@@ -132,6 +132,9 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | `unity-write-tdd`             | Formal Technical Design Document (TDD) generation.      |
 | `unity-test`                  | Automated testing using the Unity Test Framework (Edit/Play Mode). |
 | `unity-web-deploy`            | Specialist in WebGL deployment, interop, and browser optimization.  |
+| `bash-check`                 | Validate and check bash shell scripts for correctness and compatibility. |
+| `bash-optimize`              | Optimize and refactor bash shell scripts for clarity and performance.    |
+| `sisyphus`                   | Autonomous task execution and sub-agent orchestration.                    |
 | `skill-creator`               | Meta-skill for creating and improving other project skills.        |
 
 ### Skill Folder Structure
