@@ -108,35 +108,53 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 
 ### Current Skills
 
-| Skill                            | Description                                                        |
-| -------------------------------- | ------------------------------------------------------------------ |
-| `unity-orchestrator`          | The master Unity technical lead and orchestrator.                  |
-| `flatbuffers-coder`           | Specialist in FlatBuffers schema and data management.              |
-| `mermaid`             | Specialist in visual diagrams and architectural mapping (Mermaid). |
-| `unity-mcp-basics`            | Mastery of the `unityMCP` toolset for Unity Editor automation.   |
-| `unity-editor-tools`          | Specialist in custom Editor tools, windows, and automation.       |
-| `unity-implement-logic`       | Specialist in implementing C# logic and architectural patterns.    |
-| `unity-tech-art`              | Bridge between art and code (Shaders, Pipeline Automation).        |
-| `unity-mobile-deploy`         | Specialist in iOS/Android deployment, interop, and optimization.   |
-| `unity-fix-errors`            | Systematic diagnosis and resolution of Unity technical errors.     |
-| `unity-debug`                 | Deep investigation of errors with strategic Debug.Log and reports. |
-| `unity-optimize-performance`  | Identification and resolution of performance bottlenecks.          |
-| `unity-review-pr`             | Automated GitHub PR reviews with commit-ready suggestions.         |
-| `unity-write-docs`            | Expert in crafting technical documentation for projects and APIs.  |
-| `unity-plan`                  | Requirement decomposition into structured implementation plans.    |
-| `unity-plan-review`           | Facilitates high-level review, brainstorming, and task finalization. |
-| `unity-plan-detail`           | Decomposes plans into detailed tasks with code and test cases.    |
-| `unity-plan-brainstorm`       | Deep-dive investigation and refined coding instructions for tasks. |
-| `unity-plan-executor`         | Executes detailed technical tasks based on .md files in Documents/Tasks/. |
-| `unity-investigate-code`      | Deep-dive analysis of C# logic and execution flow tracing.         |
-| `unity-write-tdd`             | Formal Technical Design Document (TDD) generation.      |
-| `unity-test`                  | Automated testing using the Unity Test Framework (Edit/Play Mode). |
-| `unity-web-deploy`            | Specialist in WebGL deployment, interop, and browser optimization.  |
-| `bash-check`                 | Validate and check bash shell scripts for correctness and compatibility. |
-| `bash-optimize`              | Optimize and refactor bash shell scripts for clarity and performance.    |
-| `bash-install`               | Install software/packages with automatic retry and fallback strategies.  |
-| `sisyphus`                   | Autonomous task execution and sub-agent orchestration.                    |
-| `skill-creator`               | Meta-skill for creating and improving other project skills.        |
+#### 🎮 Unity Development
+| Skill | Description |
+| :--- | :--- |
+| `unity-orchestrator` | The master Unity technical lead and orchestrator. |
+| `unity-mcp-basics` | Mastery of the `unityMCP` toolset for Unity Editor automation. |
+| `unity-editor-tools` | Specialist in custom Editor tools, windows, and automation. |
+| `unity-implement-logic` | Specialist in implementing C# logic and architectural patterns. |
+| `unity-tech-art` | Bridge between art and code (Shaders, Pipeline Automation). |
+| `unity-fix-errors` | Systematic diagnosis and resolution of Unity technical errors. |
+| `unity-debug` | Deep investigation of errors with strategic Debug.Log and reports. |
+| `unity-optimize-performance` | Identification and resolution of performance bottlenecks. |
+| `unity-investigate-code` | Deep-dive analysis of C# logic and execution flow tracing. |
+| `unity-test` | Automated testing using the Unity Test Framework (Edit/Play Mode). |
+| `unity-mobile-deploy` | Specialist in iOS/Android deployment, interop, and optimization. |
+| `unity-web-deploy` | Specialist in WebGL deployment, interop, and browser optimization. |
+
+#### 📋 Project Planning
+| Skill | Description |
+| :--- | :--- |
+| `unity-plan` | Requirement decomposition into structured implementation plans. |
+| `unity-plan-review` | Facilitates high-level review, brainstorming, and task finalization. |
+| `unity-plan-detail` | Decomposes plans into detailed tasks with code and test cases. |
+| `unity-plan-brainstorm` | Deep-dive investigation and refined coding instructions for tasks. |
+| `unity-plan-executor` | Executes detailed technical tasks based on .md files in Documents/Tasks/. |
+| `unity-review-pr` | Automated GitHub PR reviews with commit-ready suggestions. |
+| `unity-write-docs` | Expert in crafting technical documentation for projects and APIs. |
+| `unity-write-tdd` | Formal Technical Design Document (TDD) generation. |
+
+#### 📊 Data & Architecture
+| Skill | Description |
+| :--- | :--- |
+| `flatbuffers-coder` | Specialist in FlatBuffers schema and data management. |
+| `mermaid` | Specialist in visual diagrams and architectural mapping (Mermaid). |
+
+#### 🐚 Bash Scripting
+| Skill | Description |
+| :--- | :--- |
+| `bash-check` | Validate and check bash shell scripts for correctness and compatibility. |
+| `bash-optimize` | Optimize and refactor bash shell scripts for clarity and performance. |
+| `bash-install` | Install software/packages with automatic retry and fallback strategies. |
+
+#### 🤖 Agents & Meta
+| Skill | Description |
+| :--- | :--- |
+| `sisyphus` | Autonomous task execution and sub-agent orchestration. |
+| `skill-creator` | Meta-skill for creating and improving other project skills. |
+
 
 ### Skill Folder Structure
 
