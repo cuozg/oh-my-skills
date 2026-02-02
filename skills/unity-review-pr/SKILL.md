@@ -7,6 +7,9 @@ description: "Deep-investigation PR reviews for Unity projects. Analyzes not jus
 
 Review PRs by analyzing both the changes AND their impact on the codebase.
 
+> [!CAUTION]
+> **MANDATORY**: Every review MUST be pushed to GitHub using `gh` CLI. A review is NOT complete until the `gh pr review` command has been executed successfully.
+
 ## Core Philosophy
 
 **Surface reviews miss breaking changes.** A PR that changes method signature, event behavior, or data flow can break dozens of callers. This skill investigates the ripple effects.
@@ -127,10 +130,31 @@ Structure findings in categories:
 [Nice-to-haves]
 ```
 
-### Phase 7: Submit
+### Phase 7: Submit (MANDATORY)
 
+> [!IMPORTANT]
+> This phase is **NOT OPTIONAL**. You MUST push the review to GitHub.
+
+**Option A: Using the helper script**
 ```bash
 bash .claude/skills/unity-review-pr/scripts/post_review.sh <number> review.json
+```
+
+**Option B: Direct gh command**
+```bash
+# For APPROVE
+gh pr review <number> --approve --body "<review_body>"
+
+# For REQUEST_CHANGES
+gh pr review <number> --request-changes --body "<review_body>"
+
+# For COMMENT only
+gh pr review <number> --comment --body "<review_body>"
+```
+
+**Verification**: After submitting, confirm the review was posted:
+```bash
+gh pr view <number> --json reviews --jq '.reviews[-1]'
 ```
 
 ## Comment Format
@@ -170,3 +194,17 @@ Use these in order of preference:
 
 See [DEEP_INVESTIGATION.md](references/DEEP_INVESTIGATION.md) for investigation patterns.
 See [REVIEW_JSON_SPEC.md](references/REVIEW_JSON_SPEC.md) for output format.
+
+---
+
+## Critical Rules
+
+> [!CAUTION]
+> **NEVER skip the GitHub submission step!**
+
+1. ✅ **ALWAYS** push review to GitHub using `gh pr review`
+2. ✅ **ALWAYS** verify the review was posted successfully
+3. ❌ **NEVER** consider a review complete without GitHub submission
+4. ❌ **NEVER** just output review text without pushing to GitHub
+
+**The review workflow is incomplete until the `gh pr review` command returns success.**
