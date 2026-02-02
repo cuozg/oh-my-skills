@@ -134,6 +134,7 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | `unity-web-deploy`            | Specialist in WebGL deployment, interop, and browser optimization.  |
 | `bash-check`                 | Validate and check bash shell scripts for correctness and compatibility. |
 | `bash-optimize`              | Optimize and refactor bash shell scripts for clarity and performance.    |
+| `bash-install`               | Install software/packages with automatic retry and fallback strategies.  |
 | `sisyphus`                   | Autonomous task execution and sub-agent orchestration.                    |
 | `skill-creator`               | Meta-skill for creating and improving other project skills.        |
 
