@@ -1,67 +1,120 @@
 ---
 name: sisyphus
-description: "Agent spawner for oh-my-opencode (omo). Use this skill when you need to delegate tasks to a specialized @sisyphus agent. The agent reads prompts, uses unity-orchestrator to route to appropriate skills, and executes tasks using ultrawork (ulw) pattern. Triggers: task delegation, multi-skill orchestration, complex workflows requiring agent coordination."
+description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @sisyphus agent via tool call to handle prompts. Self-routing: analyzes prompts, discovers skills by scanning .claude/skills/*/SKILL.md, routes to appropriate skill(s), executes via ultrawork (ulw) pattern. Triggers: any task, delegation, multi-skill workflows."
 ---
 
 # Sisyphus Agent Skill
 
-Spawn the @sisyphus agent from oh-my-opencode (omo) to handle prompts via tool calls.
-
-## How Sisyphus Works
-
-Sisyphus is an agent spawner that:
-1. **Reads the incoming prompt** - Analyzes user request
-2. **Uses unity-orchestrator** - Routes to the appropriate skill(s)
-3. **Executes as ultrawork (ulw)** - Handles tasks with structured work pattern
-
-## Spawning Sisyphus
-
-Invoke @sisyphus agent as a tool call with the following pattern:
+**ALWAYS spawn the @sisyphus agent from oh-my-opencode (omo) to handle prompts via tool calls.**
 
 ```
 @sisyphus <prompt>
 ```
 
+## How Sisyphus Works
+
+1. **Spawn @sisyphus** - ALWAYS invoke via tool call: `@sisyphus <prompt>`
+2. **Analyze prompt** - Parse user request and identify intent
+3. **Discover skills** - Scan `.claude/skills/*/SKILL.md` frontmatter for available skills
+4. **Route to skill** - Match intent to skill(s) using trigger patterns
+5. **Execute as ultrawork** - Handle tasks with structured work pattern
+
+## Skill Discovery Protocol
+
+Scan the `.claude/skills/` directory and read YAML frontmatter from each `SKILL.md`:
+
+```
+.claude/skills/*/SKILL.md → extract name + description → match triggers
+```
+
+## Available Skills
+
+| Skill | Triggers |
+|:------|:---------|
+| `flatbuffers-coder` | schema, binary data, serialize, fbs file, flatbuffers |
+| `mermaid` | diagram, visualize, flowchart, sequence diagram, draw the flow |
+| `skill-creator` | create skill, update skill, new skill |
+| `unity-debug` | debug this error, why is this happening, investigate crash, trace exception |
+| `unity-editor-tools` | custom Editor Windows, Inspectors, asset validation, batch processors, UI Toolkit |
+| `unity-fix-errors` | compiler errors, exceptions, Play Mode broken, build fails |
+| `unity-implement-logic` | new scripts, MonoBehaviours, refactoring, gameplay features |
+| `unity-investigate-code` | how does X work, trace the flow, explain this code, what calls this |
+| `unity-mcp-basics` | automate Editor, MCP tool, batch operations, find GameObject |
+| `unity-mobile-deploy` | iOS, Android, touch controls, mobile optimization, native features |
+| `unity-optimize-performance` | low FPS, high memory, slow load times, performance audit |
+| `unity-plan` | plan feature, analyze requirements, break into tasks, estimate effort |
+| `unity-plan-brainstorm` | task needs code-level details, investigating codebase |
+| `unity-plan-detail` | create task skeletons, task requirements from plan |
+| `unity-plan-executor` | execute task, implement from task guide |
+| `unity-plan-review` | review plan, refine decomposition, finalize task list |
+| `unity-review-pr` | review PR, check PR, PR #123, GitHub PR link |
+| `unity-tech-art` | shaders, HLSL, Shader Graph, asset pipelines, procedural content |
+| `unity-test` | create tests, Edit Mode tests, Play Mode tests, test assemblies |
+| `unity-web-deploy` | WebGL, browser issues, C#/JavaScript interop, PWA |
+| `unity-write-docs` | README, documentation, API references, onboarding guides |
+| `unity-write-tdd` | Technical Design Document, architecture decisions, specifications |
+
+## Routing Logic
+
+```
+User prompt received
+├─ Error/crash/bug?
+│  ├─ Has stack trace → unity-fix-errors
+│  ├─ Unexpected behavior → unity-debug
+│  └─ Slow/laggy → unity-optimize-performance
+├─ New feature?
+│  ├─ Small (1-2 files) → unity-implement-logic
+│  ├─ Medium → unity-plan-brainstorm → unity-plan-executor
+│  └─ Large/complex → unity-plan (full pipeline)
+├─ Review PR? → unity-review-pr
+├─ Documentation? → unity-write-docs + mermaid
+├─ Data/schema? → flatbuffers-coder
+├─ Mobile issue? → unity-mobile-deploy
+├─ WebGL issue? → unity-web-deploy
+├─ Editor tool? → unity-editor-tools + unity-mcp-basics
+├─ Shader/art? → unity-tech-art
+├─ Tests? → unity-test
+└─ How does X work? → unity-investigate-code
+```
+
+## Skill Combinations
+
+| Scenario | Combine |
+|:---------|:--------|
+| Feature with docs | `unity-plan` + `unity-write-tdd` + `mermaid` |
+| Editor tool with automation | `unity-editor-tools` + `unity-mcp-basics` |
+| Performance-critical feature | `unity-implement-logic` + `unity-optimize-performance` |
+| Mobile implementation | `unity-implement-logic` + `unity-mobile-deploy` |
+| WebGL implementation | `unity-implement-logic` + `unity-web-deploy` |
+| Data-driven system | `flatbuffers-coder` + `unity-implement-logic` |
+| Documented architecture | `unity-write-docs` + `mermaid` |
+
 ## Ultrawork (ULW) Pattern
 
-All tasks handled by Sisyphus follow the ultrawork protocol:
-
 ### 1. Analyze Phase
-- Parse the user prompt
+- Parse user prompt
 - Identify intent and required skills
-- Load `unity-orchestrator` skill to route the request
+- Scan `.claude/skills/` to discover available skills
 
 ### 2. Route Phase
-Use unity-orchestrator's routing table:
-
-| User Intent | Primary Skill | Chain |
-|:------------|:--------------|:------|
-| "Review PR #X" | `unity-review-pr` | — |
-| "Fix error/crash" | `unity-fix-errors` | → `unity-investigate-code` |
-| "Debug why X happens" | `unity-debug` | → `unity-fix-errors` |
-| "Implement [feature]" | `unity-plan` | → full pipeline |
-| "Refactor X" | `unity-implement-logic` | → `unity-test` |
-| "Performance issue" | `unity-optimize-performance` | — |
-| "Android/iOS issue" | `unity-mobile-deploy` | — |
-| "WebGL problem" | `unity-web-deploy` | — |
-| "Editor tool" | `unity-editor-tools` | + `unity-mcp-basics` |
-| "Shader/art" | `unity-tech-art` | — |
-| "Write tests" | `unity-test` | — |
-| "Write docs" | `unity-write-docs` | + `mermaid` |
-| "Data schema" | `flatbuffers-coder` | — |
-| "How does X work?" | `unity-investigate-code` | — |
+- Match intent to skill(s) using routing logic above
+- Load the matching skill's SKILL.md
+- State which skill is being loaded:
+  > "Loading `unity-fix-errors` to diagnose the NullReferenceException..."
 
 ### 3. Execute Phase
-- Spawn subagents via tool calls for each subtask
-- Coordinate results between subagents
-- Report completion status
+- Follow the loaded skill's workflow completely
+- Spawn subagents for subtasks if needed
+- Chain to additional skills when required:
+  > "Root cause identified. Chaining to `unity-implement-logic` for the fix..."
 
 ### 4. Verify Phase
 - Cross-check against original goal
-- Validate outputs from subagents
+- Validate outputs
+- Run tests if applicable (`unity-test`)
 - Report final results
 
-## Agent Spawning Protocol
+## Agent Spawning
 
 When spawning subagents:
 
@@ -69,46 +122,22 @@ When spawning subagents:
 // Spawn with specific skill
 @subagent[skill-name] <subtask-prompt>
 
-// Spawn with orchestrator routing
+// Spawn with self-routing
 @subagent <subtask-prompt>
 ```
-
-## Configuration
-
-Sisyphus uses opencode configuration for MCP server connections:
-
-```json
-{
-  "mcp": {
-    "server-name": {
-      "type": "remote",
-      "url": "http://host:port/mcp/",
-      "headers": { "Authorization": "Bearer <token>" },
-      "enabled": true
-    }
-  }
-}
-```
-
-## Integration with oh-my-opencode
-
-The skill integrates with SST OpenCode's native MCP support:
-- Auto-detects MCP servers via `opencode.json`
-- Uses bearer token authentication
-- Supports project and agent registration
 
 ## Workflow Example
 
 User prompt: "Fix the NullReferenceException in PlayerController"
 
 Sisyphus execution:
-1. **Analyze**: Error fix request detected
-2. **Route**: unity-orchestrator → `unity-fix-errors`
-3. **Execute**: Spawn subagent with `unity-fix-errors` skill
+1. **Analyze**: Error fix request detected (has exception name)
+2. **Route**: Match triggers → `unity-fix-errors`
+3. **Execute**: Load skill, follow its workflow
 4. **Verify**: Check fix compiles and error resolved
 
 ## Error Handling
 
-- If skill not found, fall back to `unity-orchestrator` for guidance
-- If subagent fails, retry with alternative skill chain
+- If no skill matches, re-scan skills and try broader matching
+- If skill execution fails, try alternative skill from combination table
 - Report all failures with diagnostic info
