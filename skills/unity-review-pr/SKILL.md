@@ -1,6 +1,6 @@
 ---
 name: unity-review-pr
-description: "Deep-investigation PR reviews for Unity projects. Analyzes not just code changes but their IMPACT on the entire codebase. Use when: (1) Reviewing PRs with logic changes that may break dependent systems, (2) Identifying cascading effects from API/interface changes, (3) Finding hidden coupling issues, (4) Verifying changes don't break callers/consumers. Triggers: 'review PR', 'check this PR', 'PR #123', any GitHub PR link."
+description: "Deep-investigation PR reviews for Unity projects. Analyzes not just code changes but their IMPACT on the entire codebase. Use when: (1) Reviewing PRs with logic changes that may break dependent systems, (2) Identifying cascading effects from API/interface changes, (3) Finding hidden coupling issues, (4) Verifying changes don't break callers/consumers. Triggers: 'review PR', 'check this PR', 'PR #123', any GitHub PR link, (5) ALWAYS push the review to GitHub using `gh` CLI. A review is NOT complete until the `gh pr review` command has been executed successfully."
 ---
 
 # Unity PR Reviewer (Deep Investigation)
