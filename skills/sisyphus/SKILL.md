@@ -6,6 +6,7 @@ description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @sisyphus age
 # Sisyphus Agent Skill
 
 **ALWAYS spawn the @sisyphus agent from oh-my-opencode (omo) to handle prompts via tool calls.**
+**ALWAYS search for skill and use them to handle the task ulw**
 
 ```
 @sisyphus <prompt>
@@ -17,7 +18,8 @@ description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @sisyphus age
 2. **Analyze prompt** - Parse user request and identify intent
 3. **Discover skills** - Scan `.claude/skills/*/SKILL.md` frontmatter for available skills
 4. **Route to skill** - Match intent to skill(s) using trigger patterns
-5. **Execute as ultrawork** - Handle tasks with structured work pattern
+5. **Load skill** - Load the matching skill's SKILL.md
+6. **Execute as ultrawork** - Handle tasks with structured work pattern
 
 ## Skill Discovery Protocol
 
