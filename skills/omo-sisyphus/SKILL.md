@@ -1,10 +1,10 @@
 ---
 name: omo-sisyphus
-description: "Agent spawner for oh-my-opencode (omo). Spawns @sisyphus-junior agent with user-provided skill-name and prompt. No auto-routing - user specifies skill directly. Format: @sisyphus-junior skill-name prompt"
+description: "Agent spawner for oh-my-opencode (omo). Spawns @sisyphus agent with user-provided skill-name and prompt. No auto-routing - user specifies skill directly. Format: @sisyphus skill-name prompt"
 ---
 # Sisyphus Agent Skill
 
-**ALWAYS spawn @sisyphus-junior agent with the skill-name provided by user.**
+**ALWAYS spawn @sisyphus agent with the skill-name provided by user.**
 
 ## Input Format
 
@@ -16,17 +16,17 @@ User provides:
 ## Trigger Call
 
 ```
-@sisyphus-junior <skill-name> <prompt>
+@sisyphus <skill-name> <prompt>
 ```
 
 ## Examples
 
 ```
-@sisyphus-junior unity-fix-errors Fix the NullReferenceException in PlayerController
-@sisyphus-junior unity-plan Plan the new inventory system feature
-@sisyphus-junior unity-review-pr Review PR #25143
-@sisyphus-junior mermaid Draw the flow of the login system
-@sisyphus-junior flatbuffers-coder Create schema for player data
+@sisyphus unity-fix-errors Fix the NullReferenceException in PlayerController
+@sisyphus unity-plan Plan the new inventory system feature
+@sisyphus unity-review-pr Review PR #25143
+@sisyphus mermaid Draw the flow of the login system
+@sisyphus flatbuffers-coder Create schema for player data
 ```
 
 ## Available Skills
@@ -59,6 +59,6 @@ User provides:
 ## Workflow
 
 1. **Receive** - User provides `<skill-name> <prompt>`
-2. **Spawn** - `@sisyphus-junior <skill-name> <prompt>`
+2. **Spawn** - `@sisyphus <skill-name> <prompt>`
 3. **Execute** - Agent handles task using the specified skill, follow the skill's workflow exactly
 4. **Report** - Return results to user
