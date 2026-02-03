@@ -1,6 +1,6 @@
 ---
 name: unity-review-pr
-description: "Deep-investigation PR reviews for Unity projects. Analyzes not just code changes but their IMPACT on the entire codebase. Use when: (1) Reviewing PRs with logic changes that may break dependent systems, (2) Identifying cascading effects from API/interface changes, (3) Finding hidden coupling issues, (4) Verifying changes don't break callers/consumers. Triggers: 'review PR', 'check this PR', 'PR #123', any GitHub PR link, (5) ALWAYS push the review to GitHub using `gh` CLI. A review is NOT complete until the `gh pr review` command has been executed successfully."
+description: "Deep-investigation PR reviews for Unity projects. Analyzes not just code changes but their IMPACT on the entire codebase. Use when: (1) Reviewing PRs with logic changes that may break dependent systems, (2) Identifying cascading effects from API/interface changes, (3) Finding hidden coupling issues, (4) Verifying changes don't break callers/consumers. Triggers: 'review PR', 'check this PR', 'PR #123', any GitHub PR link. CRITICAL: ALWAYS push the review result to GitHub - even if PR is merged or closed. A review is NOT complete until successfully pushed to GitHub."
 ---
 
 # Unity PR Reviewer (Deep Investigation)
@@ -8,7 +8,12 @@ description: "Deep-investigation PR reviews for Unity projects. Analyzes not jus
 Review PRs by analyzing both the changes AND their impact on the codebase.
 
 > [!CAUTION]
-> **MANDATORY**: Every review MUST be pushed to GitHub using `gh` CLI. A review is NOT complete until the `gh pr review` command has been executed successfully.
+> **MANDATORY**: Every review MUST be pushed to GitHub - **NO EXCEPTIONS**.
+> - Even if PR is already **merged** → Still push the review
+> - Even if PR is **closed** → Still push the review  
+> - Even if review finds no issues → Still push the review
+> 
+> A review is NOT complete until successfully pushed to GitHub.
 
 ## Core Philosophy
 
@@ -130,10 +135,11 @@ Structure findings in categories:
 [Nice-to-haves]
 ```
 
-### Phase 7: Submit (MANDATORY)
+### Phase 7: Submit (MANDATORY - NO EXCEPTIONS)
 
 > [!IMPORTANT]
 > This phase is **NOT OPTIONAL**. You MUST push the review to GitHub.
+> **Even if the PR is already merged or closed, you MUST still push the review.**
 
 **Option A: Using the helper script**
 ```bash
@@ -152,9 +158,15 @@ gh pr review <number> --request-changes --body "<review_body>"
 gh pr review <number> --comment --body "<review_body>"
 ```
 
+**Option C: For merged/closed PRs (if review command fails)**
+```bash
+# Add review as a comment on the PR
+gh pr comment <number> --body "<review_body>"
+```
+
 **Verification**: After submitting, confirm the review was posted:
 ```bash
-gh pr view <number> --json reviews --jq '.reviews[-1]'
+gh pr view <number> --json reviews,comments --jq '.reviews[-1] // .comments[-1]'
 ```
 
 ## Comment Format
@@ -202,9 +214,22 @@ See [REVIEW_JSON_SPEC.md](references/REVIEW_JSON_SPEC.md) for output format.
 > [!CAUTION]
 > **NEVER skip the GitHub submission step!**
 
-1. ✅ **ALWAYS** push review to GitHub using `gh pr review`
-2. ✅ **ALWAYS** verify the review was posted successfully
-3. ❌ **NEVER** consider a review complete without GitHub submission
-4. ❌ **NEVER** just output review text without pushing to GitHub
+1. ✅ **ALWAYS** push review to GitHub using `gh pr review` or `gh pr comment`
+2. ✅ **ALWAYS** push even if PR is **merged** or **closed**
+3. ✅ **ALWAYS** verify the review was posted successfully
+4. ❌ **NEVER** consider a review complete without GitHub submission
+5. ❌ **NEVER** just output review text without pushing to GitHub
+6. ❌ **NEVER** skip submission because "PR is already merged"
 
-**The review workflow is incomplete until the `gh pr review` command returns success.**
+**The review workflow is incomplete until the review is visible on GitHub.**
+
+### Handling Merged/Closed PRs
+
+If `gh pr review` fails because PR is merged/closed:
+
+```bash
+# Fallback: Post as comment instead
+gh pr comment <number> --body "## Post-Merge Review\n\n<review_body>"
+```
+
+The goal is to ensure the review is **recorded on GitHub** for documentation purposes, regardless of PR state.
