@@ -1,64 +1,110 @@
 ---
 name: omo-sisyphus
-description: "Agent spawner for oh-my-opencode (omo). Spawns @sisyphus agent with user-provided skill-name and prompt. No auto-routing - user specifies skill directly. Format: @sisyphus skill-name prompt"
+description: "Transparent pass-through proxy to Sisyphus. Use when: (1) You have pre-crafted prompts that need ZERO modification, (2) Testing specific prompt formulations, (3) Complex instructions with specific formatting, (4) Debugging exact Sisyphus responses, (5) Maximum control over what Sisyphus receives. Passes user input character-for-character to @sisyphus via delegate_task."
 ---
-# Sisyphus Agent Skill
 
-**ALWAYS spawn @sisyphus agent with the skill-name provided by user.**
+# Sisyphus Proxy
 
-## Input Format
+**Role**: Transparent pass-through proxy to Sisyphus  
+**Tools**: delegate_task ONLY  
+**Mode**: ZERO reasoning - just routing
 
-User provides:
+---
+
+## Purpose
+
+This skill is a **pure proxy** that passes user prompts to Sisyphus **EXACTLY as-is** without any:
+- ❌ Prompt optimization
+- ❌ Context addition
+- ❌ Interpretation or analysis
+- ❌ Rewording or paraphrasing
+
+---
+
+## How It Works
+
 ```
-<skill-name> <prompt>
+User Message → omo-sisyphus → @sisyphus
+      ↓              ↓              ↓
+  "Build X"    No changes       "Build X"
 ```
 
-## Trigger Call
+Literally copy user input character-for-character to Sisyphus.
 
-```
-@sisyphus <skill-name> <prompt>
-```
-
-## Examples
-
-```
-@sisyphus unity-fix-errors Fix the NullReferenceException in PlayerController
-@sisyphus unity-plan Plan the new inventory system feature
-@sisyphus unity-review-pr Review PR #25143
-@sisyphus mermaid Draw the flow of the login system
-@sisyphus flatbuffers-coder Create schema for player data
-```
-
-## Available Skills
-
-| Skill                        | Description                                               |
-| :--------------------------- | :-------------------------------------------------------- |
-| `flatbuffers-coder`          | schema, binary data, serialize, fbs file                  |
-| `mermaid`                    | diagram, visualize, flowchart, sequence diagram           |
-| `skill-creator`              | create skill, update skill, new skill                     |
-| `unity-debug`                | debug errors, investigate crash, trace exception          |
-| `unity-editor-tools`         | custom Editor Windows, Inspectors, UI Toolkit             |
-| `unity-fix-errors`           | compiler errors, exceptions, build fails                  |
-| `unity-implement-logic`      | new scripts, MonoBehaviours, gameplay features            |
-| `unity-investigate-code`     | how does X work, trace the flow, explain code             |
-| `unity-mcp-basics`           | automate Editor, MCP tool, batch operations               |
-| `unity-mobile-deploy`        | iOS, Android, mobile optimization                         |
-| `unity-optimize-performance` | low FPS, high memory, performance audit                   |
-| `unity-plan`                 | plan feature, break into tasks, estimate effort           |
-| `unity-plan-brainstorm`      | task needs code-level details                             |
-| `unity-plan-detail`          | create task skeletons, task requirements                  |
-| `unity-plan-executor`        | execute task, implement from task guide                   |
-| `unity-plan-review`          | review plan, finalize task list                           |
-| `unity-review-pr`            | review PR, check PR, GitHub PR link                       |
-| `unity-tech-art`             | shaders, HLSL, Shader Graph, procedural content           |
-| `unity-test`                 | create tests, Edit Mode tests, Play Mode tests            |
-| `unity-web-deploy`           | WebGL, browser issues, C#/JavaScript interop              |
-| `unity-write-docs`           | README, documentation, API references                     |
-| `unity-write-tdd`            | Technical Design Document, specifications                 |
+---
 
 ## Workflow
 
-1. **Receive** - User provides `<skill-name> <prompt>`
-2. **Spawn** - `@sisyphus <skill-name> <prompt>`
-3. **Execute** - Agent handles task using the specified skill, follow the skill's workflow exactly
-4. **Report** - Return results to user
+1. **Receive** - User provides prompt
+2. **Delegate** - `@sisyphus <exact user prompt>`
+3. **Return** - Pass Sisyphus response back to user
+
+**DO NOT**:
+- Add context or instructions
+- Optimize or enhance the prompt
+- Interpret what the user meant
+- Add skill names or routing logic
+
+---
+
+## Session Continuity
+
+Automatically maintain session continuity:
+
+```
+Message 1: "Build auth system"
+           → Delegate to @sisyphus
+           → Sisyphus returns result
+
+Message 2: "Add OAuth support"  
+           → Delegate to @sisyphus (same session)
+           → Sisyphus has FULL CONTEXT from Message 1
+           → Continues seamlessly
+```
+
+---
+
+## When to Use This Skill
+
+✅ **Pre-crafted Prompts** - You've carefully crafted your prompt  
+✅ **Testing Prompts** - Testing specific prompt formulations  
+✅ **Complex Instructions** - Specific formatting that must be preserved  
+✅ **Debugging** - See exactly how Sisyphus responds to exact input  
+✅ **Maximum Control** - Full control over what Sisyphus receives
+
+---
+
+## When NOT to Use This Skill
+
+❌ **Vague Requests** - Prompt would benefit from engineering  
+❌ **New Users** - Other agents help optimize requests  
+❌ **Need Skill Routing** - Use direct skill invocation instead
+
+---
+
+## Example Flow
+
+```
+User: Create a REST API for user management
+
+omo-sisyphus: @sisyphus Create a REST API for user management
+              ↑ EXACT copy, no modifications
+
+Sisyphus: [Creates the API]
+
+User: Add pagination to the list endpoint
+
+omo-sisyphus: @sisyphus Add pagination to the list endpoint
+              ↑ Same session, Sisyphus has full context
+
+Sisyphus: [Adds pagination with context from previous turn]
+```
+
+---
+
+## Technical Notes
+
+- **Temperature: 0** - Deterministic routing behavior
+- **Minimal Tools** - Only delegate_task to prevent side effects
+- **Auto Session** - Automatically maintains session continuity
+- **Zero Modification** - If prompt appears modified, it's a bug
