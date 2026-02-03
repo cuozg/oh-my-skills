@@ -36,7 +36,7 @@ Literally copy user input character-for-character to Sisyphus.
 ## Workflow
 
 1. **Receive** - User provides prompt
-2. **Delegate** - `@sisyphus <exact user prompt>`
+2. **Delegate** - `@sisyphus <skill-name> <exact user prompt>`
 3. **Return** - Pass Sisyphus response back to user
 
 **DO NOT**:
@@ -52,6 +52,11 @@ Literally copy user input character-for-character to Sisyphus.
 Automatically maintain session continuity:
 
 ```
+Message 1: "unity-review-pr https://github.com/xxx"
+           → Delegate to @sisyphus
+           → @sisyphus unity-review-pr https://github.com/xxx
+           → Sisyphus returns result
+
 Message 1: "Build auth system"
            → Delegate to @sisyphus
            → Sisyphus returns result
