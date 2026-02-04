@@ -1,208 +1,199 @@
 ---
 name: unity-review-pr
-description: "Deep-investigation PR reviews for Unity projects. Analyzes not just code changes but their IMPACT on the entire codebase. Use when: (1) Reviewing PRs with logic changes that may break dependent systems, (2) Identifying cascading effects from API/interface changes, (3) Finding hidden coupling issues, (4) Verifying changes don't break callers/consumers. Triggers: 'review PR', 'check this PR', 'PR #123', any GitHub PR link. CRITICAL: ALWAYS push the review result to GitHub - even if PR is merged or closed. A review is NOT complete until successfully pushed to GitHub."
+description: "Code reviewer for Unity C# projects. Reviews code changes (uncommitted, commits, branches, or PRs) and provides actionable feedback focused on bugs, structure, and performance. Use when: reviewing PRs, checking uncommitted changes, comparing branches. Triggers: 'review PR', 'check changes', 'PR #123', any GitHub PR link, commit hash, branch name."
 ---
 
-# Unity PR Reviewer (Deep Investigation)
+# Unity Code Reviewer
 
-Review PRs by analyzing both the changes AND their impact on the codebase.
+Review code changes and provide actionable feedback.
 
-> [!CAUTION]
-> **MANDATORY**: Every review MUST be pushed to GitHub - **NO EXCEPTIONS**.
-> - Even if PR is already **merged** → Still push the review
-> - Even if PR is **closed** → Still push the review  
-> - Even if review finds no issues → Still push the review
-> 
-> A review is NOT complete until successfully pushed to GitHub.
+## Determining What to Review
 
-## Core Philosophy
+Based on input, determine which review type to perform:
 
-**Surface reviews miss breaking changes.** A PR that changes method signature, event behavior, or data flow can break dozens of callers. This skill investigates the ripple effects.
+| Input Type | Detection | Commands |
+|:-----------|:----------|:---------|
+| **No arguments** | Default | `git diff` (unstaged), `git diff --cached` (staged), `git status --short` (untracked) |
+| **Commit hash** | 40-char SHA or short hash | `git show <hash>` |
+| **Branch name** | Branch identifier | `git diff <branch>...HEAD` |
+| **PR URL/number** | Contains "github.com", "pull", or looks like PR number | `gh pr view <input>`, `gh pr diff <input>` |
+
+## Gathering Context
+
+**Diffs alone are not enough.** After getting the diff:
+
+1. Identify which files changed from the diff
+2. Use `git status --short` to find untracked files, read their full contents
+3. Read full file(s) to understand existing patterns, control flow, error handling
+4. Check for conventions files (CONVENTIONS.md, AGENTS.md, .editorconfig)
+
+Code that looks wrong in isolation may be correct given surrounding logic—and vice versa.
+
+## What to Look For
+
+### Bugs (Primary Focus)
+
+- Logic errors, off-by-one mistakes, incorrect conditionals
+- If-else guards: missing guards, incorrect branching, unreachable code paths
+- Edge cases: null/empty/undefined inputs, error conditions, race conditions
+- Security issues: injection, auth bypass, data exposure
+- Broken error handling that swallows failures or throws unexpectedly
+
+### Structure
+
+- Does it follow existing patterns and conventions?
+- Are there established abstractions it should use but doesn't?
+- Excessive nesting that could be flattened with early returns
+
+### Performance (Only Flag If Obviously Problematic)
+
+- O(n²) on unbounded data
+- N+1 queries
+- Blocking I/O on hot paths
+- `GetComponent` in Update loops
+- `Camera.main` in hot paths
+
+## Before You Flag Something
+
+**Be certain.** If you call something a bug, be confident it actually is one.
+
+- Only review the changes - do NOT review pre-existing code that wasn't modified
+- Don't flag something as a bug if you're unsure - investigate first
+- Don't invent hypothetical problems - if an edge case matters, explain the realistic scenario where it breaks
+- If uncertain and can't verify with tools, say "I'm not sure about X" rather than flagging as definite
+
+**Don't be a zealot about style:**
+
+- Verify code is *actually* in violation before complaining
+- Some "violations" are acceptable when they're the simplest option
+- Excessive nesting is a legitimate concern regardless of other style choices
+- Only flag style preferences if they clearly violate established project conventions
+
+## Investigation Tools
+
+Use these to inform your review:
+
+1. **Codebase search** - Find how existing code handles similar problems
+2. **Web search** - Research best practices if unsure about a pattern
+3. **grep/find** - Locate references, patterns, and prior art
 
 ## Severity Levels
 
 | Level | Use When |
 |:------|:---------|
-| 🔴 **Critical** | Breaking changes to callers, memory leaks, crashes, data corruption |
-| 🟡 **Major** | Hidden coupling issues, missing null checks, `GetComponent` in Update |
+| 🔴 **Critical** | Breaking changes, memory leaks, crashes, data corruption |
+| 🟡 **Major** | Hidden coupling, missing null checks, performance issues |
 | 🔵 **Minor** | Naming inconsistencies, style violations |
 | 💚 **Suggestion** | Readability improvements, modern C# patterns |
 
 ## Review Workflow
 
-### Phase 1: Fetch & Parse
+### Phase 1: Fetch Changes
 
 ```bash
-# Get PR diff
+# For PR
 gh pr diff <number> --patch > pr_diff.patch
-
-# Get PR info (files changed, description)
 gh pr view <number> --json title,body,files
+
+# For uncommitted
+git diff
+git diff --cached
+git status --short
 ```
 
-### Phase 2: Identify High-Risk Changes
+### Phase 2: Read Full Context
 
-Scan the diff for these risk indicators:
+For each modified file:
+```bash
+# Read full file to understand context
+cat <filepath>
 
-| Change Type | Risk | Investigation Required |
-|:------------|:-----|:-----------------------|
-| Method signature change | 🔴 | Find ALL callers via LSP/grep |
-| Public field/property removed | 🔴 | Find ALL references |
-| Event signature change | 🔴 | Find ALL subscribers |
-| Interface method change | 🔴 | Find ALL implementations |
-| Virtual method override | 🟡 | Check base class contract |
-| ScriptableObject field change | 🟡 | Check serialized assets |
-| Enum value added/removed | 🟡 | Find switch statements |
-| Constructor parameter change | 🔴 | Find ALL instantiation sites |
+# Or view specific sections if file is large
+```
 
-### Phase 3: Deep Investigation
+### Phase 3: Analyze Changes
 
-For EACH high-risk change, investigate the codebase:
+1. **Identify high-risk changes**: signature changes, removed fields, interface changes
+2. **Trace impact**: Find all callers/consumers of changed code
+3. **Verify correctness**: Check if changes break callers
 
 ```bash
-# Find all callers of changed method
-# Use LSP references or grep patterns
-
-# Example: Method "ProcessReward" changed signature
-grep -r "ProcessReward" Assets/Scripts/ --include="*.cs"
-
-# Example: Event "OnMatchComplete" parameters changed  
-grep -r "OnMatchComplete" Assets/Scripts/ --include="*.cs"
-
-# Example: Interface IRewardHandler method changed
-grep -r "IRewardHandler" Assets/Scripts/ --include="*.cs"
+# Find callers of changed method
+grep -r "MethodName" Assets/Scripts/ --include="*.cs"
 ```
 
-**For each caller found:**
-1. Read the calling code
-2. Check if the call is still compatible
-3. If NOT compatible → 🔴 Critical issue
+### Phase 4: Draft Review
 
-### Phase 4: Logic Flow Analysis
-
-Trace the execution path of changed code:
-
-1. **Entry points**: What triggers this code? (UI, events, lifecycle)
-2. **Dependencies**: What does this code depend on? (services, data)
-3. **Side effects**: What does this code modify? (state, events, external)
-4. **Exit points**: What consumes the output? (return values, out params)
-
-Flag issues when:
-- Changed logic breaks expected behavior of callers
-- New null paths introduced without null checks downstream
-- Event timing changes affect subscribers
-- Data format changes break consumers
-
-### Phase 5: Pattern Audit
-
-Check changed files against Unity patterns:
-
-```csharp
-// 🔴 GetComponent in Update
-void Update() { GetComponent<Rigidbody>(); }
-
-// 🔴 Camera.main in loop  
-void Update() { Camera.main.transform; }
-
-// 🟡 String concat in hot path
-void Update() { label.text = "Score: " + score; }
-
-// 🔴 Missing null check after await
-async Awaitable DoAsync() {
-    await Awaitable.WaitForSecondsAsync(1f);
-    transform.position = Vector3.zero; // May be destroyed!
-}
-
-// 🔴 Breaking change without updating callers
-public void OldMethod(int x) { }  // Changed from (int x, int y)
-```
-
-### Phase 6: Draft Review
-
-Structure findings in categories:
+Structure findings clearly:
 
 ```markdown
-## 🔴 Breaking Changes (X issues)
-[List changes that WILL break existing code]
+## Summary
+[One-line summary of review outcome]
 
-## 🟡 Potential Issues (Y issues)  
-[List changes that MAY cause problems]
+## 🔴 Critical (X issues)
+[Issues that WILL break existing code or cause serious problems]
 
-## 🔵 Code Quality (Z issues)
+## 🟡 Major (Y issues)
+[Issues that MAY cause problems under specific conditions]
+
+## 🔵 Minor (Z issues)
 [Style, naming, minor improvements]
 
 ## 💚 Suggestions
-[Nice-to-haves]
+[Nice-to-haves, not blocking]
 ```
 
-### Phase 7: Submit (MANDATORY - NO EXCEPTIONS)
+### Phase 5: Submit to GitHub
 
-> [!IMPORTANT]
-> This phase is **NOT OPTIONAL**. You MUST push the review to GitHub.
-> **Even if the PR is already merged or closed, you MUST still push the review.**
-
-**Option A: Using the helper script**
 ```bash
-bash .claude/skills/unity-review-pr/scripts/post_review.sh <number> review.json
-```
-
-**Option B: Direct gh command**
-```bash
-# For APPROVE
+# For APPROVE (no critical/major issues)
 gh pr review <number> --approve --body "<review_body>"
 
-# For REQUEST_CHANGES
+# For REQUEST_CHANGES (has critical issues)
 gh pr review <number> --request-changes --body "<review_body>"
 
-# For COMMENT only
+# For COMMENT only (minor issues or suggestions)
 gh pr review <number> --comment --body "<review_body>"
+
+# For merged/closed PRs - post as comment
+gh pr comment <number> --body "## Post-Merge Review\n\n<review_body>"
 ```
 
-**Option C: For merged/closed PRs (if review command fails)**
-```bash
-# Add review as a comment on the PR
-gh pr comment <number> --body "<review_body>"
-```
+## Output Guidelines
 
-**Verification**: After submitting, confirm the review was posted:
-```bash
-gh pr view <number> --json reviews,comments --jq '.reviews[-1] // .comments[-1]'
-```
+1. **Be direct** about bugs - explain clearly why it's a bug
+2. **Communicate severity** - don't overstate
+3. **Specify conditions** - state scenarios/inputs where bug arises
+4. **Keep tone matter-of-fact** - not accusatory or overly positive
+5. **Be scannable** - reader should quickly understand without reading closely
+6. **No flattery** - avoid "Great job", "Thanks for" phrasing
 
-## Comment Format
-
-Include impact analysis in critical findings:
+### Comment Format
 
 ```markdown
 🔴 **Critical**: Method signature changed from `ProcessReward(int amount)` to `ProcessReward(RewardData data)`.
 
-**Impact Analysis**: Found 12 callers that will break:
-- `RewardManager.cs:45` - Direct call
-- `QuestSystem.cs:123` - Event handler
-- `DailyBonus.cs:67` - Coroutine call
-[...]
+**Impact**: Found 12 callers that need updating:
+- `RewardManager.cs:45`
+- `QuestSystem.cs:123`
+
+**Condition**: All direct callers will fail to compile.
 
 \`\`\`suggestion
-// Consider: Add overload for backward compatibility
+// Add overload for backward compatibility
 public void ProcessReward(int amount) => ProcessReward(new RewardData { Amount = amount });
 \`\`\`
 ```
 
 ## Approval Logic
 
-| Condition | Event |
-|:----------|:------|
+| Condition | Action |
+|:----------|:-------|
 | No 🔴 or 🟡 issues | APPROVE |
 | Only 🔵/💚 issues | COMMENT |
 | Any 🔴 issues | REQUEST_CHANGES |
 
-## Investigation Tools
-
-Use these in order of preference:
-
-1. **LSP find references** - Most accurate for symbol usage
-2. **AST grep** - Pattern-based code search
-3. **Text grep** - Fallback for string matching
+---
 
 See [DEEP_INVESTIGATION.md](references/DEEP_INVESTIGATION.md) for investigation patterns.
 See [REVIEW_JSON_SPEC.md](references/REVIEW_JSON_SPEC.md) for output format.
