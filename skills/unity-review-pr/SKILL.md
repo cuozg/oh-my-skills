@@ -180,9 +180,9 @@ Check for:
 - [ ] `## High Level Summary` - Present and contains meaningful content
 - [ ] `## Specific details of the changes made` - Present and contains meaningful content
 
-**If either is missing or empty:** Stop here. Add 🔴 Critical issue and REQUEST_CHANGES immediately with the missing section template (see PR Description Requirements section above).
+**If either is missing or empty:** Note it as a 🔴 Critical issue to include in the final review. **Continue with the full code review** - do not stop here.
 
-**If both are present and complete:** Proceed to Phase 1.
+**Proceed to Phase 1 regardless of description status.** The missing description issue will be included when submitting the review to GitHub.
 
 ### Phase 1: Fetch Changes
 
