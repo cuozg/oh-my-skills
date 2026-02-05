@@ -158,8 +158,6 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 #### 🤖 Agents & Meta
 | Skill | Description |
 | :--- | :--- |
-| `omo-sisyphus` | Autonomous task execution and sub-agent orchestration. |
-| `omo-hephaestus` | Task execution specialist for detailed implementation work. |
 | `skill-creator` | Meta-skill for creating and improving other project skills. |
 
 
