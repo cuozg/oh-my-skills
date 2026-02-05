@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent. Use for any complex task requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol and delegates via delegate_task."
+description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Always include load_skills parameter in delegate_task. Use for complex tasks requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol."
 ---
 
 # Sisyphus Orchestrator
@@ -18,9 +18,68 @@ Sisyphus is a powerful AI orchestrator that:
 - Delegates via category + skills combinations
 - Uses `@explore` for internal code, `@librarian` for external docs
 
+> [!CAUTION]
+> **CRITICAL REQUIREMENT: ALWAYS Include `load_skills` Parameter**
+> 
+> Every `delegate_task` call to Sisyphus **MUST** include the `load_skills` parameter:
+> ```typescript
+> delegate_task(
+>   subagent_type="sisyphus",
+>   load_skills=["skill-name"],  // <-- MANDATORY, even if empty []
+>   prompt="..."
+> )
+> ```
+> 
+> **Missing `load_skills` = Skill not loaded = Task will fail!**
+
+---
+
+## ❌ WRONG vs ✅ RIGHT Delegation
+
+**❌ WRONG - Missing `load_skills`:**
+```typescript
+delegate_task(
+  subagent_type="sisyphus",
+  description="Debug issue",  // ❌ This won't work!
+  prompt="Debug the SS Tier..."
+)
+```
+**Result**: Skill NOT loaded, task will likely fail!
+
+**✅ RIGHT - With `load_skills`:**
+```typescript
+delegate_task(
+  subagent_type="sisyphus",
+  load_skills=["unity-debug"],  // ✅ Skill loaded!
+  prompt="## Task\nDebug the SS Tier..."
+)
+```
+**Result**: `unity-debug` skill loaded, task properly equipped!
+
 ---
 
 ## Workflow
+
+> [!IMPORTANT]
+> **When a skill is loaded, the prompt MUST explicitly tell Sisyphus to USE that skill:**
+> 
+> ```markdown
+> ## Task
+> [Task description]
+> 
+> **YOU MUST USE THE <skill-name> SKILL** that has been loaded for you.
+> Follow the skill's instructions exactly.
+> 
+> ## Context
+> - **Loaded skill**: <skill-name> - [brief description]
+> 
+> ## Requirements
+> ### MUST DO:
+> - **FOLLOW <skill-name> skill EXACTLY**
+> - [other requirements from skill]
+> ```
+> 
+> Simply passing `load_skills` is NOT enough - Sisyphus needs explicit instruction to use it!
 
 ### Step 1: Detect Skill Loading Mode
 
@@ -122,9 +181,14 @@ Based on [Sisyphus.ts](scripts/Sisyphus.ts):
 
 ### For Implementation Tasks
 
+**When skill is loaded:**
+
 ```markdown
 ## Task
 Implement [specific feature/fix]
+
+**YOU MUST USE THE `[skill-name]` SKILL** that has been loaded for you.
+Follow the skill's instructions exactly.
 
 ## Expected Outcome
 - File(s) to create/modify: [paths]
@@ -133,9 +197,11 @@ Implement [specific feature/fix]
 ## Context
 - Existing patterns: [reference files]
 - Constraints: [tech stack, style]
+- **Loaded skill**: `[skill-name]` - [brief description of what skill does]
 
 ## Requirements
 ### MUST DO:
+- **FOLLOW `[skill-name]` skill instructions**
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns
@@ -143,6 +209,7 @@ Implement [specific feature/fix]
 - Verify build/tests pass
 
 ### MUST NOT DO:
+- Ignore the loaded skill instructions
 - Suppress type errors with as any, @ts-ignore
 - Commit unless explicitly requested
 - Refactor while fixing bugs
@@ -151,9 +218,13 @@ Implement [specific feature/fix]
 
 ### For Exploration Tasks
 
+**When skill is loaded:**
+
 ```markdown
 ## Task
 Research/understand [topic]
+
+**YOU MUST USE THE `[skill-name]` SKILL** that has been loaded for you.
 
 ## Expected Outcome
 - Summary of findings
@@ -163,15 +234,18 @@ Research/understand [topic]
 ## Context
 - Why needed: [reason]
 - Scope: [boundaries]
+- **Loaded skill**: `[skill-name]`
 
 ## Requirements
 ### MUST DO:
+- **FOLLOW `[skill-name]` skill workflow**
 - Use @explore for internal code (parallel)
 - Use @librarian for external docs
 - Stop when enough context found
 - Cancel background tasks when done
 
 ### MUST NOT DO:
+- Skip the skill instructions
 - Over-explore (time is precious)
 - Wait synchronously for explore/librarian
 - Implement without understanding first
@@ -179,9 +253,14 @@ Research/understand [topic]
 
 ### For Review/Analysis Tasks
 
+**When skill is loaded:**
+
 ```markdown
 ## Task
 Review/analyze [target]
+
+**YOU MUST USE THE `[skill-name]` SKILL** that has been loaded for you.
+The skill contains the review template and submission instructions.
 
 ## Expected Outcome
 - Assessment with severity levels
@@ -191,15 +270,19 @@ Review/analyze [target]
 ## Context
 - Scope: [what to review]
 - Standards: [conventions, patterns]
+- **Loaded skill**: `[skill-name]` - Contains review format and submission script
 
 ## Requirements
 ### MUST DO:
-- Focus on [specific areas]
+- **FOLLOW `[skill-name]` skill EXACTLY**
+- Check [specific areas from skill]
 - Provide evidence for issues
 - Suggest fixes
+- Submit results using skill's method
 
 ### MUST NOT DO:
-- Miss [critical patterns]
+- Deviate from skill's format
+- Miss [critical patterns from skill]
 - Over-report minor issues
 ```
 
@@ -219,19 +302,29 @@ delegate_task(
 ## Task
 Review PR #123 as expert Unity Developer
 
+**YOU MUST USE THE unity-review-pr SKILL** that has been loaded for you.
+Follow the skill's REVIEW_TEMPLATE.md format and submission instructions exactly.
+
 ## Expected Outcome
 - Review posted to GitHub with inline comments
 - Each issue as separate resolvable comment
+- Submitted using post_review.sh script from skill
+
+## Context
+- **Loaded skill**: unity-review-pr - Contains review format, Unity patterns, and GitHub submission script
 
 ## Requirements
 ### MUST DO:
-- Follow REVIEW_TEMPLATE.md format
-- Check Unity-specific patterns
-- Submit using post_review.sh
+- **FOLLOW unity-review-pr skill EXACTLY**
+- Use REVIEW_TEMPLATE.md format
+- Check Unity-specific patterns (GetComponent in Update, etc.)
+- Submit using scripts/post_review.sh
 
 ### MUST NOT DO:
+- Deviate from REVIEW_TEMPLATE.md format
 - Miss GetComponent in Update loops
 - Combine multiple issues into one comment
+- Skip GitHub submission
 `
 )
 ```
@@ -250,9 +343,20 @@ delegate_task(
 ## Task
 Review PR #456
 
+**YOU MUST USE THE unity-review-pr SKILL** that has been loaded for you.
+
 ## Expected Outcome
 - Complete review following REVIEW_TEMPLATE.md
 - Inline comments for each issue
+- Submitted to GitHub using post_review.sh
+
+## Context
+- **Loaded skill**: unity-review-pr
+
+## Requirements
+### MUST DO:
+- **FOLLOW unity-review-pr skill workflow**
+- Use templates and scripts from the skill
 `
 )
 ```
@@ -326,8 +430,19 @@ Sisyphus has FULL context from previous session - no need to repeat.
 
 | Bad | Good |
 |-----|------|
-| Vague prompts | Exhaustive requirements |
-| Missing MUST/MUST NOT | Explicit constraints |
-| No expected outcome | Clear success criteria |
-| Skipping todos | Plan before implement |
-| Synchronous explore | Background + parallel |
+| ❌ Missing `load_skills` parameter | ✅ Always include `load_skills=["skill"]` or `[]` |
+| ❌ Vague prompts | ✅ Exhaustive requirements |
+| ❌ Missing MUST/MUST NOT | ✅ Explicit constraints |
+| ❌ No expected outcome | ✅ Clear success criteria |
+| ❌ Skipping todos | ✅ Plan before implement |
+| ❌ Synchronous explore | ✅ Background + parallel |
+
+---
+
+## Critical Checklist
+
+Before delegating to Sisyphus, verify:
+- [ ] `load_skills` parameter is present (with skill name or empty `[]`)
+- [ ] Prompt includes TASK, EXPECTED OUTCOME, REQUIREMENTS
+- [ ] MUST DO and MUST NOT DO sections are complete
+- [ ] Skill name matches auto-detect table (if applicable)
