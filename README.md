@@ -149,10 +149,17 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | `bash-optimize` | Optimize and refactor bash shell scripts for clarity and performance. |
 | `bash-install` | Install software/packages with automatic retry and fallback strategies. |
 
+#### 🔀 Git Operations
+| Skill | Description |
+| :--- | :--- |
+| `git-comment` | Generate comprehensive commit comments from PRs or commits with structured summaries. |
+| `git-squash` | Intelligently group and squash related commits with proper documentation. |
+
 #### 🤖 Agents & Meta
 | Skill | Description |
 | :--- | :--- |
-| `sisyphus` | Autonomous task execution and sub-agent orchestration. |
+| `omo-sisyphus` | Autonomous task execution and sub-agent orchestration. |
+| `omo-hephaestus` | Task execution specialist for detailed implementation work. |
 | `skill-creator` | Meta-skill for creating and improving other project skills. |
 
 
@@ -237,6 +244,8 @@ Workflows are **step-by-step procedures** for complex, repetitive tasks. They ca
 | `/unity-write-tdd`            | Generate a Technical Design Document (TDD) based on the WWE 2025 template.        |
 | `/unity-test`                 | Create and run automated tests using the Unity Test Framework.                    |
 | `/unity-web-deploy`           | Optimize, build, and deploy the project to the WebGL platform.                    |
+| `/git-comment`                | Generate structured commit comments from PRs or commit hashes.                    |
+| `/git-squash`                 | Intelligently group and squash related commits with proper documentation.         |
 
 ### How to Create a Workflow
 

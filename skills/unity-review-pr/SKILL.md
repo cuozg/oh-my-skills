@@ -29,6 +29,85 @@ Based on input, determine which review type to perform:
 
 Code that looks wrong in isolation may be correct given surrounding logic—and vice versa.
 
+## PR Description Requirements
+
+**Every PR description MUST contain two mandatory sections.** Check these first before reviewing code.
+
+### Required Sections
+
+| Section | Purpose | Status if Missing |
+|:--------|:--------|:------------------|
+| **## High Level Summary** | Brief overview of what the PR accomplishes and why | 🔴 **Must update** |
+| **## Specific details of the changes made** | Detailed breakdown of what changed in each file/component | 🔴 **Must update** |
+
+### Validation Workflow
+
+1. **Fetch PR description:**
+   ```bash
+   gh pr view <number> --json body --jq '.body'
+   ```
+
+2. **Check for required sections:**
+   - Look for `## High Level Summary` or similar heading
+   - Look for `## Specific details` or similar heading
+
+3. **If either section is missing or empty:**
+   - Add to review as 🔴 **Critical** issue
+   - Mark as **Must update** before code review can be approved
+   - Include template for the author to fill in
+
+### Missing Section Template
+
+If sections are missing, include this in your review:
+
+```markdown
+🔴 **Critical**: PR description is incomplete.
+
+The following required sections are missing or empty:
+
+- [ ] **## High Level Summary** - [MISSING/EMPTY - Must update]
+  > Provide a brief 2-3 sentence overview of what this PR accomplishes and why it matters.
+
+- [ ] **## Specific details of the changes made** - [MISSING/EMPTY - Must update]
+  > List each file/component changed and describe what was modified and why.
+
+**Action Required**: Please update the PR description with the missing sections before this PR can be approved.
+```
+
+### Valid Description Example
+
+```markdown
+## High Level Summary
+
+This PR adds OAuth2 authentication support using Google and GitHub providers.
+Users can now sign in with their existing accounts, improving security and
+reducing friction during onboarding.
+
+## Specific details of the changes made
+
+### AuthController.cs
+- Added `HandleOAuthCallback()` method for processing provider responses
+- Implemented token validation using Microsoft.Identity.Web
+
+### UserService.cs
+- Extended `CreateUser()` to accept external identity provider data
+- Added `LinkExternalAccount()` for connecting existing accounts
+
+### appsettings.json
+- Added OAuth configuration section with client ID placeholders
+```
+
+### Approval Impact
+
+| Description Status | Review Action |
+|:-------------------|:--------------|
+| Both sections present and complete | Continue with code review |
+| Either section missing | REQUEST_CHANGES immediately |
+| Sections present but empty/placeholder | REQUEST_CHANGES immediately |
+
+> [!IMPORTANT]
+> A PR cannot be approved if either **High Level Summary** or **Specific details of the changes made** is missing or incomplete. This is non-negotiable.
+
 ## What to Look For
 
 ### Bugs (Primary Focus)
@@ -87,6 +166,23 @@ Use these to inform your review:
 | 💚 **Suggestion** | Readability improvements, modern C# patterns |
 
 ## Review Workflow
+
+### Phase 0: Validate PR Description (For PRs Only)
+
+**Before reviewing code, check the PR description for required sections.**
+
+```bash
+# Fetch PR description
+gh pr view <number> --json body --jq '.body'
+```
+
+Check for:
+- [ ] `## High Level Summary` - Present and contains meaningful content
+- [ ] `## Specific details of the changes made` - Present and contains meaningful content
+
+**If either is missing or empty:** Stop here. Add 🔴 Critical issue and REQUEST_CHANGES immediately with the missing section template (see PR Description Requirements section above).
+
+**If both are present and complete:** Proceed to Phase 1.
 
 ### Phase 1: Fetch Changes
 
