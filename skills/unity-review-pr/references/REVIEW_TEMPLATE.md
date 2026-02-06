@@ -39,6 +39,33 @@ Submit **ONE GitHub review** containing:
 
 Overall this is [assessment]. See inline comments below for specific issues.
 
+### ✅ Acceptance Criteria
+Based on the changes in this PR, the following should be verified:
+
+#### UI Verification
+- [ ] [Specific screen/component] displays correctly
+- [ ] [UI element] responds to user interaction
+- [ ] [Visual element] renders correctly at different resolutions
+- [ ] [Animation/transition] plays smoothly
+
+#### Functional Verification
+- [ ] [Feature/function] works as expected with valid inputs
+- [ ] Edge cases handled correctly (null, empty, max values, boundary conditions)
+- [ ] [System integration] communicates properly with [external system/service]
+- [ ] Error handling works correctly for [specific error conditions]
+
+#### Performance Verification
+- [ ] No frame drops during [specific actions/operations]
+- [ ] Memory usage remains stable during [specific gameplay scenarios]
+- [ ] No GC spikes from [identified allocations]
+- [ ] Load times acceptable for [specific assets/scenes]
+
+#### Data Verification
+- [ ] Existing saves/prefabs migrate correctly without data loss
+- [ ] [Data structure] serializes and deserializes properly
+- [ ] [ScriptableObject/Config] maintains expected values
+- [ ] No breaking changes to serialized data format
+
 ### 🔴 Breaking Changes ([COUNT])
 - [One-line description of each critical issue]
 
@@ -222,7 +249,7 @@ public int playerScore;
 
 ```json
 {
-  "body": "## 🔍 Code Review - PR #25103\n\n**Scope**: WHIP-55760 - Fix showdown hub display\n\nOverall this is a well-structured PR. See inline comments below for specific issues.\n\n### 🟡 Potential Issues (1)\n- Method visibility changed creating coupling\n\n### 🔵 Code Quality (1)\n- Potential null reference needs defensive check\n\n### Impact Analysis\n- Files investigated: 2\n- Breaking call sites: 0",
+  "body": "## 🔍 Code Review - PR #25103\n\n**Scope**: WHIP-55760 - Fix showdown hub display\n\nOverall this is a well-structured PR. See inline comments below for specific issues.\n\n### ✅ Acceptance Criteria\nBased on the changes in this PR, the following should be verified:\n\n#### UI Verification\n- [ ] Showdown hub displays active tournaments correctly\n- [ ] Tournament list filters out inactive tournaments\n- [ ] UI updates when tournament status changes\n\n#### Functional Verification\n- [ ] `GetActiveTournamentList()` returns only active tournaments with valid inputs\n- [ ] Edge cases handled correctly (null tournament list, empty list)\n- [ ] Method works correctly when called from `ShowdownHubController`\n\n#### Performance Verification\n- [ ] No frame drops when filtering tournament list\n- [ ] Memory usage stable when displaying multiple tournaments\n\n#### Data Verification\n- [ ] Tournament data structure maintains expected values\n- [ ] No breaking changes to tournament serialization\n\n### 🟡 Potential Issues (1)\n- Method visibility changed creating coupling\n\n### 🔵 Code Quality (1)\n- Potential null reference needs defensive check\n\n### Impact Analysis\n- Files investigated: 2\n- Breaking call sites: 0",
   "event": "COMMENT",
   "comments": [
     {
@@ -278,6 +305,7 @@ gh api \
 - [ ] Reviewed as expert Unity Developer
 - [ ] Checked Unity-specific patterns (Update allocations, lifecycle, etc.)
 - [ ] Summary body includes PR number and scope
+- [ ] **Acceptance Criteria section included** with specific, actionable items
 - [ ] Each issue is a separate entry in `comments` array
 - [ ] Comments have correct `path`, `line`, `side: "RIGHT"`
 - [ ] Investigated callers for breaking changes

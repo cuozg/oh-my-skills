@@ -1,6 +1,6 @@
 ---
 name: unity-review-pr
-description: "Expert Unity Developer code reviewer. Reviews PRs, commits, branches, or uncommitted changes with focus on Unity-specific patterns, performance, and best practices. Use when: reviewing PRs, checking changes, comparing branches. Triggers: 'review PR', 'check changes', 'PR #123', GitHub PR links, commit hashes, branch names."
+description: "Expert Unity Developer code reviewer. Reviews PRs, commits, branches, or uncommitted changes with focus on Unity-specific patterns, performance, and best practices. Accepts Pull Request links as input. Use when: reviewing PRs, checking changes, comparing branches. Triggers: 'review PR', 'check changes', 'PR #123', GitHub PR links, commit hashes, branch names."
 ---
 
 # Unity Code Reviewer
@@ -10,6 +10,10 @@ Review code changes as an **expert Unity Developer**. Each issue is a separate i
 > [!IMPORTANT]
 > **ALL reviews MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)**
 > **Submit using [post_review.sh](scripts/post_review.sh)**
+
+## Input
+
+**Pull Request Link**: Accepts GitHub PR URL (e.g., `https://github.com/owner/repo/pull/123`) or PR number (`#123`).
 
 ## Determining What to Review
 
@@ -76,6 +80,22 @@ Use `@explore` or `@librarian` subagent to:
 - Check for similar patterns in codebase
 - Identify breaking change impact
 
+### Phase 2.5: Generate Acceptance Criteria
+
+**MUST create Acceptance Criteria section** based on the PR changes to guide testing and verification.
+
+**Analyze the PR changes and identify:**
+1. What **UI screens/components** were added or modified?
+2. What **logic/algorithms** were changed?
+3. What **features** were added, modified, or removed?
+4. What **functions/methods** have new or changed signatures?
+5. What **data/serialization** formats were affected?
+6. What **integrations** with external systems were touched?
+
+**For each change, create specific, testable acceptance criteria.**
+
+See [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) for the **Acceptance Criteria template format**.
+
 ### Phase 3: Analyze for Unity Issues
 
 For each change, check:
@@ -121,18 +141,20 @@ Create `/tmp/review.json`:
 
 1. ✅ Follow REVIEW_TEMPLATE.md format exactly
 2. ✅ Review as expert Unity Developer - check Unity patterns first
-3. ✅ Submit using `post_review.sh <PR_NUMBER> /tmp/review.json`
-4. ✅ Each issue is a separate `comments` entry
-5. ✅ Verify review was posted successfully
-6. ✅ Submit even if PR is merged/closed
+3. ✅ Generate Acceptance Criteria based on PR changes (UI, logic, features, data)
+4. ✅ Submit using `post_review.sh <PR_NUMBER> /tmp/review.json`
+5. ✅ Each issue is a separate `comments` entry
+6. ✅ Verify review was posted successfully
+7. ✅ Submit even if PR is merged/closed
 
 ### Never
 
 1. ❌ Deviate from REVIEW_TEMPLATE.md format
-2. ❌ Combine multiple issues into one comment
-3. ❌ Skip GitHub submission
-4. ❌ Flag issues without investigating callers/impact
-5. ❌ Miss Unity-specific patterns (Update allocations, async safety)
+2. ❌ Skip Acceptance Criteria section
+3. ❌ Combine multiple issues into one comment
+4. ❌ Skip GitHub submission
+5. ❌ Flag issues without investigating callers/impact
+6. ❌ Miss Unity-specific patterns (Update allocations, async safety)
 
 **Review is incomplete until each issue is a resolvable comment on GitHub.**
 
