@@ -1,3 +1,27 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_OUTPUT TEMPLATE                             ║
+    ║              Authoritative Structure Reference                      ║
+    ║                                                                     ║
+    ║  This file is the SINGLE SOURCE OF TRUTH for plan output format.    ║
+    ║  SKILL.md defines workflow logic; this file defines output format.  ║
+    ║                                                                     ║
+    ║  HOW TO USE:                                                        ║
+    ║  1. Copy this entire file as-is                                     ║
+    ║  2. Replace [PLACEHOLDER] values with actual content                ║
+    ║  3. Replicate the example rows/sections for your actual data        ║
+    ║  4. Remove all INSTRUCTION comments from final output               ║
+    ║  5. Keep ALL CSS exactly as-is — do not modify styles               ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS (replace ALL of these):                               ║
+    ║    [FEATURE_NAME]   — Feature name in <title> tag                   ║
+    ║    [FEATURE_TITLE]  — Feature title in header                       ║
+    ║    [TOTAL_DURATION] — Estimated total duration (e.g. "3-5 days")    ║
+    ║    [RISK_LEVEL]     — Low / Medium / High                           ║
+    ║    [FILE_COUNT]     — Number of files changed (integer)             ║
+    ║    [TASK_COUNT]     — Number of tasks (integer)                     ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -367,8 +391,8 @@
         .diff-line-code {
             padding: 0 8px;
             white-space: pre-wrap;
-            word-break: break-all;
-            overflow-wrap: break-word;
+            word-break: normal;
+            overflow-wrap: anywhere;
             vertical-align: top;
         }
 
@@ -560,7 +584,8 @@
             .diff-line-code {
                 padding: 0 6px;
                 white-space: pre-wrap;
-                word-break: break-all;
+                word-break: normal;
+                overflow-wrap: anywhere;
             }
         }
         
@@ -585,13 +610,18 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- INSTRUCTION: HEADER — Replace [FEATURE_TITLE] and [FILE_COUNT] -->
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
             <div class="pr-subtitle">Implementation Plan • [FILE_COUNT] files changed</div>
         </div>
 
-        <!-- Summary -->
+        <!-- INSTRUCTION: SUMMARY CARDS — Replace all [PLACEHOLDER] values.
+             [TOTAL_DURATION]: e.g. "3-5 days", "2 weeks"
+             [RISK_LEVEL]: "Low" | "Medium" | "High"
+             [FILE_COUNT]: integer, e.g. "12"
+             [TASK_COUNT]: integer, e.g. "8"
+        -->
         <div class="summary-row">
             <div class="summary-card">
                 <div class="summary-label">Duration</div>
@@ -611,10 +641,16 @@
             </div>
         </div>
 
-        <!-- Architecture Overview -->
+        <!-- INSTRUCTION: ARCHITECTURE OVERVIEW
+             Structure: OLD ARCHITECTURE (left) + NEW ARCHITECTURE (right) + Key Benefits below.
+             - Use <pre class="architecture-code"> for ASCII diagrams
+             - Use ASCII tree characters: ├──, └──, │
+             - Keep diagrams max 10-15 lines each
+             - Show data flow and object relationships
+             - The "old" title class adds red tint; "new" title class adds green tint
+        -->
         <div class="section-header">🏗️ Architecture Overview</div>
         <div class="architecture-overview">
-            <!-- [ARCHITECTURE_OVERVIEW] - Replace with actual architecture diagrams -->
             <div class="architecture-grid">
                 <div class="architecture-section">
                     <div class="architecture-title old">OLD ARCHITECTURE (Single Event)</div>
@@ -649,11 +685,15 @@
             </div>
         </div>
 
-        <!-- Technical Approach -->
+        <!-- INSTRUCTION: TECHNICAL APPROACH
+             - Create numbered <li> items inside <ol class="approach-list">
+             - Use <code>ClassName.MethodName()</code> for code references
+             - Each step = one concrete implementation action
+        -->
         <div class="section-header">🎯 Technical Approach</div>
         <div class="technical-approach">
             <ol class="approach-list">
-                <!-- [TECHNICAL_APPROACH_ITEMS] - Replace with actual approach items -->
+                <!-- INSTRUCTION: Replace these example items with actual approach steps -->
                 <li>Move remaining single-event state into <code>EventStateCache</code> (or a new <code>ActiveEventContext</code> struct)</li>
                 <li>Introduce an <code>_activeEventIds</code> list to track all currently active events</li>
                 <li>Keep <code>EventID</code> as <code>_focusedEventId</code> — the event the player is currently interacting with (UI context)</li>
@@ -663,7 +703,20 @@
             </ol>
         </div>
 
-        <!-- Task Table -->
+        <!-- INSTRUCTION: TASK TABLE
+             Column structure: # | Epic | Task | Description | Type | Cost
+             
+             Valid Types: Logic, UI, Data, API, Asset, Test, Config
+             
+             Cost Badges (use exact class names):
+               badge-s  = S (Simple, < 2 hours)
+               badge-m  = M (Moderate, 2-4 hours)  
+               badge-l  = L (Complex, 4-8 hours)
+               badge-xl = XL (Very complex, 1-2 days)
+             
+             Task numbering: [Epic#].[Task#] e.g. 1.1, 1.2, 2.1
+             Replicate <tr> rows for each task.
+        -->
         <div class="section-header">📋 Task Breakdown</div>
         <table class="task-table">
             <thead>
@@ -688,11 +741,58 @@
             </tbody>
         </table>
 
-        <!-- Code Changes -->
+        <!-- INSTRUCTION: CODE CHANGES — CRITICAL SECTION
+             Create one <div class="file-diff"> per changed file.
+             
+             FILE HEADER structure:
+               - expand-btn: toggles file content visibility
+               - file-path: full path e.g. "Assets/Scripts/Path/File.cs"
+               - diffstat: +N additions, -N deletions (integers)
+               - diffstat-bar: visual bar, set width% proportional to adds vs dels
+               - viewed: checkbox for reviewer tracking
+             
+             DIFF ROW TYPES (use exact class names):
+             
+             1. CONTEXT LINE (unchanged, shown on both sides):
+                <tr class="diff-line-context"> with matching line numbers
+             
+             2. DELETION (left side only, red):
+                Left: <tr class="diff-line-deletion"> with sign "-"
+                Right: <tr class="diff-line-addition"> or <tr class="diff-line-empty">
+             
+             3. ADDITION (right side only, green):
+                Left: <tr class="diff-line-empty"> (blank placeholder)
+                Right: <tr class="diff-line-addition"> with sign "+"
+             
+             4. MODIFICATION (deletion left + addition right):
+                Left: <tr class="diff-line-deletion"> with sign "-"
+                Right: <tr class="diff-line-addition"> with sign "+"
+             
+             5. EMPTY LINE (placeholder when sides don't match):
+                <tr class="diff-line-empty"> — all cells empty
+             
+             6. HUNK HEADER (section separator):
+                <tr class="diff-hunk-header"> with @@ -old,count +new,count @@ context
+             
+             WORD-LEVEL HIGHLIGHTS:
+               <x>text</x> — highlights NEW/CHANGED text in additions (green bg)
+               <y>text</y> — highlights REMOVED/CHANGED text in deletions (red bg)
+             
+             MANDATORY RULES:
+               - Show 100% complete code changes for ALL files
+               - Include full method implementations, not snippets
+               - Do NOT use "..." or "// remaining code" 
+               - Do NOT skip files because they are "similar"
+               - Do NOT summarize changes instead of showing exact code
+               - HTML-escape special characters: & → &amp;  < → &lt;  > → &gt;
+        -->
         <div class="section-header">📁 Proposed Code Changes</div>
         <div style="height: 8px"></div>
 
-        <!-- File Diff Example: C# Script -->
+        <!-- INSTRUCTION: FILE DIFF EXAMPLE — Replicate this entire <div class="file-diff"> block
+             for each changed file. The example below shows all diff row types in action.
+             Study this example to understand the exact HTML nesting required.
+        -->
         <div class="file-diff">
             <div class="file-header">
                 <span class="expand-btn" onclick="toggleFile(this)">▼</span>
@@ -716,12 +816,14 @@
                             <col style="width:50%">
                         </colgroup>
                         <tbody>
-                            <!-- Hunk 1 -->
+                            <!-- INSTRUCTION: HUNK HEADER — Start each code section with this.
+                                 Format: @@ -oldStart,oldCount +newStart,newCount @@ optional context
+                            -->
                             <tr class="diff-hunk-header">
                                 <td class="diff-split-side diff-split-left">@@ -1619,14 +1619,20 @@ private bool SetGachaTokenButtonParameter(int _boxCount, int _cost) {</td>
                                 <td class="diff-split-side">@@ -1619,14 +1619,20 @@ private bool SetGachaTokenButtonParameter(int _boxCount, int _cost) {</td>
                             </tr>
-                            <!-- Context -->
+                            <!-- INSTRUCTION: CONTEXT LINE — Both sides identical, same line number -->
                             <tr>
                                 <td class="diff-split-side diff-split-left">
                                     <table class="diff-side-table"><tr class="diff-line-context">
@@ -770,7 +872,7 @@
                                     </tr></table>
                                 </td>
                             </tr>
-                            <!-- Modified line -->
+                            <!-- INSTRUCTION: MODIFICATION — Deletion on left with <y> highlights, Addition on right with <x> highlights -->
                             <tr>
                                 <td class="diff-split-side diff-split-left">
                                     <table class="diff-side-table"><tr class="diff-line-deletion">
@@ -868,7 +970,8 @@
                                     </tr></table>
                                 </td>
                             </tr>
-                            <!-- Deleted on left, Added multiple on right -->
+                            <!-- INSTRUCTION: DELETION + MULTI-LINE ADDITION — Left has deletions, right has additions.
+                                 When right has MORE lines than left, pad left with diff-line-empty rows. -->
                             <tr>
                                 <td class="diff-split-side diff-split-left">
                                     <table class="diff-side-table"><tr class="diff-line-deletion">
@@ -997,7 +1100,7 @@
                                     </tr></table>
                                 </td>
                             </tr>
-                            <!-- Context -->
+                            <!-- INSTRUCTION: More context lines after changes — note line numbers diverge (left: 1630, right: 1636) -->
                             <tr>
                                 <td class="diff-split-side diff-split-left">
                                     <table class="diff-side-table"><tr class="diff-line-context">
@@ -1052,11 +1155,14 @@
             </div>
         </div>
 
-        <!-- Acceptance Criteria -->
+        <!-- INSTRUCTION: ACCEPTANCE CRITERIA
+             Structure: 2x2 grid of criteria groups (CSS handles the grid layout).
+             Required groups: Functional, UI/UX, Edge Cases, Debug Verification.
+             Each group contains checkbox items with optional <code> references.
+             Replicate <li> items for each criterion.
+        -->
         <div class="section-header">✅ Acceptance Criteria</div>
         <div class="acceptance-criteria">
-            <!-- [ACCEPTANCE_CRITERIA] - Replace with actual criteria -->
-            
             <div class="criteria-group">
                 <h4 class="criteria-title">Functional</h4>
                 <ul class="criteria-list">
