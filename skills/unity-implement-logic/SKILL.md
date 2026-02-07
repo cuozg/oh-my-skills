@@ -1,6 +1,6 @@
 ---
 name: unity-implement-logic
-description: "Implement Unity C# logic, gameplay systems, and architectural patterns. Use when: (1) Creating new scripts/MonoBehaviours, (2) Refactoring for performance, (3) Implementing gameplay features (controllers, combat, data), (4) Using Unity 6 features (Awaitable, New Input System)."
+description: "Implement Unity C# logic, gameplay systems, and architectural patterns. Use when: (1) Creating new .claude/skills/unity-implement-logic/scripts/MonoBehaviours, (2) Refactoring for performance, (3) Implementing gameplay features (controllers, combat, data), (4) Using Unity 6 features (Awaitable, New Input System)."
 ---
 
 # Unity Logic Implementer
@@ -9,7 +9,7 @@ Implement robust, performant C# code following Unity best practices.
 
 ## Output Requirement (MANDATORY)
 
-**Every new script MUST follow the template**: [SCRIPT_TEMPLATE.md](assets/templates/SCRIPT_TEMPLATE.md)
+**Every new script MUST follow the template**: [SCRIPT_TEMPLATE.md](.claude/skills/unity-implement-logic/assets/templates/SCRIPT_TEMPLATE.md)
 
 Place scripts in the appropriate `Assets/Scripts/` subdirectory.
 
@@ -18,7 +18,7 @@ Read the template first, then populate all sections.
 ## Implementation Workflow
 
 1. **Clarify**: Identify dependencies, target assembly (`.asmdef`)
-2. **Implement**: Follow [UNITY_CSHARP_PATTERNS.md](references/UNITY_CSHARP_PATTERNS.md) and `.claude/rules/`
+2. **Implement**: Follow [UNITY_CSHARP_PATTERNS.md](.claude/skills/unity-implement-logic/references/UNITY_CSHARP_PATTERNS.md) and `.claude/rules/`
 3. **Verify**: Check edge cases (null refs, async destruction)
 4. **Compile**: `refresh_unity(compile="request")` - fix errors with `unity-fix-errors`
 
@@ -68,4 +68,4 @@ void Awake() {
 - **Namespace Hygiene**: `_Project.Scripts.Feature`
 - **Inspector Friendly**: Expose meaningful properties for Designers
 
-See [SCRIPT_TEMPLATE.md](assets/templates/SCRIPT_TEMPLATE.md) for starting point.
+See [SCRIPT_TEMPLATE.md](.claude/skills/unity-implement-logic/assets/templates/SCRIPT_TEMPLATE.md) for starting point.

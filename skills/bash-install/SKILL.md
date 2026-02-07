@@ -9,7 +9,7 @@ Install software and tools with automatic verification and fallback strategies w
 
 ## Output Requirement (MANDATORY)
 
-**Every installation report MUST follow the template**: [INSTALL_REPORT.md](assets/templates/INSTALL_REPORT.md)
+**Every installation report MUST follow the template**: [INSTALL_REPORT.md](.claude/skills/bash-install/assets/templates/INSTALL_REPORT.md)
 
 Output the report directly to the user. No file save required.
 

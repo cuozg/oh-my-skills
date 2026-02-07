@@ -1,6 +1,6 @@
 ---
 name: unity-task-executor
-description: "Execute detailed tasks. Use when: (1) Task guide ready from unity-task-brainstorm, (2) Implementing C#/assets/data, (3) Coordinating specialists for planned task."
+description: "Execute detailed tasks. Use when: (1) Task guide ready from unity-task-brainstorm, (2) Implementing C#/.claude/skills/unity-task-executor/assets/data, (3) Coordinating specialists for planned task."
 ---
 
 # Unity Plan Executor
@@ -9,7 +9,7 @@ Execute task instructions using specialized skills.
 
 ## Output Requirement (MANDATORY)
 
-**Every execution report MUST follow the template**: [EXECUTION_REPORT.md](assets/templates/EXECUTION_REPORT.md)
+**Every execution report MUST follow the template**: [EXECUTION_REPORT.md](.claude/skills/unity-task-executor/assets/templates/EXECUTION_REPORT.md)
 
 Update the task file status and output the execution report to the user.
 

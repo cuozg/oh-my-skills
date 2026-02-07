@@ -9,7 +9,7 @@ Refine task files into execution-ready blueprints.
 
 ## Output Requirement (MANDATORY)
 
-**Every brainstorm output MUST follow the template**: [BRAINSTORM_OUTPUT.md](assets/templates/BRAINSTORM_OUTPUT.md)
+**Every brainstorm output MUST follow the template**: [BRAINSTORM_OUTPUT.md](.claude/skills/unity-task-brainstorm/assets/templates/BRAINSTORM_OUTPUT.md)
 
 Update the task file at `Documents/Tasks/[Number][Epic][Task].md` with the brainstorm results.
 

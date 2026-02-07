@@ -9,7 +9,7 @@ Generate professional, structured commit comments by analyzing code changes from
 
 ## Output Requirement (MANDATORY)
 
-**Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](assets/templates/COMMIT_COMMENT.md)
+**Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](.claude/skills/git-comment/assets/templates/COMMIT_COMMENT.md)
 
 Output the comment directly to the user. No file save required.
 

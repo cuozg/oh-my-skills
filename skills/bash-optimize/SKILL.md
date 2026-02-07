@@ -9,7 +9,7 @@ Analyze and optimize bash scripts for better performance, clarity, and maintaina
 
 ## Output Requirement (MANDATORY)
 
-**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REPORT.md)
+**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](.claude/skills/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md)
 
 Output the report directly to the user. No file save required.
 

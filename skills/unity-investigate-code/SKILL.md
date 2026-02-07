@@ -9,7 +9,7 @@ Analyze and explain C# logic, execution flows, and feature implementations.
 
 ## Output Requirement (MANDATORY)
 
-**Every investigation report MUST follow the template**: [INVESTIGATION_REPORT.md](assets/templates/INVESTIGATION_REPORT.md)
+**Every investigation report MUST follow the template**: [INVESTIGATION_REPORT.md](.claude/skills/unity-investigate-code/assets/templates/INVESTIGATION_REPORT.md)
 
 Save output to: `Documents/Investigations/INVESTIGATION_[FeatureName]_[YYYYMMDD].md`
 

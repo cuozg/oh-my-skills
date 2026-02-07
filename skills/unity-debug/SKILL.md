@@ -9,7 +9,7 @@ Investigate Unity errors deeply, add strategic Debug.Log statements, identify ro
 
 ## Output Requirement (MANDATORY)
 
-**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](assets/DEBUG_REPORT_TEMPLATE.md)
+**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-debug/assets/DEBUG_REPORT_TEMPLATE.md)
 
 Save output to: `Documents/Debugs/DEBUG_{ErrorName}_{YYYYMMDD}.md`
 
@@ -290,7 +290,7 @@ private void HandleDataLoaded(PlayerData data)
 
 Save report to `Documents/Debugs/DEBUG_{ErrorName}_{YYYYMMDD}.md`
 
-Use template: [DEBUG_REPORT_TEMPLATE.md](assets/DEBUG_REPORT_TEMPLATE.md)
+Use template: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-debug/assets/DEBUG_REPORT_TEMPLATE.md)
 
 ```bash
 mkdir -p Documents/Debugs
@@ -307,7 +307,7 @@ Report structure:
 
 ## Common Unity Error Patterns
 
-See [references/common_errors.md](references/common_errors.md) for detailed patterns and solutions for:
+See [.claude/skills/unity-debug/references/common_errors.md](.claude/skills/unity-debug/references/common_errors.md) for detailed patterns and solutions for:
 - NullReferenceException patterns
 - Async/await pitfalls
 - Unity lifecycle issues

@@ -9,7 +9,7 @@ Break high-level plans into detailed task requirements.
 
 ## Output Requirement (MANDATORY)
 
-**Every task detail MUST follow the template**: [TASK_DETAIL_TEMPLATE.md](assets/templates/TASK_DETAIL_TEMPLATE.md)
+**Every task detail MUST follow the template**: [TASK_DETAIL_TEMPLATE.md](.claude/skills/unity-plan-tasks/assets/templates/TASK_DETAIL_TEMPLATE.md)
 
 Save output to: `Documents/Tasks/[Number][Epic][Task].md`
 
@@ -22,7 +22,7 @@ For each task in the plan:
 1. **Analyze**: Extract objective, constraints, success criteria
 2. **Draft Strategy**: High-level approach (e.g., "Create Manager class", "Modify UI")
 3. **Define Tests**: What success looks like
-4. **Export**: Use [TASK_DETAIL_TEMPLATE.md](assets/templates/TASK_DETAIL_TEMPLATE.md)
+4. **Export**: Use [TASK_DETAIL_TEMPLATE.md](.claude/skills/unity-plan-tasks/assets/templates/TASK_DETAIL_TEMPLATE.md)
 5. **Save**: `Documents/Tasks/[Number][Epic][Task].md`
 6. **Handoff**: Notify ready for `unity-task-brainstorm`
 

@@ -9,7 +9,7 @@ Review PRs against Unity coding standards and output results as a markdown file.
 
 ## Output Requirement (MANDATORY)
 
-**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](references/OUTPUT_TEMPLATE.md)
+**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)
 
 Save output to: `Documents/Reviews/PR_<number>_review.md`
 
@@ -112,4 +112,4 @@ Generate markdown file at `Documents/Reviews/PR_<number>_review.md`:
 - **COMMENT**: Only 🔵/💚 issues
 - **REQUEST_CHANGES**: Any 🔴 issues
 
-See [OUTPUT_TEMPLATE.md](references/OUTPUT_TEMPLATE.md) for full template.
+See [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.

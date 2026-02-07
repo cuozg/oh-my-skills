@@ -9,7 +9,7 @@ WebGL platform specialist.
 
 ## Output Requirement (MANDATORY)
 
-**Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](assets/templates/WEBGL_BUILD_REPORT.md)
+**Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](.claude/skills/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md)
 
 Save output to: `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md`
 
@@ -18,9 +18,9 @@ Read the template first, then populate all sections.
 ## Workflow
 
 1. **Discover**: Required Web APIs (LocalStorage, Fullscreen, WebXR), browser targets
-2. **Implement**: C# managers for interop (see [WEBGL_INTEROP_PATTERNS.md](references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
-3. **Optimize**: Build size, memory limits, compression (see [WEBGL_OPTIMIZATION_GUIDE.md](references/WEBGL_OPTIMIZATION_GUIDE.md))
-4. **Deploy**: Build report via [WEBGL_BUILD_REPORT.md](assets/templates/WEBGL_BUILD_REPORT.md), validate COOP/COEP headers, HTTPS
+2. **Implement**: C# managers for interop (see [.claude/skills/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md](.claude/skills/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
+3. **Optimize**: Build size, memory limits, compression (see [.claude/skills/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md](.claude/skills/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md))
+4. **Deploy**: Build report via [.claude/skills/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md](.claude/skills/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md), validate COOP/COEP headers, HTTPS
 
 ## Build Settings
 

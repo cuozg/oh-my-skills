@@ -9,7 +9,7 @@ Validate bash shell scripts for syntax errors, shell compatibility, and potentia
 
 ## Output Requirement (MANDATORY)
 
-**Every check report MUST follow the template**: [CHECK_REPORT.md](assets/templates/CHECK_REPORT.md)
+**Every check report MUST follow the template**: [CHECK_REPORT.md](.claude/skills/bash-check/assets/templates/CHECK_REPORT.md)
 
 Output the report directly to the user. No file save required.
 

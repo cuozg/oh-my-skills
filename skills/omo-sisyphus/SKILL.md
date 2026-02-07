@@ -11,7 +11,7 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Alw
 
 ## Output Requirement (MANDATORY)
 
-**Every delegation prompt MUST follow the template**: [DELEGATION_PROMPT.md](assets/templates/DELEGATION_PROMPT.md)
+**Every delegation prompt MUST follow the template**: [DELEGATION_PROMPT.md](.claude/skills/omo-sisyphus/assets/templates/DELEGATION_PROMPT.md)
 
 The generated prompt is passed directly to `delegate_task()`. No file save required.
 
@@ -193,7 +193,7 @@ Follow the skill's REVIEW_TEMPLATE.md format and submission instructions.
 ### MUST DO:
 - **FOLLOW unity-review-pr skill EXACTLY**
 - Check Unity-specific patterns (GetComponent in Update, etc.)
-- Submit using scripts/post_review.sh
+- Submit using .claude/skills/omo-sisyphus/scripts/post_review.sh
 
 ### MUST NOT DO:
 - Deviate from REVIEW_TEMPLATE.md format

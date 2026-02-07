@@ -11,7 +11,7 @@ Create high-level cost estimates and task breakdowns for Unity features.
 
 ## Output Requirement (MANDATORY)
 
-**Every plan MUST follow the template**: `assets/templates/IMPLEMENTATION_PLAN.md`
+**Every plan MUST follow the template**: `.claude/skills/unity-plan/assets/templates/IMPLEMENTATION_PLAN.md`
 
 Save output to: `Documents/Plans/IMPLEMENTATION_PLAN_[FeatureName].md`
 
@@ -62,7 +62,7 @@ Use T-shirt sizing:
 
 ### 6. Populate Template (REQUIRED)
 
-Read template: `assets/templates/IMPLEMENTATION_PLAN.md`
+Read template: `.claude/skills/unity-plan/assets/templates/IMPLEMENTATION_PLAN.md`
 
 Fill in **every section**:
 

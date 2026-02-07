@@ -9,7 +9,7 @@ Systematically identify and resolve Unity technical issues.
 
 ## Output Requirement (MANDATORY)
 
-**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](assets/templates/DEBUG_REPORT_TEMPLATE.md)
+**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-fix-errors/assets/templates/DEBUG_REPORT_TEMPLATE.md)
 
 Save output to: `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
 

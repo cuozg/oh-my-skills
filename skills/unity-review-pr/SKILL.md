@@ -9,15 +9,15 @@ Review code changes as an **expert Unity Developer**. Each issue is a separate i
 
 ## Output Requirement (MANDATORY)
 
-**Every review MUST follow the template**: [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)
+**Every review MUST follow the template**: [REVIEW_TEMPLATE.md](.claude/skills/unity-review-pr/references/REVIEW_TEMPLATE.md)
 
-Submit using: [post_review.sh](scripts/post_review.sh) `<pr_number> /tmp/review.json`
+Submit using: [post_review.sh](.claude/skills/unity-review-pr/scripts/post_review.sh) `<pr_number> /tmp/review.json`
 
 Read the template first, then populate all sections. No variations. No negotiation.
 
 > [!IMPORTANT]
-> **ALL reviews MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)**
-> **Submit using [post_review.sh](scripts/post_review.sh)**
+> **ALL reviews MUST follow [REVIEW_TEMPLATE.md](.claude/skills/unity-review-pr/references/REVIEW_TEMPLATE.md)**
+> **Submit using [post_review.sh](.claude/skills/unity-review-pr/scripts/post_review.sh)**
 
 ## Input
 
@@ -102,7 +102,7 @@ Use `@explore` or `@librarian` subagent to:
 
 **For each change, create specific, testable acceptance criteria.**
 
-See [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) for the **Acceptance Criteria template format**.
+See [REVIEW_TEMPLATE.md](.claude/skills/unity-review-pr/references/REVIEW_TEMPLATE.md) for the **Acceptance Criteria template format**.
 
 ### Phase 3: Analyze for Unity Issues
 
@@ -115,13 +115,13 @@ For each change, check:
 
 ### Phase 4: Create Review JSON
 
-**MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) exactly.**
+**MUST follow [REVIEW_TEMPLATE.md](.claude/skills/unity-review-pr/references/REVIEW_TEMPLATE.md) exactly.**
 
 Create `/tmp/review.json`:
 
 ### Phase 5: Submit Using Script
 
-**ALWAYS use [post_review.sh](scripts/post_review.sh) to submit:**
+**ALWAYS use [post_review.sh](.claude/skills/unity-review-pr/scripts/post_review.sh) to submit:**
 
 **Script usage:**
 ```bash
@@ -141,8 +141,8 @@ Create `/tmp/review.json`:
 ## Critical Rules
 
 > [!CAUTION]
-> - **MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)**
-> - **MUST submit using [post_review.sh](scripts/post_review.sh)**
+> - **MUST follow [REVIEW_TEMPLATE.md](.claude/skills/unity-review-pr/references/REVIEW_TEMPLATE.md)**
+> - **MUST submit using [post_review.sh](.claude/skills/unity-review-pr/scripts/post_review.sh)**
 > - **Each issue MUST be a separate inline comment!**
 
 ### Always

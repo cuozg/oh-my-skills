@@ -9,7 +9,7 @@ Intelligently group, squash, and document related commits to create a clean, mea
 
 ## Output Requirement (MANDATORY)
 
-**Every squash plan MUST follow the template**: [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md)
+**Every squash plan MUST follow the template**: [SQUASH_PLAN.md](.claude/skills/git-squash/assets/templates/SQUASH_PLAN.md)
 
 Present the squash plan to the user for approval before executing.
 

@@ -10,8 +10,8 @@ Extend the Unity Editor with tools and automation.
 ## Output Requirement (MANDATORY)
 
 **Every editor tool MUST follow one of the templates**:
-- [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md) — for EditorWindow tools
-- [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md) — for Custom Inspectors
+- [EDITOR_WINDOW_TEMPLATE.md](.claude/skills/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md) — for EditorWindow tools
+- [CUSTOM_INSPECTOR_TEMPLATE.md](.claude/skills/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md) — for Custom Inspectors
 
 Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, then populate all sections.
 
@@ -28,7 +28,7 @@ Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, the
 
 1. **Assess**: Identify pain point, choose Window vs Inspector
 2. **Architect**: UI Toolkit (modern) vs IMGUI (legacy), data persistence
-3. **Implement**: Use templates from `assets/templates/`, patterns from [EDITOR_SCRIPTING_PATTERNS.md](references/EDITOR_SCRIPTING_PATTERNS.md)
+3. **Implement**: Use templates from `.claude/skills/unity-editor-tools/assets/templates/`, patterns from [EDITOR_SCRIPTING_PATTERNS.md](.claude/skills/unity-editor-tools/references/EDITOR_SCRIPTING_PATTERNS.md)
 4. **Verify**: Test domain reloads, scene changes, profile if handling large data
 
 ## Best Practices
@@ -41,6 +41,6 @@ Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, the
 
 ## Templates
 
-- [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md)
-- [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- [EDITOR_UI_TOOLKIT_GUIDE.md](references/EDITOR_UI_TOOLKIT_GUIDE.md)
+- [EDITOR_WINDOW_TEMPLATE.md](.claude/skills/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md)
+- [CUSTOM_INSPECTOR_TEMPLATE.md](.claude/skills/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
+- [EDITOR_UI_TOOLKIT_GUIDE.md](.claude/skills/unity-editor-tools/references/EDITOR_UI_TOOLKIT_GUIDE.md)

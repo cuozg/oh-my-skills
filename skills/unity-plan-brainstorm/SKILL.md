@@ -9,7 +9,7 @@ Audit plans, brainstorm edge cases, finalize task lists.
 
 ## Output Requirement (MANDATORY)
 
-**Every plan review MUST follow the template**: [REVIEW_OUTPUT.md](assets/templates/REVIEW_OUTPUT.md)
+**Every plan review MUST follow the template**: [REVIEW_OUTPUT.md](.claude/skills/unity-plan-brainstorm/assets/templates/REVIEW_OUTPUT.md)
 
 Update the plan document at `Documents/Plans/` with refined decomposition.
 

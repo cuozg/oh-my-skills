@@ -9,7 +9,7 @@ Create and manage automated tests using Unity Test Framework.
 
 ## Output Requirement (MANDATORY)
 
-**Every test plan MUST follow the template**: [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md)
+**Every test plan MUST follow the template**: [TEST_PLAN_TEMPLATE.md](.claude/skills/unity-test/assets/templates/TEST_PLAN_TEMPLATE.md)
 
 Place test scripts in `Tests/EditMode/` or `Tests/PlayMode/` as appropriate.
 
@@ -61,4 +61,4 @@ public void Player_TakesDamage_HealthDecreases()
 - **Isolation**: No external data dependencies
 - **Naming**: Descriptive `Subject_Scenario_Expected`
 
-See [TEST_EXAMPLES.md](references/TEST_EXAMPLES.md) for more patterns.
+See [TEST_EXAMPLES.md](.claude/skills/unity-test/references/TEST_EXAMPLES.md) for more patterns.
