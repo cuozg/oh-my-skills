@@ -43,10 +43,10 @@ Complete catalog of specialized skills in `.claude/skills/`.
 | Skill | When to Use | Triggers |
 |:------|:------------|:---------|
 | `unity-plan` | Requirements → roadmap with epics/tasks | "plan", "implement feature", "how should I build" |
-| `unity-plan-review` | Critique and refine plans | After `unity-plan` |
-| `unity-plan-detail` | Create task skeletons in Documents/Tasks/ | After `unity-plan-review` |
-| `unity-plan-brainstorm` | Technical deep-dive with code-level details | After `unity-plan-detail` |
-| `unity-plan-executor` | Execute detailed task instructions | After `unity-plan-brainstorm` |
+| `unity-plan-brainstorm` | Critique and refine plans | After `unity-plan` |
+| `unity-plan-tasks` | Create task skeletons in Documents/Tasks/ | After `unity-plan-brainstorm` |
+| `unity-task-brainstorm` | Technical deep-dive with code-level details | After `unity-plan-tasks` |
+| `unity-task-executor` | Execute detailed task instructions | After `unity-task-brainstorm` |
 | `unity-write-tdd` | Formal Technical Design Documents | "TDD", "technical spec", "design document" |
 | `unity-write-docs` | README, architecture docs, API references | "document", "README", "onboarding guide" |
 
@@ -86,7 +86,7 @@ Complete catalog of specialized skills in `.claude/skills/`.
 ### Feature Implementation
 
 1. **Quick fix (1-2 files)?** → `unity-implement-logic`
-2. **Medium scope (known requirements)?** → `unity-plan-brainstorm` → `unity-plan-executor`
+2. **Medium scope (known requirements)?** → `unity-task-brainstorm` → `unity-task-executor`
 3. **Large scope (needs planning)?** → Full pipeline starting with `unity-plan`
 
 ### Documentation

@@ -1,5 +1,5 @@
 ---
-name: unity-plan-detail
+name: unity-plan-tasks
 description: "Create task skeletons from plans. Use when: (1) Have a plan from unity-plan needing task requirements, (2) Creating initial task docs in Documents/Tasks/."
 ---
 
@@ -24,7 +24,7 @@ For each task in the plan:
 3. **Define Tests**: What success looks like
 4. **Export**: Use [TASK_DETAIL_TEMPLATE.md](assets/templates/TASK_DETAIL_TEMPLATE.md)
 5. **Save**: `Documents/Tasks/[Number][Epic][Task].md`
-6. **Handoff**: Notify ready for `unity-plan-brainstorm`
+6. **Handoff**: Notify ready for `unity-task-brainstorm`
 
 ## Output Format
 
@@ -43,4 +43,4 @@ Each task file should contain:
 
 ## Routing
 
-- Technical deep-dive & code changes → `unity-plan-brainstorm`
+- Technical deep-dive & code changes → `unity-task-brainstorm`

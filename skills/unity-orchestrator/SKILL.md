@@ -24,7 +24,7 @@ Read the template first, then populate all sections.
 | "Review PR #X" | `unity-review-pr` | — |
 | "Fix this error/crash" | `unity-fix-errors` | → `unity-investigate-code` if root cause unclear |
 | "Debug why X happens" | `unity-debug` | → `unity-fix-errors` after diagnosis |
-| "Implement [feature]" | `unity-plan` | → `unity-plan-review` → `unity-plan-detail` → `unity-plan-brainstorm` → `unity-plan-executor` |
+| "Implement [feature]" | `unity-plan` | → `unity-plan-brainstorm` → `unity-plan-tasks` → `unity-task-brainstorm` → `unity-task-executor` |
 | "Refactor X" | `unity-implement-logic` | → `unity-test` to verify |
 | "Game is slow/laggy" | `unity-optimize-performance` | — |
 | "Android/iOS issue" | `unity-mobile-deploy` | — |
@@ -62,11 +62,11 @@ User wants new feature?
 ├─ Small/isolated change (1-2 files)?
 │  └─ unity-implement-logic directly
 ├─ Medium feature (known scope)?
-│  └─ unity-plan-brainstorm → unity-plan-executor
+│  └─ unity-task-brainstorm → unity-task-executor
 └─ Large/complex feature?
    └─ Full pipeline:
-      unity-plan → unity-plan-review → unity-plan-detail 
-      → unity-plan-brainstorm → unity-plan-executor
+      unity-plan → unity-plan-brainstorm → unity-plan-tasks 
+      → unity-task-brainstorm → unity-task-executor
 ```
 
 ### Skill Combinations

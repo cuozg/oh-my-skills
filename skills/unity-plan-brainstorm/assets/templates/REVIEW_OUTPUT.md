@@ -56,4 +56,4 @@
 - [ ] Edge cases addressed
 - [ ] System interactions considered
 - [ ] User confirmed decomposition
-- [ ] Ready for `unity-plan-detail`
+- [ ] Ready for `unity-plan-tasks`

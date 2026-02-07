@@ -1,6 +1,6 @@
 ---
-name: unity-plan-executor
-description: "Execute detailed tasks. Use when: (1) Task guide ready from unity-plan-brainstorm, (2) Implementing C#/assets/data, (3) Coordinating specialists for planned task."
+name: unity-task-executor
+description: "Execute detailed tasks. Use when: (1) Task guide ready from unity-task-brainstorm, (2) Implementing C#/assets/data, (3) Coordinating specialists for planned task."
 ---
 
 # Unity Plan Executor

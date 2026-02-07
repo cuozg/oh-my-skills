@@ -9,18 +9,18 @@ Full pipeline for large features:
 ```
 unity-plan          → High-level roadmap, epics, costing
        ↓
-unity-plan-review   → Critique, refine with user, finalize tasks
+unity-plan-brainstorm → Critique, refine with user, finalize tasks
        ↓
-unity-plan-detail   → Create task skeletons in Documents/Tasks/
+unity-plan-tasks   → Create task skeletons in Documents/Tasks/
        ↓
-unity-plan-brainstorm → Code-level investigation, specific changes
+unity-task-brainstorm → Code-level investigation, specific changes
        ↓
-unity-plan-executor → Implement using specialists
+unity-task-executor → Implement using specialists
 ```
 
 **When to use full pipeline:** Complex features with unknown scope, multiple systems involved, or significant architectural decisions.
 
-**Shortcut for medium tasks:** Skip directly to `unity-plan-brainstorm` → `unity-plan-executor`.
+**Shortcut for medium tasks:** Skip directly to `unity-task-brainstorm` → `unity-task-executor`.
 
 ## 2. Debug-Fix-Verify Loop
 

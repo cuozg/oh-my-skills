@@ -52,10 +52,10 @@ Scan the `.claude/skills/` directory and read YAML frontmatter from each `SKILL.
 | `unity-mobile-deploy`        | iOS, Android, touch controls, mobile optimization, native features                |
 | `unity-optimize-performance` | low FPS, high memory, slow load times, performance audit                          |
 | `unity-plan`                 | plan feature, analyze requirements, break into tasks, estimate effort             |
-| `unity-plan-brainstorm`      | task needs code-level details, investigating codebase                             |
-| `unity-plan-detail`          | create task skeletons, task requirements from plan                                |
-| `unity-plan-executor`        | execute task, implement from task guide                                           |
-| `unity-plan-review`          | review plan, refine decomposition, finalize task list                             |
+| `unity-plan-brainstorm`      | review plan, refine decomposition, finalize task list                             |
+| `unity-plan-tasks`          | create task skeletons, task requirements from plan                                |
+| `unity-task-executor`        | execute task, implement from task guide                                           |
+| `unity-task-brainstorm`      | task needs code-level details, investigating codebase                             |
 | `unity-review-pr`            | review PR, check PR, PR #123, GitHub PR link                                      |
 | `unity-tech-art`             | shaders, HLSL, Shader Graph, asset pipelines, procedural content                  |
 | `unity-test`                 | create tests, Edit Mode tests, Play Mode tests, test assemblies                   |
@@ -73,7 +73,7 @@ User prompt received
 │  └─ Slow/laggy → unity-optimize-performance
 ├─ New feature?
 │  ├─ Small (1-2 files) → unity-implement-logic
-│  ├─ Medium → unity-plan-brainstorm → unity-plan-executor
+│  ├─ Medium → unity-task-brainstorm → unity-task-executor
 │  └─ Large/complex → unity-plan (full pipeline)
 ├─ Review PR? → unity-review-pr
 ├─ Documentation? → unity-write-docs + mermaid

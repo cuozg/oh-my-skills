@@ -1,55 +1,44 @@
 ---
-name: unity-plan-brainstorm
-description: "Technical deep-dive for tasks. Use when: (1) Task file needs code-level details, (2) Investigating codebase for implementation, (3) Generating specific code changes with explanations."
+name: unity-plan-review
+description: "Review and brainstorm implementation plans. Use when: (1) Plan from unity-plan needs critique, (2) Need to refine decomposition with user, (3) Finalizing task list before detailing."
 ---
 
-# Unity Plan Brainstorm
+# Unity Plan Reviewer
 
-Refine task files into execution-ready blueprints.
+Audit plans, brainstorm edge cases, finalize task lists.
 
 ## Output Requirement (MANDATORY)
 
-**Every brainstorm output MUST follow the template**: [BRAINSTORM_OUTPUT.md](assets/templates/BRAINSTORM_OUTPUT.md)
+**Every plan review MUST follow the template**: [REVIEW_OUTPUT.md](assets/templates/REVIEW_OUTPUT.md)
 
-Update the task file at `Documents/Tasks/[Number][Epic][Task].md` with the brainstorm results.
+Update the plan document at `Documents/Plans/` with refined decomposition.
 
 Read the template first, then populate all sections.
 
 ## Workflow
 
-1. **Read Task**: `Documents/Tasks/[Number][Epic][Task].md`
-2. **Investigate**: Load `unity-investigate-code`, trace classes mentioned
-3. **Brainstorm**: Identify gaps, **ask user** questions:
-   - "Should cooldown be global or per-instance?"
-   - "Support pooled objects here?"
-4. **Detail Code Changes**: For each change, specify:
-   - **Target File**: Absolute path
-   - **Original Snippet**: Code being replaced
-   - **New Snippet**: Implementation
-   - **Rationale**: Why this change
-5. **Update Task**: Refine Implementation Strategy & Code Changes sections
+1. **Ingest**: Read plan from `Documents/Plans/` or context
+2. **Audit**: Analyze Epics, identify missing components
+3. **Discuss**: Present findings, ask clarifying questions
+4. **Refine**: Update document with refined decomposition
+5. **Finalize**: Output numbered task list for `unity-plan-tasks`
 
-## Code Change Format
+## Key Questions to Ask
 
-```markdown
-### Change 1: Add Heal Method
-- **File**: `Assets/Scripts/Player/HealthManager.cs`
-- **Line**: 45
-- **Original**: `// TODO: Add healing`
-- **New**:
-```csharp
-public void Heal(int amount)
-{
-    _health = Mathf.Min(_health + amount, _maxHealth);
-    OnHealthChanged?.Invoke(_health);
-}
-```
-- **Rationale**: Symmetric to TakeDamage, fires same event for UI updates
-```
+- "Does this Epic cover all user requirements?"
+- "What happens if [edge case]?"
+- "How does this interact with existing [Combat/Meta/Persistence]?"
+- "What's the fallback if this approach fails?"
 
 ## Best Practices
 
-- **Explain "Why"**: Architectural reason for each change
-- **No Ambiguity**: Exact file, line, code - not "Update the Health class"
-- **Subagent Research**: Use browser for unfamiliar Unity 6000.1 APIs
-- **Execution Ready**: Final task = blueprint for `unity-plan-executor`
+- **Assume Nothing**: Treat vague specs as risks
+- **Big Picture**: Consider system interactions
+- **Completeness**: Trace every requirement to a task
+- **User Alignment**: Don't finalize until user confirms
+
+## Output
+
+Always update the plan document with:
+1. Refined high-level decomposition
+2. Finalized numbered task list
