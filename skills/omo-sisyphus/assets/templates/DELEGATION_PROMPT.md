@@ -13,6 +13,13 @@ Follow the skill's instructions exactly.
 - Existing patterns: {reference files}
 - Constraints: {tech stack, style}
 - **Loaded skill**: `{skill-name}` - {brief description}
+- **Session context**: {previous session_id if follow-up, or "new delegation"}
+
+## Metadata (v3.3.0 — for transparency and inspectability)
+- **Delegation reason**: {why this task is being delegated}
+- **Skill justification**: {why these skills were selected/omitted}
+- **Background/Sync decision**: {why this execution mode was chosen}
+- **Parent session**: {orchestrator session_id for traceability}
 
 ## Requirements
 
@@ -23,6 +30,7 @@ Follow the skill's instructions exactly.
 - Match existing codebase patterns
 - Run lsp_diagnostics on changed files
 - Verify build/tests pass
+- Store session_id for potential follow-up continuity
 
 ### MUST NOT DO:
 - Ignore the loaded skill instructions

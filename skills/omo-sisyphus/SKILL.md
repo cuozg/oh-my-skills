@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Always include load_skills parameter in delegate_task. Use for complex tasks requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol."
+description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Always include load_skills parameter in delegate_task. Use for complex tasks requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol. Supports v3.3.0 features: task transparency/inspectability, ctx.metadata(), storeToolMetadata(), session continuity, and enhanced CLI flags (--port, --attach, --session-id, --on-complete, --json)."
 ---
 
 # Sisyphus Orchestrator
@@ -38,6 +38,52 @@ You are invoking "Sisyphus" - Powerful AI Agent with orchestration capabilities.
 
 ---
 
+## Task Transparency & Inspectability (v3.3.0)
+
+> **Subagents are NO LONGER black boxes.** Every delegated `delegate_task` call is clickable and inspectable in the UI.
+
+Each delegation exposes:
+- **Full prompt** sent to the subagent
+- **Description** of the task
+- **Model** used for execution
+- **Session ID** for continuity
+- **Complete execution story** (inputs, outputs, tool calls)
+
+**Implications for prompt quality**: Since every delegation is now fully visible and inspectable, prompts MUST be:
+- Clear and self-documenting (users will read them)
+- Well-structured with explicit sections
+- Free of ambiguous or lazy instructions
+
+### Metadata Documentation (v3.3.0)
+
+Use `ctx.metadata()` and `storeToolMetadata()` to document delegation context:
+
+```typescript
+// Store structured metadata about what you're delegating and why
+ctx.metadata({
+  delegationReason: "PR review requires Unity-specific pattern checks",
+  selectedSkills: ["unity-review-pr"],
+  skillJustification: "Task is a PR review targeting Unity codebase",
+  expectedOutcome: "Review posted to GitHub with inline comments",
+})
+
+// Document tool calls, not just execute them
+storeToolMetadata({
+  tool: "delegate_task",
+  purpose: "Review PR #123 for Unity anti-patterns",
+  category: "quick",
+  skills: ["unity-review-pr"],
+  sessionId: "ses_abc123",
+})
+```
+
+**When to use metadata:**
+- ALWAYS before `delegate_task()` calls — document intent
+- When selecting/omitting skills — record justification
+- When continuing sessions — link to previous session context
+
+---
+
 ## CRITICAL: Always Include `load_skills`
 
 > [!CAUTION]
@@ -58,6 +104,37 @@ You are invoking "Sisyphus" - Powerful AI Agent with orchestration capabilities.
 > ```
 > load_skills=[]  // Justified: No skill matches this general implementation task
 > ```
+
+---
+
+## Enhanced CLI Capabilities (v3.3.0)
+
+New flags available for fine-grained control:
+
+| Flag | Purpose | Example |
+|------|---------|---------|
+| `--port <N>` | Connect to specific OpenCode instance | `--port 3001` |
+| `--attach` | Attach to running session interactively | `--attach --session-id ses_abc` |
+| `--session-id <id>` | Resume specific session (critical for continuity) | `--session-id ses_abc123` |
+| `--on-complete <cmd>` | Run command after task completes | `--on-complete "notify-send 'Done'"` |
+| `--json` | Output structured JSON for programmatic use | `--json` |
+
+**Use in delegation context:**
+```typescript
+// Resume a previous session with new instructions
+delegate_task(
+  session_id="ses_abc123",   // ← --session-id equivalent
+  prompt="Fix the type error from previous attempt"
+)
+
+// Background task with structured output
+delegate_task(
+  subagent_type="explore",
+  run_in_background=true,    // ← async execution
+  load_skills=[],
+  prompt="Find all auth patterns in codebase"
+)
+```
 
 ---
 
@@ -153,24 +230,83 @@ Transform user request into structured Sisyphus prompt with ALL 6 sections:
 
 ### Phase 3: Delegate to Sisyphus
 
+#### Background vs Sync Delegation (v3.3.0)
+
+| Mode | `run_in_background` | Use When |
+|------|---------------------|----------|
+| **Sync** | `false` | Task requires immediate result before next step |
+| **Background** | `true` | Parallel tasks, exploration, non-blocking work |
+
+**Prefer background** for:
+- Multiple independent explorations (fire all in parallel)
+- Long-running tasks where you can continue other work
+- Explore/librarian agents (ALWAYS background)
+
+**Use sync** for:
+- Implementation tasks that block your next action
+- Tasks where you need the result to make a decision
+- Final verification/review steps
+
 ```typescript
+// Sync delegation (blocking - wait for result)
 delegate_task(
   subagent_type="sisyphus",
   run_in_background=false,
   load_skills=["<skill-name>"],  // From Phase 0
   prompt="[generated prompt from Phase 2]"
 )
+
+// Background delegation (non-blocking - continue working)
+delegate_task(
+  subagent_type="sisyphus",
+  run_in_background=true,
+  load_skills=["<skill-name>"],
+  prompt="[generated prompt from Phase 2]"
+)
+// Collect later: background_output(task_id="...")
 ```
+
+#### Session Continuity (v3.3.0)
+
+Every `delegate_task()` output includes a `session_id`. **ALWAYS store and reuse it.**
+
+```typescript
+// First delegation → get session_id
+result = delegate_task(subagent_type="sisyphus", run_in_background=false,
+  load_skills=["unity-implement-logic"], prompt="Implement auth middleware")
+// result.session_id = "ses_abc123"
+
+// Follow-up using session_id → full context preserved
+delegate_task(session_id="ses_abc123",
+  prompt="Fix: Type error on line 42 in auth.ts")
+
+// Verification using session_id → agent knows what it built
+delegate_task(session_id="ses_abc123",
+  prompt="Run lsp_diagnostics on all changed files and fix any errors")
+```
+
+**Why session_id is CRITICAL:**
+- Subagent retains FULL conversation context
+- No repeated file reads, exploration, or setup
+- Saves 70%+ tokens on follow-ups
+- Subagent knows what it already tried/learned
 
 ---
 
 ## Delegation Examples
 
-### Example 1: Explicit Skill Mode
+### Example 1: Explicit Skill Mode (with metadata)
 
 User: `use skill unity-review-pr Review PR #123`
 
 ```typescript
+// Document delegation intent (v3.3.0 transparency)
+ctx.metadata({
+  delegationReason: "Explicit skill request: unity-review-pr",
+  selectedSkills: ["unity-review-pr"],
+  expectedOutcome: "Review posted to GitHub with inline comments",
+})
+
 delegate_task(
   subagent_type="sisyphus",
   run_in_background=false,
@@ -202,7 +338,7 @@ Follow the skill's REVIEW_TEMPLATE.md format and submission instructions.
 )
 ```
 
-### Example 2: No Skill Needed (with justification)
+### Example 2: No Skill Needed (with justification and metadata)
 
 User: `Add user authentication to the API`
 
@@ -215,6 +351,16 @@ Skill evaluation:
 ```
 
 ```typescript
+// Store skill evaluation metadata (v3.3.0)
+storeToolMetadata({
+  tool: "delegate_task",
+  purpose: "Implement user authentication",
+  skillEvaluation: {
+    omitted: ["unity-review-pr", "unity-plan", "flatbuffer-builder"],
+    reason: "General implementation task, no domain-specific skill applies"
+  },
+})
+
 delegate_task(
   subagent_type="sisyphus",
   run_in_background=false,
@@ -244,6 +390,53 @@ Implement user authentication for the API
 )
 ```
 
+### Example 3: Parallel Background Delegation (v3.3.0)
+
+User: `Investigate how auth and caching work, then implement rate limiting`
+
+```typescript
+// Phase 1: Fire parallel background explorations
+const authTask = delegate_task(
+  subagent_type="explore",
+  run_in_background=true,
+  load_skills=[],
+  prompt="Find all authentication middleware, patterns, and credential validation in this codebase."
+)
+
+const cacheTask = delegate_task(
+  subagent_type="explore",
+  run_in_background=true,
+  load_skills=[],
+  prompt="Find caching implementations, cache invalidation patterns, and TTL configurations."
+)
+
+// Phase 2: Continue with immediate work while background tasks run
+// ... (prepare rate limiting plan)
+
+// Phase 3: Collect results when needed
+const authResult = background_output(task_id=authTask.task_id)
+const cacheResult = background_output(task_id=cacheTask.task_id)
+
+// Phase 4: Delegate implementation with gathered context
+delegate_task(
+  subagent_type="sisyphus",
+  run_in_background=false,
+  load_skills=[],  // Justified: general implementation
+  prompt=`
+## Task
+Implement rate limiting middleware
+
+## Context
+- Auth patterns found: [from authResult]
+- Caching patterns found: [from cacheResult]
+...
+`
+)
+
+// Cleanup
+background_cancel(all=true)
+```
+
 ---
 
 ## Communication Style for Prompts
@@ -265,6 +458,10 @@ Sisyphus expects:
 | Loading skill without "YOU MUST USE" instruction | Explicit instruction to follow skill |
 | Vague prompts | Exhaustive requirements with MUST/MUST NOT |
 | No expected outcome | Clear success criteria |
+| No metadata on delegation | `ctx.metadata()` before every `delegate_task()` |
+| Starting fresh session when follow-up | Reuse `session_id` for continuity |
+| Sync explore/librarian agents | ALWAYS use `run_in_background=true` for explore/librarian |
+| Sequential independent explorations | Fire parallel background agents |
 
 ---
 
@@ -275,3 +472,6 @@ Sisyphus expects:
 - [ ] Prompt includes: TASK, EXPECTED OUTCOME, CONTEXT, REQUIREMENTS
 - [ ] MUST DO includes skill reference if skill loaded
 - [ ] MUST NOT DO anticipates rogue behavior
+- [ ] `ctx.metadata()` documents delegation intent (v3.3.0)
+- [ ] `session_id` stored for potential follow-ups (v3.3.0)
+- [ ] Background vs sync decision is intentional (v3.3.0)
