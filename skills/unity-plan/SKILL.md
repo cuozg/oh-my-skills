@@ -1,21 +1,21 @@
 ---
 name: unity-plan
-description: "High-level planning and costing for Unity features. Use when: (1) Analyzing requirements and specs, (2) Clarifying ambiguous specifications with the user, (3) Investigating existing codebase/systems, (4) Breaking work into Epics/Tasks, (5) Estimating high-level effort costs. This skill ONLY creates planning artifacts - it does NOT implement, code, or execute any tasks."
+description: "High-level planning with GitHub PR-style output for Unity features. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into Tasks with code change previews, (4) Generating visual diff plans showing exact proposed changes. Outputs an HTML file resembling GitHub PR split view."
 ---
 
 # Unity Planning Skill
 
-Create high-level cost estimates and task breakdowns for Unity features.
+Create implementation plans for Unity features with GitHub PR-style code diff previews.
 
-**IMPORTANT**: This skill is for **planning only**. Do NOT implement, write code, or execute any work.
+**IMPORTANT**: This skill is for **planning only**. Do NOT implement or execute any work.
 
-## Output Requirement (MANDATORY)
+## Output
 
-**Every plan MUST follow the template**: `.claude/skills/unity-plan/assets/templates/IMPLEMENTATION_PLAN.md`
+**Template**: `.claude/skills/unity-plan/assets/templates/PLAN_OUTPUT.html`
 
-Save output to: `Documents/Plans/IMPLEMENTATION_PLAN_[FeatureName].md`
+**Save to**: `Documents/Plans/[FeatureName]_PLAN.html`
 
-Read the template first, then populate all sections as described below.
+Read the template file for all HTML structure, CSS classes, and placeholder details.
 
 ## Workflow
 
@@ -23,89 +23,142 @@ Read the template first, then populate all sections as described below.
 - Read the provided spec/requirements carefully
 - Identify goals, constraints, and acceptance criteria
 - Note any ambiguities or missing information
+- **Ask clarifying questions** before proceeding if specs are unclear
 
-### 2. Clarify Specifications
-Ask the user to clarify if:
-- Requirements are vague or incomplete
-- Acceptance criteria are missing
-- Dependencies are unclear
-- Scope boundaries are undefined
+### 2. Investigate Codebase
 
-**Always ask before assuming.** Use questions like:
-- "What should happen when [edge case]?"
-- "Is [Feature X] in scope or out of scope?"
-- "What is the expected behavior for [scenario]?"
+Use the **`unity-investigate-code`** skill to understand the related codebase:
 
-### 3. Investigate Codebase
-Run: `.claude/skills/unity-plan/scripts/investigate_feature.sh [Keywords]`
+```
+Read and follow: .claude/skills/unity-investigate-code/SKILL.md
+```
 
-Examine:
+Focus on:
 - Existing systems that will be affected
-- Foundational files to modify
+- Files that need modification
 - Technical debt or constraints
 - Reusable components
+- Entry points and execution flows
 
-### 4. Break Down Work
-Structure work into **Epics** (large features) and **Tasks** (atomic units):
-- Each Task should be small and focused
-- One responsibility per Task
-- Clear deliverables
+### 3. Architecture Overview
 
-### 5. Estimate Costs
-Use T-shirt sizing:
-| Size | Description | Rough Estimate |
-|:----:|:------------|:---------------|
-| S | Simple, well-understood work | < 2 hours |
-| M | Moderate complexity | 2-4 hours |
-| L | Complex, multiple components | 4-8 hours |
-| XL | Very complex, research needed | 1-2 days |
+**Show the architectural change** using simple before/after ASCII diagrams:
 
-### 6. Populate Template (REQUIRED)
+**Structure**:
+- **OLD ARCHITECTURE**: Current state (problems highlighted)
+- **NEW ARCHITECTURE**: Proposed state (with tree/hierarchy diagram)
+- **Key Benefits**: Bullet list of architectural improvements
 
-Read template: `.claude/skills/unity-plan/assets/templates/IMPLEMENTATION_PLAN.md`
+**Rules**:
+- Keep diagrams simple and scannable (max 10-15 lines each)
+- Use ASCII tree structure (`├──`, `└──`, `│`)
+- Show data flow and object relationships
+- Highlight the core structural change
 
-Fill in **every section**:
+See the template file for HTML structure and styling.
 
-#### Section 1: Executive Summary
-- Brief overview of the feature
-- Key requirements and goals
-- High-level technical approach
+### 4. Technical Approach
 
-#### Section 2: Project Base Investigation
-- **Existing Systems**: List all systems involved (e.g., PlayerState, InventoryManager)
-- **Foundational Files**: List key scripts, prefabs, or assets to modify
-- **Technical Constraints**: Note known limitations, legacy debt, or risks
+**After Architecture Overview**, provide implementation steps:
+- Explains **how** to implement the feature (not just what)
+- Shows **key insights** from the investigation
+- Keeps explanations **short and clear**
 
-#### Section 3: High-Level Decomposition (Task Table)
-Populate the Task Table:
+**Format**: Numbered bullet points with concise explanations
 
-| Number | Epic | Task | Description | Type | Cost | Note |
-|:---:|:---|:---|:---|:---:|:---:|:---|
+**Example**:
+```markdown
+## Technical Approach
+
+1. Move remaining single-event state into `EventStateCache` (or a new `ActiveEventContext` struct)
+2. Introduce an `_activeEventIds` list to track all currently active events
+3. Keep `EventID` as `_focusedEventId` — the event the player is currently interacting with (UI context)
+4. Add event-scoped overloads for `SelectDailyBossDifficulty()`, `SetCurrentBossHP()`, etc.
+5. Mark old single-event methods `[Obsolete]` and delegate to the new event-scoped versions
+6. Update callers progressively (foundation → non-breaking → breaking)
+```
+
+**Key elements to include**:
+- Architecture decisions (patterns, data structures)
+- Integration points with existing systems
+- Migration strategy if touching legacy code
+- Risk mitigation approach
+
+### 5. High-Level Decomposition (Task Table)
+
+Break down work into Tasks:
+
+| # | Epic | Task | Description | Type | Cost |
+|---|------|------|-------------|------|------|
 
 **Types**: Logic, UI, Data, API, Asset, Test, Config
 
-#### Section 4: Total Estimated Costing
-- **Total Duration**: Sum of T-shirt sizes converted to days
-- **Resource Requirement**: Team composition needed
-- **Risk Level**: Low/Medium/High with justification
+**Cost Sizing**:
+| Size | Description |
+|:----:|:------------|
+| S | Simple, < 2 hours |
+| M | Moderate, 2-4 hours |
+| L | Complex, 4-8 hours |
+| XL | Very complex, 1-2 days |
 
-#### Section 5: Implementation Workflow
-Define the recommended phases:
-1. **Setup Phase**: Base data structures and placeholders
-2. **Logic Phase**: Core engine/system functionality
-3. **UI/UX Phase**: Visuals and user interactions
-4. **Validation Phase**: Testing and user verification
-5. **Polishing/Optimization**: Final cleanup
+### 6. Walk Through Each Task with Code Changes
 
-#### Section 6: Definition of Done
-Create a checklist of completion criteria, e.g.:
-- [ ] Code passes all linting rules
-- [ ] Unit tests cover core logic
-- [ ] Feature verified in target scene
-- [ ] Documentation updated
+For each task, show **exact proposed code changes** in split-view format:
 
-### 7. Summarize
-After populating the template, provide a verbal summary:
+1. Identify affected files
+2. Show before/after code side by side
+3. Use the diff row classes from the template:
+   - Deletions on left (red)
+   - Additions on right (green)
+   - Word-level highlights for inline changes
+
+### 7. Acceptance Criteria
+
+**After all code changes are defined**, generate Acceptance Criteria based on what you're planning to change. This section helps verify that all implementations work correctly.
+
+**Format**: Checklist with testable criteria grouped by category
+
+**Example**:
+```markdown
+## Acceptance Criteria
+
+### Functional
+- [ ] Multiple events can be active simultaneously without data conflicts
+- [ ] Switching between events updates `_focusedEventId` correctly
+- [ ] Old single-event methods still work via delegation to new overloads
+
+### UI/UX
+- [ ] Event list displays all active events
+- [ ] Selected event is visually highlighted
+- [ ] Switching events updates all UI elements
+
+### Edge Cases
+- [ ] Handle case when no events are active
+- [ ] Handle case when focused event expires while viewing
+- [ ] Handle rapid switching between events
+
+### Debug Verification
+- [ ] Log output confirms correct event scoping
+- [ ] State inspector shows expected `_activeEventIds` values
+- [ ] No null reference exceptions during event transitions
+```
+
+**Categories to include**:
+- **Functional**: Core feature behavior
+- **UI/UX**: Visual and interaction verification
+- **Edge Cases**: Boundary conditions and error handling
+- **Debug Verification**: Specific checks for debugging the implementation
+
+### 8. Populate HTML Template
+
+Read the template and replace all placeholders with actual data, including:
+- `[ARCHITECTURE_OVERVIEW]` - The before/after diagrams from Step 3
+- `[TECHNICAL_APPROACH]` - The bullet-pointed approach from Step 4
+- `[ACCEPTANCE_CRITERIA]` - The checklist from Step 7
+
+### 9. Summary
+
+Provide a verbal summary:
 - Total estimated effort
 - Key risks or blockers
 - Dependencies between tasks
@@ -113,10 +166,9 @@ After populating the template, provide a verbal summary:
 
 ## What This Skill Does NOT Do
 
-❌ Write or modify code  
+❌ Write or modify actual code files  
 ❌ Create or edit Unity assets  
 ❌ Run implementations  
 ❌ Execute tasks from the plan  
-❌ Make architectural decisions without user approval  
 
-This skill produces a **plan document** only. Implementation is handled separately.
+This skill produces a **visual plan document** showing proposed changes only.

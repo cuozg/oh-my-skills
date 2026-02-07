@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementation Plan: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-canvas-inset: #010409;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-diffstat-addition-bg: #238636;
+            --color-diffstat-deletion-bg: #da3633;
+            --color-diff-blob-addition-num-bg: rgba(63,185,80,0.3);
+            --color-diff-blob-addition-line-bg: rgba(46,160,67,0.15);
+            --color-diff-blob-addition-word-bg: rgba(46,160,67,0.4);
+            --color-diff-blob-deletion-num-bg: rgba(248,81,73,0.3);
+            --color-diff-blob-deletion-line-bg: rgba(248,81,73,0.15);
+            --color-diff-blob-deletion-word-bg: rgba(248,81,73,0.4);
+            --color-diff-blob-hunk-num-bg: rgba(56,139,253,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        /* Header */
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        /* Summary Cards */
+        .summary-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .summary-card {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .summary-label { font-size: 11px; color: var(--color-fg-subtle); text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-value { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+        /* Section Header */
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Architecture Overview */
+        .architecture-overview {
+            padding: 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .architecture-section {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .architecture-title {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--color-border-muted);
+        }
+        .architecture-title.old {
+            background: rgba(248, 81, 73, 0.1);
+            color: var(--color-danger-fg);
+        }
+        .architecture-title.new {
+            background: rgba(63, 185, 80, 0.1);
+            color: var(--color-success-fg);
+        }
+        .architecture-code {
+            margin: 0;
+            padding: 14px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--color-fg-muted);
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .architecture-benefits {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 14px 18px;
+        }
+        .architecture-benefits h4 {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+        }
+        .architecture-benefits ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .architecture-benefits li {
+            padding: 4px 0;
+            color: var(--color-fg-muted);
+            line-height: 1.5;
+        }
+
+        /* Technical Approach */
+        .technical-approach {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .approach-list {
+            margin: 0;
+            padding-left: 24px;
+            list-style-type: decimal;
+        }
+        .approach-list li {
+            padding: 6px 0;
+            color: var(--color-fg-default);
+            line-height: 1.6;
+        }
+        .approach-list li code {
+            background: var(--color-border-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-accent-fg);
+        }
+
+        /* Acceptance Criteria */
+        .acceptance-criteria {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .criteria-group {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 12px 16px;
+        }
+        .criteria-title {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .criteria-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .criteria-list li {
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--color-fg-default);
+            line-height: 1.5;
+        }
+        .criteria-list li input[type="checkbox"] {
+            margin-top: 4px;
+            accent-color: var(--color-success-fg);
+        }
+        .criteria-list li code {
+            background: var(--color-border-muted);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 11px;
+            color: var(--color-accent-fg);
+        }
+
+        /* Task Table */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            margin-bottom: 24px;
+        }
+        .task-table th {
+            padding: 8px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--color-fg-muted);
+            background: var(--color-border-muted);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .task-table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--color-border-default);
+        }
+        .task-table tr:hover { background: var(--color-border-muted); }
+        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
+        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
+        .badge-m { background: #1f6feb; color: #fff; }
+        .badge-l { background: #8957e5; color: #fff; }
+        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
+
+        /* File Diff Container */
+        .file-diff {
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        /* File Header - exactly like GitHub */
+        .file-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--color-canvas-subtle);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .file-header .expand-btn {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            cursor: pointer;
+            color: var(--color-fg-muted);
+        }
+        .file-header .file-icon { margin-right: 6px; }
+        .file-header .file-path {
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            flex: 1;
+        }
+        .file-header .diffstat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 16px;
+            font-weight: 600;
+        }
+        .file-header .diffstat .additions { color: var(--color-success-fg); }
+        .file-header .diffstat .deletions { color: var(--color-danger-fg); }
+        .file-header .diffstat-bar {
+            display: flex;
+            width: 40px;
+            height: 8px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 8px;
+        }
+        .file-header .diffstat-bar span { height: 100%; }
+        .file-header .diffstat-bar .add { background: var(--color-diffstat-addition-bg); }
+        .file-header .diffstat-bar .del { background: var(--color-diffstat-deletion-bg); }
+        .file-header .diffstat-bar .neutral { background: var(--color-border-muted); }
+        .file-header .viewed {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+            color: var(--color-fg-muted);
+        }
+        .file-header .viewed input { margin: 0; }
+
+        /* Split Diff Table */
+        .diff-table-wrapper { 
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            line-height: 20px;
+            table-layout: fixed;
+        }
+
+        /* Each side is 50% */
+        .diff-split-side { width: 50%; vertical-align: top; }
+        .diff-split-left { border-right: 1px solid var(--color-border-default); }
+
+        /* Inner table for each side */
+        .diff-side-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        
+        /* Line number cell */
+        .diff-line-num {
+            width: 48px;
+            min-width: 48px;
+            padding: 0 10px;
+            text-align: right;
+            color: var(--color-fg-subtle);
+            background: var(--color-canvas-subtle);
+            user-select: none;
+            vertical-align: top;
+            white-space: nowrap;
+        }
+        
+        /* Sign (+/-) cell */
+        .diff-line-sign {
+            width: 14px;
+            min-width: 14px;
+            padding: 0;
+            text-align: center;
+            user-select: none;
+            vertical-align: top;
+        }
+        
+        /* Code content */
+        .diff-line-code {
+            padding: 0 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            vertical-align: top;
+        }
+
+        /* Hunk Header */
+        .diff-hunk-header td {
+            padding: 8px 10px;
+            background: var(--color-diff-blob-hunk-num-bg);
+            color: var(--color-fg-muted);
+            font-size: 12px;
+        }
+
+        /* Line types */
+        .diff-line-context .diff-line-num { background: var(--color-canvas-subtle); }
+        .diff-line-context .diff-line-sign { background: var(--color-canvas-default); }
+        .diff-line-context .diff-line-code { background: var(--color-canvas-default); }
+
+        .diff-line-addition .diff-line-num { background: var(--color-diff-blob-addition-num-bg); }
+        .diff-line-addition .diff-line-sign { background: var(--color-diff-blob-addition-line-bg); color: var(--color-success-fg); }
+        .diff-line-addition .diff-line-code { background: var(--color-diff-blob-addition-line-bg); }
+
+        .diff-line-deletion .diff-line-num { background: var(--color-diff-blob-deletion-num-bg); }
+        .diff-line-deletion .diff-line-sign { background: var(--color-diff-blob-deletion-line-bg); color: var(--color-danger-fg); }
+        .diff-line-deletion .diff-line-code { background: var(--color-diff-blob-deletion-line-bg); }
+
+        .diff-line-empty .diff-line-num { background: var(--color-border-muted); }
+        .diff-line-empty .diff-line-sign { background: var(--color-canvas-inset); }
+        .diff-line-empty .diff-line-code { background: var(--color-canvas-inset); }
+
+        /* Word highlight */
+        .x { background: var(--color-diff-blob-addition-word-bg); padding: 1px 0; border-radius: 2px; }
+        .y { background: var(--color-diff-blob-deletion-word-bg); padding: 1px 0; border-radius: 2px; }
+
+        /* Collapsed */
+        .file-content.collapsed { display: none; }
+
+        /* ========== RESPONSIVE STYLES ========== */
+        
+        /* Tablet and smaller (portrait mode) */
+        @media screen and (max-width: 1024px) {
+            .container { padding: 12px 16px; }
+            
+            /* Summary cards - 2x2 grid on tablet */
+            .summary-row {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .summary-card {
+                flex: 1 1 calc(50% - 6px);
+                min-width: 140px;
+            }
+            
+            /* Acceptance Criteria - single column */
+            .acceptance-criteria {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            /* Architecture Overview - single column */
+            .architecture-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .architecture-code {
+                font-size: 11px;
+            }
+            
+            /* Diff table - ensure horizontal scroll */
+            .diff-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .diff-table {
+                min-width: 800px;
+            }
+        }
+        
+        /* Mobile portrait */
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            
+            /* Header */
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .pr-subtitle { font-size: 12px; }
+            
+            /* Summary cards - stack vertically */
+            .summary-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .summary-card {
+                flex: 1 1 100%;
+            }
+            .summary-value { font-size: 16px; }
+            
+            /* Section headers */
+            .section-header {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            
+            /* Technical Approach */
+            .technical-approach {
+                padding: 12px 14px;
+            }
+            .approach-list {
+                padding-left: 20px;
+            }
+            .approach-list li {
+                font-size: 13px;
+                padding: 4px 0;
+            }
+            .approach-list li code {
+                font-size: 11px;
+                padding: 1px 4px;
+            }
+            
+            /* Acceptance Criteria */
+            .acceptance-criteria {
+                padding: 12px 14px;
+            }
+            .criteria-group {
+                padding: 10px 12px;
+            }
+            .criteria-title {
+                font-size: 12px;
+            }
+            .criteria-list li {
+                font-size: 13px;
+                padding: 4px 0;
+            }
+            
+            /* Task Table - horizontal scroll */
+            .task-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .task-table th,
+            .task-table td {
+                padding: 6px 10px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            
+            /* File diff */
+            .file-header {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 8px;
+            }
+            .file-header .file-path {
+                font-size: 11px;
+                word-break: break-all;
+                flex: 1 1 100%;
+                order: 1;
+            }
+            .file-header .expand-btn { order: 0; }
+            .file-header .file-icon { order: 0; }
+            .file-header .diffstat { order: 2; margin-left: 0; }
+            .file-header .diffstat-bar { order: 2; }
+            .file-header .viewed { order: 2; margin-left: auto; }
+            
+            /* Diff view - wrap long lines */
+            .file-diff {
+                overflow-x: hidden;
+            }
+            .diff-table-wrapper {
+                overflow-x: hidden;
+            }
+            .diff-table {
+                width: 100%;
+                font-size: 11px;
+                table-layout: fixed;
+            }
+            .diff-side-table {
+                table-layout: fixed;
+            }
+            .diff-line-num {
+                width: 36px;
+                min-width: 36px;
+                padding: 0 4px;
+                font-size: 10px;
+            }
+            .diff-line-sign {
+                width: 14px;
+                min-width: 14px;
+            }
+            .diff-line-code {
+                padding: 0 6px;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+        }
+        
+        /* Very small screens */
+        @media screen and (max-width: 480px) {
+            .container { padding: 6px 8px; }
+            
+            .pr-title { font-size: 14px; }
+            
+            .summary-card {
+                padding: 10px 12px;
+            }
+            .summary-label { font-size: 10px; }
+            .summary-value { font-size: 14px; }
+            
+            .diff-table {
+                min-width: 600px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Implementation Plan • [FILE_COUNT] files changed</div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">Duration</div>
+                <div class="summary-value">[TOTAL_DURATION]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Risk</div>
+                <div class="summary-value">[RISK_LEVEL]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Files</div>
+                <div class="summary-value">[FILE_COUNT]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Tasks</div>
+                <div class="summary-value">[TASK_COUNT]</div>
+            </div>
+        </div>
+
+        <!-- Architecture Overview -->
+        <div class="section-header">🏗️ Architecture Overview</div>
+        <div class="architecture-overview">
+            <!-- [ARCHITECTURE_OVERVIEW] - Replace with actual architecture diagrams -->
+            <div class="architecture-grid">
+                <div class="architecture-section">
+                    <div class="architecture-title old">OLD ARCHITECTURE (Single Event)</div>
+                    <pre class="architecture-code">Single static Dictionary&lt;string, DailyBossResponseData&gt; CachedDailyBossResponseData
+└── All events share same cache
+└── Data overwrites when switching events
+└── No isolation between concurrent events</pre>
+                </div>
+                <div class="architecture-section">
+                    <div class="architecture-title new">NEW ARCHITECTURE (Multi-Event)</div>
+                    <pre class="architecture-code">DailyBossManager._eventCaches: Dictionary&lt;string, EventStateCache&gt;
+├── Event 1 → EventStateCache (ID: "event_abc123")
+│   ├── DifficultyResponses
+│   ├── TierResponseData
+│   ├── HighestDamageByTier
+│   └── [7+ other state properties]
+├── Event 2 → EventStateCache (ID: "event_xyz789")
+│   └── [independent copy of all properties]
+└── Event N → EventStateCache (ID: "event_nnn")
+    └── [independent copy of all properties]</pre>
+                </div>
+            </div>
+            <div class="architecture-benefits">
+                <h4>Key Benefits</h4>
+                <ul>
+                    <li>Events maintain independent state</li>
+                    <li>No data collisions when switching events</li>
+                    <li>Server responses routed to correct event cache via eventId</li>
+                    <li>Simple O(1) + O(1) nested dictionary lookups</li>
+                    <li>Linear memory scaling (~10KB per event)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Technical Approach -->
+        <div class="section-header">🎯 Technical Approach</div>
+        <div class="technical-approach">
+            <ol class="approach-list">
+                <!-- [TECHNICAL_APPROACH_ITEMS] - Replace with actual approach items -->
+                <li>Move remaining single-event state into <code>EventStateCache</code> (or a new <code>ActiveEventContext</code> struct)</li>
+                <li>Introduce an <code>_activeEventIds</code> list to track all currently active events</li>
+                <li>Keep <code>EventID</code> as <code>_focusedEventId</code> — the event the player is currently interacting with (UI context)</li>
+                <li>Add event-scoped overloads for <code>SelectDailyBossDifficulty()</code>, <code>SetCurrentBossHP()</code>, etc.</li>
+                <li>Mark old single-event methods <code>[Obsolete]</code> and delegate to the new event-scoped versions</li>
+                <li>Update callers progressively (foundation → non-breaking → breaking)</li>
+            </ol>
+        </div>
+
+        <!-- Task Table -->
+        <div class="section-header">📋 Task Breakdown</div>
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th style="width:50px">#</th>
+                    <th style="width:100px">Epic</th>
+                    <th style="width:140px">Task</th>
+                    <th>Description</th>
+                    <th style="width:70px">Type</th>
+                    <th style="width:50px">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1.1</td>
+                    <td>Epic 1</td>
+                    <td>Task Name</td>
+                    <td>Task description goes here</td>
+                    <td>Logic</td>
+                    <td><span class="badge badge-m">M</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Code Changes -->
+        <div class="section-header">📁 Proposed Code Changes</div>
+        <div style="height: 8px"></div>
+
+        <!-- File Diff Example: C# Script -->
+        <div class="file-diff">
+            <div class="file-header">
+                <span class="expand-btn" onclick="toggleFile(this)">▼</span>
+                <span class="file-icon">📄</span>
+                <span class="file-path">Assets/Scripts/Game/UI/FrontEnd/GachaDetailController_r7.cs</span>
+                <span class="diffstat">
+                    <span class="additions">+21</span>
+                    <span class="deletions">-9</span>
+                </span>
+                <span class="diffstat-bar">
+                    <span class="add" style="width:70%"></span>
+                    <span class="del" style="width:30%"></span>
+                </span>
+                <span class="viewed"><input type="checkbox"> Viewed</span>
+            </div>
+            <div class="file-content">
+                <div class="diff-table-wrapper">
+                    <table class="diff-table">
+                        <colgroup>
+                            <col style="width:50%">
+                            <col style="width:50%">
+                        </colgroup>
+                        <tbody>
+                            <!-- Hunk 1 -->
+                            <tr class="diff-hunk-header">
+                                <td class="diff-split-side diff-split-left">@@ -1619,14 +1619,20 @@ private bool SetGachaTokenButtonParameter(int _boxCount, int _cost) {</td>
+                                <td class="diff-split-side">@@ -1619,14 +1619,20 @@ private bool SetGachaTokenButtonParameter(int _boxCount, int _cost) {</td>
+                            </tr>
+                            <!-- Context -->
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1619</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        return tf;</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1619</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        return tf;</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1620</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">    }</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1620</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">    }</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1621</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1621</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <!-- Modified line -->
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-deletion">
+                                        <td class="diff-line-num">1622</td>
+                                        <td class="diff-line-sign">-</td>
+                                        <td class="diff-line-code">    public void OnCurrencyGachaGetClicked(int <y>n</y>) {</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1622</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">    public void OnCurrencyGachaGetClicked(int <x>buttonIndex</x>) {</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <!-- Context -->
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1623</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        if (isGachaStickyEvent &amp;&amp; isGachaStickyEventEnded) {</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1623</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        if (isGachaStickyEvent &amp;&amp; isGachaStickyEventEnded) {</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1624</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">            SimplePopupController.Instance.ShowMessage(KFFLocalization.Get("!IR69_EVENT_HAS_ENDED_T</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1624</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">            SimplePopupController.Instance.ShowMessage(KFFLocalization.Get("!IR69_EVENT_HAS_ENDED_T</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1625</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">            return;</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1625</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">            return;</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1626</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        }</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1626</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        }</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1627</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1627</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <!-- Deleted on left, Added multiple on right -->
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-deletion">
+                                        <td class="diff-line-num">1628</td>
+                                        <td class="diff-line-sign">-</td>
+                                        <td class="diff-line-code">        if (mCurrentButtonSet == null) {</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1628</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">        //If it's the first button --> check free pull to handle</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-deletion">
+                                        <td class="diff-line-num">1629</td>
+                                        <td class="diff-line-sign">-</td>
+                                        <td class="diff-line-code">            OnGachaGetClicked(n);</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1629</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">        if (buttonIndex == 0 &amp;&amp; HavingFreePull()) {</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1630</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">            OnClickFreePull();</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1631</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">        } else {</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1632</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">            //If not --> handle the normal case with the old flow</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1633</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">            if (mCurrentButtonSet == null) {</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1634</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">                OnGachaGetClicked(buttonIndex);</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-empty">
+                                        <td class="diff-line-num"></td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-addition">
+                                        <td class="diff-line-num">1635</td>
+                                        <td class="diff-line-sign">+</td>
+                                        <td class="diff-line-code">            }</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <!-- Context -->
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1630</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        }</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1636</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">        }</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1631</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">    }</td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1637</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code">    }</td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="diff-split-side diff-split-left">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1632</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                                <td class="diff-split-side">
+                                    <table class="diff-side-table"><tr class="diff-line-context">
+                                        <td class="diff-line-num">1638</td>
+                                        <td class="diff-line-sign"></td>
+                                        <td class="diff-line-code"></td>
+                                    </tr></table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acceptance Criteria -->
+        <div class="section-header">✅ Acceptance Criteria</div>
+        <div class="acceptance-criteria">
+            <!-- [ACCEPTANCE_CRITERIA] - Replace with actual criteria -->
+            
+            <div class="criteria-group">
+                <h4 class="criteria-title">Functional</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> Multiple events can be active simultaneously without data conflicts</li>
+                    <li><input type="checkbox"> Switching between events updates <code>_focusedEventId</code> correctly</li>
+                    <li><input type="checkbox"> Old single-event methods still work via delegation to new overloads</li>
+                </ul>
+            </div>
+            
+            <div class="criteria-group">
+                <h4 class="criteria-title">UI/UX</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> Event list displays all active events</li>
+                    <li><input type="checkbox"> Selected event is visually highlighted</li>
+                    <li><input type="checkbox"> Switching events updates all UI elements</li>
+                </ul>
+            </div>
+            
+            <div class="criteria-group">
+                <h4 class="criteria-title">Edge Cases</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> Handle case when no events are active</li>
+                    <li><input type="checkbox"> Handle case when focused event expires while viewing</li>
+                    <li><input type="checkbox"> Handle rapid switching between events</li>
+                </ul>
+            </div>
+            
+            <div class="criteria-group">
+                <h4 class="criteria-title">Debug Verification</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> Log output confirms correct event scoping</li>
+                    <li><input type="checkbox"> State inspector shows expected <code>_activeEventIds</code> values</li>
+                    <li><input type="checkbox"> No null reference exceptions during event transitions</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleFile(btn) {
+            const content = btn.closest('.file-header').nextElementSibling;
+            content.classList.toggle('collapsed');
+            btn.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+        }
+    </script>
+</body>
+</html>
