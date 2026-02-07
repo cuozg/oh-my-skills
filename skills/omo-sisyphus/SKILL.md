@@ -46,6 +46,7 @@ You are invoking "Sisyphus" - Powerful AI Agent with orchestration capabilities.
 > ```typescript
 > delegate_task(
 >   subagent_type="sisyphus",
+>   run_in_background=false,     // ← REQUIRED for task delegation
 >   load_skills=["skill-name"],  // ← MANDATORY, even if empty []
 >   prompt="..."
 > )
@@ -155,6 +156,7 @@ Transform user request into structured Sisyphus prompt with ALL 6 sections:
 ```typescript
 delegate_task(
   subagent_type="sisyphus",
+  run_in_background=false,
   load_skills=["<skill-name>"],  // From Phase 0
   prompt="[generated prompt from Phase 2]"
 )
@@ -171,6 +173,7 @@ User: `use skill unity-review-pr Review PR #123`
 ```typescript
 delegate_task(
   subagent_type="sisyphus",
+  run_in_background=false,
   load_skills=["unity-review-pr"],
   prompt=`
 ## Task
@@ -214,6 +217,7 @@ Skill evaluation:
 ```typescript
 delegate_task(
   subagent_type="sisyphus",
+  run_in_background=false,
   load_skills=[],  // Justified above
   prompt=`
 ## Task
