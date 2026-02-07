@@ -207,8 +207,8 @@
             border-radius: 0 0 6px 6px;
             margin-bottom: 24px;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 16px;
         }
         .criteria-group {
             background: var(--color-canvas-default);
@@ -444,11 +444,7 @@
                 min-width: 140px;
             }
             
-            /* Acceptance Criteria - single column */
-            .acceptance-criteria {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
+            /* Acceptance Criteria - already single column in base */
             
             /* Architecture Overview - single column */
             .architecture-grid {
@@ -1156,7 +1152,7 @@
         </div>
 
         <!-- INSTRUCTION: ACCEPTANCE CRITERIA
-             Structure: 2x2 grid of criteria groups (CSS handles the grid layout).
+             Structure: Single-column list of criteria groups (stacked vertically).
              Required groups: Functional, UI/UX, Edge Cases, Debug Verification.
              Each group contains checkbox items with optional <code> references.
              Replicate <li> items for each criterion.
