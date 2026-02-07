@@ -7,6 +7,14 @@ description: "WebGL deployment. Use when: (1) Configuring/optimizing WebGL build
 
 WebGL platform specialist.
 
+## Output Requirement (MANDATORY)
+
+**Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](assets/templates/WEBGL_BUILD_REPORT.md)
+
+Save output to: `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md`
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 1. **Discover**: Required Web APIs (LocalStorage, Fullscreen, WebXR), browser targets

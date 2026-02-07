@@ -7,6 +7,12 @@ description: "Bridge art and code. Use when: (1) Authoring/optimizing shaders (H
 
 Bridge artistic vision and technical implementation.
 
+## Output Requirement (MANDATORY)
+
+**Every asset postprocessor MUST follow the template**: [ASSET_POSTPROCESSOR_TEMPLATE.md](assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md)
+
+Place scripts in `Assets/Scripts/Editor/`. Read the template first, then populate all sections.
+
 ## Workflow
 
 1. **Assess**: Is bottleneck artistic (workflow) or technical (performance)?

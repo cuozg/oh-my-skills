@@ -7,6 +7,14 @@ description: "Install software, packages, and tools with automatic retry and fal
 
 Install software and tools with automatic verification and fallback strategies when installation fails.
 
+## Output Requirement (MANDATORY)
+
+**Every installation report MUST follow the template**: [INSTALL_REPORT.md](assets/templates/INSTALL_REPORT.md)
+
+Output the report directly to the user. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 ### 1. Identify What to Install

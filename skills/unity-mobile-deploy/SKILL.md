@@ -7,6 +7,14 @@ description: "iOS/Android development. Use when: (1) Touch controls/gestures, (2
 
 iOS and Android platform specialist.
 
+## Output Requirement (MANDATORY)
+
+**Every build report MUST follow the template**: [MOBILE_BUILD_REPORT.md](assets/templates/MOBILE_BUILD_REPORT.md)
+
+Save output to: `Documents/Builds/MOBILE_BUILD_[Platform]_[YYYYMMDD].md`
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 1. **Profile**: Target devices, min specs, permissions, native services

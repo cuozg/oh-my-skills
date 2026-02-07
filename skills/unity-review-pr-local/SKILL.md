@@ -7,6 +7,14 @@ description: "Local PR reviews for Unity projects without GitHub posting. Use wh
 
 Review PRs against Unity coding standards and output results as a markdown file.
 
+## Output Requirement (MANDATORY)
+
+**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](references/OUTPUT_TEMPLATE.md)
+
+Save output to: `Documents/Reviews/PR_<number>_review.md`
+
+Read the template first, then populate all sections.
+
 ## Severity Levels
 
 | Level | Use When |

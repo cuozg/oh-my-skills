@@ -7,6 +7,14 @@ description: "Unity Editor automation via unityMCP. Use when: (1) Finding/creati
 
 Automate Unity Editor tasks with `unityMCP`.
 
+## Output Requirement (MANDATORY)
+
+**Every operation log MUST follow the template**: [MCP_OPERATION_LOG.md](assets/templates/MCP_OPERATION_LOG.md)
+
+Output the log directly to the user. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Core Tools
 
 | Tool | Purpose |

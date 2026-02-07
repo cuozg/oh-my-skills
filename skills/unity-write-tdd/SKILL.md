@@ -7,6 +7,14 @@ description: "Generate Technical Design Documents. Use when: (1) Formalizing pla
 
 Generate Technical Design Documents from implementation plans.
 
+## Output Requirement (MANDATORY)
+
+**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](assets/templates/UNITY_TDD_TEMPLATE.md)
+
+Save output to: `Documents/TDDs/TDD_[FeatureName].md`
+
+Read the template first, then populate all sections.
+
 ## Output
 
 Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](assets/templates/UNITY_TDD_TEMPLATE.md).

@@ -7,6 +7,14 @@ description: "Squash multiple related commits into organized, well-documented co
 
 Intelligently group, squash, and document related commits to create a clean, meaningful commit history.
 
+## Output Requirement (MANDATORY)
+
+**Every squash plan MUST follow the template**: [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md)
+
+Present the squash plan to the user for approval before executing.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 ### Step 1: Identify the Commits

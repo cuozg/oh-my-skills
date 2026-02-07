@@ -7,6 +7,14 @@ description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play 
 
 Create and manage automated tests using Unity Test Framework.
 
+## Output Requirement (MANDATORY)
+
+**Every test plan MUST follow the template**: [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md)
+
+Place test scripts in `Tests/EditMode/` or `Tests/PlayMode/` as appropriate.
+
+Read the template first, then populate all sections.
+
 ## Test Types
 
 | Type | Use For | Location |

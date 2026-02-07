@@ -7,6 +7,14 @@ description: "Execute detailed tasks. Use when: (1) Task guide ready from unity-
 
 Execute task instructions using specialized skills.
 
+## Output Requirement (MANDATORY)
+
+**Every execution report MUST follow the template**: [EXECUTION_REPORT.md](assets/templates/EXECUTION_REPORT.md)
+
+Update the task file status and output the execution report to the user.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 1. **Read**: Load `Documents/Tasks/[Number][Epic][Task].md`

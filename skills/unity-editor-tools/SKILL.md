@@ -7,6 +7,14 @@ description: "Create Unity Editor tools. Use when: (1) Custom Editor Windows/Ins
 
 Extend the Unity Editor with tools and automation.
 
+## Output Requirement (MANDATORY)
+
+**Every editor tool MUST follow one of the templates**:
+- [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md) — for EditorWindow tools
+- [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md) — for Custom Inspectors
+
+Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, then populate all sections.
+
 ## Tool Types
 
 | Type | Use Case |

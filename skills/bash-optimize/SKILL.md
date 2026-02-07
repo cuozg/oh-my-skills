@@ -7,6 +7,14 @@ description: "Optimize and refactor bash shell scripts for clarity, performance,
 
 Analyze and optimize bash scripts for better performance, clarity, and maintainability.
 
+## Output Requirement (MANDATORY)
+
+**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REPORT.md)
+
+Output the report directly to the user. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 ### 1. Analyze Current Script

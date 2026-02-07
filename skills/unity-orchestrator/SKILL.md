@@ -7,6 +7,14 @@ description: "Master Unity technical lead. Use for ALL Unity requests. Analyzes 
 
 Route tasks to specialized skills and coordinate complex implementations.
 
+## Output Requirement (MANDATORY)
+
+**Every routing decision MUST follow the template**: [ROUTING_DECISION.md](assets/templates/ROUTING_DECISION.md)
+
+Output the routing decision as part of the orchestration log. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Quick Routing
 
 ### By Intent

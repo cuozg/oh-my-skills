@@ -7,6 +7,14 @@ description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @hephaestus a
 **ALWAYS spawn exactly the @hephaestus agent from oh-my-opencode (omo) to handle prompts via tool calls.**
 **ALWAYS search for skill and use them to handle the task**
 
+## Output Requirement (MANDATORY)
+
+**Every routing decision MUST follow the template**: [ROUTING_REPORT.md](assets/templates/ROUTING_REPORT.md)
+
+Output the routing report as part of the task execution log. No file save required.
+
+Read the template first, then populate all sections.
+
 ```
 @hephaestus <prompt>
 ```

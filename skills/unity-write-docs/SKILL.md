@@ -7,6 +7,16 @@ description: "Create Unity project documentation. Use when: (1) Creating/updatin
 
 Create clear, maintainable documentation for Unity projects.
 
+## Output Requirement (MANDATORY)
+
+**Every document MUST follow one of the templates**:
+- [README_TEMPLATE.md](assets/templates/README_TEMPLATE.md) — for project READMEs
+- [API_TEMPLATE.md](assets/templates/API_TEMPLATE.md) — for API references
+- [ARCHITECTURE_TEMPLATE.md](assets/templates/ARCHITECTURE_TEMPLATE.md) — for architecture docs
+- [GUIDE_TEMPLATE.md](assets/templates/GUIDE_TEMPLATE.md) — for onboarding/usage guides
+
+Read the relevant template first, then populate all sections.
+
 ## Document Types
 
 | Type | Purpose | Location |

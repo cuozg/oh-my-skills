@@ -7,6 +7,14 @@ description: "Generate comprehensive commit comments from pull requests or commi
 
 Generate professional, structured commit comments by analyzing code changes from pull requests or specific commits.
 
+## Output Requirement (MANDATORY)
+
+**Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](assets/templates/COMMIT_COMMENT.md)
+
+Output the comment directly to the user. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 ### Step 1: Identify the Input

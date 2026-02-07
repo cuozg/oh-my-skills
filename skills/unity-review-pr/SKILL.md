@@ -7,6 +7,14 @@ description: "Expert Unity Developer code reviewer. Reviews PRs, commits, branch
 
 Review code changes as an **expert Unity Developer**. Each issue is a separate inline comment the author must resolve before merge.
 
+## Output Requirement (MANDATORY)
+
+**Every review MUST follow the template**: [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)
+
+Submit using: [post_review.sh](scripts/post_review.sh) `<pr_number> /tmp/review.json`
+
+Read the template first, then populate all sections. No variations. No negotiation.
+
 > [!IMPORTANT]
 > **ALL reviews MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)**
 > **Submit using [post_review.sh](scripts/post_review.sh)**

@@ -7,6 +7,14 @@ description: "Create Mermaid diagrams. Use when: (1) Documenting logic flows, (2
 
 Visualize complex systems using Mermaid.js syntax.
 
+## Output Requirement (MANDATORY)
+
+**Every diagram MUST follow the template**: [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md)
+
+Embed diagrams in context or save to the relevant documentation file.
+
+Read the template first, then populate all sections.
+
 ## Diagram Types
 
 | Type | Use Case |

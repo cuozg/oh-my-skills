@@ -7,6 +7,14 @@ description: "Diagnose and fix Unity errors. Use when: (1) Console shows compile
 
 Systematically identify and resolve Unity technical issues.
 
+## Output Requirement (MANDATORY)
+
+**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](assets/templates/DEBUG_REPORT_TEMPLATE.md)
+
+Save output to: `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
+
+Read the template first, then populate all sections.
+
 ## Debugging Workflow
 
 1. **Gather Intel**

@@ -7,6 +7,14 @@ description: "Review and brainstorm implementation plans. Use when: (1) Plan fro
 
 Audit plans, brainstorm edge cases, finalize task lists.
 
+## Output Requirement (MANDATORY)
+
+**Every plan review MUST follow the template**: [REVIEW_OUTPUT.md](assets/templates/REVIEW_OUTPUT.md)
+
+Update the plan document at `Documents/Plans/` with refined decomposition.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 1. **Ingest**: Read plan from `Documents/Plans/` or context

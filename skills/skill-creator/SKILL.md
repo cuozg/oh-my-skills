@@ -1,12 +1,17 @@
 ---
 name: skill-creator
 description: "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations."
-license: Complete terms in LICENSE.txt
 ---
 
 # Skill Creator
 
 This skill provides guidance for creating effective skills.
+
+## Output Requirement (MANDATORY)
+
+**Every skill MUST be validated using**: `scripts/package_skill.py <path/to/skill-folder>`
+
+The output is a validated `.skill` package file. No other output format accepted.
 
 ## About Skills
 

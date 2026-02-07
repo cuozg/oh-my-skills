@@ -7,6 +7,14 @@ description: "Deep investigation and debugging of Unity errors. Use when: (1) Us
 
 Investigate Unity errors deeply, add strategic Debug.Log statements, identify root causes, and produce detailed debug reports.
 
+## Output Requirement (MANDATORY)
+
+**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](assets/DEBUG_REPORT_TEMPLATE.md)
+
+Save output to: `Documents/Debugs/DEBUG_{ErrorName}_{YYYYMMDD}.md`
+
+Read the template first, then populate all sections.
+
 ## ⚠️ CRITICAL CONSTRAINT: READ-ONLY DEBUGGING
 
 **This skill is STRICTLY for investigation and diagnosis, NOT for fixing code.**

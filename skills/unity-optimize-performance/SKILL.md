@@ -7,6 +7,14 @@ description: "Fix Unity performance issues. Use when: (1) Low/inconsistent FPS, 
 
 Diagnose and resolve performance bottlenecks across logic, graphics, and memory.
 
+## Output Requirement (MANDATORY)
+
+**Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](assets/templates/PERFORMANCE_REPORT.md)
+
+Save output to: `Documents/Performance/PERFORMANCE_REPORT_[Area]_[YYYYMMDD].md`
+
+Read the template first, then populate all sections.
+
 ## Optimization Workflow
 
 1. **Baseline**: `manage_scene(get_hierarchy)` for object counts, `read_console` for high-freq logs

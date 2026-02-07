@@ -7,6 +7,14 @@ description: "FlatBuffers for Unity. Use when: (1) Creating/updating .fbs schema
 
 Manage schemas, code generation, and binary data conversion.
 
+## Output Requirement (MANDATORY)
+
+**Every schema MUST follow the template**: [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md)
+
+Save schemas to: `FlatBuffers/New_Fbs/[Name].fbs`
+
+Read the template first, then populate all sections.
+
 ## File Locations
 
 | Type | Location |

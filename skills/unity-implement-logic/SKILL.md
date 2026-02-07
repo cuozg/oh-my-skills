@@ -7,6 +7,14 @@ description: "Implement Unity C# logic, gameplay systems, and architectural patt
 
 Implement robust, performant C# code following Unity best practices.
 
+## Output Requirement (MANDATORY)
+
+**Every new script MUST follow the template**: [SCRIPT_TEMPLATE.md](assets/templates/SCRIPT_TEMPLATE.md)
+
+Place scripts in the appropriate `Assets/Scripts/` subdirectory.
+
+Read the template first, then populate all sections.
+
 ## Implementation Workflow
 
 1. **Clarify**: Identify dependencies, target assembly (`.asmdef`)

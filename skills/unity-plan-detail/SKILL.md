@@ -7,6 +7,14 @@ description: "Create task skeletons from plans. Use when: (1) Have a plan from u
 
 Break high-level plans into detailed task requirements.
 
+## Output Requirement (MANDATORY)
+
+**Every task detail MUST follow the template**: [TASK_DETAIL_TEMPLATE.md](assets/templates/TASK_DETAIL_TEMPLATE.md)
+
+Save output to: `Documents/Tasks/[Number][Epic][Task].md`
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 For each task in the plan:

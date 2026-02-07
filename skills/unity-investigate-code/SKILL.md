@@ -7,6 +7,14 @@ description: "Analyze C# logic and trace execution flows. Use when: (1) Understa
 
 Analyze and explain C# logic, execution flows, and feature implementations.
 
+## Output Requirement (MANDATORY)
+
+**Every investigation report MUST follow the template**: [INVESTIGATION_REPORT.md](assets/templates/INVESTIGATION_REPORT.md)
+
+Save output to: `Documents/Investigations/INVESTIGATION_[FeatureName]_[YYYYMMDD].md`
+
+Read the template first, then populate all sections.
+
 ## Investigation Workflow
 
 1. **Define Scope**: Target class/method/feature, ask for entry points if complex

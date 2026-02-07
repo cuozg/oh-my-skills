@@ -7,6 +7,14 @@ description: "Validate and check bash shell scripts for correctness and compatib
 
 Validate bash shell scripts for syntax errors, shell compatibility, and potential runtime issues.
 
+## Output Requirement (MANDATORY)
+
+**Every check report MUST follow the template**: [CHECK_REPORT.md](assets/templates/CHECK_REPORT.md)
+
+Output the report directly to the user. No file save required.
+
+Read the template first, then populate all sections.
+
 ## Workflow
 
 ### 1. Identify Target Script
