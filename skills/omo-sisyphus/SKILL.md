@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Always include load_skills parameter in delegate_task. Use for complex tasks requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol. Supports v3.3.0 features: task transparency/inspectability, ctx.metadata(), storeToolMetadata(), session continuity, and enhanced CLI flags (--port, --attach, --session-id, --on-complete, --json)."
+description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Always include load_skills parameter in task(). Use for complex tasks requiring planning, delegation, code implementation, or multi-step work. Generates structured prompts following Sisyphus protocol. Supports v3.3.0 features: task transparency/inspectability, ctx.metadata(), storeToolMetadata(), session continuity, and enhanced CLI flags (--port, --attach, --session-id, --on-complete, --json)."
 ---
 
 # Sisyphus Orchestrator
@@ -13,7 +13,7 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Alw
 
 **Every delegation prompt MUST follow the template**: [DELEGATION_PROMPT.md](.claude/skills/omo-sisyphus/assets/templates/DELEGATION_PROMPT.md)
 
-The generated prompt is passed directly to `delegate_task()`. No file save required.
+The generated prompt is passed directly to `task()`. No file save required.
 
 Read the template first, then populate all sections.
 
@@ -40,7 +40,7 @@ You are invoking "Sisyphus" - Powerful AI Agent with orchestration capabilities.
 
 ## Task Transparency & Inspectability (v3.3.0)
 
-> **Subagents are NO LONGER black boxes.** Every delegated `delegate_task` call is clickable and inspectable in the UI.
+> **Subagents are NO LONGER black boxes.** Every delegated `task()` call is clickable and inspectable in the UI.
 
 Each delegation exposes:
 - **Full prompt** sent to the subagent
@@ -69,7 +69,7 @@ ctx.metadata({
 
 // Document tool calls, not just execute them
 storeToolMetadata({
-  tool: "delegate_task",
+  tool: "task",
   purpose: "Review PR #123 for Unity anti-patterns",
   category: "quick",
   skills: ["unity-review-pr"],
@@ -78,7 +78,7 @@ storeToolMetadata({
 ```
 
 **When to use metadata:**
-- ALWAYS before `delegate_task()` calls — document intent
+- ALWAYS before `task()` calls — document intent
 - When selecting/omitting skills — record justification
 - When continuing sessions — link to previous session context
 
@@ -87,13 +87,13 @@ storeToolMetadata({
 ## CRITICAL: Always Include `load_skills`
 
 > [!CAUTION]
-> **MANDATORY: Every `delegate_task` call MUST include `load_skills` parameter**
+> **MANDATORY: Every `task()` call MUST include `load_skills` parameter**
 > 
 > ```typescript
-> delegate_task(
->   subagent_type="sisyphus",
->   run_in_background=false,     // ← REQUIRED for task delegation
->   load_skills=["skill-name"],  // ← MANDATORY, even if empty []
+> task(
+>   category="quick",              // ← REQUIRED: task category
+>   load_skills=["skill-name"],    // ← MANDATORY, even if empty []
+>   run_in_background=false,       // ← sync or async execution
 >   prompt="..."
 > )
 > ```
@@ -122,16 +122,15 @@ New flags available for fine-grained control:
 **Use in delegation context:**
 ```typescript
 // Resume a previous session with new instructions
-delegate_task(
+task(
   session_id="ses_abc123",   // ← --session-id equivalent
   prompt="Fix the type error from previous attempt"
 )
 
-// Background task with structured output
-delegate_task(
+// Background exploration with call_omo_agent
+call_omo_agent(
   subagent_type="explore",
   run_in_background=true,    // ← async execution
-  load_skills=[],
   prompt="Find all auth patterns in codebase"
 )
 ```
@@ -162,10 +161,11 @@ delegate_task(
 
 ### Phase 1: Pre-Delegation Planning (MANDATORY)
 
-**BEFORE every `delegate_task` call, EXPLICITLY declare your reasoning:**
+**BEFORE every `task()` call, EXPLICITLY declare your reasoning:**
 
 ```
-I will use delegate_task with:
+I will use task() with:
+- **category**: "quick" | "visual-engineering" | "deep" | etc.
 - **load_skills**: ["skill-name"] or []
 - **Skill evaluation**:
   - unity-review-pr: OMIT - not a PR review task
@@ -174,7 +174,7 @@ I will use delegate_task with:
 - **Expected Outcome**: [what success looks like]
 ```
 
-**Then** make the delegate_task call.
+**Then** make the task() call.
 
 > [!IMPORTANT]
 > **When a skill is loaded, the prompt MUST explicitly tell Sisyphus to USE it:**
@@ -240,7 +240,7 @@ Transform user request into structured Sisyphus prompt with ALL 6 sections:
 **Prefer background** for:
 - Multiple independent explorations (fire all in parallel)
 - Long-running tasks where you can continue other work
-- Explore/librarian agents (ALWAYS background)
+- Explore/librarian agents (ALWAYS background via `call_omo_agent`)
 
 **Use sync** for:
 - Implementation tasks that block your next action
@@ -249,16 +249,16 @@ Transform user request into structured Sisyphus prompt with ALL 6 sections:
 
 ```typescript
 // Sync delegation (blocking - wait for result)
-delegate_task(
-  subagent_type="sisyphus",
+task(
+  category="quick",                // ← task category
   run_in_background=false,
-  load_skills=["<skill-name>"],  // From Phase 0
+  load_skills=["<skill-name>"],    // From Phase 0
   prompt="[generated prompt from Phase 2]"
 )
 
 // Background delegation (non-blocking - continue working)
-delegate_task(
-  subagent_type="sisyphus",
+task(
+  category="quick",
   run_in_background=true,
   load_skills=["<skill-name>"],
   prompt="[generated prompt from Phase 2]"
@@ -268,20 +268,20 @@ delegate_task(
 
 #### Session Continuity (v3.3.0)
 
-Every `delegate_task()` output includes a `session_id`. **ALWAYS store and reuse it.**
+Every `task()` output includes a `session_id`. **ALWAYS store and reuse it.**
 
 ```typescript
 // First delegation → get session_id
-result = delegate_task(subagent_type="sisyphus", run_in_background=false,
+result = task(category="quick", run_in_background=false,
   load_skills=["unity-implement-logic"], prompt="Implement auth middleware")
 // result.session_id = "ses_abc123"
 
 // Follow-up using session_id → full context preserved
-delegate_task(session_id="ses_abc123",
+task(session_id="ses_abc123",
   prompt="Fix: Type error on line 42 in auth.ts")
 
 // Verification using session_id → agent knows what it built
-delegate_task(session_id="ses_abc123",
+task(session_id="ses_abc123",
   prompt="Run lsp_diagnostics on all changed files and fix any errors")
 ```
 
@@ -307,8 +307,8 @@ ctx.metadata({
   expectedOutcome: "Review posted to GitHub with inline comments",
 })
 
-delegate_task(
-  subagent_type="sisyphus",
+task(
+  category="quick",
   run_in_background=false,
   load_skills=["unity-review-pr"],
   prompt=`
@@ -353,7 +353,7 @@ Skill evaluation:
 ```typescript
 // Store skill evaluation metadata (v3.3.0)
 storeToolMetadata({
-  tool: "delegate_task",
+  tool: "task",
   purpose: "Implement user authentication",
   skillEvaluation: {
     omitted: ["unity-review-pr", "unity-plan", "flatbuffer-builder"],
@@ -361,8 +361,8 @@ storeToolMetadata({
   },
 })
 
-delegate_task(
-  subagent_type="sisyphus",
+task(
+  category="unspecified-high",
   run_in_background=false,
   load_skills=[],  // Justified above
   prompt=`
@@ -395,18 +395,16 @@ Implement user authentication for the API
 User: `Investigate how auth and caching work, then implement rate limiting`
 
 ```typescript
-// Phase 1: Fire parallel background explorations
-const authTask = delegate_task(
+// Phase 1: Fire parallel background explorations via call_omo_agent
+const authTask = call_omo_agent(
   subagent_type="explore",
   run_in_background=true,
-  load_skills=[],
   prompt="Find all authentication middleware, patterns, and credential validation in this codebase."
 )
 
-const cacheTask = delegate_task(
+const cacheTask = call_omo_agent(
   subagent_type="explore",
   run_in_background=true,
-  load_skills=[],
   prompt="Find caching implementations, cache invalidation patterns, and TTL configurations."
 )
 
@@ -418,8 +416,8 @@ const authResult = background_output(task_id=authTask.task_id)
 const cacheResult = background_output(task_id=cacheTask.task_id)
 
 // Phase 4: Delegate implementation with gathered context
-delegate_task(
-  subagent_type="sisyphus",
+task(
+  category="unspecified-high",
   run_in_background=false,
   load_skills=[],  // Justified: general implementation
   prompt=`
@@ -458,9 +456,9 @@ Sisyphus expects:
 | Loading skill without "YOU MUST USE" instruction | Explicit instruction to follow skill |
 | Vague prompts | Exhaustive requirements with MUST/MUST NOT |
 | No expected outcome | Clear success criteria |
-| No metadata on delegation | `ctx.metadata()` before every `delegate_task()` |
+| No metadata on delegation | `ctx.metadata()` before every `task()` |
 | Starting fresh session when follow-up | Reuse `session_id` for continuity |
-| Sync explore/librarian agents | ALWAYS use `run_in_background=true` for explore/librarian |
+| Sync explore/librarian agents | ALWAYS use `call_omo_agent(run_in_background=true)` for explore/librarian |
 | Sequential independent explorations | Fire parallel background agents |
 
 ---
