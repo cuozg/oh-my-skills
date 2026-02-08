@@ -63,8 +63,8 @@ For files marked as NEW:
 
 | Check | Action | On Failure |
 |-------|--------|------------|
-| **Compile** | `mcp_unityMCP_refresh_unity` with `compile="request"` | Fix immediately |
-| **Console** | `mcp_unityMCP_read_console` for errors | Address errors |
+| **Compile** | `coplay-mcp_check_compile_errors` | Fix immediately |
+| **Console** | `coplay-mcp_get_unity_logs(show_errors=true)` | Address errors |
 
 ### Phase 5: Git Commit
 

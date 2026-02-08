@@ -49,7 +49,8 @@ All output formatting is delegated to [TEST_PLAN_TEMPLATE.md](assets/templates/T
    - Add `defineConstraints: ["UNITY_INCLUDE_TESTS"]`
 
 6. **Execute & Validate**
-   - Run via `unityMCP.run_tests` or Unity Test Runner
+   - Run via `coplay-mcp_execute_script` with a test runner script, or Unity Test Runner
+   - Check results: `coplay-mcp_get_unity_logs(show_errors=true)`
    - On failure: use `/unity-fix-errors` or `/unity-debug` to diagnose
 
 7. **Output**
@@ -145,3 +146,27 @@ When analyzing code to generate tests, systematically check:
 
 - [TEST_EXAMPLES.md](references/TEST_EXAMPLES.md) — Edit Mode, Play Mode, async, parameterized, and mocking patterns
 - [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md) — **Mandatory output format** for all test plans
+
+---
+
+## MCP Tools Integration
+
+Prefer `coplay-mcp_*` tools for test execution and validation.
+
+| Operation | MCP Tool | Replaces |
+|:----------|:---------|:---------|
+| Check compilation | `coplay-mcp_check_compile_errors` | Manual compile check |
+| Read test logs | `coplay-mcp_get_unity_logs(search_term="Test")` | Manual console inspection |
+| Run editor script | `coplay-mcp_execute_script(filePath)` | Manual test runner invocation |
+| Play mode tests | `coplay-mcp_play_game` / `coplay-mcp_stop_game` | Manual play button |
+| Verify scene state | `coplay-mcp_list_game_objects_in_hierarchy` | Manual hierarchy inspection |
+| Inspect test object | `coplay-mcp_get_game_object_info(gameObjectPath)` | Manual component check |
+
+### Test Execution Flow
+
+```
+1. coplay-mcp_check_compile_errors        → Ensure tests compile
+2. coplay-mcp_execute_script(test_runner)  → Run tests via editor script
+3. coplay-mcp_get_unity_logs(show_errors=true) → Check test results
+4. On failure: read logs, fix, repeat
+```

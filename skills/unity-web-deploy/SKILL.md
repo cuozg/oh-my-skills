@@ -37,3 +37,28 @@ Read the template first, then populate all sections.
 - **Sanitize Input**: Treat `SendMessage` data from JS as untrusted
 - **User Interaction**: Audio/video only after first click (browser policy)
 - **Decompression Fallback**: Handle browsers without native Brotli/Gzip
+
+---
+
+## MCP Tools Integration
+
+Use `coplay-mcp_*` tools for build configuration, profiling, and validation.
+
+| Operation | MCP Tool |
+|-----------|----------|
+| Editor/build state | `coplay-mcp_get_unity_editor_state` |
+| Check compilation | `coplay-mcp_check_compile_errors` |
+| Run build script | `coplay-mcp_execute_script(filePath="...")` |
+| Console output | `coplay-mcp_get_unity_logs()` |
+| CPU profiling | `coplay-mcp_get_worst_cpu_frames` |
+| GC profiling | `coplay-mcp_get_worst_gc_frames` |
+| Installed packages | `coplay-mcp_list_packages` |
+
+### WebGL Build Verification Flow
+
+```
+1. coplay-mcp_get_unity_editor_state            → Confirm WebGL build target
+2. coplay-mcp_check_compile_errors              → Verify clean compilation
+3. coplay-mcp_execute_script(filePath="...")     → Run WebGL build script
+4. coplay-mcp_get_unity_logs(show_errors=true)  → Check for build errors
+```

@@ -123,3 +123,31 @@ Present key findings to the user. Highlight risks, technical debt, and improveme
 - **Use Diagrams**: Mermaid sequence diagrams for flows, state diagrams for state machines, graph diagrams for architecture
 - **Cross-Reference**: Connect findings across systems (e.g., animation events triggering audio, UI driving network calls)
 - **Quantify Impact**: Estimate memory, CPU, or draw call costs where possible
+
+---
+
+## MCP Tools Integration
+
+Use `coplay-mcp_*` tools for runtime inspection during investigation.
+
+| Operation | MCP Tool |
+|-----------|----------|
+| Scene hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` |
+| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
+| Component filter | `coplay-mcp_list_game_objects_in_hierarchy(componentFilter="...")` |
+| Console logs | `coplay-mcp_get_unity_logs()` |
+| Editor state | `coplay-mcp_get_unity_editor_state` |
+| Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
+| UI screenshot | `coplay-mcp_capture_ui_canvas()` |
+| Play to test | `coplay-mcp_play_game` / `coplay-mcp_stop_game` |
+| Installed packages | `coplay-mcp_list_packages` |
+
+### Investigation Discovery Flow
+
+```
+1. coplay-mcp_get_unity_editor_state                           → Project context
+2. coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")  → Find target objects
+3. coplay-mcp_get_game_object_info(gameObjectPath="...")       → Inspect components/state
+4. coplay-mcp_capture_scene_object(gameObjectPath="...")       → Visual reference
+5. [Trace code via LSP tools + grep]
+```

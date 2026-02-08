@@ -18,26 +18,27 @@ Read the template first, then populate all sections.
 ## Debugging Workflow
 
 1. **Gather Intel**
-   - `read_console` → Get error message, stack trace, frequency
+   - `coplay-mcp_get_unity_logs(show_errors=true)` → Get error message, stack trace, frequency
    - Identify: script, line number, error type (NullRef, IndexOutOfRange, etc.)
-   - `manage_scene` (screenshot) for visual/UI issues
+   - `coplay-mcp_capture_scene_object()` for visual/UI issues
 
 2. **Investigate**
    - `view_file` → Code around error line
    - `grep_search` → Find all references to failing variable/object
-   - Check component properties via `mcpforunity://scene/gameobject/{id}/components`
+   - Check component properties via `coplay-mcp_get_game_object_info(gameObjectPath="...")`
 
 3. **Fix**
    - Draft fix (null guard, race condition, logic correction)
-   - Apply: `script_apply_edits` (structural) or `apply_text_edits` (minor)
+   - Apply via code edit tools
 
 4. **Verify**
-   - `refresh_unity(compile="request", wait_for_ready=true)`
-   - `read_console` again - if errors persist, repeat Step 1
+   - `coplay-mcp_check_compile_errors` → Confirm no compile errors
+   - `coplay-mcp_get_unity_logs(show_errors=true)` → If errors persist, repeat Step 1
 
 5. **Runtime Validate**
-   - `manage_editor(action="play")` → Verify fix in action
+   - `coplay-mcp_play_game` → Verify fix in action
    - Ensure no regressions
+   - `coplay-mcp_stop_game` → Stop after validation
 
 6. **Document** (Optional)
    - Save report to `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
@@ -55,6 +56,35 @@ Read the template first, then populate all sections.
 ## Best Practices
 
 - **Stack Trace First**: Top of trace = immediate trigger
-- **Clean Slate**: `refresh_unity` to rule out transient state
+- **Clean Slate**: `coplay-mcp_check_compile_errors` to rule out transient state
 - **Isolate**: Reproduce in empty test scene if systemic
 - **Evidence-Based**: Only declare fixed if console clear after repro steps
+
+---
+
+## MCP Tools Integration
+
+Prefer `coplay-mcp_*` tools over manual file/shell operations for Unity Editor interaction.
+
+| Operation | MCP Tool | Replaces |
+|-----------|----------|----------|
+| Read console errors | `coplay-mcp_get_unity_logs(show_errors=true)` | `read_console` |
+| Check compilation | `coplay-mcp_check_compile_errors` | `refresh_unity(compile="request")` |
+| Play game | `coplay-mcp_play_game` | `manage_editor(action="play")` |
+| Stop game | `coplay-mcp_stop_game` | `manage_editor(action="stop")` |
+| Inspect object | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | `mcpforunity://scene/gameobject` |
+| Scene screenshot | `coplay-mcp_capture_scene_object()` | `manage_scene` screenshot |
+| List hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` | Manual scene browsing |
+| Editor state | `coplay-mcp_get_unity_editor_state` | Manual editor checks |
+
+### Debug-Fix-Verify Flow
+
+```
+1. coplay-mcp_get_unity_logs(show_errors=true)       → Capture errors and stack traces
+2. coplay-mcp_get_game_object_info(gameObjectPath=..) → Inspect failing object's components
+3. [Apply code fix via editor tools]
+4. coplay-mcp_check_compile_errors                    → Confirm compilation success
+5. coplay-mcp_play_game                               → Runtime validation
+6. coplay-mcp_get_unity_logs(show_errors=true)        → Verify no new errors
+7. coplay-mcp_stop_game                               → Clean stop
+```

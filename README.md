@@ -66,7 +66,7 @@ graph TD
 1.  **`unity-plan`**: Analyzes the input specification to produce a high-level roadmap, epics, and costing estimates.
 2.  **`unity-plan-review`**: The strategic audit. High-level decomposition is critiqued and refined through user brainstorming to ensure a complete task list.
 3.  **`unity-plan-detail`**: Decomposes epics into individual task skeletons. It generates `.md` files in `Documents/Tasks/` defining the requirements and success criteria for each step.
-4.  **`unity-plan-brainstorm`**: The technical deep-dive. It uses `unity-investigate-code` to find exact code locations, brainstorms architectural decisions with the user, and provides specific code changes and test cases.
+4.  **`unity-plan-brainstorm`**: The technical deep-dive. It uses `unity-investigate` to find exact code locations, brainstorms architectural decisions with the user, and provides specific code changes and test cases.
 5.  **`unity-plan-executor`**: The final implementation stage. It reads the refined task instructions and coordinates specialized experts (like `unity-code` or `flatbuffers-coder`) to apply the changes and verify the "Definition of Done".
 
 ---
@@ -119,7 +119,7 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | `unity-fix-errors` | Systematic diagnosis and resolution of Unity technical errors. |
 | `unity-debug` | Deep investigation of errors with strategic Debug.Log and reports. |
 | `unity-optimize-performance` | Identification and resolution of performance bottlenecks. |
-| `unity-investigate-code` | Deep-dive analysis of C# logic and execution flow tracing. |
+| `unity-investigate` | Deep-dive analysis of C# logic and execution flow tracing. |
 | `unity-test` | Automated testing using the Unity Test Framework (Edit/Play Mode). |
 | `unity-mobile-deploy` | Specialist in iOS/Android deployment, interop, and optimization. |
 | `unity-web-deploy` | Specialist in WebGL deployment, interop, and browser optimization. |
@@ -238,7 +238,7 @@ Workflows are **step-by-step procedures** for complex, repetitive tasks. They ca
 | `/unity-mobile-deploy`        | Optimize, build, and deploy the project to iOS and Android.                       |
 | `/unity-review-pr`            | Conduct a full code review on a GitHub Pull Request.                              |
 | `/unity-plan`                 | Investigate requirements and produce a detailed implementation plan with costing. |
-| `/unity-investigate-code`     | Deep-dive into complex logic, execution flows, and feature implementations.       |
+| `/unity-investigate`     | Deep-dive into complex logic, execution flows, and feature implementations.       |
 | `/unity-write-tdd`            | Generate a Technical Design Document (TDD) based on the WWE 2025 template.        |
 | `/unity-test`                 | Create and run automated tests using the Unity Test Framework.                    |
 | `/unity-web-deploy`           | Optimize, build, and deploy the project to the WebGL platform.                    |

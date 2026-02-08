@@ -37,3 +37,29 @@ Read the template first, then populate all sections.
 - **Permissions**: Request only when needed with UI rationale
 - **Resolution**: Dynamic for gameplay, sharp for UI
 - **Safe Area**: Respect notches/home indicators
+
+---
+
+## MCP Tools Integration
+
+Use `coplay-mcp_*` tools for build configuration, profiling, and validation.
+
+| Operation | MCP Tool |
+|-----------|----------|
+| Editor/build state | `coplay-mcp_get_unity_editor_state` |
+| Check compilation | `coplay-mcp_check_compile_errors` |
+| Run build script | `coplay-mcp_execute_script(filePath="...")` |
+| Console output | `coplay-mcp_get_unity_logs()` |
+| CPU profiling | `coplay-mcp_get_worst_cpu_frames` |
+| GC profiling | `coplay-mcp_get_worst_gc_frames` |
+| High-poly audit | `coplay-mcp_list_objects_with_high_polygon_count()` |
+| Installed packages | `coplay-mcp_list_packages` |
+
+### Mobile Build Verification Flow
+
+```
+1. coplay-mcp_get_unity_editor_state            → Confirm build target (iOS/Android)
+2. coplay-mcp_check_compile_errors              → Verify clean compilation
+3. coplay-mcp_execute_script(filePath="...")     → Run platform-specific build script
+4. coplay-mcp_get_unity_logs(show_errors=true)  → Check for build errors
+```

@@ -323,3 +323,34 @@ See [.claude/skills/unity-debug/references/common_errors.md](.claude/skills/unit
 - **Document** - Debug reports help with future similar issues
 - **READ-ONLY** - Never modify code except for Debug.Log statements
 - **User decides** - All fixes documented in report; user applies them
+
+---
+
+## MCP Tools Integration
+
+Use `coplay-mcp_*` tools for Unity Editor interaction during investigation.
+
+| Operation | MCP Tool |
+|-----------|----------|
+| Read console errors | `coplay-mcp_get_unity_logs(show_errors=true)` |
+| Filter specific logs | `coplay-mcp_get_unity_logs(search_term="[DEBUG]")` |
+| Inspect object state | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
+| Browse hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` |
+| Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
+| Editor state | `coplay-mcp_get_unity_editor_state` |
+| Check compilation | `coplay-mcp_check_compile_errors` |
+| Play to reproduce | `coplay-mcp_play_game` |
+| Stop after repro | `coplay-mcp_stop_game` |
+
+### Investigation Flow
+
+```
+1. coplay-mcp_get_unity_logs(show_errors=true)             → Capture error + stack trace
+2. coplay-mcp_list_game_objects_in_hierarchy(nameFilter=..) → Locate relevant objects
+3. coplay-mcp_get_game_object_info(gameObjectPath=..)      → Inspect component state
+4. [Add Debug.Log statements]
+5. coplay-mcp_check_compile_errors                         → Verify logs compile
+6. coplay-mcp_play_game                                    → Reproduce issue
+7. coplay-mcp_get_unity_logs(search_term="[DEBUG]")        → Capture debug output
+8. coplay-mcp_stop_game                                    → Stop and analyze
+```

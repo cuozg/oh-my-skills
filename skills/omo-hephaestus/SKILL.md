@@ -47,7 +47,7 @@ Scan the `.claude/skills/` directory and read YAML frontmatter from each `SKILL.
 | `unity-editor-tools`         | custom Editor Windows, Inspectors, asset validation, batch processors, UI Toolkit |
 | `unity-fix-errors`           | compiler errors, exceptions, Play Mode broken, build fails                        |
 | `unity-code`                 | new scripts, MonoBehaviours, refactoring, gameplay features                       |
-| `unity-investigate-code`     | how does X work, trace the flow, explain this code, what calls this               |
+| `unity-investigate`     | how does X work, trace the flow, explain this code, what calls this               |
 | `unity-mcp`           | automate Editor, MCP tool, batch operations, find GameObject                      |
 | `unity-mobile-deploy`        | iOS, Android, touch controls, mobile optimization, native features                |
 | `unity-optimize-performance` | low FPS, high memory, slow load times, performance audit                          |
@@ -83,7 +83,7 @@ User prompt received
 ├─ Editor tool? → unity-editor-tools + unity-mcp
 ├─ Shader/art? → unity-tech-art
 ├─ Tests? → unity-test
-└─ How does X work? → unity-investigate-code
+└─ How does X work? → unity-investigate
 ```
 
 ## Skill Combinations
