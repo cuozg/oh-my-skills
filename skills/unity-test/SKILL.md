@@ -27,9 +27,9 @@ All output formatting is delegated to [TEST_PLAN_TEMPLATE.md](assets/templates/T
 
    | Condition | Type | Location |
    |-----------|------|----------|
-   | Pure C# logic, no Unity API | Edit Mode | `Tests/EditMode/` |
-   | Uses MonoBehaviour, coroutines, physics, UI | Play Mode | `Tests/PlayMode/` |
-   | Async operations with `Awaitable` | Play Mode (async) | `Tests/PlayMode/` |
+   | Pure C# logic, no Unity API | Edit Mode | `Assets/Scripts/Test/EditMode/` |
+   | Uses MonoBehaviour, coroutines, physics, UI | Play Mode | `Assets/Scripts/Test/PlayMode/` |
+   | Async operations with `Awaitable` | Play Mode (async) | `Assets/Scripts/Test/PlayMode/` |
 
 3. **Generate Test Cases**
    - Apply the rules in "Test Logic Rules" below
@@ -43,10 +43,11 @@ All output formatting is delegated to [TEST_PLAN_TEMPLATE.md](assets/templates/T
    - Add `[SetUp]`/`[TearDown]` for shared state
    - Destroy all test GameObjects in TearDown
 
-5. **Configure Assembly**
-   - Ensure `Tests/EditMode/` and `Tests/PlayMode/` have `.asmdef` files
-   - Reference `UnityEngine.TestRunner`, `UnityEditor.TestRunner`, and target assembly
-   - Add `defineConstraints: ["UNITY_INCLUDE_TESTS"]`
+5. **Configure Test Directory**
+   - Place all test scripts under `Assets/Scripts/Test/`
+   - Use `Assets/Scripts/Test/EditMode/` for Edit Mode tests
+   - Use `Assets/Scripts/Test/PlayMode/` for Play Mode tests
+   - Do NOT create `.asmdef` files — the project manages assembly definitions externally
 
 6. **Execute & Validate**
    - Run via `coplay-mcp_execute_script` with a test runner script, or Unity Test Runner

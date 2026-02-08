@@ -272,25 +272,14 @@ public IEnumerator Projectile_HitsTarget_DealsDamage()
 }
 ```
 
-## Assembly Definition (Tests.asmdef)
+## Test Directory Structure
 
-Required per workflow step 5. Include `UNITY_INCLUDE_TESTS` constraint.
+Place all test scripts under `Assets/Scripts/Test/`. Do NOT create `.asmdef` files — the project manages assembly definitions externally.
 
-```json
-{
-    "name": "Tests",
-    "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "GameCode"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "overrideReferences": true,
-    "precompiledReferences": ["nunit.framework.dll"],
-    "autoReferenced": false,
-    "defineConstraints": ["UNITY_INCLUDE_TESTS"]
-}
+```
+Assets/Scripts/Test/
+├── EditMode/     # Pure C# logic tests (no Unity API)
+└── PlayMode/     # MonoBehaviour, coroutine, physics, UI tests
 ```
 
 ## Test Logic Generation — Worked Example
