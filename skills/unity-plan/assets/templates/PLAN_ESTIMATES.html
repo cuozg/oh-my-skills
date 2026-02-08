@@ -1,0 +1,304 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_ESTIMATES TEMPLATE                          ║
+    ║              Effort Estimation & Resource Allocation                ║
+    ║                                                                     ║
+    ║  Part of multi-file plan output. Generates: estimates.html          ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS:                                                      ║
+    ║    [FEATURE_NAME]     — Feature name in <title>                     ║
+    ║    [FEATURE_TITLE]    — Feature title in header                     ║
+    ║    [TOTAL_HOURS_MIN]  — Min total hours (integer)                   ║
+    ║    [TOTAL_HOURS_MAX]  — Max total hours (integer)                   ║
+    ║    [TOTAL_DAYS_MIN]   — Min total days (integer)                    ║
+    ║    [TOTAL_DAYS_MAX]   — Max total days (integer)                    ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Estimates: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-diffstat-addition-bg: #238636;
+            --color-diffstat-deletion-bg: #da3633;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .nav-links a:hover { background: var(--color-border-muted); }
+        .nav-links a.active { border-color: var(--color-accent-fg); }
+
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .summary-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .summary-card {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .summary-label { font-size: 11px; color: var(--color-fg-subtle); text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-value { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+        .estimate-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            margin-bottom: 24px;
+        }
+        .estimate-table th {
+            padding: 8px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--color-fg-muted);
+            background: var(--color-border-muted);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .estimate-table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--color-border-default);
+        }
+        .estimate-table tr:hover { background: var(--color-border-muted); }
+        .estimate-table tfoot td {
+            font-weight: 600;
+            background: var(--color-border-muted);
+        }
+
+        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
+        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
+        .badge-m { background: #1f6feb; color: #fff; }
+        .badge-l { background: #8957e5; color: #fff; }
+        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
+
+        .resource-section {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .resource-card {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 14px 16px;
+        }
+        .resource-role {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+            margin-bottom: 8px;
+        }
+        .resource-detail {
+            font-size: 12px;
+            color: var(--color-fg-muted);
+            padding: 3px 0;
+        }
+        .resource-detail strong {
+            color: var(--color-fg-default);
+        }
+
+        .assumptions-section {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .assumptions-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .assumptions-list li {
+            padding: 4px 0;
+            color: var(--color-fg-muted);
+            line-height: 1.5;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .summary-row { flex-direction: column; gap: 8px; }
+            .summary-card { flex: 1 1 100%; }
+            .estimate-table { display: block; overflow-x: auto; }
+            .resource-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Effort Estimation & Resource Allocation</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="overview.html">Overview</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="estimates.html" class="active">Estimates</a>
+            <a href="dependencies.html">Dependencies</a>
+            <a href="timeline.html">Timeline</a>
+        </nav>
+
+        <!-- INSTRUCTION: ESTIMATION SUMMARY — Aggregate totals -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">Total Hours</div>
+                <div class="summary-value">[TOTAL_HOURS_MIN]-[TOTAL_HOURS_MAX]h</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Total Days</div>
+                <div class="summary-value">[TOTAL_DAYS_MIN]-[TOTAL_DAYS_MAX]d</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Complexity</div>
+                <div class="summary-value">[COMPLEXITY_LEVEL]</div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: PER-EPIC ESTIMATION TABLE
+             Columns: Epic | Tasks | Min Hours | Max Hours | Cost Distribution
+             Cost Distribution: count of S/M/L/XL tasks in that epic
+             Replicate <tr> for each epic. Footer row shows totals.
+        -->
+        <div class="section-header">Per-Epic Estimation</div>
+        <table class="estimate-table">
+            <thead>
+                <tr>
+                    <th>Epic</th>
+                    <th style="width:60px">Tasks</th>
+                    <th style="width:80px">Min Hours</th>
+                    <th style="width:80px">Max Hours</th>
+                    <th>Cost Distribution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- INSTRUCTION: Replicate this <tr> for each epic -->
+                <tr>
+                    <td>[EPIC_NAME]</td>
+                    <td>[EPIC_TASK_COUNT]</td>
+                    <td>[EPIC_MIN_HOURS]</td>
+                    <td>[EPIC_MAX_HOURS]</td>
+                    <td>
+                        <span class="badge badge-s">[S_COUNT]×S</span>
+                        <span class="badge badge-m">[M_COUNT]×M</span>
+                        <span class="badge badge-l">[L_COUNT]×L</span>
+                        <span class="badge badge-xl">[XL_COUNT]×XL</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Total</td>
+                    <td>[TOTAL_TASK_COUNT]</td>
+                    <td>[TOTAL_HOURS_MIN]</td>
+                    <td>[TOTAL_HOURS_MAX]</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- INSTRUCTION: RESOURCE ALLOCATION
+             One card per role/skill required.
+             Include: role name, estimated hours, tasks assigned, skills needed.
+        -->
+        <div class="section-header">Resource Allocation</div>
+        <div class="resource-section">
+            <div class="resource-grid">
+                <!-- INSTRUCTION: Replicate this card for each resource/role -->
+                <div class="resource-card">
+                    <div class="resource-role">[ROLE_NAME]</div>
+                    <div class="resource-detail"><strong>Hours:</strong> [ROLE_HOURS_MIN]-[ROLE_HOURS_MAX]h</div>
+                    <div class="resource-detail"><strong>Tasks:</strong> [ASSIGNED_TASK_NUMBERS]</div>
+                    <div class="resource-detail"><strong>Skills:</strong> [REQUIRED_SKILLS]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: ESTIMATION ASSUMPTIONS
+             List assumptions that underpin the estimates.
+             e.g. "Developer has familiarity with the codebase"
+        -->
+        <div class="section-header">Estimation Assumptions</div>
+        <div class="assumptions-section">
+            <ul class="assumptions-list">
+                <!-- INSTRUCTION: Replicate <li> for each assumption -->
+                <li>[ASSUMPTION_1]</li>
+                <li>[ASSUMPTION_2]</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

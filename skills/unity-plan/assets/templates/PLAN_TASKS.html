@@ -1,0 +1,376 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_TASKS TEMPLATE                              ║
+    ║              Task Breakdown & Walkthrough                           ║
+    ║                                                                     ║
+    ║  Part of multi-file plan output. Generates: tasks.html              ║
+    ║                                                                     ║
+    ║  HOW TO USE:                                                        ║
+    ║  1. Copy this entire file as-is                                     ║
+    ║  2. Replace [PLACEHOLDER] values with actual content                ║
+    ║  3. Replicate <tr> rows for each task                               ║
+    ║  4. Replicate walkthrough sections for each task                    ║
+    ║  5. Remove all INSTRUCTION comments from final output               ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS:                                                      ║
+    ║    [FEATURE_NAME]   — Feature name in <title> tag                   ║
+    ║    [FEATURE_TITLE]  — Feature title in header                       ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Tasks: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-canvas-inset: #010409;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-diffstat-addition-bg: #238636;
+            --color-diffstat-deletion-bg: #da3633;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .nav-links a:hover { background: var(--color-border-muted); }
+        .nav-links a.active { border-color: var(--color-accent-fg); }
+
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            margin-bottom: 24px;
+        }
+        .task-table th {
+            padding: 8px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--color-fg-muted);
+            background: var(--color-border-muted);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .task-table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--color-border-default);
+        }
+        .task-table tr:hover { background: var(--color-border-muted); }
+        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
+        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
+        .badge-m { background: #1f6feb; color: #fff; }
+        .badge-l { background: #8957e5; color: #fff; }
+        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
+
+        .walkthrough-section {
+            margin-bottom: 24px;
+        }
+        .walkthrough-task {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+        }
+        .walkthrough-task:last-child {
+            margin-bottom: 24px;
+        }
+        .wt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .wt-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+        }
+        .wt-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .wt-type {
+            padding: 2px 8px;
+            background: var(--color-border-muted);
+            border-radius: 3px;
+            font-size: 11px;
+            color: var(--color-fg-muted);
+            text-transform: uppercase;
+        }
+        .wt-body {
+            color: var(--color-fg-muted);
+            line-height: 1.6;
+        }
+        .wt-body p { margin-bottom: 8px; }
+        .wt-body code {
+            background: var(--color-border-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-accent-fg);
+        }
+        .wt-files {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+        }
+        .wt-files-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-fg-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .wt-files ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .wt-files li {
+            padding: 2px 0;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-fg-muted);
+        }
+
+        .acceptance-criteria {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+        .criteria-group {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 12px 16px;
+        }
+        .criteria-title {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .criteria-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .criteria-list li {
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--color-fg-default);
+            line-height: 1.5;
+        }
+        .criteria-list li input[type="checkbox"] {
+            margin-top: 4px;
+            accent-color: var(--color-success-fg);
+        }
+        .criteria-list li code {
+            background: var(--color-border-muted);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 11px;
+            color: var(--color-accent-fg);
+        }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .task-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .task-table th, .task-table td { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
+            .walkthrough-task { padding: 12px 14px; }
+            .acceptance-criteria { padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Task Breakdown & Walkthrough</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="overview.html">Overview</a>
+            <a href="tasks.html" class="active">Tasks</a>
+            <a href="estimates.html">Estimates</a>
+            <a href="dependencies.html">Dependencies</a>
+            <a href="timeline.html">Timeline</a>
+        </nav>
+
+        <!-- INSTRUCTION: TASK TABLE
+             Column structure: # | Epic | Task | Description | Type | Cost
+             Valid Types: Logic, UI, Data, API, Asset, Test, Config
+             Cost Badges: badge-s=S(<2h), badge-m=M(2-4h), badge-l=L(4-8h), badge-xl=XL(1-2d)
+             Task numbering: [Epic#].[Task#] e.g. 1.1, 1.2, 2.1
+             Replicate <tr> rows for each task.
+        -->
+        <div class="section-header">Task Breakdown</div>
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th style="width:50px">#</th>
+                    <th style="width:100px">Epic</th>
+                    <th style="width:140px">Task</th>
+                    <th>Description</th>
+                    <th style="width:70px">Type</th>
+                    <th style="width:50px">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- INSTRUCTION: Replicate this <tr> for each task -->
+                <tr>
+                    <td>[TASK_NUMBER]</td>
+                    <td>[EPIC_NAME]</td>
+                    <td>[TASK_NAME]</td>
+                    <td>[TASK_DESCRIPTION]</td>
+                    <td>[TASK_TYPE]</td>
+                    <td><span class="badge [BADGE_CLASS]">[COST_LABEL]</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- INSTRUCTION: TASK WALKTHROUGH
+             For EVERY task in the table above, create a walkthrough section.
+             Each walkthrough must include:
+             - Task number and name in header
+             - Type badge and cost badge
+             - Detailed description of what to do
+             - List of files to modify/create
+             - Acceptance criteria specific to this task
+
+             Replicate the entire walkthrough-task div for each task.
+        -->
+        <div class="section-header">Task Walkthrough</div>
+        <div class="walkthrough-section">
+            <!-- INSTRUCTION: Replicate this block for each task -->
+            <div class="walkthrough-task">
+                <div class="wt-header">
+                    <div class="wt-title">[TASK_NUMBER]. [TASK_NAME]</div>
+                    <div class="wt-meta">
+                        <span class="wt-type">[TASK_TYPE]</span>
+                        <span class="badge [BADGE_CLASS]">[COST_LABEL]</span>
+                    </div>
+                </div>
+                <div class="wt-body">
+                    <p>[DETAILED_TASK_DESCRIPTION]</p>
+                    <p>[IMPLEMENTATION_STEPS]</p>
+                </div>
+                <div class="wt-files">
+                    <div class="wt-files-title">Files to Modify</div>
+                    <ul>
+                        <!-- INSTRUCTION: List every file path that this task touches -->
+                        <li>[FILE_PATH_1]</li>
+                        <li>[FILE_PATH_2]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: ACCEPTANCE CRITERIA
+             Groups: Functional, UI/UX, Edge Cases, Debug Verification
+             Each group: checkbox items with optional <code> references
+        -->
+        <div class="section-header">Acceptance Criteria</div>
+        <div class="acceptance-criteria">
+            <div class="criteria-group">
+                <h4 class="criteria-title">Functional</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> [CRITERION]</li>
+                </ul>
+            </div>
+            <div class="criteria-group">
+                <h4 class="criteria-title">UI/UX</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> [CRITERION]</li>
+                </ul>
+            </div>
+            <div class="criteria-group">
+                <h4 class="criteria-title">Edge Cases</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> [CRITERION]</li>
+                </ul>
+            </div>
+            <div class="criteria-group">
+                <h4 class="criteria-title">Debug Verification</h4>
+                <ul class="criteria-list">
+                    <li><input type="checkbox"> [CRITERION]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_TIMELINE TEMPLATE                           ║
+    ║              Implementation Timeline & Milestones                   ║
+    ║                                                                     ║
+    ║  Part of multi-file plan output. Generates: timeline.html           ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS:                                                      ║
+    ║    [FEATURE_NAME]   — Feature name in <title>                       ║
+    ║    [FEATURE_TITLE]  — Feature title in header                       ║
+    ║    [TOTAL_DURATION] — e.g. "3-5 days"                               ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Timeline: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-warning-fg: #d29922;
+            --color-diffstat-addition-bg: #238636;
+            --color-diffstat-deletion-bg: #da3633;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .nav-links a:hover { background: var(--color-border-muted); }
+        .nav-links a.active { border-color: var(--color-accent-fg); }
+
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .timeline-section {
+            padding: 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--color-border-default);
+        }
+        .timeline-item {
+            position: relative;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 18px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-accent-fg);
+            border: 2px solid var(--color-canvas-subtle);
+        }
+        .timeline-item.milestone::before {
+            background: var(--color-success-fg);
+            width: 12px;
+            height: 12px;
+            left: -27px;
+        }
+        .tl-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .tl-phase {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+        }
+        .tl-duration {
+            font-size: 12px;
+            color: var(--color-fg-muted);
+            padding: 2px 8px;
+            background: var(--color-border-muted);
+            border-radius: 3px;
+        }
+        .tl-tasks {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+        .tl-tasks li {
+            padding: 3px 0;
+            color: var(--color-fg-muted);
+            font-size: 13px;
+        }
+        .tl-tasks li code {
+            background: var(--color-border-muted);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 11px;
+            color: var(--color-accent-fg);
+        }
+
+        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
+        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
+        .badge-m { background: #1f6feb; color: #fff; }
+        .badge-l { background: #8957e5; color: #fff; }
+        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
+
+        .milestone-section {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        .milestone-card {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 14px 16px;
+            border-left: 3px solid var(--color-success-fg);
+        }
+        .milestone-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+            margin-bottom: 6px;
+        }
+        .milestone-criteria {
+            font-size: 12px;
+            color: var(--color-fg-muted);
+            line-height: 1.5;
+        }
+        .milestone-target {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--color-fg-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-section {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .order-list {
+            margin: 0;
+            padding-left: 24px;
+            list-style-type: decimal;
+        }
+        .order-list li {
+            padding: 6px 0;
+            color: var(--color-fg-default);
+            line-height: 1.6;
+        }
+        .order-list li code {
+            background: var(--color-border-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-accent-fg);
+        }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .timeline { padding-left: 24px; }
+            .milestone-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Implementation Timeline — [TOTAL_DURATION]</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="overview.html">Overview</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="estimates.html">Estimates</a>
+            <a href="dependencies.html">Dependencies</a>
+            <a href="timeline.html" class="active">Timeline</a>
+        </nav>
+
+        <!-- INSTRUCTION: IMPLEMENTATION TIMELINE
+             One timeline-item per phase/day/sprint.
+             Add class "milestone" to timeline-items that represent checkpoints.
+             Each phase lists the tasks to be completed.
+             Order phases chronologically.
+        -->
+        <div class="section-header">Implementation Phases</div>
+        <div class="timeline-section">
+            <div class="timeline">
+                <!-- INSTRUCTION: Replicate this block for each phase -->
+                <div class="timeline-item">
+                    <div class="tl-header">
+                        <span class="tl-phase">[PHASE_NAME]</span>
+                        <span class="tl-duration">[PHASE_DURATION]</span>
+                    </div>
+                    <ul class="tl-tasks">
+                        <!-- INSTRUCTION: List tasks in this phase -->
+                        <li>[TASK_NUMBER] - [TASK_NAME] <span class="badge [BADGE_CLASS]">[COST]</span></li>
+                    </ul>
+                </div>
+
+                <!-- INSTRUCTION: Milestone example — add class="milestone" -->
+                <div class="timeline-item milestone">
+                    <div class="tl-header">
+                        <span class="tl-phase">[MILESTONE_NAME]</span>
+                        <span class="tl-duration">Checkpoint</span>
+                    </div>
+                    <ul class="tl-tasks">
+                        <li>[MILESTONE_CRITERIA]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: MILESTONES
+             Key checkpoints with success criteria.
+             One card per milestone.
+        -->
+        <div class="section-header">Milestones</div>
+        <div class="milestone-section">
+            <div class="milestone-grid">
+                <!-- INSTRUCTION: Replicate this card for each milestone -->
+                <div class="milestone-card">
+                    <div class="milestone-name">[MILESTONE_NAME]</div>
+                    <div class="milestone-criteria">[SUCCESS_CRITERIA]</div>
+                    <div class="milestone-target">Target: [TARGET_TIMEFRAME]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: RECOMMENDED IMPLEMENTATION ORDER
+             Numbered list of the optimal task execution order.
+             Consider dependencies, risk, and early-value delivery.
+        -->
+        <div class="section-header">Recommended Implementation Order</div>
+        <div class="order-section">
+            <ol class="order-list">
+                <!-- INSTRUCTION: List tasks in recommended order -->
+                <li>[TASK_NUMBER] <code>[TASK_NAME]</code> — [REASON_FOR_ORDER]</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

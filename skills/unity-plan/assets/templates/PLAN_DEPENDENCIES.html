@@ -1,0 +1,319 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_DEPENDENCIES TEMPLATE                       ║
+    ║              Dependency Map, Risks & Blockers                       ║
+    ║                                                                     ║
+    ║  Part of multi-file plan output. Generates: dependencies.html       ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS:                                                      ║
+    ║    [FEATURE_NAME]   — Feature name in <title>                       ║
+    ║    [FEATURE_TITLE]  — Feature title in header                       ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Dependencies: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-warning-fg: #d29922;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .nav-links a:hover { background: var(--color-border-muted); }
+        .nav-links a.active { border-color: var(--color-accent-fg); }
+
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .dep-section {
+            padding: 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+
+        .dep-graph {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .dep-graph pre {
+            margin: 0;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--color-fg-muted);
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .dep-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            margin-bottom: 24px;
+        }
+        .dep-table th {
+            padding: 8px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--color-fg-muted);
+            background: var(--color-border-muted);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .dep-table td {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--color-border-default);
+        }
+        .dep-table tr:hover { background: var(--color-border-muted); }
+
+        .risk-card {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        .risk-card:last-child { margin-bottom: 0; }
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .risk-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+        }
+        .risk-level {
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .risk-high { background: rgba(248, 81, 73, 0.2); color: var(--color-danger-fg); }
+        .risk-medium { background: rgba(210, 153, 34, 0.2); color: var(--color-warning-fg); }
+        .risk-low { background: rgba(63, 185, 80, 0.2); color: var(--color-success-fg); }
+        .risk-body {
+            color: var(--color-fg-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .risk-mitigation {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: var(--color-canvas-subtle);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--color-fg-muted);
+        }
+        .risk-mitigation strong { color: var(--color-fg-default); }
+
+        .blocker-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .blocker-item {
+            padding: 12px 16px;
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .blocker-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .blocker-content {
+            flex: 1;
+        }
+        .blocker-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--color-fg-default);
+            margin-bottom: 4px;
+        }
+        .blocker-desc {
+            font-size: 12px;
+            color: var(--color-fg-muted);
+            line-height: 1.5;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .dep-section { padding: 12px 14px; }
+            .dep-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Dependencies, Risks & Blockers</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="overview.html">Overview</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="estimates.html">Estimates</a>
+            <a href="dependencies.html" class="active">Dependencies</a>
+            <a href="timeline.html">Timeline</a>
+        </nav>
+
+        <!-- INSTRUCTION: DEPENDENCY GRAPH
+             ASCII diagram showing task dependencies.
+             Use arrows (→) to show flow direction.
+             Group parallel tasks on the same line.
+             Format: [Task#] TaskName → [Task#] TaskName
+        -->
+        <div class="section-header">Dependency Graph</div>
+        <div class="dep-section">
+            <div class="dep-graph">
+                <pre>[DEPENDENCY_GRAPH_ASCII]
+
+Example format:
+[1.1] Create Model ──→ [1.2] Add Repository ──→ [2.1] Build UI
+                   └──→ [1.3] Add Tests (parallel)
+[2.1] Build UI ──→ [2.2] Wire Events ──→ [3.1] Integration Test</pre>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: DEPENDENCY TABLE
+             Columns: Task | Depends On | Blocks | Type
+             Type: "hard" (must complete first) or "soft" (can start in parallel)
+             Replicate <tr> for each dependency relationship.
+        -->
+        <div class="section-header">Dependency Matrix</div>
+        <table class="dep-table">
+            <thead>
+                <tr>
+                    <th style="width:120px">Task</th>
+                    <th>Depends On</th>
+                    <th>Blocks</th>
+                    <th style="width:80px">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- INSTRUCTION: Replicate this <tr> for each task's dependencies -->
+                <tr>
+                    <td>[TASK_NUMBER]</td>
+                    <td>[DEPENDS_ON_TASKS]</td>
+                    <td>[BLOCKS_TASKS]</td>
+                    <td>[DEP_TYPE]</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- INSTRUCTION: RISKS
+             One risk-card per identified risk.
+             Risk levels: risk-high, risk-medium, risk-low
+             Each risk must have: title, description, mitigation strategy.
+        -->
+        <div class="section-header">Risks</div>
+        <div class="dep-section">
+            <!-- INSTRUCTION: Replicate this risk-card for each risk -->
+            <div class="risk-card">
+                <div class="risk-header">
+                    <div class="risk-title">[RISK_TITLE]</div>
+                    <span class="risk-level [RISK_LEVEL_CLASS]">[RISK_LEVEL]</span>
+                </div>
+                <div class="risk-body">[RISK_DESCRIPTION]</div>
+                <div class="risk-mitigation">
+                    <strong>Mitigation:</strong> [MITIGATION_STRATEGY]
+                </div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: BLOCKERS
+             Known blockers that must be resolved before or during implementation.
+             Use ⚠️ for warnings, 🔴 for critical blockers, 🔵 for informational.
+        -->
+        <div class="section-header">Blockers</div>
+        <div class="dep-section">
+            <ul class="blocker-list">
+                <!-- INSTRUCTION: Replicate this blocker-item for each blocker -->
+                <li class="blocker-item">
+                    <span class="blocker-icon">[BLOCKER_ICON]</span>
+                    <div class="blocker-content">
+                        <div class="blocker-title">[BLOCKER_TITLE]</div>
+                        <div class="blocker-desc">[BLOCKER_DESCRIPTION]</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

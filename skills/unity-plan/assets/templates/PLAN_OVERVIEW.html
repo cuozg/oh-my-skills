@@ -1,0 +1,316 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                    PLAN_OVERVIEW TEMPLATE                           ║
+    ║              Overview, Architecture & Technical Approach            ║
+    ║                                                                     ║
+    ║  Part of multi-file plan output. Generates: overview.html           ║
+    ║                                                                     ║
+    ║  HOW TO USE:                                                        ║
+    ║  1. Copy this entire file as-is                                     ║
+    ║  2. Replace [PLACEHOLDER] values with actual content                ║
+    ║  3. Remove all INSTRUCTION comments from final output               ║
+    ║  4. Keep ALL CSS exactly as-is                                      ║
+    ║                                                                     ║
+    ║  PLACEHOLDERS:                                                      ║
+    ║    [FEATURE_NAME]     — Feature name in <title> tag                 ║
+    ║    [FEATURE_TITLE]    — Feature title in header                     ║
+    ║    [TOTAL_DURATION]   — e.g. "3-5 days"                             ║
+    ║    [RISK_LEVEL]       — Low / Medium / High                         ║
+    ║    [TASK_COUNT]       — Number of tasks (integer)                   ║
+    ║    [EPIC_COUNT]       — Number of epics (integer)                   ║
+    ║    [PLAN_DATE]        — Generation date (YYYY-MM-DD)                ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Overview: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-canvas-inset: #010409;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .nav-links a:hover { background: var(--color-border-muted); }
+        .nav-links a.active { border-color: var(--color-accent-fg); }
+
+        .summary-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .summary-card {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .summary-label { font-size: 11px; color: var(--color-fg-subtle); text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-value { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .architecture-overview {
+            padding: 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .architecture-section {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .architecture-title {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--color-border-muted);
+        }
+        .architecture-title.old {
+            background: rgba(248, 81, 73, 0.1);
+            color: var(--color-danger-fg);
+        }
+        .architecture-title.new {
+            background: rgba(63, 185, 80, 0.1);
+            color: var(--color-success-fg);
+        }
+        .architecture-code {
+            margin: 0;
+            padding: 14px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--color-fg-muted);
+            white-space: pre;
+            overflow-x: auto;
+        }
+        .architecture-benefits {
+            background: var(--color-canvas-default);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            padding: 14px 18px;
+        }
+        .architecture-benefits h4 {
+            margin: 0 0 10px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-fg-default);
+        }
+        .architecture-benefits ul { margin: 0; padding-left: 20px; }
+        .architecture-benefits li {
+            padding: 4px 0;
+            color: var(--color-fg-muted);
+            line-height: 1.5;
+        }
+
+        .technical-approach {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .approach-list {
+            margin: 0;
+            padding-left: 24px;
+            list-style-type: decimal;
+        }
+        .approach-list li {
+            padding: 6px 0;
+            color: var(--color-fg-default);
+            line-height: 1.6;
+        }
+        .approach-list li code {
+            background: var(--color-border-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-accent-fg);
+        }
+
+        @media screen and (max-width: 1024px) {
+            .container { padding: 12px 16px; }
+            .summary-row { flex-wrap: wrap; gap: 12px; }
+            .summary-card { flex: 1 1 calc(50% - 6px); min-width: 140px; }
+            .architecture-grid { grid-template-columns: 1fr; gap: 16px; }
+        }
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .summary-row { flex-direction: column; gap: 8px; }
+            .summary-card { flex: 1 1 100%; }
+            .summary-value { font-size: 16px; }
+            .technical-approach { padding: 12px 14px; }
+            .approach-list { padding-left: 20px; }
+            .approach-list li { font-size: 13px; }
+        }
+        @media screen and (max-width: 480px) {
+            .container { padding: 6px 8px; }
+            .pr-title { font-size: 14px; }
+            .summary-label { font-size: 10px; }
+            .summary-value { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- INSTRUCTION: HEADER — Replace [FEATURE_TITLE] and [PLAN_DATE] -->
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE]</div>
+            <div class="pr-subtitle">Implementation Plan — [PLAN_DATE]</div>
+        </div>
+
+        <!-- INSTRUCTION: NAVIGATION — Links to sibling plan files.
+             Adjust relative paths if output folder structure differs.
+        -->
+        <nav class="nav-links">
+            <a href="overview.html" class="active">Overview</a>
+            <a href="tasks.html">Tasks</a>
+            <a href="estimates.html">Estimates</a>
+            <a href="dependencies.html">Dependencies</a>
+            <a href="timeline.html">Timeline</a>
+        </nav>
+
+        <!-- INSTRUCTION: SUMMARY CARDS — Replace all [PLACEHOLDER] values.
+             [TOTAL_DURATION]: e.g. "3-5 days", "2 weeks"
+             [RISK_LEVEL]: "Low" | "Medium" | "High"
+             [TASK_COUNT]: integer, e.g. "8"
+             [EPIC_COUNT]: integer, e.g. "3"
+        -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">Duration</div>
+                <div class="summary-value">[TOTAL_DURATION]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Risk</div>
+                <div class="summary-value">[RISK_LEVEL]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Tasks</div>
+                <div class="summary-value">[TASK_COUNT]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Epics</div>
+                <div class="summary-value">[EPIC_COUNT]</div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: ARCHITECTURE OVERVIEW
+             Structure: OLD ARCHITECTURE (left) + NEW ARCHITECTURE (right) + Key Benefits below.
+             - Use <pre class="architecture-code"> for ASCII diagrams
+             - Use ASCII tree characters: ├──, └──, │
+             - Keep diagrams max 10-15 lines each
+             - Show data flow and object relationships
+             - The "old" title class adds red tint; "new" title class adds green tint
+        -->
+        <div class="section-header">Architecture Overview</div>
+        <div class="architecture-overview">
+            <div class="architecture-grid">
+                <div class="architecture-section">
+                    <div class="architecture-title old">OLD ARCHITECTURE</div>
+                    <pre class="architecture-code">[OLD_ARCHITECTURE_DIAGRAM]</pre>
+                </div>
+                <div class="architecture-section">
+                    <div class="architecture-title new">NEW ARCHITECTURE</div>
+                    <pre class="architecture-code">[NEW_ARCHITECTURE_DIAGRAM]</pre>
+                </div>
+            </div>
+            <div class="architecture-benefits">
+                <h4>Key Benefits</h4>
+                <ul>
+                    <!-- INSTRUCTION: Replace with actual benefits. One <li> per benefit. -->
+                    <li>[BENEFIT_1]</li>
+                    <li>[BENEFIT_2]</li>
+                    <li>[BENEFIT_3]</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: TECHNICAL APPROACH
+             - Create numbered <li> items inside <ol class="approach-list">
+             - Use <code>ClassName.MethodName()</code> for code references
+             - Each step = one concrete implementation action
+        -->
+        <div class="section-header">Technical Approach</div>
+        <div class="technical-approach">
+            <ol class="approach-list">
+                <!-- INSTRUCTION: Replace with actual approach steps -->
+                <li>[APPROACH_STEP_1] using <code>[CodeReference]</code></li>
+                <li>[APPROACH_STEP_2] using <code>[CodeReference]</code></li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
