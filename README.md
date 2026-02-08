@@ -67,7 +67,7 @@ graph TD
 2.  **`unity-plan-review`**: The strategic audit. High-level decomposition is critiqued and refined through user brainstorming to ensure a complete task list.
 3.  **`unity-plan-detail`**: Decomposes epics into individual task skeletons. It generates `.md` files in `Documents/Tasks/` defining the requirements and success criteria for each step.
 4.  **`unity-plan-brainstorm`**: The technical deep-dive. It uses `unity-investigate-code` to find exact code locations, brainstorms architectural decisions with the user, and provides specific code changes and test cases.
-5.  **`unity-plan-executor`**: The final implementation stage. It reads the refined task instructions and coordinates specialized experts (like `unity-implement-logic` or `flatbuffers-coder`) to apply the changes and verify the "Definition of Done".
+5.  **`unity-plan-executor`**: The final implementation stage. It reads the refined task instructions and coordinates specialized experts (like `unity-code` or `flatbuffers-coder`) to apply the changes and verify the "Definition of Done".
 
 ---
 
@@ -112,9 +112,9 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | Skill | Description |
 | :--- | :--- |
 | `unity-orchestrator` | The master Unity technical lead and orchestrator. |
-| `unity-mcp-basics` | Mastery of the `unityMCP` toolset for Unity Editor automation. |
+| `unity-mcp` | Expert Unity Editor automation via MCP for Unity (CoplayDev). |
 | `unity-editor-tools` | Specialist in custom Editor tools, windows, and automation. |
-| `unity-implement-logic` | Specialist in implementing C# logic and architectural patterns. |
+| `unity-code` | Expert Unity Developer — clean, commented, performant C# implementation. |
 | `unity-tech-art` | Bridge between art and code (Shaders, Pipeline Automation). |
 | `unity-fix-errors` | Systematic diagnosis and resolution of Unity technical errors. |
 | `unity-debug` | Deep investigation of errors with strategic Debug.Log and reports. |
@@ -234,7 +234,7 @@ Workflows are **step-by-step procedures** for complex, repetitive tasks. They ca
 | `/unity-fix-errors`           | Diagnose and fix Unity compiler or runtime errors.                                |
 | `/unity-documentation`        | Create and maintain technical project documentation.                              |
 | `/unity-optimize-performance` | Identify and resolve performance bottlenecks.                                     |
-| `/unity-implement-logic`      | Implement or refactor Unity C# logic and gameplay systems.                        |
+| `/unity-code`                 | Implement or refactor Unity C# logic and gameplay systems.                        |
 | `/unity-mobile-deploy`        | Optimize, build, and deploy the project to iOS and Android.                       |
 | `/unity-review-pr`            | Conduct a full code review on a GitHub Pull Request.                              |
 | `/unity-plan`                 | Investigate requirements and produce a detailed implementation plan with costing. |
