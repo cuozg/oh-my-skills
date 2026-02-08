@@ -62,10 +62,10 @@ Read every template file in `assets/templates/`. Note the `<!-- INSTRUCTION: ...
 
 ### 3. Investigate Codebase
 
-Use the **`unity-investigate-code`** skill:
+Use the **`unity-investigate`** skill:
 
 ```
-Read and follow: .claude/skills/unity-investigate-code/SKILL.md
+Read and follow: .claude/skills/unity-investigate/SKILL.md
 ```
 
 Focus on: existing systems affected, files needing modification, technical debt, reusable components, entry points and execution flows.

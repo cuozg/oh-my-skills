@@ -22,7 +22,7 @@ Read the template first, then populate all sections.
 | User Intent | Primary Skill | Chain |
 |:------------|:--------------|:------|
 | "Review PR #X" | `unity-review-pr` | — |
-| "Fix this error/crash" | `unity-fix-errors` | → `unity-investigate-code` if root cause unclear |
+| "Fix this error/crash" | `unity-fix-errors` | → `unity-investigate` if root cause unclear |
 | "Debug why X happens" | `unity-debug` | → `unity-fix-errors` after diagnosis |
 | "Implement [feature]" | `unity-plan` | → `unity-plan-brainstorm` → `unity-plan-tasks` → `unity-task-brainstorm` → `unity-task-executor` |
 | "Refactor X" | `unity-code` | → `unity-test` to verify |
@@ -35,7 +35,7 @@ Read the template first, then populate all sections.
 | "Write TDD" | `unity-write-tdd` | + `mermaid` for diagrams |
 | "Write docs/README" | `unity-write-docs` | + `mermaid` for architecture |
 | "Add data table/schema" | `flatbuffers-coder` | — |
-| "How does X work?" | `unity-investigate-code` | — |
+| "How does X work?" | `unity-investigate` | — |
 | "Create a diagram" | `mermaid` | — |
 | "Automate Editor task" | `unity-mcp` | — |
 | "Create/update a skill" | `skill-creator` | — |
@@ -46,7 +46,7 @@ Read the template first, then populate all sections.
 User reports error/crash/bug?
 ├─ Has stack trace or error message?
 │  ├─ YES → unity-fix-errors (diagnose + fix)
-│  │        └─ Can't find root cause? → unity-investigate-code
+│  │        └─ Can't find root cause? → unity-investigate
 │  └─ NO → Ask for console output first
 ├─ Unexpected behavior (no error)?
 │  └─ unity-debug (strategic logging + analysis)

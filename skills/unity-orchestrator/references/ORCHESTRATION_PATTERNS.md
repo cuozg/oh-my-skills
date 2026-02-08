@@ -29,7 +29,7 @@ unity-fix-errors    → Diagnose from console/stack trace
        ↓
 [Can't find cause?]
        ↓
-unity-investigate-code → Trace execution, find root cause
+unity-investigate → Trace execution, find root cause
        ↓
 unity-code  → Apply targeted fix
        ↓
@@ -117,7 +117,7 @@ When a skill recommends chaining:
 
 | Signal | Chain To |
 |:-------|:---------|
-| "Root cause unclear" | `unity-investigate-code` |
+| "Root cause unclear" | `unity-investigate` |
 | "Need architectural decision" | `unity-plan` or `unity-write-tdd` |
 | "Performance concern identified" | `unity-optimize-performance` |
 | "Platform-specific behavior" | `unity-mobile-deploy` or `unity-web-deploy` |

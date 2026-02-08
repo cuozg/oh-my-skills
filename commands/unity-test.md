@@ -22,7 +22,7 @@ Implement and execute automated tests to ensure code quality and stability.
     // turbo
     - Run `unityMCP.run_tests` to execute the suite.
 6.  **Verify & Refactor**:
-    - If tests fail, use `/unity-fix-errors` or `/unity-investigate-code` to identify the cause.
+    - If tests fail, use `/unity-fix-errors` or `/unity-investigate` to identify the cause.
     - Re-run until all tests pass.
 7.  **Document**:
     - (Optional) Use the `TEST_PLAN_TEMPLATE.md` from `.claude/skills/unity-test/assets/templates/` to document the suite.

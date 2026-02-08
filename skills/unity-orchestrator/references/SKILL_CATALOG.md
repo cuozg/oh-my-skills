@@ -8,7 +8,7 @@ Complete catalog of specialized skills in `.claude/skills/`.
 |:------|:------------|:---------|
 | `unity-orchestrator` | ALL Unity requests - routes to specialists | Any Unity question |
 | `unity-code` | C# systems, MonoBehaviours, gameplay features | "implement", "create script", "add feature" |
-| `unity-investigate-code` | Trace execution, understand existing code | "how does X work", "trace the flow", "explain this code" |
+| `unity-investigate` | Trace execution, understand existing code | "how does X work", "trace the flow", "explain this code" |
 
 ## Error & Debug Skills
 
@@ -93,4 +93,4 @@ Complete catalog of specialized skills in `.claude/skills/`.
 
 1. **Architecture/flow explanation?** → `unity-write-docs` + `mermaid`
 2. **Formal specification?** → `unity-write-tdd`
-3. **Code understanding?** → `unity-investigate-code`
+3. **Code understanding?** → `unity-investigate`

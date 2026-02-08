@@ -60,9 +60,9 @@ Write comprehensive description:
 
 **How to generate code:**
 
-1. **Read actual source files** using `unity-investigate-code` skill:
+1. **Read actual source files** using `unity-investigate` skill:
    ```
-   Read and follow: .claude/skills/unity-investigate-code/SKILL.md
+   Read and follow: .claude/skills/unity-investigate/SKILL.md
    ```
 
 2. **For existing files**:

@@ -119,7 +119,7 @@ Extract: `PlayerController.cs:42`, called from `GameManager.cs:156`
 
 ## Step 2: Investigate Logic
 
-Load `unity-investigate-code` skill for deep analysis:
+Load `unity-investigate` skill for deep analysis:
 
 1. **Read error file** - Code around error line with context (±50 lines)
 2. **Trace callers** - Use `grep_search` or `lsp_find_references` for call sites
