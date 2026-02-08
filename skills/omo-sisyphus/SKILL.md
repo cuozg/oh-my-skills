@@ -5,7 +5,21 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Sub
 
 # Sisyphus Orchestrator
 
-**Purpose**: Generate Sisyphus-compatible prompts and delegate via `task()`.
+**Purpose**: Generate Sisyphus-compatible prompts and delegate via `call_omo_agent()`.
+
+> [!CAUTION]
+> **ALL delegations MUST use `subagent_type="sisyphus"`.**
+> This is NON-NEGOTIABLE. No other subagent type is permitted.
+
+---
+
+## MANDATORY: Subagent Type Constraint
+
+**Every `call_omo_agent()` call MUST specify `subagent_type="sisyphus"`.**
+
+- No exceptions. No alternatives. No fallbacks.
+- Using any other `subagent_type` value violates this skill's contract.
+- If `subagent_type` is omitted or set to anything other than `"sisyphus"`, the delegation is INVALID.
 
 ---
 
@@ -13,11 +27,11 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Sub
 
 > [!CAUTION]
 > **The subagent MUST load the appropriate skill BEFORE doing any work.**
-> 
+>
 > The prompt MUST explicitly instruct the subagent:
 > ```markdown
 > ## FIRST: Load Required Skill
-> **BEFORE you do anything**, read and follow this skill:
+> **BEFORE you do anything**, you MUST read and follow this skill:
 > `.claude/skills/[skill-name]/SKILL.md`
 > ```
 >
@@ -37,6 +51,7 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Sub
 > | Generate flatbuffer | `flatbuffers-coder` |
 > | Generate diagram | `mermaid` |
 > | Check bash script | `bash-check` |
+> | Create/update skill | `skill-creator` |
 > | General (no specific skill) | Justify omission |
 
 ---
@@ -61,20 +76,22 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Sub
 
 ### Phase 2: Pre-Delegation Planning (MANDATORY)
 
-**BEFORE every `task()` call:**
+**BEFORE every `call_omo_agent()` call:**
 
 ```
-I will use task() with:
+I will delegate via call_omo_agent() with:
+- **subagent_type**: "sisyphus" (MANDATORY - no alternatives)
 - **Primary action**: [code|plan|test|review|execute|investigate|fix|debug|...]
-- **load_skills**: ["skill-name"]
-- **Skill justification**: 
-  - Action is "code" → unity-code (write C# for Unity)
+- **Skill to load**: [skill-name]
+- **Skill justification**: Action is "code" → unity-code
 - **Expected Outcome**: [success criteria]
 ```
 
 ---
 
 ### Phase 3: Generate Prompt
+
+Read the delegation prompt template at `assets/templates/DELEGATION_PROMPT.md` and fill in all placeholders.
 
 **Every prompt MUST include the skill loading instruction as the FIRST section:**
 
@@ -116,6 +133,9 @@ This skill contains the rules, patterns, and workflow you MUST use.
 
 ### Phase 4: Delegate
 
+> [!CAUTION]
+> **`subagent_type="sisyphus"` is MANDATORY in every call. NO EXCEPTIONS.**
+
 #### Background vs Sync
 
 | Mode | When |
@@ -123,24 +143,26 @@ This skill contains the rules, patterns, and workflow you MUST use.
 | `run_in_background=false` | Need result before next step |
 | `run_in_background=true` | Parallel tasks, exploration |
 
-```typescript
-// Sync (blocking)
-task(
-  category="quick",
-  run_in_background=false,
-  load_skills=["<skill>"],
-  prompt="..."
+```python
+# Sync (blocking) - MUST use subagent_type="sisyphus"
+call_omo_agent(
+    subagent_type="sisyphus",
+    description="Brief task description",
+    run_in_background=False,
+    prompt="..."
 )
 
-// Background (non-blocking)
-task(
-  category="quick",
-  run_in_background=true,
-  load_skills=["<skill>"],
-  prompt="..."
+# Background (non-blocking) - MUST use subagent_type="sisyphus"
+call_omo_agent(
+    subagent_type="sisyphus",
+    description="Brief task description",
+    run_in_background=True,
+    prompt="..."
 )
-// Collect later: background_output(task_id="...")
+# Collect later: background_output(task_id="...")
 ```
+
+**NEVER use any other value for `subagent_type`.** The only valid value is `"sisyphus"`.
 
 ---
 
@@ -151,22 +173,23 @@ task(
 User: `Add a health bar to the player`
 
 ```
-I will use task() with:
+I will delegate via call_omo_agent() with:
+- **subagent_type**: "sisyphus" (MANDATORY)
 - **Primary action**: code (write C# implementation)
-- **load_skills**: ["unity-code"]
+- **Skill to load**: unity-code
 - **Expected Outcome**: PlayerHealthBar.cs created with proper patterns
 ```
 
-```typescript
-task(
-  category="unspecified-high",
-  run_in_background=false,
-  load_skills=["unity-code"],
-  prompt=`
+```python
+call_omo_agent(
+    subagent_type="sisyphus",
+    description="Implement player health bar UI component",
+    run_in_background=False,
+    prompt="""
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-\`.claude/skills/unity-code/SKILL.md\`
+`.claude/skills/unity-code/SKILL.md`
 
 This skill contains Unity C# patterns, anti-patterns to avoid, and the pre-completion checklist.
 
@@ -195,7 +218,7 @@ Implement a health bar UI component for the player.
 - Use GetComponent in Update
 - Skip the pre-completion checklist
 - Ignore unity-code patterns
-`
+"""
 )
 ```
 
@@ -204,22 +227,23 @@ Implement a health bar UI component for the player.
 User: `Create a plan for implementing multiplayer`
 
 ```
-I will use task() with:
+I will delegate via call_omo_agent() with:
+- **subagent_type**: "sisyphus" (MANDATORY)
 - **Primary action**: plan
-- **load_skills**: ["unity-plan"]
+- **Skill to load**: unity-plan
 - **Expected Outcome**: Plan documents in documents/plans/multiplayer/
 ```
 
-```typescript
-task(
-  category="deep",
-  run_in_background=false,
-  load_skills=["unity-plan"],
-  prompt=`
+```python
+call_omo_agent(
+    subagent_type="sisyphus",
+    description="Create multiplayer implementation plan",
+    run_in_background=False,
+    prompt="""
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-\`.claude/skills/unity-plan/SKILL.md\`
+`.claude/skills/unity-plan/SKILL.md`
 
 This skill contains the planning workflow, templates, and output format.
 
@@ -247,7 +271,7 @@ Create an implementation plan for adding multiplayer support.
 - Implement any code (planning only)
 - Skip any template file
 - Output to assets/templates/ instead of documents/plans/
-`
+"""
 )
 ```
 
@@ -256,22 +280,23 @@ Create an implementation plan for adding multiplayer support.
 User: `Write unit tests for PlayerHealth class`
 
 ```
-I will use task() with:
+I will delegate via call_omo_agent() with:
+- **subagent_type**: "sisyphus" (MANDATORY)
 - **Primary action**: test
-- **load_skills**: ["unity-test"]
+- **Skill to load**: unity-test
 - **Expected Outcome**: Test file with comprehensive coverage
 ```
 
-```typescript
-task(
-  category="quick",
-  run_in_background=false,
-  load_skills=["unity-test"],
-  prompt=`
+```python
+call_omo_agent(
+    subagent_type="sisyphus",
+    description="Write unit tests for PlayerHealth class",
+    run_in_background=False,
+    prompt="""
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-\`.claude/skills/unity-test/SKILL.md\`
+`.claude/skills/unity-test/SKILL.md`
 
 This skill contains test generation rules, naming conventions, and the output template.
 
@@ -299,7 +324,7 @@ Write comprehensive unit tests for PlayerHealth class.
 - Skip the code analysis checklist
 - Write Play Mode tests when Edit Mode suffices
 - Leave tests without proper cleanup
-`
+"""
 )
 ```
 
@@ -307,10 +332,12 @@ Write comprehensive unit tests for PlayerHealth class.
 
 ## Anti-Patterns
 
-| ❌ Bad | ✅ Good |
-|-------|--------|
+| Bad | Good |
+|-----|------|
+| `subagent_type="explore"` | `subagent_type="sisyphus"` (ALWAYS) |
+| `subagent_type="hephaestus"` | `subagent_type="sisyphus"` (ALWAYS) |
+| Omitting `subagent_type` | `subagent_type="sisyphus"` (ALWAYS) |
 | Missing skill load instruction | "FIRST: Load Required Skill" section at top |
-| `load_skills=[]` without justification | Evaluate action type, select skill |
 | Generic prompt without skill reference | Prompt references loaded skill in MUST DO |
 | Same skill for all tasks | Match skill to action type |
 | Skill loaded but not used | "Follow skill EXACTLY as loaded above" |
@@ -319,9 +346,9 @@ Write comprehensive unit tests for PlayerHealth class.
 
 ## Checklist
 
+- [ ] `subagent_type="sisyphus"` specified (MANDATORY, no exceptions)
 - [ ] Action type identified (code/plan/test/review/etc)
 - [ ] Correct skill selected for action type
-- [ ] `load_skills` matches skill in prompt
 - [ ] Prompt has "FIRST: Load Required Skill" section
 - [ ] Skill path is `.claude/skills/[name]/SKILL.md`
 - [ ] MUST DO includes "Follow skill EXACTLY as loaded above"

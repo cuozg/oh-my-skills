@@ -1,3 +1,12 @@
+## FIRST: Load Required Skill
+
+**BEFORE you do anything**, you MUST read and follow this skill:
+`.claude/skills/{skill-name}/SKILL.md`
+
+This skill contains the rules, patterns, and workflow you MUST use.
+
+---
+
 ## Task
 {Clear, atomic description - one action per delegation}
 
@@ -12,12 +21,12 @@ Follow the skill's instructions exactly.
 ## Context
 - Existing patterns: {reference files}
 - Constraints: {tech stack, style}
-- **Loaded skill**: `{skill-name}` - {brief description}
+- **Required skill**: `{skill-name}` - you loaded this above
 
 ## Requirements
 
 ### MUST DO:
-- **FOLLOW `{skill-name}` skill instructions**
+- Follow `{skill-name}` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns
@@ -25,8 +34,18 @@ Follow the skill's instructions exactly.
 - Verify build/tests pass
 
 ### MUST NOT DO:
+- Skip loading the skill first
 - Ignore the loaded skill instructions
 - Suppress type errors with `as any`, `@ts-ignore`
 - Commit unless explicitly requested
 - Refactor while fixing bugs
 - Leave code in broken state
+
+---
+
+<!--
+DELEGATION CONSTRAINT (for the orchestrator, not the subagent):
+This prompt MUST be sent via:
+  call_omo_agent(subagent_type="sisyphus", ...)
+Using any other subagent_type is FORBIDDEN.
+-->
