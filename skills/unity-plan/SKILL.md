@@ -11,36 +11,37 @@ Create implementation plans for Unity features with architecture, task breakdown
 
 ---
 
-## Output Structure
+## Architecture: Templates vs Generated Files
 
-Plans output to a folder with one file per section:
+This skill uses a **template-to-output** architecture. Understanding the distinction prevents `ERR_FILE_NOT_FOUND` errors.
 
-```
-documents/plans/{plan-name}/
-├── overview.html
-├── tasks.html
-├── estimates.html
-├── dependencies.html
-├── timeline.html
-└── changes.patch
-```
+**Templates** (`assets/templates/`) are **internal boilerplate** containing HTML structure, CSS, `[PLACEHOLDER]` values, and `<!-- INSTRUCTION: ... -->` comments. They exist solely as input to the generation process. **NEVER** access template files directly — opening them in a browser shows placeholder text and navigation links break because sibling files don't exist at that path.
+
+**Generated files** (`documents/plans/{plan-name}/`) are the **actual user-facing output** created by processing templates with real plan data. Users open these files in their browser.
+
+| Template (internal — do not access) | Generated Output (user-facing) |
+|---|---|
+| `assets/templates/PLAN_OVERVIEW.html` | `documents/plans/{plan-name}/overview.html` |
+| `assets/templates/PLAN_TASKS.html` | `documents/plans/{plan-name}/tasks.html` |
+| `assets/templates/PLAN_ESTIMATES.html` | `documents/plans/{plan-name}/estimates.html` |
+| `assets/templates/PLAN_DEPENDENCIES.html` | `documents/plans/{plan-name}/dependencies.html` |
+| `assets/templates/PLAN_TIMELINE.html` | `documents/plans/{plan-name}/timeline.html` |
+| `assets/templates/PLAN_PATCH_TEMPLATE.patch` | `documents/plans/{plan-name}/changes.patch` |
 
 `{plan-name}` = kebab-case feature name (e.g. `multi-event-daily-boss`).
 
 ---
 
-## Templates
+## Generation Process
 
-Each output file has a corresponding template in `assets/templates/`:
+When generating output from a template:
 
-| Template | Output | Content |
-|---|---|---|
-| `PLAN_OVERVIEW.html` | `overview.html` | Header, summary cards, architecture diagrams, technical approach |
-| `PLAN_TASKS.html` | `tasks.html` | Task table + per-task walkthrough with files and criteria |
-| `PLAN_ESTIMATES.html` | `estimates.html` | Per-epic hours, resource allocation, assumptions |
-| `PLAN_DEPENDENCIES.html` | `dependencies.html` | Dependency graph, dependency matrix, risks, blockers |
-| `PLAN_TIMELINE.html` | `timeline.html` | Implementation phases, milestones, recommended order |
-| `PLAN_PATCH_TEMPLATE.patch` | `changes.patch` | Unified diff format reference |
+1. Read the template from `assets/templates/` to understand structure
+2. Replace all `[PLACEHOLDER]` values with actual plan content
+3. Keep the `<nav class="nav-links">` section — paths are already relative (`./`)
+4. Mark the correct tab as `class="active"` for each output file
+5. Remove all `<!-- INSTRUCTION: ... -->` comments from final output
+6. Write the completed HTML to `documents/plans/{plan-name}/`
 
 ---
 
@@ -48,7 +49,7 @@ Each output file has a corresponding template in `assets/templates/`:
 
 ### 1. Read All Templates
 
-Read every template file in `assets/templates/` and understand all `<!-- INSTRUCTION: ... -->` comments. These are the authoritative format reference.
+Read every template file in `assets/templates/`. Note the `<!-- INSTRUCTION: ... -->` comments — they describe what content goes where. The navigation bar uses relative `./` paths with the active tab pre-marked.
 
 ### 2. Analyze Requirements
 
@@ -74,7 +75,7 @@ mkdir -p documents/plans/{plan-name}
 
 ### 5. Generate overview.html
 
-Use `PLAN_OVERVIEW.html` template. Populate:
+Read `assets/templates/PLAN_OVERVIEW.html`. Replace placeholders and write to `documents/plans/{plan-name}/overview.html`. Populate:
 - Feature title and generation date
 - Summary cards: duration, risk, task count, epic count
 - Architecture overview: old vs new ASCII diagrams + key benefits
@@ -82,7 +83,7 @@ Use `PLAN_OVERVIEW.html` template. Populate:
 
 ### 6. Generate tasks.html
 
-Use `PLAN_TASKS.html` template. Populate:
+Read `assets/templates/PLAN_TASKS.html`. Replace placeholders and write to `documents/plans/{plan-name}/tasks.html`. Populate:
 - Task table grouped by epic (columns: #, Epic, Task, Description, Type, Cost)
 - **Full walkthrough for EVERY task** — each task gets:
   - Detailed description of what to implement
@@ -98,7 +99,7 @@ Task numbering: `[Epic#].[Task#]` (e.g. 1.1, 1.2, 2.1)
 
 ### 7. Generate estimates.html
 
-Use `PLAN_ESTIMATES.html` template. Populate:
+Read `assets/templates/PLAN_ESTIMATES.html`. Replace placeholders and write to `documents/plans/{plan-name}/estimates.html`. Populate:
 - Aggregate totals: total hours range, total days range, complexity
 - Per-epic estimation table with cost distribution (S/M/L/XL counts)
 - Resource allocation cards: role, hours, assigned tasks, required skills
@@ -106,7 +107,7 @@ Use `PLAN_ESTIMATES.html` template. Populate:
 
 ### 8. Generate dependencies.html
 
-Use `PLAN_DEPENDENCIES.html` template. Populate:
+Read `assets/templates/PLAN_DEPENDENCIES.html`. Replace placeholders and write to `documents/plans/{plan-name}/dependencies.html`. Populate:
 - ASCII dependency graph showing task flow with arrows
 - Dependency matrix: each task's depends-on and blocks relationships
 - Risk cards with level (high/medium/low), description, mitigation
@@ -114,14 +115,14 @@ Use `PLAN_DEPENDENCIES.html` template. Populate:
 
 ### 9. Generate timeline.html
 
-Use `PLAN_TIMELINE.html` template. Populate:
+Read `assets/templates/PLAN_TIMELINE.html`. Replace placeholders and write to `documents/plans/{plan-name}/timeline.html`. Populate:
 - Implementation phases with tasks per phase and duration
 - Milestone checkpoints with success criteria
 - Recommended implementation order with rationale
 
 ### 10. Generate changes.patch
 
-Use `PLAN_PATCH_TEMPLATE.patch` as format reference. Generate a unified diff file containing **100% of all code changes** for the entire plan.
+Read `assets/templates/PLAN_PATCH_TEMPLATE.patch` as format reference. Generate a unified diff at `documents/plans/{plan-name}/changes.patch` containing **100% of all code changes** for the entire plan.
 
 **Patch generation rules:**
 1. Include every file that any task modifies, creates, or deletes
@@ -136,6 +137,8 @@ Use `PLAN_PATCH_TEMPLATE.patch` as format reference. Generate a unified diff fil
 ### 11. Verbal Summary
 
 After generating all files, provide:
+- Location of generated files: `documents/plans/{plan-name}/`
+- Instruction to open `overview.html` in a browser
 - Total estimated effort
 - Key risks or blockers
 - Critical path through dependencies
@@ -144,20 +147,46 @@ After generating all files, provide:
 
 ---
 
+## How to Access Generated Plans
+
+After generation, files are in `documents/plans/{plan-name}/`:
+
+```
+documents/plans/{plan-name}/
+├── overview.html       ← Start here
+├── tasks.html
+├── estimates.html
+├── dependencies.html
+├── timeline.html
+└── changes.patch
+```
+
+1. Open `documents/plans/{plan-name}/overview.html` in a browser
+2. Use navigation tabs to switch between sections
+3. All navigation uses relative paths (`./tasks.html`, `./estimates.html`, etc.)
+
+**WARNING**: Do NOT open files from `.claude/skills/unity-plan/assets/templates/`. Those are internal templates with placeholder text. Clicking navigation tabs will cause `ERR_FILE_NOT_FOUND` because sibling files don't exist at that location.
+
+---
+
 ## Output Checklist
 
 Before completing, verify:
 
-- [ ] All 6 templates read before generating output
+- [ ] All 6 templates read from `assets/templates/` before generating output
 - [ ] Output folder created at `documents/plans/{plan-name}/`
+- [ ] All 5 HTML files written to output folder (NOT to `assets/templates/`)
 - [ ] overview.html: CSS copied exactly, all placeholders replaced, architecture has old/new diagrams
 - [ ] tasks.html: Every task has a walkthrough section, files listed, criteria defined
 - [ ] estimates.html: Per-epic totals, resource allocation cards, assumptions listed
 - [ ] dependencies.html: Dependency graph, matrix, risks with mitigations, blockers
 - [ ] timeline.html: Phases with tasks, milestones with criteria, recommended order
 - [ ] changes.patch: Unified diff format, all tasks have code changes, applies cleanly
-- [ ] Navigation links work between all HTML files
+- [ ] Navigation tabs present in all 5 HTML files with relative `./` paths
+- [ ] Correct tab marked `class="active"` in each file
+- [ ] Patch tab links to `./changes.patch` in all HTML files
 - [ ] All `<!-- INSTRUCTION: ... -->` comments removed from final output
+- [ ] Summary includes path to generated files for user to open
 
 ---
 
@@ -167,3 +196,4 @@ Before completing, verify:
 - Modify actual project files (except creating the plan output folder)
 - Run the generated patch file
 - Skip any task in the walkthrough or patch
+- Serve files from `assets/templates/` to users

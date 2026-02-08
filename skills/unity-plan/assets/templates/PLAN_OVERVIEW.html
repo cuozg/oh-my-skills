@@ -1,15 +1,23 @@
 <!--
     ╔══════════════════════════════════════════════════════════════════════╗
+    ║  TEMPLATE FILE — DO NOT ACCESS DIRECTLY                            ║
+    ║                                                                     ║
+    ║  This is an INTERNAL template used to generate output files.        ║
+    ║  Opening this file in a browser will show placeholder text and      ║
+    ║  navigation links will cause ERR_FILE_NOT_FOUND errors.             ║
+    ║                                                                     ║
+    ║  Generated output location: documents/plans/{plan-name}/overview.html║
+    ║  Only access files in documents/plans/ — never this template.       ║
+    ╠══════════════════════════════════════════════════════════════════════╣
     ║                    PLAN_OVERVIEW TEMPLATE                           ║
     ║              Overview, Architecture & Technical Approach            ║
     ║                                                                     ║
-    ║  Part of multi-file plan output. Generates: overview.html           ║
-    ║                                                                     ║
-    ║  HOW TO USE:                                                        ║
-    ║  1. Copy this entire file as-is                                     ║
-    ║  2. Replace [PLACEHOLDER] values with actual content                ║
+    ║  HOW TO USE (for generation workflow only):                         ║
+    ║  1. Read this template to understand structure and placeholders     ║
+    ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
     ║  3. Remove all INSTRUCTION comments from final output               ║
     ║  4. Keep ALL CSS exactly as-is                                      ║
+    ║  5. Write result to documents/plans/{plan-name}/overview.html       ║
     ║                                                                     ║
     ║  PLACEHOLDERS:                                                      ║
     ║    [FEATURE_NAME]     — Feature name in <title> tag                 ║
@@ -80,7 +88,18 @@
             font-size: 13px;
         }
         .nav-links a:hover { background: var(--color-border-muted); }
-        .nav-links a.active { border-color: var(--color-accent-fg); }
+        .nav-links a.active {
+            border-color: var(--color-accent-fg);
+            background: rgba(88, 166, 255, 0.15);
+            color: #fff;
+            font-weight: 600;
+        }
+        .nav-links a.patch-link {
+            background: var(--color-border-muted);
+            color: var(--color-success-fg);
+            border-color: var(--color-success-fg);
+        }
+        .nav-links a.patch-link:hover { background: rgba(63, 185, 80, 0.15); }
 
         .summary-row {
             display: flex;
@@ -232,14 +251,16 @@
         </div>
 
         <!-- INSTRUCTION: NAVIGATION — Links to sibling plan files.
-             Adjust relative paths if output folder structure differs.
+             All paths are relative to the output folder (documents/plans/{plan-name}/).
+             Mark the current page's tab with class="active".
         -->
         <nav class="nav-links">
-            <a href="overview.html" class="active">Overview</a>
-            <a href="tasks.html">Tasks</a>
-            <a href="estimates.html">Estimates</a>
-            <a href="dependencies.html">Dependencies</a>
-            <a href="timeline.html">Timeline</a>
+            <a href="./overview.html" class="active">Overview</a>
+            <a href="./tasks.html">Tasks</a>
+            <a href="./estimates.html">Estimates</a>
+            <a href="./dependencies.html">Dependencies</a>
+            <a href="./timeline.html">Timeline</a>
+            <a href="./changes.patch" class="patch-link">Patch</a>
         </nav>
 
         <!-- INSTRUCTION: SUMMARY CARDS — Replace all [PLACEHOLDER] values.

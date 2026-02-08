@@ -1,3 +1,11 @@
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  TEMPLATE FILE — DO NOT USE DIRECTLY                               ║
+# ║                                                                     ║
+# ║  This is an INTERNAL template showing the expected patch format.    ║
+# ║  Generated output location: documents/plans/{plan-name}/changes.patch
+# ║  Only access files in documents/plans/ — never this template.      ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+#
 # PLAN_PATCH_TEMPLATE
 #
 # Unified diff format template for plan code changes.

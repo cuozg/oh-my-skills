@@ -1,9 +1,22 @@
 <!--
     ╔══════════════════════════════════════════════════════════════════════╗
+    ║  TEMPLATE FILE — DO NOT ACCESS DIRECTLY                            ║
+    ║                                                                     ║
+    ║  This is an INTERNAL template used to generate output files.        ║
+    ║  Opening this file in a browser will show placeholder text and      ║
+    ║  navigation links will cause ERR_FILE_NOT_FOUND errors.             ║
+    ║                                                                     ║
+    ║  Generated output location: documents/plans/{plan-name}/dependencies.html║
+    ║  Only access files in documents/plans/ — never this template.       ║
+    ╠══════════════════════════════════════════════════════════════════════╣
     ║                    PLAN_DEPENDENCIES TEMPLATE                       ║
     ║              Dependency Map, Risks & Blockers                       ║
     ║                                                                     ║
-    ║  Part of multi-file plan output. Generates: dependencies.html       ║
+    ║  HOW TO USE (for generation workflow only):                         ║
+    ║  1. Read this template to understand structure and placeholders     ║
+    ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
+    ║  3. Remove all INSTRUCTION comments from final output               ║
+    ║  4. Write result to documents/plans/{plan-name}/dependencies.html   ║
     ║                                                                     ║
     ║  PLACEHOLDERS:                                                      ║
     ║    [FEATURE_NAME]   — Feature name in <title>                       ║
@@ -69,7 +82,18 @@
             font-size: 13px;
         }
         .nav-links a:hover { background: var(--color-border-muted); }
-        .nav-links a.active { border-color: var(--color-accent-fg); }
+        .nav-links a.active {
+            border-color: var(--color-accent-fg);
+            background: rgba(88, 166, 255, 0.15);
+            color: #fff;
+            font-weight: 600;
+        }
+        .nav-links a.patch-link {
+            background: var(--color-border-muted);
+            color: var(--color-success-fg);
+            border-color: var(--color-success-fg);
+        }
+        .nav-links a.patch-link:hover { background: rgba(63, 185, 80, 0.15); }
 
         .section-header {
             padding: 10px 16px;
@@ -226,11 +250,12 @@
         </div>
 
         <nav class="nav-links">
-            <a href="overview.html">Overview</a>
-            <a href="tasks.html">Tasks</a>
-            <a href="estimates.html">Estimates</a>
-            <a href="dependencies.html" class="active">Dependencies</a>
-            <a href="timeline.html">Timeline</a>
+            <a href="./overview.html">Overview</a>
+            <a href="./tasks.html">Tasks</a>
+            <a href="./estimates.html">Estimates</a>
+            <a href="./dependencies.html" class="active">Dependencies</a>
+            <a href="./timeline.html">Timeline</a>
+            <a href="./changes.patch" class="patch-link">Patch</a>
         </nav>
 
         <!-- INSTRUCTION: DEPENDENCY GRAPH
