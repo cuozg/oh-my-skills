@@ -1,11 +1,11 @@
 ---
 name: unity-plan
-description: "High-level planning with GitHub PR-style output for Unity features. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into Tasks with code change previews, (4) Generating visual diff plans showing exact proposed changes. Outputs an HTML file resembling GitHub PR split view."
+description: "High-level planning for Unity features. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into epics and tasks, (4) Estimating effort and identifying risks. Outputs an HTML file with architecture overview, technical approach, task breakdown, and acceptance criteria."
 ---
 
 # Unity Planning Skill
 
-Create implementation plans for Unity features with GitHub PR-style code diff previews.
+Create implementation plans for Unity features with clear architecture, task breakdown, and acceptance criteria.
 
 **IMPORTANT**: This skill is for **planning only**. Do NOT implement or execute any work.
 
@@ -22,7 +22,7 @@ Create implementation plans for Unity features with GitHub PR-style code diff pr
 2. **Copy the exact HTML structure** — all CSS, all classes, all elements
 3. **Replace only the placeholder values** — do not modify structure
 4. **Use the exact CSS** from the template verbatim
-5. All placeholder names, class names, diff row formats, and section structures are defined **exclusively in the template** — refer to the inline `<!-- INSTRUCTION: ... -->` comments
+5. All placeholder names, class names, and section structures are defined **exclusively in the template** — refer to the inline `<!-- INSTRUCTION: ... -->` comments
 
 ---
 
@@ -73,29 +73,11 @@ Create a numbered list of implementation steps with `<code>` references. Structu
 
 Break work into tasks grouped by epic. Structure and valid values defined in template.
 
-### 7. Code Changes (CRITICAL)
-
-**MANDATORY**: Show **100% COMPLETE code changes** for ALL files.
-
-Rules:
-1. List ALL affected files — every file that will be modified
-2. Show complete before/after code — all lines that change
-3. Include full method implementations — not just snippets
-4. Show complete `[Obsolete]` wrappers with full forwarding logic
-
-**Do NOT**:
-- Show partial code with "..." or "// remaining code"
-- Skip files because they are "similar"
-- Summarize changes instead of showing exact code
-- Omit any method or property that will be modified
-
-All diff HTML structures (context lines, additions, deletions, empty lines, hunk headers, word highlights) are defined in the template.
-
-### 8. Acceptance Criteria
+### 7. Acceptance Criteria
 
 Group criteria into categories (Functional, UI/UX, Edge Cases, Debug Verification). Structure defined in template.
 
-### 9. Summary
+### 8. Summary
 
 After generating the HTML file, provide a verbal summary:
 - Total estimated effort
@@ -115,9 +97,6 @@ Before saving the file, verify:
 - [ ] Architecture overview has old/new diagrams + benefits
 - [ ] Technical approach is numbered list with `<code>` tags
 - [ ] Task table uses correct badge classes
-- [ ] All affected files have diff blocks
-- [ ] Diff rows use exact HTML structure from template
-- [ ] Word highlights use `<x>` and `<y>` tags
 - [ ] Acceptance criteria grouped correctly
 - [ ] File saved to `Documents/Plans/[FeatureName]_PLAN.html`
 
@@ -129,5 +108,6 @@ Before saving the file, verify:
 - Create or edit Unity assets
 - Run implementations
 - Execute tasks from the plan
+- Generate code diffs or proposed code changes
 
-This skill produces a **visual plan document** showing proposed changes only.
+This skill produces a **planning document** with architecture, tasks, and acceptance criteria only.

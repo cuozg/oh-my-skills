@@ -1,0 +1,743 @@
+<!--
+    ╔══════════════════════════════════════════════════════════════════════╗
+    ║                  DETAIL_OUTPUT TEMPLATE                            ║
+    ║            Authoritative Structure Reference                      ║
+    ║                                                                   ║
+    ║  This file is the SINGLE SOURCE OF TRUTH for detail output.       ║
+    ║  SKILL.md defines workflow logic; this file defines output format. ║
+    ║                                                                   ║
+    ║  HOW TO USE:                                                      ║
+    ║  1. Copy this entire file as-is                                   ║
+    ║  2. Replace [PLACEHOLDER] values with actual content              ║
+    ║  3. Replicate the TASK SECTION block for each task in the plan    ║
+    ║  4. Remove all INSTRUCTION comments from final output             ║
+    ║  5. Keep ALL CSS exactly as-is — do not modify styles             ║
+    ║                                                                   ║
+    ║  PLACEHOLDERS (replace ALL of these):                             ║
+    ║    [FEATURE_NAME]    — Feature name in <title> tag                ║
+    ║    [FEATURE_TITLE]   — Feature title in header                    ║
+    ║    [PLAN_SOURCE]     — Source plan file path                      ║
+    ║    [TOTAL_TASKS]     — Total number of tasks (integer)            ║
+    ║    [TOTAL_FILES]     — Total files changed across all tasks       ║
+    ║    [TOTAL_DURATION]  — Estimated total duration                   ║
+    ║                                                                   ║
+    ║  PER-TASK PLACEHOLDERS:                                           ║
+    ║    [TASK_NUMBER]     — Task number (e.g. "1.1", "2.3")            ║
+    ║    [TASK_TITLE]      — Short task title                           ║
+    ║    [TASK_EPIC]       — Epic name this task belongs to             ║
+    ║    [TASK_TYPE]       — Logic | UI | Data | API | Asset | Test     ║
+    ║    [TASK_COST]       — S | M | L | XL                             ║
+    ║    [TASK_DESCRIPTION]— Full description of what the task does     ║
+    ║    [TASK_FILE_COUNT] — Number of files changed in this task       ║
+    ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details: [FEATURE_NAME]</title>
+    <style>
+        :root {
+            --color-canvas-default: #0d1117;
+            --color-canvas-subtle: #161b22;
+            --color-canvas-inset: #010409;
+            --color-border-default: #30363d;
+            --color-border-muted: #21262d;
+            --color-fg-default: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-fg-subtle: #6e7681;
+            --color-accent-fg: #58a6ff;
+            --color-success-fg: #3fb950;
+            --color-danger-fg: #f85149;
+            --color-diffstat-addition-bg: #238636;
+            --color-diffstat-deletion-bg: #da3633;
+            --color-diff-blob-addition-num-bg: rgba(63,185,80,0.3);
+            --color-diff-blob-addition-line-bg: rgba(46,160,67,0.15);
+            --color-diff-blob-addition-word-bg: rgba(46,160,67,0.4);
+            --color-diff-blob-deletion-num-bg: rgba(248,81,73,0.3);
+            --color-diff-blob-deletion-line-bg: rgba(248,81,73,0.15);
+            --color-diff-blob-deletion-word-bg: rgba(248,81,73,0.4);
+            --color-diff-blob-hunk-num-bg: rgba(56,139,253,0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--color-canvas-default);
+            color: var(--color-fg-default);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .container { max-width: 100%; padding: 16px 24px; }
+
+        /* Header */
+        .pr-header {
+            padding: 16px;
+            margin-bottom: 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
+
+        /* Summary Cards */
+        .summary-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .summary-card {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+        }
+        .summary-label { font-size: 11px; color: var(--color-fg-subtle); text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-value { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+        /* Table of Contents */
+        .toc {
+            padding: 16px 20px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 24px;
+        }
+        .toc-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .toc-list li {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--color-border-muted);
+        }
+        .toc-list li:last-child { border-bottom: none; }
+        .toc-list a {
+            color: var(--color-accent-fg);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toc-list a:hover { text-decoration: underline; }
+        .toc-task-num {
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-fg-subtle);
+            min-width: 40px;
+        }
+        .toc-task-title { flex: 1; }
+        .toc-task-meta {
+            font-size: 12px;
+            color: var(--color-fg-subtle);
+        }
+
+        /* Section Header */
+        .section-header {
+            padding: 10px 16px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px 6px 0 0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Task Section */
+        .task-section {
+            margin-bottom: 32px;
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .task-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--color-canvas-subtle);
+            border-bottom: 1px solid var(--color-border-default);
+            gap: 12px;
+            cursor: pointer;
+        }
+        .task-header:hover { background: var(--color-border-muted); }
+        .task-number {
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 13px;
+            color: var(--color-fg-subtle);
+            min-width: 40px;
+        }
+        .task-title-text {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+        }
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Badges */
+        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
+        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
+        .badge-m { background: #1f6feb; color: #fff; }
+        .badge-l { background: #8957e5; color: #fff; }
+        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
+        .badge-type {
+            background: var(--color-border-muted);
+            color: var(--color-fg-muted);
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Task Body */
+        .task-body {
+            padding: 16px 20px;
+            background: var(--color-canvas-default);
+        }
+
+        /* Task Description */
+        .task-description {
+            padding: 14px 18px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            color: var(--color-fg-default);
+            line-height: 1.6;
+        }
+        .task-description p { margin-bottom: 8px; }
+        .task-description p:last-child { margin-bottom: 0; }
+        .task-description code {
+            background: var(--color-border-muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            color: var(--color-accent-fg);
+        }
+        .task-description ul, .task-description ol {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+        .task-description li {
+            padding: 2px 0;
+        }
+
+        /* Task Files Summary */
+        .task-files-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--color-canvas-subtle);
+            border: 1px solid var(--color-border-muted);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--color-fg-muted);
+        }
+        .task-files-summary strong {
+            color: var(--color-fg-default);
+        }
+
+        /* File Diff Container */
+        .file-diff {
+            border: 1px solid var(--color-border-default);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        /* File Header - exactly like GitHub */
+        .file-header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--color-canvas-subtle);
+            border-bottom: 1px solid var(--color-border-default);
+            font-size: 12px;
+        }
+        .file-header .expand-btn {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            cursor: pointer;
+            color: var(--color-fg-muted);
+        }
+        .file-header .file-icon { margin-right: 6px; }
+        .file-header .file-path {
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            flex: 1;
+        }
+        .file-header .diffstat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 16px;
+            font-weight: 600;
+        }
+        .file-header .diffstat .additions { color: var(--color-success-fg); }
+        .file-header .diffstat .deletions { color: var(--color-danger-fg); }
+        .file-header .diffstat-bar {
+            display: flex;
+            width: 40px;
+            height: 8px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 8px;
+        }
+        .file-header .diffstat-bar span { height: 100%; }
+        .file-header .diffstat-bar .add { background: var(--color-diffstat-addition-bg); }
+        .file-header .diffstat-bar .del { background: var(--color-diffstat-deletion-bg); }
+        .file-header .diffstat-bar .neutral { background: var(--color-border-muted); }
+        .file-header .viewed {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+            color: var(--color-fg-muted);
+        }
+        .file-header .viewed input { margin: 0; }
+
+        /* Split Diff Table */
+        .diff-table-wrapper { 
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+            font-size: 12px;
+            line-height: 20px;
+            table-layout: fixed;
+        }
+
+        /* Each side is 50% */
+        .diff-split-side { width: 50%; vertical-align: top; }
+        .diff-split-left { border-right: 1px solid var(--color-border-default); }
+
+        /* Inner table for each side */
+        .diff-side-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        
+        /* Line number cell */
+        .diff-line-num {
+            width: 48px;
+            min-width: 48px;
+            padding: 0 10px;
+            text-align: right;
+            color: var(--color-fg-subtle);
+            background: var(--color-canvas-subtle);
+            user-select: none;
+            vertical-align: top;
+            white-space: nowrap;
+        }
+        
+        /* Sign (+/-) cell */
+        .diff-line-sign {
+            width: 14px;
+            min-width: 14px;
+            padding: 0;
+            text-align: center;
+            user-select: none;
+            vertical-align: top;
+        }
+        
+        /* Code content */
+        .diff-line-code {
+            padding: 0 8px;
+            white-space: pre-wrap;
+            word-break: normal;
+            overflow-wrap: anywhere;
+            vertical-align: top;
+        }
+
+        /* Hunk Header */
+        .diff-hunk-header td {
+            padding: 8px 10px;
+            background: var(--color-diff-blob-hunk-num-bg);
+            color: var(--color-fg-muted);
+            font-size: 12px;
+        }
+
+        /* Line types */
+        .diff-line-context .diff-line-num { background: var(--color-canvas-subtle); }
+        .diff-line-context .diff-line-sign { background: var(--color-canvas-default); }
+        .diff-line-context .diff-line-code { background: var(--color-canvas-default); }
+
+        .diff-line-addition .diff-line-num { background: var(--color-diff-blob-addition-num-bg); }
+        .diff-line-addition .diff-line-sign { background: var(--color-diff-blob-addition-line-bg); color: var(--color-success-fg); }
+        .diff-line-addition .diff-line-code { background: var(--color-diff-blob-addition-line-bg); }
+
+        .diff-line-deletion .diff-line-num { background: var(--color-diff-blob-deletion-num-bg); }
+        .diff-line-deletion .diff-line-sign { background: var(--color-diff-blob-deletion-line-bg); color: var(--color-danger-fg); }
+        .diff-line-deletion .diff-line-code { background: var(--color-diff-blob-deletion-line-bg); }
+
+        .diff-line-empty .diff-line-num { background: var(--color-border-muted); }
+        .diff-line-empty .diff-line-sign { background: var(--color-canvas-inset); }
+        .diff-line-empty .diff-line-code { background: var(--color-canvas-inset); }
+
+        /* Word highlight */
+        .x { background: var(--color-diff-blob-addition-word-bg); padding: 1px 0; border-radius: 2px; }
+        .y { background: var(--color-diff-blob-deletion-word-bg); padding: 1px 0; border-radius: 2px; }
+
+        /* Collapsed */
+        .file-content.collapsed { display: none; }
+        .task-body.collapsed { display: none; }
+
+        /* New file indicator */
+        .new-file-badge {
+            background: var(--color-diffstat-addition-bg);
+            color: #fff;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        /* ========== RESPONSIVE STYLES ========== */
+        
+        @media screen and (max-width: 1024px) {
+            .container { padding: 12px 16px; }
+            .summary-row {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .summary-card {
+                flex: 1 1 calc(50% - 6px);
+                min-width: 140px;
+            }
+            .diff-table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .diff-table {
+                min-width: 800px;
+            }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .container { padding: 8px 12px; }
+            .pr-header { padding: 12px; }
+            .pr-title { font-size: 16px; }
+            .pr-subtitle { font-size: 12px; }
+            .summary-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .summary-card { flex: 1 1 100%; }
+            .summary-value { font-size: 16px; }
+            .section-header {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            .task-header {
+                flex-wrap: wrap;
+                padding: 10px 12px;
+            }
+            .task-title-text { font-size: 14px; flex: 1 1 100%; order: 1; }
+            .task-number { order: 0; }
+            .task-meta { order: 2; margin-top: 4px; }
+            .task-body { padding: 12px 14px; }
+            .task-description { padding: 10px 14px; }
+            .file-header {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 8px;
+            }
+            .file-header .file-path {
+                font-size: 11px;
+                word-break: break-all;
+                flex: 1 1 100%;
+                order: 1;
+            }
+            .file-header .expand-btn { order: 0; }
+            .file-header .file-icon { order: 0; }
+            .file-header .diffstat { order: 2; margin-left: 0; }
+            .file-header .diffstat-bar { order: 2; }
+            .file-header .viewed { order: 2; margin-left: auto; }
+            .file-diff { overflow-x: hidden; }
+            .diff-table-wrapper { overflow-x: hidden; }
+            .diff-table {
+                width: 100%;
+                font-size: 11px;
+                table-layout: fixed;
+            }
+            .diff-side-table { table-layout: fixed; }
+            .diff-line-num {
+                width: 36px;
+                min-width: 36px;
+                padding: 0 4px;
+                font-size: 10px;
+            }
+            .diff-line-sign { width: 14px; min-width: 14px; }
+            .diff-line-code {
+                padding: 0 6px;
+                white-space: pre-wrap;
+                word-break: normal;
+                overflow-wrap: anywhere;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .container { padding: 6px 8px; }
+            .pr-title { font-size: 14px; }
+            .summary-card { padding: 10px 12px; }
+            .summary-label { font-size: 10px; }
+            .summary-value { font-size: 14px; }
+            .diff-table {
+                min-width: 600px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- INSTRUCTION: HEADER — Replace [FEATURE_TITLE] and [PLAN_SOURCE] -->
+        <div class="pr-header">
+            <div class="pr-title">[FEATURE_TITLE] — Task Details</div>
+            <div class="pr-subtitle">Detailed code changes per task • Source: [PLAN_SOURCE]</div>
+        </div>
+
+        <!-- INSTRUCTION: SUMMARY CARDS — Replace all [PLACEHOLDER] values.
+             [TOTAL_TASKS]: total number of tasks
+             [TOTAL_FILES]: total files changed across all tasks
+             [TOTAL_DURATION]: estimated total duration (e.g. "3-5 days")
+        -->
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">Tasks</div>
+                <div class="summary-value">[TOTAL_TASKS]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Files Changed</div>
+                <div class="summary-value">[TOTAL_FILES]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Duration</div>
+                <div class="summary-value">[TOTAL_DURATION]</div>
+            </div>
+        </div>
+
+        <!-- INSTRUCTION: TABLE OF CONTENTS
+             List all tasks as anchor links for quick navigation.
+             Replicate <li> for each task.
+        -->
+        <div class="section-header">📑 Table of Contents</div>
+        <div class="toc">
+            <ul class="toc-list">
+                <!-- INSTRUCTION: Replicate this <li> for each task. Replace placeholders. -->
+                <li>
+                    <a href="#task-[TASK_NUMBER]">
+                        <span class="toc-task-num">[TASK_NUMBER]</span>
+                        <span class="toc-task-title">[TASK_TITLE]</span>
+                        <span class="toc-task-meta">[TASK_TYPE] • <span class="badge badge-[TASK_COST_LOWER]">[TASK_COST]</span></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ================================================================
+             TASK SECTIONS — Replicate this entire block for EACH task.
+             Each task contains: header, description, and file diffs.
+             ================================================================ -->
+
+        <!-- INSTRUCTION: TASK SECTION — One per task. Replace all [TASK_*] placeholders.
+             The task-header is clickable to expand/collapse the task body.
+             [TASK_NUMBER]: e.g. "1.1"
+             [TASK_TITLE]: short descriptive title
+             [TASK_EPIC]: epic name
+             [TASK_TYPE]: Logic | UI | Data | API | Asset | Test | Config
+             [TASK_COST]: S | M | L | XL
+             [TASK_COST_LOWER]: s | m | l | xl (lowercase for badge class)
+             [TASK_DESCRIPTION]: full description with implementation details
+             [TASK_FILE_COUNT]: number of files changed
+        -->
+        <div class="task-section" id="task-[TASK_NUMBER]">
+            <div class="task-header" onclick="toggleTask(this)">
+                <span class="task-number">[TASK_NUMBER]</span>
+                <span class="task-title-text">[TASK_TITLE]</span>
+                <div class="task-meta">
+                    <span class="badge-type">[TASK_TYPE]</span>
+                    <span class="badge badge-[TASK_COST_LOWER]">[TASK_COST]</span>
+                    <span style="color: var(--color-fg-subtle); font-size: 12px;">▼</span>
+                </div>
+            </div>
+            <div class="task-body">
+                <!-- INSTRUCTION: TASK DESCRIPTION
+                     Provide full description of what this task does.
+                     Use <p>, <code>, <ul>/<ol> as needed.
+                     Include: purpose, approach, dependencies, edge cases.
+                -->
+                <div class="task-description">
+                    <p>[TASK_DESCRIPTION]</p>
+                </div>
+
+                <!-- INSTRUCTION: TASK FILES SUMMARY — Show count of files changed in this task -->
+                <div class="task-files-summary">
+                    📁 <strong>[TASK_FILE_COUNT]</strong> file(s) changed in this task
+                </div>
+
+                <!-- INSTRUCTION: FILE DIFFS FOR THIS TASK
+                     Create one <div class="file-diff"> per changed file.
+                     Uses IDENTICAL diff structure to PLAN_OUTPUT.html.
+                     
+                     DIFF ROW TYPES (use exact class names):
+                     
+                     1. CONTEXT LINE (unchanged, shown on both sides):
+                        <tr class="diff-line-context"> with matching line numbers
+                     
+                     2. DELETION (left side only, red):
+                        Left: <tr class="diff-line-deletion"> with sign "-"
+                        Right: <tr class="diff-line-addition"> or <tr class="diff-line-empty">
+                     
+                     3. ADDITION (right side only, green):
+                        Left: <tr class="diff-line-empty"> (blank placeholder)
+                        Right: <tr class="diff-line-addition"> with sign "+"
+                     
+                     4. MODIFICATION (deletion left + addition right):
+                        Left: <tr class="diff-line-deletion"> with sign "-"
+                        Right: <tr class="diff-line-addition"> with sign "+"
+                     
+                     5. EMPTY LINE (placeholder when sides don't match):
+                        <tr class="diff-line-empty"> — all cells empty
+                     
+                     6. HUNK HEADER (section separator):
+                        <tr class="diff-hunk-header"> with @@ -old,count +new,count @@ context
+                     
+                     WORD-LEVEL HIGHLIGHTS:
+                       <x>text</x> — highlights NEW/CHANGED text in additions (green bg)
+                       <y>text</y> — highlights REMOVED/CHANGED text in deletions (red bg)
+                     
+                     MANDATORY RULES:
+                       - Show 100% complete code changes for ALL files in this task
+                       - Include full method implementations, not snippets
+                       - Do NOT use "..." or "// remaining code"
+                       - Do NOT skip files because they are "similar"
+                       - HTML-escape special characters: & → &amp;  < → &lt;  > → &gt;
+                       - For NEW files: left side is all diff-line-empty, right side is all diff-line-addition
+                -->
+                <div class="file-diff">
+                    <div class="file-header">
+                        <span class="expand-btn" onclick="toggleFile(this)">▼</span>
+                        <span class="file-icon">📄</span>
+                        <span class="file-path">Assets/Scripts/Path/To/File.cs</span>
+                        <span class="diffstat">
+                            <span class="additions">+21</span>
+                            <span class="deletions">-9</span>
+                        </span>
+                        <span class="diffstat-bar">
+                            <span class="add" style="width:70%"></span>
+                            <span class="del" style="width:30%"></span>
+                        </span>
+                        <span class="viewed"><input type="checkbox"> Viewed</span>
+                    </div>
+                    <div class="file-content">
+                        <div class="diff-table-wrapper">
+                            <table class="diff-table">
+                                <colgroup>
+                                    <col style="width:50%">
+                                    <col style="width:50%">
+                                </colgroup>
+                                <tbody>
+                                    <!-- INSTRUCTION: HUNK HEADER — Start each code section with this -->
+                                    <tr class="diff-hunk-header">
+                                        <td class="diff-split-side diff-split-left">@@ -1,5 +1,10 @@ namespace Example {</td>
+                                        <td class="diff-split-side">@@ -1,5 +1,10 @@ namespace Example {</td>
+                                    </tr>
+                                    <!-- INSTRUCTION: CONTEXT LINE — Both sides identical -->
+                                    <tr>
+                                        <td class="diff-split-side diff-split-left">
+                                            <table class="diff-side-table"><tr class="diff-line-context">
+                                                <td class="diff-line-num">1</td>
+                                                <td class="diff-line-sign"></td>
+                                                <td class="diff-line-code">    // context line</td>
+                                            </tr></table>
+                                        </td>
+                                        <td class="diff-split-side">
+                                            <table class="diff-side-table"><tr class="diff-line-context">
+                                                <td class="diff-line-num">1</td>
+                                                <td class="diff-line-sign"></td>
+                                                <td class="diff-line-code">    // context line</td>
+                                            </tr></table>
+                                        </td>
+                                    </tr>
+                                    <!-- INSTRUCTION: MODIFICATION — Deletion left with <y>, Addition right with <x> -->
+                                    <tr>
+                                        <td class="diff-split-side diff-split-left">
+                                            <table class="diff-side-table"><tr class="diff-line-deletion">
+                                                <td class="diff-line-num">2</td>
+                                                <td class="diff-line-sign">-</td>
+                                                <td class="diff-line-code">    public void <y>OldMethod</y>() {</td>
+                                            </tr></table>
+                                        </td>
+                                        <td class="diff-split-side">
+                                            <table class="diff-side-table"><tr class="diff-line-addition">
+                                                <td class="diff-line-num">2</td>
+                                                <td class="diff-line-sign">+</td>
+                                                <td class="diff-line-code">    public void <x>NewMethod</x>() {</td>
+                                            </tr></table>
+                                        </td>
+                                    </tr>
+                                    <!-- INSTRUCTION: ADDITION — Left empty, right has new line -->
+                                    <tr>
+                                        <td class="diff-split-side diff-split-left">
+                                            <table class="diff-side-table"><tr class="diff-line-empty">
+                                                <td class="diff-line-num"></td>
+                                                <td class="diff-line-sign"></td>
+                                                <td class="diff-line-code"></td>
+                                            </tr></table>
+                                        </td>
+                                        <td class="diff-split-side">
+                                            <table class="diff-side-table"><tr class="diff-line-addition">
+                                                <td class="diff-line-num">3</td>
+                                                <td class="diff-line-sign">+</td>
+                                                <td class="diff-line-code">        // new line added</td>
+                                            </tr></table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- INSTRUCTION: Replicate <div class="file-diff"> for each file changed in this task -->
+
+            </div>
+        </div>
+        <!-- INSTRUCTION: Replicate the entire <div class="task-section"> block for each task -->
+
+    </div>
+
+    <script>
+        function toggleFile(btn) {
+            const content = btn.closest('.file-header').nextElementSibling;
+            content.classList.toggle('collapsed');
+            btn.textContent = content.classList.contains('collapsed') ? '▶' : '▼';
+        }
+        function toggleTask(header) {
+            const body = header.nextElementSibling;
+            body.classList.toggle('collapsed');
+            const arrow = header.querySelector('span[style*="color"]');
+            if (arrow) arrow.textContent = body.classList.contains('collapsed') ? '▶' : '▼';
+        }
+    </script>
+</body>
+</html>
