@@ -113,3 +113,26 @@ Generate markdown file at `Documents/Reviews/PR_<number>_review.md`:
 - **REQUEST_CHANGES**: Any 🔴 issues
 
 See [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.
+
+---
+
+## MCP Tools Integration
+
+Optionally verify compilation and runtime behavior during local review.
+
+| Operation | MCP Tool | Use Case |
+| --------- | -------- | -------- |
+| Check compilation | `coplay-mcp_check_compile_errors` | Verify changes compile before reviewing |
+| Read console | `coplay-mcp_get_unity_logs(show_errors=true)` | Check for runtime errors |
+| Play/stop game | `coplay-mcp_play_game` / `coplay-mcp_stop_game` | Smoke-test changes in Editor |
+| Inspect hierarchy | `coplay-mcp_list_game_objects_in_hierarchy()` | Verify scene structure |
+| Get object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | Validate component changes |
+
+### Review Verification Flow
+
+```
+1. coplay-mcp_check_compile_errors         → confirm code compiles
+2. coplay-mcp_get_unity_logs(show_errors=true) → scan for warnings/errors
+3. coplay-mcp_play_game                    → smoke-test if relevant
+4. coplay-mcp_stop_game                    → end test session
+```

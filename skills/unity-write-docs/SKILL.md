@@ -50,3 +50,27 @@ Read the relevant template first, then populate all sections.
 /// <returns>True if died from this damage.</returns>
 public bool TakeDamage(int amount)
 ```
+
+---
+
+## MCP Tools Integration
+
+Use MCP tools to gather project context for accurate documentation.
+
+| Operation | MCP Tool | Use Case |
+| --------- | -------- | -------- |
+| Project context | `coplay-mcp_get_unity_editor_state` | Get Unity version, render pipeline, build target |
+| List packages | `coplay-mcp_list_packages` | Document installed dependencies |
+| Scene structure | `coplay-mcp_list_game_objects_in_hierarchy()` | Document scene hierarchy |
+| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | Document component setups |
+| Prefab catalog | `coplay-mcp_list_all_prefabs_with_bounding_boxes()` | Document prefab inventory |
+| Capture visuals | `coplay-mcp_capture_scene_object(gameObjectPath="...")` | Screenshot for documentation |
+
+### Documentation Context Flow
+
+```
+1. coplay-mcp_get_unity_editor_state          → project metadata
+2. coplay-mcp_list_packages                   → dependency list
+3. coplay-mcp_list_game_objects_in_hierarchy() → scene overview
+4. coplay-mcp_capture_scene_object()          → visual references
+```
