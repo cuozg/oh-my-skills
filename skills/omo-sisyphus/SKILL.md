@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Subagent MUST load skill before ANY action. Use for complex tasks requiring planning, delegation, or multi-step work. Generates structured prompts following Sisyphus protocol. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
+description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Subagent MUST load skill before ANY action. Use for complex tasks requiring planning, delegation, or multi-step work. Generates structured prompts following Sisyphus protocol. Uses /handoff for context preservation. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
 ---
 
 # Sisyphus Orchestrator
@@ -20,6 +20,25 @@ description: "Orchestrator that delegates tasks to Sisyphus agent. CRITICAL: Sub
 - No exceptions. No alternatives. No fallbacks.
 - Using any other `subagent_type` value violates this skill's contract.
 - If `subagent_type` is omitted or set to anything other than `"sisyphus"`, the delegation is INVALID.
+
+---
+
+## MANDATORY: Context Preservation with /handoff
+
+> [!IMPORTANT]
+> **Use `/handoff` instead of `/compact` for context preservation.**
+>
+> When context is getting long and compaction is imminent:
+> - Use `/handoff` to synthetically transfer session context to a new session
+> - This preserves critical state mid-work before compaction strikes
+> - Continue where you left off without losing essential context
+>
+> **When to use `/handoff`:**
+> - Context window is approaching capacity
+> - Session is getting too long and quality may degrade
+> - Deep in multi-step work and need to preserve progress
+>
+> **Include in delegation prompts:** "Use `/handoff` if context is getting long"
 
 ---
 
@@ -121,6 +140,7 @@ This skill contains the rules, patterns, and workflow you MUST use.
 - Create todos BEFORE starting
 - Match existing codebase patterns
 - Run lsp_diagnostics on changed files
+- Use `/handoff` if context is getting long (before compaction strikes)
 
 ### MUST NOT DO:
 - Skip loading the skill first
@@ -213,6 +233,7 @@ Implement a health bar UI component for the player.
 - Cache component references in Awake
 - Subscribe in OnEnable, unsubscribe in OnDisable
 - Add XML docs and comments
+- Use `/handoff` if context is getting long
 
 ### MUST NOT DO:
 - Use GetComponent in Update
@@ -266,6 +287,7 @@ Create an implementation plan for adding multiplayer support.
 - Follow unity-plan skill EXACTLY as loaded above
 - Read all templates before generating
 - Generate all 6 HTML files + patch
+- Use `/handoff` if context is getting long
 
 ### MUST NOT DO:
 - Implement any code (planning only)
@@ -319,6 +341,7 @@ Write comprehensive unit tests for PlayerHealth class.
 - Follow unity-test skill EXACTLY as loaded above
 - Use proper test naming convention
 - Cover happy path + edge cases + error conditions
+- Use `/handoff` if context is getting long
 
 ### MUST NOT DO:
 - Skip the code analysis checklist

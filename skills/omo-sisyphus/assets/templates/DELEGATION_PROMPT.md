@@ -32,6 +32,7 @@ Follow the skill's instructions exactly.
 - Match existing codebase patterns
 - Run lsp_diagnostics on changed files
 - Verify build/tests pass
+- Use `/handoff` if context is getting long (before compaction strikes)
 
 ### MUST NOT DO:
 - Skip loading the skill first
