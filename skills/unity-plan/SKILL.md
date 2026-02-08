@@ -26,6 +26,7 @@ This skill uses a **template-to-output** architecture. Understanding the distinc
 | `assets/templates/PLAN_ESTIMATES.html` | `documents/plans/{plan-name}/estimates.html` |
 | `assets/templates/PLAN_DEPENDENCIES.html` | `documents/plans/{plan-name}/dependencies.html` |
 | `assets/templates/PLAN_TIMELINE.html` | `documents/plans/{plan-name}/timeline.html` |
+| `assets/templates/PLAN_PATCH.html` | `documents/plans/{plan-name}/patch.html` |
 | `assets/templates/PLAN_PATCH_TEMPLATE.patch` | `documents/plans/{plan-name}/changes.patch` |
 
 `{plan-name}` = kebab-case feature name (e.g. `multi-event-daily-boss`).
@@ -38,10 +39,12 @@ When generating output from a template:
 
 1. Read the template from `assets/templates/` to understand structure
 2. Replace all `[PLACEHOLDER]` values with actual plan content
-3. Keep the `<nav class="nav-links">` section — paths are already relative (`./`)
-4. Mark the correct tab as `class="active"` for each output file
+3. Keep the sticky `<nav class="plan-nav-bar">` — it is the first element in `<body>`, before `.container`. All navigation href paths use the `PLAN_` prefix format (e.g. `./PLAN_OVERVIEW.html`, `./PLAN_TASKS.html`) matching the actual template file names
+4. Mark the correct tab with `class="nav-tab nav-tab-active"` for each output file (only one tab is active per file)
 5. Remove all `<!-- INSTRUCTION: ... -->` comments from final output
 6. Write the completed HTML to `documents/plans/{plan-name}/`
+7. **Do NOT add any `<script>` tags or JavaScript** — navigation relies on pure HTML `<a href>` links with browser-default behavior
+8. **Do NOT add `addEventListener`, `console.log`, `preventDefault`, or any event handlers** — these break navigation
 
 ---
 
@@ -49,7 +52,7 @@ When generating output from a template:
 
 ### 1. Read All Templates
 
-Read every template file in `assets/templates/`. Note the `<!-- INSTRUCTION: ... -->` comments — they describe what content goes where. The navigation bar uses relative `./` paths with the active tab pre-marked.
+Read every template file in `assets/templates/`. Note the `<!-- INSTRUCTION: ... -->` comments — they describe what content goes where. The sticky navigation bar (`<nav class="plan-nav-bar">`) is the first element in `<body>`, uses relative paths with `PLAN_` prefix (e.g. `./PLAN_OVERVIEW.html`, `./PLAN_TASKS.html`), and has the current page's tab marked with `class="nav-tab-active"`. It stays fixed at the top while users scroll.
 
 ### 2. Analyze Requirements
 
@@ -134,7 +137,15 @@ Read `assets/templates/PLAN_PATCH_TEMPLATE.patch` as format reference. Generate 
 7. Every task in the plan MUST have corresponding code in the patch
 8. The patch must apply cleanly: `patch -p1 --dry-run < changes.patch`
 
-### 11. Verbal Summary
+### 11. Generate patch.html
+
+Read `assets/templates/PLAN_PATCH.html`. Replace placeholders and write to `documents/plans/{plan-name}/patch.html`. Populate:
+- Patch stats: file count, total additions, total deletions
+- File list: each file with status (added/modified/deleted) and per-file stats
+- Diff viewer: GitHub-style diff rendering with line numbers, additions (green), deletions (red), context lines
+- Download link to raw `changes.patch` file
+
+### 12. Verbal Summary
 
 After generating all files, provide:
 - Location of generated files: `documents/plans/{plan-name}/`
@@ -158,14 +169,69 @@ documents/plans/{plan-name}/
 ├── estimates.html
 ├── dependencies.html
 ├── timeline.html
-└── changes.patch
+├── patch.html          ← Visual diff viewer
+└── changes.patch       ← Raw patch file
 ```
 
 1. Open `documents/plans/{plan-name}/overview.html` in a browser
-2. Use navigation tabs to switch between sections
-3. All navigation uses relative paths (`./tasks.html`, `./estimates.html`, etc.)
+2. Use the sticky navigation bar at the top to switch between sections (Overview, Tasks, Estimates, Dependencies, Timeline, View Patch)
+3. The current section's tab is highlighted in blue — click any other tab to navigate
+4. All navigation uses relative paths with `PLAN_` prefix matching template file names (`./PLAN_OVERVIEW.html`, `./PLAN_TASKS.html`, `./PLAN_ESTIMATES.html`, `./PLAN_DEPENDENCIES.html`, `./PLAN_TIMELINE.html`, `./PLAN_PATCH.html`)
+5. The "View Patch" tab opens `patch.html` which shows a visual diff viewer with download link to raw `changes.patch`
 
 **WARNING**: Do NOT open files from `.claude/skills/unity-plan/assets/templates/`. Those are internal templates with placeholder text. Clicking navigation tabs will cause `ERR_FILE_NOT_FOUND` because sibling files don't exist at that location.
+
+### Navigation: Pure HTML Only
+
+Navigation between plan pages uses **pure HTML anchor tags** (`<a href="./page.html">`). This is intentional.
+
+**DO NOT** add any of the following to generated output:
+- `<script>` tags
+- `addEventListener` calls
+- `console.log` statements
+- `preventDefault()` or `stopPropagation()` calls
+- `onclick` attributes or inline event handlers
+- Any JavaScript that intercepts or modifies link behavior
+
+The browser's default `<a href>` behavior handles navigation. Adding JavaScript click handlers can intercept clicks and prevent navigation — this is the most common cause of "tabs don't work" bugs.
+
+### Content Security Policy (CSP)
+
+All templates include a CSP meta tag in `<head>` that controls what resources the browser allows. This prevents CSP violation errors (e.g., `default-src 'none'` blocking navigation, connections, and inline styles).
+
+**Current CSP configuration:**
+```html
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline';
+               style-src 'self' 'unsafe-inline'; img-src 'self' data:;
+               font-src 'self' data:; connect-src 'self'; frame-src 'self';
+               object-src 'none'; base-uri 'self'; form-action 'self';">
+```
+
+**Directive breakdown:**
+| Directive | Value | Purpose |
+|---|---|---|
+| `default-src` | `'self'` | Allow same-origin resources by default |
+| `script-src` | `'self' 'unsafe-inline'` | Allow inline scripts (unused but safe fallback) |
+| `style-src` | `'self' 'unsafe-inline'` | Allow inline `<style>` blocks (required — all CSS is inline) |
+| `img-src` | `'self' data:` | Allow images and data URIs |
+| `font-src` | `'self' data:` | Allow fonts and data URIs |
+| `connect-src` | `'self'` | Allow XHR/fetch/WebSocket to same origin (prevents DevTools CSP errors) |
+| `frame-src` | `'self'` | Allow iframes from same origin |
+| `object-src` | `'none'` | Block plugins (Flash, Java applets) |
+| `base-uri` | `'self'` | Restrict `<base>` tag to same origin |
+| `form-action` | `'self'` | Restrict form submissions to same origin |
+
+**Why `'self'` instead of `'none'`:**
+These are local HTML files opened via `file://` or a local dev server (`http://127.0.0.1:5504/`). Using `default-src 'none'` blocks all connections — including DevTools, inline styles, and same-origin navigation — causing console errors and broken functionality.
+
+**Security considerations:**
+- Generated plans are local files, not deployed to public web servers
+- No external resources are loaded (all CSS is inline, no external JS)
+- `object-src 'none'` prevents plugin-based attacks
+- If deploying to a web server, consider tightening `script-src` by removing `'unsafe-inline'` and using nonces or hashes instead
+
+**IMPORTANT:** When generating output files, the CSP meta tag from the template must be preserved exactly as-is. Do not modify, remove, or replace it with a more restrictive policy.
 
 ---
 
@@ -173,18 +239,21 @@ documents/plans/{plan-name}/
 
 Before completing, verify:
 
-- [ ] All 6 templates read from `assets/templates/` before generating output
+- [ ] All 7 templates read from `assets/templates/` before generating output
 - [ ] Output folder created at `documents/plans/{plan-name}/`
-- [ ] All 5 HTML files written to output folder (NOT to `assets/templates/`)
+- [ ] All 6 HTML files written to output folder (NOT to `assets/templates/`)
 - [ ] overview.html: CSS copied exactly, all placeholders replaced, architecture has old/new diagrams
 - [ ] tasks.html: Every task has a walkthrough section, files listed, criteria defined
 - [ ] estimates.html: Per-epic totals, resource allocation cards, assumptions listed
 - [ ] dependencies.html: Dependency graph, matrix, risks with mitigations, blockers
 - [ ] timeline.html: Phases with tasks, milestones with criteria, recommended order
 - [ ] changes.patch: Unified diff format, all tasks have code changes, applies cleanly
-- [ ] Navigation tabs present in all 5 HTML files with relative `./` paths
-- [ ] Correct tab marked `class="active"` in each file
-- [ ] Patch tab links to `./changes.patch` in all HTML files
+- [ ] patch.html: Visual diff viewer with stats, file list, diff rendering, download link
+- [ ] Navigation tabs present in all 6 HTML files with `PLAN_` prefix paths (e.g. `./PLAN_OVERVIEW.html`)
+- [ ] Sticky navbar is FIRST element in `<body>`, before `.container`
+- [ ] Correct tab marked `class="nav-tab-active"` in each file
+- [ ] Patch tab links to `./PLAN_PATCH.html` with `class="nav-tab-patch"` in all HTML files
+- [ ] **No `<script>` tags, JavaScript, or event handlers in any generated HTML file**
 - [ ] All `<!-- INSTRUCTION: ... -->` comments removed from final output
 - [ ] Summary includes path to generated files for user to open
 

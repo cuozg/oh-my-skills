@@ -17,6 +17,8 @@
     ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
     ║  3. Remove all INSTRUCTION comments from final output               ║
     ║  4. Write result to documents/plans/{plan-name}/dependencies.html   ║
+    ║  5. DO NOT add any <script> tags or JavaScript to generated output  ║
+    ║  6. Navigation uses pure HTML <a href> — no JS event listeners      ║
     ║                                                                     ║
     ║  PLACEHOLDERS:                                                      ║
     ║    [FEATURE_NAME]   — Feature name in <title>                       ║
@@ -28,6 +30,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>Plan Dependencies: [FEATURE_NAME]</title>
     <style>
         :root {
@@ -66,34 +69,82 @@
         .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
         .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
 
-        .nav-links {
+        /* ── Sticky Navigation Bar ── */
+        .plan-nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #1a1a2e;
+            border-bottom: 1px solid var(--color-border-default);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+        .nav-container {
+            max-width: 100%;
+            padding: 0 24px;
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .nav-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #e6edf3;
+            white-space: nowrap;
+            margin: 0;
+            padding: 12px 0;
+        }
+        .nav-tabs {
+            list-style: none;
+            display: flex;
+            gap: 4px;
+            margin: 0;
+            padding: 0;
             flex-wrap: wrap;
         }
-        .nav-links a {
-            padding: 6px 12px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-            color: var(--color-accent-fg);
+        .nav-tab {
+            display: inline-block;
+            padding: 10px 16px;
+            color: #8b949e;
             text-decoration: none;
             font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            cursor: pointer;
+            pointer-events: auto;
         }
-        .nav-links a:hover { background: var(--color-border-muted); }
-        .nav-links a.active {
-            border-color: var(--color-accent-fg);
-            background: rgba(88, 166, 255, 0.15);
-            color: #fff;
+        .nav-tab:hover {
+            color: #e6edf3;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .nav-tab-active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
             font-weight: 600;
         }
-        .nav-links a.patch-link {
-            background: var(--color-border-muted);
-            color: var(--color-success-fg);
-            border-color: var(--color-success-fg);
+        .nav-tab-active:hover {
+            color: #79b8ff;
+            background: rgba(88, 166, 255, 0.08);
         }
-        .nav-links a.patch-link:hover { background: rgba(63, 185, 80, 0.15); }
+        .nav-tab-patch {
+            color: var(--color-success-fg);
+        }
+        .nav-tab-patch:hover {
+            color: #56d364;
+            background: rgba(63, 185, 80, 0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0 12px;
+            }
+            .nav-title { padding: 10px 0 4px 0; font-size: 14px; }
+            .nav-tabs { padding-bottom: 8px; }
+            .nav-tab { padding: 6px 10px; font-size: 12px; }
+        }
 
         .section-header {
             padding: 10px 16px;
@@ -243,20 +294,25 @@
     </style>
 </head>
 <body>
+    <nav class="plan-nav-bar">
+        <div class="nav-container">
+            <h1 class="nav-title">Implementation Plan</h1>
+            <ul class="nav-tabs">
+                <li><a href="./PLAN_OVERVIEW.html" class="nav-tab">Overview</a></li>
+                <li><a href="./PLAN_TASKS.html" class="nav-tab">Tasks</a></li>
+                <li><a href="./PLAN_ESTIMATES.html" class="nav-tab">Estimates</a></li>
+                <li><a href="./PLAN_DEPENDENCIES.html" class="nav-tab nav-tab-active">Dependencies</a></li>
+                <li><a href="./PLAN_TIMELINE.html" class="nav-tab">Timeline</a></li>
+                <li><a href="./PLAN_PATCH.html" class="nav-tab nav-tab-patch">View Patch</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
             <div class="pr-subtitle">Dependencies, Risks & Blockers</div>
         </div>
-
-        <nav class="nav-links">
-            <a href="./overview.html">Overview</a>
-            <a href="./tasks.html">Tasks</a>
-            <a href="./estimates.html">Estimates</a>
-            <a href="./dependencies.html" class="active">Dependencies</a>
-            <a href="./timeline.html">Timeline</a>
-            <a href="./changes.patch" class="patch-link">Patch</a>
-        </nav>
 
         <!-- INSTRUCTION: DEPENDENCY GRAPH
              ASCII diagram showing task dependencies.
