@@ -46,9 +46,9 @@ Scan the `.claude/skills/` directory and read YAML frontmatter from each `SKILL.
 | `unity-debug`                | debug this error, why is this happening, investigate crash, trace exception       |
 | `unity-editor-tools`         | custom Editor Windows, Inspectors, asset validation, batch processors, UI Toolkit |
 | `unity-fix-errors`           | compiler errors, exceptions, Play Mode broken, build fails                        |
-| `unity-implement-logic`      | new scripts, MonoBehaviours, refactoring, gameplay features                       |
+| `unity-code`                 | new scripts, MonoBehaviours, refactoring, gameplay features                       |
 | `unity-investigate-code`     | how does X work, trace the flow, explain this code, what calls this               |
-| `unity-mcp-basics`           | automate Editor, MCP tool, batch operations, find GameObject                      |
+| `unity-mcp`           | automate Editor, MCP tool, batch operations, find GameObject                      |
 | `unity-mobile-deploy`        | iOS, Android, touch controls, mobile optimization, native features                |
 | `unity-optimize-performance` | low FPS, high memory, slow load times, performance audit                          |
 | `unity-plan`                 | plan feature, analyze requirements, break into tasks, estimate effort             |
@@ -72,7 +72,7 @@ User prompt received
 │  ├─ Unexpected behavior → unity-debug
 │  └─ Slow/laggy → unity-optimize-performance
 ├─ New feature?
-│  ├─ Small (1-2 files) → unity-implement-logic
+│  ├─ Small (1-2 files) → unity-code
 │  ├─ Medium → unity-task-brainstorm → unity-task-executor
 │  └─ Large/complex → unity-plan (full pipeline)
 ├─ Review PR? → unity-review-pr
@@ -80,7 +80,7 @@ User prompt received
 ├─ Data/schema? → flatbuffers-coder
 ├─ Mobile issue? → unity-mobile-deploy
 ├─ WebGL issue? → unity-web-deploy
-├─ Editor tool? → unity-editor-tools + unity-mcp-basics
+├─ Editor tool? → unity-editor-tools + unity-mcp
 ├─ Shader/art? → unity-tech-art
 ├─ Tests? → unity-test
 └─ How does X work? → unity-investigate-code
@@ -91,11 +91,11 @@ User prompt received
 | Scenario                     | Combine                                                    |
 | :--------------------------- | :--------------------------------------------------------- |
 | Feature with docs            | `unity-plan` + `unity-write-tdd` + `mermaid`         |
-| Editor tool with automation  | `unity-editor-tools` + `unity-mcp-basics`              |
-| Performance-critical feature | `unity-implement-logic` + `unity-optimize-performance` |
-| Mobile implementation        | `unity-implement-logic` + `unity-mobile-deploy`        |
-| WebGL implementation         | `unity-implement-logic` + `unity-web-deploy`           |
-| Data-driven system           | `flatbuffers-coder` + `unity-implement-logic`          |
+| Editor tool with automation  | `unity-editor-tools` + `unity-mcp`              |
+| Performance-critical feature | `unity-code` + `unity-optimize-performance` |
+| Mobile implementation        | `unity-code` + `unity-mobile-deploy`        |
+| WebGL implementation         | `unity-code` + `unity-web-deploy`           |
+| Data-driven system           | `flatbuffers-coder` + `unity-code`          |
 | Documented architecture      | `unity-write-docs` + `mermaid`                         |
 
 ## Execution Pattern
@@ -119,7 +119,7 @@ User prompt received
 - Follow the loaded skill's workflow completely
 - Spawn subagents for subtasks if needed
 - Chain to additional skills when required:
-  > "Root cause identified. Chaining to `unity-implement-logic` for the fix..."
+  > "Root cause identified. Chaining to `unity-code` for the fix..."
   >
 
 ### 4. Verify Phase

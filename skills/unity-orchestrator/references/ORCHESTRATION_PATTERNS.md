@@ -31,7 +31,7 @@ unity-fix-errors    → Diagnose from console/stack trace
        ↓
 unity-investigate-code → Trace execution, find root cause
        ↓
-unity-implement-logic  → Apply targeted fix
+unity-code  → Apply targeted fix
        ↓
 unity-test          → Verify fix, add regression test
 ```
@@ -55,7 +55,7 @@ unity-write-tdd    → Technical Design Document
 ## 4. Platform-Specific Implementation
 
 ```
-unity-implement-logic → Core feature logic
+unity-code → Core feature logic
        +
 unity-mobile-deploy   → Mobile adaptations (iOS/Android)
        OR
@@ -69,7 +69,7 @@ unity-optimize-performance → Platform-specific optimization
 ```
 unity-editor-tools → Custom window/inspector design
        +
-unity-mcp-basics   → unityMCP automation integration
+unity-mcp   → unityMCP automation integration
        ↓
 unity-test         → Editor test coverage
 ```

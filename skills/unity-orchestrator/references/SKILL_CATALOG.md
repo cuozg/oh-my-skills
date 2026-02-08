@@ -7,7 +7,7 @@ Complete catalog of specialized skills in `.claude/skills/`.
 | Skill | When to Use | Triggers |
 |:------|:------------|:---------|
 | `unity-orchestrator` | ALL Unity requests - routes to specialists | Any Unity question |
-| `unity-implement-logic` | C# systems, MonoBehaviours, gameplay features | "implement", "create script", "add feature" |
+| `unity-code` | C# systems, MonoBehaviours, gameplay features | "implement", "create script", "add feature" |
 | `unity-investigate-code` | Trace execution, understand existing code | "how does X work", "trace the flow", "explain this code" |
 
 ## Error & Debug Skills
@@ -36,7 +36,7 @@ Complete catalog of specialized skills in `.claude/skills/`.
 |:------|:------------|:---------|
 | `unity-tech-art` | Shaders, asset pipelines, procedural generation | "shader", "postprocessor", "rendering" |
 | `unity-editor-tools` | Custom windows, inspectors, editor automation | "editor window", "inspector", "editor tool" |
-| `unity-mcp-basics` | unityMCP automation for Editor tasks | "automate", "batch", "find GameObject" |
+| `unity-mcp` | unityMCP automation for Editor tasks | "automate", "batch", "find GameObject" |
 
 ## Planning & Documentation
 
@@ -85,7 +85,7 @@ Complete catalog of specialized skills in `.claude/skills/`.
 
 ### Feature Implementation
 
-1. **Quick fix (1-2 files)?** → `unity-implement-logic`
+1. **Quick fix (1-2 files)?** → `unity-code`
 2. **Medium scope (known requirements)?** → `unity-task-brainstorm` → `unity-task-executor`
 3. **Large scope (needs planning)?** → Full pipeline starting with `unity-plan`
 
