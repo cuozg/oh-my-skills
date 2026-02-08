@@ -1,64 +1,147 @@
 ---
 name: unity-test
-description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play Mode tests, (2) Configuring test assemblies (.asmdef), (3) Mocking dependencies, (4) Analyzing test results."
+description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play Mode tests, (2) Configuring test assemblies (.asmdef), (3) Mocking dependencies, (4) Analyzing test results. Triggers: 'write tests', 'test this class', 'add unit tests', 'test coverage', 'play mode test', 'edit mode test'."
 ---
 
-# Unity Testing
+# Unity Test Logic
 
-Create and manage automated tests using Unity Test Framework.
+Generate comprehensive test suites for Unity C# code using Unity Test Framework.
 
-## Output Requirement (MANDATORY)
+## Scope & Constraints
 
-**Every test plan MUST follow the template**: [TEST_PLAN_TEMPLATE.md](.claude/skills/unity-test/assets/templates/TEST_PLAN_TEMPLATE.md)
+**This skill defines RULES and WORKFLOWS for test generation only.**
+All output formatting is delegated to [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md). Read the template first, then populate its sections with test logic generated below.
 
-Place test scripts in `Tests/EditMode/` or `Tests/PlayMode/` as appropriate.
+**In scope**: Test case identification, test code generation, test organization, mocking strategy, coverage analysis.
+**Out of scope**: Output document structure, markdown formatting, report layout (template owns these).
 
-Read the template first, then populate all sections.
+## Test Generation Workflow
 
-## Test Types
+1. **Analyze Target Code**
+   - Read the class/method under test
+   - Identify public API surface (methods, properties, events)
+   - Map dependencies (injected services, MonoBehaviour refs, ScriptableObjects)
+   - Determine testability: pure logic → Edit Mode, Unity lifecycle → Play Mode
 
-| Type | Use For | Location |
-|------|---------|----------|
-| **Edit Mode** | Pure logic, algorithms, non-Unity code | `Tests/EditMode/` |
-| **Play Mode** | Physics, lifecycles, coroutines, UI | `Tests/PlayMode/` |
+2. **Classify Test Type**
 
-## Workflow
+   | Condition | Type | Location |
+   |-----------|------|----------|
+   | Pure C# logic, no Unity API | Edit Mode | `Tests/EditMode/` |
+   | Uses MonoBehaviour, coroutines, physics, UI | Play Mode | `Tests/PlayMode/` |
+   | Async operations with `Awaitable` | Play Mode (async) | `Tests/PlayMode/` |
 
-1. **Analyze**: Target method/class, check for existing `.asmdef`
-2. **Setup**: Create `Tests/` folder + `.asmdef` referencing `UnityEngine.TestRunner`
-3. **Implement**: Arrange-Act-Assert pattern, use `[SetUp]`/`[TearDown]`
-4. **Execute**: `unityMCP.run_tests`
-5. **Fix Failures**: Use `/unity-fix-errors` or `/unity-investigate-code`
+3. **Generate Test Cases**
+   - Apply the rules in "Test Logic Rules" below
+   - For each public method: happy path + edge cases + error conditions
+   - For each state transition: valid + invalid transitions
+   - For each event: subscription, firing, handler execution
 
-## Test Naming Convention
+4. **Implement Tests**
+   - Follow Arrange-Act-Assert pattern
+   - Apply naming convention: `[Subject]_[Scenario]_[ExpectedResult]`
+   - Add `[SetUp]`/`[TearDown]` for shared state
+   - Destroy all test GameObjects in TearDown
 
+5. **Configure Assembly**
+   - Ensure `Tests/EditMode/` and `Tests/PlayMode/` have `.asmdef` files
+   - Reference `UnityEngine.TestRunner`, `UnityEditor.TestRunner`, and target assembly
+   - Add `defineConstraints: ["UNITY_INCLUDE_TESTS"]`
+
+6. **Execute & Validate**
+   - Run via `unityMCP.run_tests` or Unity Test Runner
+   - On failure: use `/unity-fix-errors` or `/unity-debug` to diagnose
+
+7. **Output**
+   - Populate the [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md) with generated test cases and results
+
+## Test Logic Rules
+
+### Rule 1: Coverage Targets
+For every public method, generate tests covering:
+- **Happy path**: Normal input → expected output
+- **Boundary values**: Min, max, zero, empty, null
+- **Error conditions**: Invalid input → expected exception or fallback
+- **State preconditions**: Method behavior when object is in different states
+
+### Rule 2: Test Isolation
+- Each test MUST be independent — no shared mutable state between tests
+- Use `[SetUp]` to create fresh instances per test
+- Use `[TearDown]` to destroy GameObjects and unsubscribe events
+- Never rely on test execution order
+
+### Rule 3: Dependency Handling
+Analyze dependencies and apply the appropriate strategy:
+- **Interface-based**: Create test doubles implementing the interface
+- **Concrete class**: Wrap in interface or use subclass override
+- **Static/Singleton**: Isolate behind wrapper; document as untestable if necessary
+- **MonoBehaviour**: Use `new GameObject().AddComponent<T>()` in SetUp, `Object.Destroy` in TearDown
+
+### Rule 4: Test Naming
 ```
 [Subject]_[Scenario]_[ExpectedResult]
 ```
-Example: `Player_TakesDamage_HealthDecreases`
+- Subject = class or method name
+- Scenario = input condition or action
+- ExpectedResult = observable outcome
 
-## Example Test
+Examples:
+- `Health_TakeDamageWithNegativeValue_ClampsToZero`
+- `Inventory_AddItemWhenFull_ReturnsFalse`
+- `Player_DiesAtZeroHealth_FiresOnDeathEvent`
 
-```csharp
-[Test]
-public void Player_TakesDamage_HealthDecreases()
-{
-    // Arrange
-    var player = new PlayerHealth(100);
-    
-    // Act
-    player.TakeDamage(30);
-    
-    // Assert
-    Assert.AreEqual(70, player.CurrentHealth);
-}
-```
+### Rule 5: Edit Mode vs Play Mode Selection
+- Default to Edit Mode (faster, no scene required)
+- Use Play Mode ONLY when test requires:
+  - `MonoBehaviour` lifecycle (`Start`, `Update`, `OnEnable`)
+  - Physics simulation (`Rigidbody`, collisions)
+  - Coroutines (`yield return`)
+  - `Awaitable` async operations
+  - UI interaction (`EventSystem`, `Button.onClick`)
+  - Scene loading
 
-## Best Practices
+### Rule 6: Assertion Selection
+- `Assert.AreEqual(expected, actual)` — value comparison
+- `Assert.IsTrue/IsFalse` — boolean conditions
+- `Assert.IsNull/IsNotNull` — null checks
+- `Assert.Throws<T>(() => ...)` — exception verification
+- `Assert.That(value, Is.InRange(min, max))` — range constraints
+- For floating point: `Assert.AreEqual(expected, actual, tolerance)`
 
-- **Atomic**: One behavior per test
-- **Cleanup**: Destroy test GameObjects in `TearDown`
-- **Isolation**: No external data dependencies
-- **Naming**: Descriptive `Subject_Scenario_Expected`
+### Rule 7: Async & Coroutine Tests
+- Coroutine tests: use `[UnityTest]` returning `IEnumerator`
+- Async tests (Unity 6+): use `[Test]` with `async Task` or `[UnityTest]` with `Awaitable`
+- Always set a timeout for async operations to prevent hanging tests
+- Yield `null` or `WaitForFixedUpdate` to advance frames
 
-See [TEST_EXAMPLES.md](.claude/skills/unity-test/references/TEST_EXAMPLES.md) for more patterns.
+### Rule 8: Test Data
+- Use constants or factory methods for test data, not magic numbers
+- Name test data descriptively: `const int FullHealth = 100;`
+- For parameterized tests, use `[TestCase(input, expected)]`
+
+## Code Analysis Checklist
+
+When analyzing code to generate tests, systematically check:
+
+1. **Constructors**: Valid params, invalid params, default state
+2. **Public methods**: All overloads, return values, side effects
+3. **Properties**: Get/set, validation, change notifications
+4. **Events**: Subscribe, unsubscribe, fire conditions, handler args
+5. **State machines**: Each state, each transition, invalid transitions
+6. **Collections**: Empty, single, multiple, capacity limits
+7. **Error paths**: Null inputs, out-of-range, disposed objects
+8. **Integration points**: Interface calls, event bus messages, callbacks
+
+## Best Practices for Unity Test Framework
+
+- **Speed**: Keep Edit Mode tests under 10ms each. Batch Play Mode tests that share scene setup.
+- **Determinism**: Avoid `Time.deltaTime` in assertions. Use fixed values or `WaitForFixedUpdate`.
+- **Cleanup**: Always destroy GameObjects. Leaked objects corrupt subsequent tests.
+- **No side effects**: Tests must not modify ProjectSettings, persistent data, or PlayerPrefs.
+- **Test one thing**: Each test validates exactly one behavior. Multiple asserts are acceptable only when verifying one logical outcome.
+- **Readable failures**: Prefer `Assert.AreEqual(expected, actual, "Health should decrease by damage amount")` with descriptive messages.
+
+## References
+
+- [TEST_EXAMPLES.md](references/TEST_EXAMPLES.md) — Edit Mode, Play Mode, async, parameterized, and mocking patterns
+- [TEST_PLAN_TEMPLATE.md](assets/templates/TEST_PLAN_TEMPLATE.md) — **Mandatory output format** for all test plans

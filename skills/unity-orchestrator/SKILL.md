@@ -25,11 +25,11 @@ Read the template first, then populate all sections.
 | "Fix this error/crash" | `unity-fix-errors` | → `unity-investigate-code` if root cause unclear |
 | "Debug why X happens" | `unity-debug` | → `unity-fix-errors` after diagnosis |
 | "Implement [feature]" | `unity-plan` | → `unity-plan-brainstorm` → `unity-plan-tasks` → `unity-task-brainstorm` → `unity-task-executor` |
-| "Refactor X" | `unity-implement-logic` | → `unity-test` to verify |
+| "Refactor X" | `unity-code` | → `unity-test` to verify |
 | "Game is slow/laggy" | `unity-optimize-performance` | — |
 | "Android/iOS issue" | `unity-mobile-deploy` | — |
 | "WebGL problem" | `unity-web-deploy` | — |
-| "Create editor tool" | `unity-editor-tools` | + `unity-mcp-basics` for automation |
+| "Create editor tool" | `unity-editor-tools` | + `unity-mcp` for automation |
 | "Shader/art pipeline" | `unity-tech-art` | — |
 | "Write tests" | `unity-test` | — |
 | "Write TDD" | `unity-write-tdd` | + `mermaid` for diagrams |
@@ -37,7 +37,7 @@ Read the template first, then populate all sections.
 | "Add data table/schema" | `flatbuffers-coder` | — |
 | "How does X work?" | `unity-investigate-code` | — |
 | "Create a diagram" | `mermaid` | — |
-| "Automate Editor task" | `unity-mcp-basics` | — |
+| "Automate Editor task" | `unity-mcp` | — |
 | "Create/update a skill" | `skill-creator` | — |
 
 ### Decision Tree: Errors & Debugging
@@ -50,7 +50,7 @@ User reports error/crash/bug?
 │  └─ NO → Ask for console output first
 ├─ Unexpected behavior (no error)?
 │  └─ unity-debug (strategic logging + analysis)
-│     └─ Found cause? → unity-fix-errors or unity-implement-logic
+│     └─ Found cause? → unity-fix-errors or unity-code
 └─ Performance issue (slow, lag, memory)?
    └─ unity-optimize-performance
 ```
@@ -60,7 +60,7 @@ User reports error/crash/bug?
 ```
 User wants new feature?
 ├─ Small/isolated change (1-2 files)?
-│  └─ unity-implement-logic directly
+│  └─ unity-code directly
 ├─ Medium feature (known scope)?
 │  └─ unity-task-brainstorm → unity-task-executor
 └─ Large/complex feature?
@@ -74,11 +74,11 @@ User wants new feature?
 | Scenario | Combine |
 |:---------|:--------|
 | New feature with documentation | `unity-plan` + `unity-write-tdd` + `mermaid` |
-| Editor tool with automation | `unity-editor-tools` + `unity-mcp-basics` |
-| Performance-critical feature | `unity-implement-logic` + `unity-optimize-performance` |
-| Mobile-specific implementation | `unity-implement-logic` + `unity-mobile-deploy` |
-| WebGL-specific implementation | `unity-implement-logic` + `unity-web-deploy` |
-| Data-driven system | `flatbuffers-coder` + `unity-implement-logic` |
+| Editor tool with automation | `unity-editor-tools` + `unity-mcp` |
+| Performance-critical feature | `unity-code` + `unity-optimize-performance` |
+| Mobile-specific implementation | `unity-code` + `unity-mobile-deploy` |
+| WebGL-specific implementation | `unity-code` + `unity-web-deploy` |
+| Data-driven system | `flatbuffers-coder` + `unity-code` |
 | Documented architecture | `unity-write-docs` + `mermaid` |
 
 For full skill catalog, see [SKILL_CATALOG.md](.claude/skills/unity-orchestrator/references/SKILL_CATALOG.md).
@@ -99,7 +99,7 @@ Adopt the specialist skill's workflow completely. Follow its protocols, template
 
 When initial skill recommends another, chain explicitly:
 
-> "Root cause identified. Chaining to `unity-implement-logic` for the fix..."
+> "Root cause identified. Chaining to `unity-code` for the fix..."
 
 ### 4. Verify & Cross-Cut
 
