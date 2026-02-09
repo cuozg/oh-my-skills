@@ -29,9 +29,11 @@ void Update()
 ```csharp
 void Start()
 {
-    Debug.Log($"[DEBUG] _target assigned: {_target != null}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=cyan>[DEBUG] _target assigned: {_target != null}</color>");
     if (_target == null)
-        Debug.LogError($"[DEBUG] _target is NULL! Check Inspector assignment on {gameObject.name}");
+        Debug.LogError($"<color=red>[DEBUG] _target is NULL! Check Inspector assignment on {gameObject.name}</color>");
+    #endif
 }
 ```
 
@@ -50,7 +52,9 @@ rb.AddForce(Vector3.up); // NullRef if no Rigidbody
 **Debug Logs:**
 ```csharp
 var rb = GetComponent<Rigidbody>();
-Debug.Log($"[DEBUG] GetComponent<Rigidbody> result: {(rb != null ? "found" : "NOT FOUND")} on {gameObject.name}");
+#if UNITY_EDITOR
+Debug.Log($"<color=cyan>[DEBUG] GetComponent<Rigidbody> result: {(rb != null ? "found" : "NOT FOUND")} on {gameObject.name}</color>");
+#endif
 ```
 
 **Solutions:**
@@ -76,8 +80,10 @@ player.GetComponent<Health>().TakeDamage(10); // NullRef if "Player" not found
 **Debug Logs:**
 ```csharp
 var player = GameObject.Find("Player");
-Debug.Log($"[DEBUG] GameObject.Find('Player') result: {(player != null ? player.name : "NOT FOUND")}");
-Debug.Log($"[DEBUG] Active GameObjects in scene: {FindObjectsOfType<GameObject>().Length}");
+#if UNITY_EDITOR
+Debug.Log($"<color=cyan>[DEBUG] GameObject.Find('Player') result: {(player != null ? player.name : "NOT FOUND")}</color>");
+Debug.Log($"<color=cyan>[DEBUG] Active GameObjects in scene: {FindObjectsOfType<GameObject>().Length}</color>");
+#endif
 ```
 
 **Solutions:**
@@ -104,7 +110,9 @@ void Update()
 
 **Debug Logs:**
 ```csharp
-Debug.Log($"[DEBUG] _targetEnemy: C# null={_targetEnemy is null}, Unity null={_targetEnemy == null}");
+#if UNITY_EDITOR
+Debug.Log($"<color=cyan>[DEBUG] _targetEnemy: C# null={_targetEnemy is null}, Unity null={_targetEnemy == null}</color>");
+#endif
 ```
 
 **Solutions:**
@@ -139,9 +147,13 @@ async void LoadDataAsync()
 ```csharp
 async void LoadDataAsync()
 {
-    Debug.Log($"[DEBUG] LoadDataAsync START, gameObject active: {gameObject.activeInHierarchy}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] LoadDataAsync START, gameObject active: {gameObject.activeInHierarchy}</color>");
+    #endif
     var data = await FetchFromServer();
-    Debug.Log($"[DEBUG] LoadDataAsync AFTER await, this == null: {this == null}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] LoadDataAsync AFTER await, this == null: {this == null}</color>");
+    #endif
     
     if (this == null) return; // Guard
     _text.text = data;
@@ -189,10 +201,14 @@ for (int i = 0; i <= array.Length; i++) // ERROR: <= instead of <
 
 **Debug Logs:**
 ```csharp
-Debug.Log($"[DEBUG] array.Length={array.Length}, loop range: 0 to {array.Length}");
+#if UNITY_EDITOR
+Debug.Log($"<color=lime>[DEBUG] array.Length={array.Length}, loop range: 0 to {array.Length}</color>");
+#endif
 for (int i = 0; i <= array.Length; i++)
 {
-    Debug.Log($"[DEBUG] Accessing index {i}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=lime>[DEBUG] Accessing index {i}</color>");
+    #endif
     Process(array[i]);
 }
 ```
@@ -212,11 +228,15 @@ void OnItemRemoved(int removedIndex)
 ```csharp
 void OnItemRemoved(int removedIndex)
 {
-    Debug.Log($"[DEBUG] OnItemRemoved: removedIndex={removedIndex}, _selectedIndex={_selectedIndex}, _items.Count={_items.Count}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=lime>[DEBUG] OnItemRemoved: removedIndex={removedIndex}, _selectedIndex={_selectedIndex}, _items.Count={_items.Count}</color>");
+    #endif
     
     if (_selectedIndex >= _items.Count)
     {
-        Debug.LogWarning($"[DEBUG] _selectedIndex {_selectedIndex} is now out of range!");
+        #if UNITY_EDITOR
+        Debug.LogWarning($"<color=red>[DEBUG] _selectedIndex {_selectedIndex} is now out of range!</color>");
+        #endif
         _selectedIndex = Mathf.Max(0, _items.Count - 1);
     }
 }
@@ -276,17 +296,25 @@ void Awake()
 // Script A
 void Awake()
 {
-    Debug.Log($"[DEBUG] ScriptA.Awake() START, frame={Time.frameCount}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=magenta>[DEBUG] ScriptA.Awake() START, frame={Time.frameCount}</color>");
+    #endif
     _data = LoadData();
-    Debug.Log($"[DEBUG] ScriptA.Awake() END, _data ready");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=magenta>[DEBUG] ScriptA.Awake() END, _data ready</color>");
+    #endif
 }
 
 // Script B  
 void Awake()
 {
-    Debug.Log($"[DEBUG] ScriptB.Awake() START, frame={Time.frameCount}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=magenta>[DEBUG] ScriptB.Awake() START, frame={Time.frameCount}</color>");
+    #endif
     _scriptA = GetComponent<ScriptA>();
-    Debug.Log($"[DEBUG] ScriptA._data is {(_scriptA._data != null ? "ready" : "NULL")}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=cyan>[DEBUG] ScriptA._data is {(_scriptA._data != null ? "ready" : "NULL")}</color>");
+    #endif
 }
 ```
 
@@ -356,7 +384,9 @@ async void Start()
     }
     catch (Exception e)
     {
-        Debug.LogError($"[DEBUG] LoadAsync failed: {e}");
+        #if UNITY_EDITOR
+        Debug.LogError($"<color=red>[DEBUG] LoadAsync failed: {e}</color>");
+        #endif
     }
 }
 ```
@@ -410,13 +440,17 @@ void OnEnable()
 ```csharp
 void OnEnable()
 {
-    Debug.Log($"[DEBUG] {gameObject.name} subscribing to OnPlayerDied");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] {gameObject.name} subscribing to OnPlayerDied</color>");
+    #endif
     GameManager.OnPlayerDied += HandlePlayerDied;
 }
 
 void OnDisable()
 {
-    Debug.Log($"[DEBUG] {gameObject.name} unsubscribing from OnPlayerDied");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] {gameObject.name} unsubscribing from OnPlayerDied</color>");
+    #endif
     GameManager.OnPlayerDied -= HandlePlayerDied;
 }
 ```
@@ -450,12 +484,16 @@ private Dictionary<string, int> _data; // Not serialized!
 ```csharp
 void OnValidate()
 {
-    Debug.Log($"[DEBUG] _data count in Editor: {_data?.Count ?? -1}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] _data count in Editor: {_data?.Count ?? -1}</color>");
+    #endif
 }
 
 void Awake()
 {
-    Debug.Log($"[DEBUG] _data count at runtime: {_data?.Count ?? -1}");
+    #if UNITY_EDITOR
+    Debug.Log($"<color=yellow>[DEBUG] _data count at runtime: {_data?.Count ?? -1}</color>");
+    #endif
 }
 ```
 

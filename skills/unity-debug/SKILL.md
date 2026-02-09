@@ -100,44 +100,61 @@ Add targeted instrumentation to capture evidence. This is the primary code modif
 
 **Entry/Exit — bracket the problem:**
 ```csharp
-Debug.Log($"[DEBUG] ProcessDamage ENTER: damage={damage}, type={type}, health={_health}");
+#if UNITY_EDITOR
+Debug.Log($"<color=yellow>[DEBUG] ProcessDamage ENTER: damage={damage}, type={type}, health={_health}</color>");
+#endif
 // ... existing code ...
-Debug.Log($"[DEBUG] ProcessDamage EXIT: health={_health}, isDead={IsDead}");
+#if UNITY_EDITOR
+Debug.Log($"<color=yellow>[DEBUG] ProcessDamage EXIT: health={_health}, isDead={IsDead}</color>");
+#endif
 ```
 
 **Null Guard — expose missing state:**
 ```csharp
-Debug.Log($"[DEBUG] _player={(_player != null ? "valid" : "NULL")}, _target={(_targetEnemy != null ? _targetEnemy.name : "NULL")}");
+#if UNITY_EDITOR
+Debug.Log($"<color=cyan>[DEBUG] _player={(_player != null ? "valid" : "NULL")}, _target={(_targetEnemy != null ? _targetEnemy.name : "NULL")}</color>");
+#endif
 ```
 
 **State Transition — catch mutations:**
 ```csharp
-Debug.Log($"[DEBUG] State: {_prevState} → {_currentState}");
-Debug.Log($"[DEBUG] Before: field={_field?.ToString() ?? "null"}");
+#if UNITY_EDITOR
+Debug.Log($"<color=orange>[DEBUG] State: {_prevState} → {_currentState}</color>");
+Debug.Log($"<color=orange>[DEBUG] Before: field={_field?.ToString() ?? "null"}</color>");
+#endif
 _field = newValue;
-Debug.Log($"[DEBUG] After: field={_field?.ToString() ?? "null"}");
+#if UNITY_EDITOR
+Debug.Log($"<color=orange>[DEBUG] After: field={_field?.ToString() ?? "null"}</color>");
+#endif
 ```
 
 **Collection Bounds — prevent index errors:**
 ```csharp
-Debug.Log($"[DEBUG] items.Count={items?.Count ?? -1}, index={index}");
+#if UNITY_EDITOR
+Debug.Log($"<color=lime>[DEBUG] items.Count={items?.Count ?? -1}, index={index}</color>");
+#endif
 ```
 
 **Lifecycle — catch ordering issues:**
 ```csharp
-void Awake() => Debug.Log($"[DEBUG] {GetType().Name}.Awake on {gameObject.name}");
-void OnEnable() => Debug.Log($"[DEBUG] {GetType().Name}.OnEnable");
-void Start() => Debug.Log($"[DEBUG] {GetType().Name}.Start");
+#if UNITY_EDITOR
+void Awake() => Debug.Log($"<color=magenta>[DEBUG] {GetType().Name}.Awake on {gameObject.name}</color>");
+void OnEnable() => Debug.Log($"<color=magenta>[DEBUG] {GetType().Name}.OnEnable</color>");
+void Start() => Debug.Log($"<color=magenta>[DEBUG] {GetType().Name}.Start</color>");
+#endif
 ```
 
 **Conditional (strip from builds):**
 ```csharp
 [System.Diagnostics.Conditional("UNITY_EDITOR")]
-private void DebugLog(string msg) => Debug.Log($"[DEBUG] {msg}");
+private void DebugLog(string msg) => Debug.Log($"<color=yellow>[DEBUG] {msg}</color>");
 ```
 
 ### Debug Flow Guidelines
 
+- **MANDATORY**: Wrap ALL `Debug.Log` statements in `#if UNITY_EDITOR`...`#endif` preprocessor flags
+- **MANDATORY**: Apply highlight color to ALL `Debug.Log` output using `<color=COLOR>...</color>` tags
+- Color guide: `yellow` (general), `cyan` (null checks), `orange` (state changes), `lime` (collections), `magenta` (lifecycle), `red` (errors)
 - Prefix ALL debug logs with `[DEBUG]` for easy filtering/removal
 - Log BEFORE and AFTER critical operations
 - Include method name + relevant variable values (not just "here")
