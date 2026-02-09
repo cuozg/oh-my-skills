@@ -1,74 +1,931 @@
 # Unity Test Examples
 
-Patterns organized by test type. Each demonstrates test logic generation rules from SKILL.md.
+Comprehensive examples demonstrating test organization by feature, maximum coverage, and Unity Test Framework patterns.
 
-## Edit Mode — Pure Logic
+## Table of Contents
 
-Fast tests for non-Unity code. Default choice per Rule 5.
+- [Feature: Inventory System (Edit Mode)](#feature-inventory-system-edit-mode)
+- [Feature: Inventory Events (Edit Mode)](#feature-inventory-events-edit-mode)
+- [Feature: Inventory Integration (Edit Mode)](#feature-inventory-integration-edit-mode)
+- [Feature: Player Movement (Play Mode)](#feature-player-movement-play-mode)
+- [Feature: Spawner System (Play Mode)](#feature-spawner-system-play-mode)
+- [Patterns: Mocking Dependencies](#patterns-mocking-dependencies)
+- [Patterns: Parameterized Tests](#patterns-parameterized-tests)
+- [Patterns: State Machine Testing](#patterns-state-machine-testing)
+
+---
+
+## Feature: Inventory System (Edit Mode)
+
+Core logic tests — happy path, boundaries, error conditions. 15 test cases.
 
 ```csharp
+using NUnit.Framework;
+using System;
+
 [TestFixture]
-public class HealthTests
+public class InventoryTests
 {
-    private const int FullHealth = 100;
-    private const int StandardDamage = 30;
-    private Health _health;
+    private const int DefaultMaxSlots = 10;
+    private Inventory _inventory;
 
     [SetUp]
     public void SetUp()
     {
-        _health = new Health();
-        _health.SetMax(FullHealth);
+        _inventory = new Inventory(DefaultMaxSlots);
     }
 
-    // Rule 1: Happy path
+    // --- Constructor ---
+
     [Test]
-    public void Health_TakesDamage_ValueDecreases()
+    public void Constructor_ValidSlots_CreatesEmptyInventory()
     {
-        _health.TakeDamage(StandardDamage);
-        Assert.AreEqual(70, _health.Current);
+        Assert.AreEqual(0, _inventory.Count, "New inventory should be empty");
     }
 
-    // Rule 1: Boundary — zero damage
     [Test]
-    public void Health_TakesZeroDamage_ValueUnchanged()
+    public void Constructor_ValidSlots_SetsMaxSlots()
     {
-        _health.TakeDamage(0);
-        Assert.AreEqual(FullHealth, _health.Current);
+        Assert.AreEqual(DefaultMaxSlots, _inventory.MaxSlots);
     }
 
-    // Rule 1: Boundary — overkill
     [Test]
-    public void Health_TakesDamageExceedingMax_ClampsToZero()
+    public void Constructor_ZeroSlots_ThrowsArgumentException()
     {
-        _health.TakeDamage(FullHealth + 50);
-        Assert.AreEqual(0, _health.Current);
+        Assert.Throws<ArgumentException>(() => new Inventory(0));
     }
 
-    // Rule 1: Error condition — negative input
     [Test]
-    public void Health_TakesNegativeDamage_ClampsToZero()
+    public void Constructor_NegativeSlots_ThrowsArgumentException()
     {
-        _health.TakeDamage(-10);
-        Assert.AreEqual(FullHealth, _health.Current,
-            "Negative damage should be ignored");
+        Assert.Throws<ArgumentException>(() => new Inventory(-5));
+    }
+
+    // --- Add ---
+
+    [Test]
+    public void Add_ValidItem_ReturnsTrue()
+    {
+        var result = _inventory.Add(new Item("sword"));
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void Add_ValidItem_IncrementsCount()
+    {
+        _inventory.Add(new Item("sword"));
+        Assert.AreEqual(1, _inventory.Count);
+    }
+
+    [Test]
+    public void Add_NullItem_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => _inventory.Add(null));
+    }
+
+    [Test]
+    public void Add_WhenFull_ReturnsFalse()
+    {
+        var inventory = new Inventory(maxSlots: 1);
+        inventory.Add(new Item("sword"));
+
+        var result = inventory.Add(new Item("shield"));
+
+        Assert.IsFalse(result, "Should reject item when full");
+    }
+
+    [Test]
+    public void Add_WhenFull_DoesNotIncrementCount()
+    {
+        var inventory = new Inventory(maxSlots: 1);
+        inventory.Add(new Item("sword"));
+        inventory.Add(new Item("shield"));
+
+        Assert.AreEqual(1, inventory.Count, "Count should not increase past capacity");
+    }
+
+    [Test]
+    public void Add_ExactlyAtCapacity_Succeeds()
+    {
+        var inventory = new Inventory(maxSlots: 2);
+        inventory.Add(new Item("sword"));
+        var result = inventory.Add(new Item("shield"));
+
+        Assert.IsTrue(result, "Should accept item at exactly max capacity");
+        Assert.AreEqual(2, inventory.Count);
+    }
+
+    // --- Remove ---
+
+    [Test]
+    public void Remove_ExistingItem_ReturnsTrue()
+    {
+        _inventory.Add(new Item("sword", id: "item_001"));
+        var result = _inventory.Remove("item_001");
+        Assert.IsTrue(result);
+    }
+
+    [Test]
+    public void Remove_ExistingItem_DecrementsCount()
+    {
+        _inventory.Add(new Item("sword", id: "item_001"));
+        _inventory.Remove("item_001");
+        Assert.AreEqual(0, _inventory.Count);
+    }
+
+    [Test]
+    public void Remove_NonexistentId_ReturnsFalse()
+    {
+        var result = _inventory.Remove("nonexistent");
+        Assert.IsFalse(result);
+    }
+
+    [Test]
+    public void Remove_NullId_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => _inventory.Remove(null));
+    }
+
+    // --- GetById ---
+
+    [Test]
+    public void GetById_ExistingItem_ReturnsItem()
+    {
+        var item = new Item("sword", id: "item_001");
+        _inventory.Add(item);
+
+        var result = _inventory.GetById("item_001");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("sword", result.Name);
+    }
+
+    [Test]
+    public void GetById_NonexistentId_ReturnsNull()
+    {
+        var result = _inventory.GetById("nonexistent");
+        Assert.IsNull(result);
     }
 }
 ```
 
-## Edit Mode — Parameterized Tests
+---
 
-Rule 8: Use `[TestCase]` for data-driven tests.
+## Feature: Inventory Events (Edit Mode)
+
+Event-focused tests for the same Inventory feature. 10 test cases.
+
+```csharp
+using NUnit.Framework;
+using System;
+
+[TestFixture]
+public class InventoryEventTests
+{
+    private Inventory _inventory;
+    private Item _lastAddedItem;
+    private string _lastRemovedId;
+    private bool _fullEventFired;
+    private int _addEventCount;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _inventory = new Inventory(maxSlots: 3);
+        _lastAddedItem = null;
+        _lastRemovedId = null;
+        _fullEventFired = false;
+        _addEventCount = 0;
+
+        _inventory.OnItemAdded += item => { _lastAddedItem = item; _addEventCount++; };
+        _inventory.OnItemRemoved += id => _lastRemovedId = id;
+        _inventory.OnInventoryFull += () => _fullEventFired = true;
+    }
+
+    // --- OnItemAdded ---
+
+    [Test]
+    public void Add_ValidItem_FiresOnItemAdded()
+    {
+        var item = new Item("sword");
+        _inventory.Add(item);
+        Assert.AreEqual(item, _lastAddedItem);
+    }
+
+    [Test]
+    public void Add_ValidItem_FiresOnItemAddedOnce()
+    {
+        _inventory.Add(new Item("sword"));
+        Assert.AreEqual(1, _addEventCount, "Event should fire exactly once per add");
+    }
+
+    [Test]
+    public void Add_WhenFull_DoesNotFireOnItemAdded()
+    {
+        var inventory = new Inventory(maxSlots: 1);
+        inventory.OnItemAdded += _ => _addEventCount++;
+        _addEventCount = 0;
+
+        inventory.Add(new Item("sword"));
+        inventory.Add(new Item("shield")); // rejected
+
+        Assert.AreEqual(1, _addEventCount, "Should not fire for rejected add");
+    }
+
+    [Test]
+    public void Add_MultipleItems_FiresOnItemAddedForEach()
+    {
+        _inventory.Add(new Item("sword"));
+        _inventory.Add(new Item("shield"));
+        Assert.AreEqual(2, _addEventCount);
+    }
+
+    // --- OnItemRemoved ---
+
+    [Test]
+    public void Remove_ExistingItem_FiresOnItemRemoved()
+    {
+        _inventory.Add(new Item("sword", id: "item_001"));
+        _inventory.Remove("item_001");
+        Assert.AreEqual("item_001", _lastRemovedId);
+    }
+
+    [Test]
+    public void Remove_NonexistentItem_DoesNotFireOnItemRemoved()
+    {
+        _inventory.Remove("nonexistent");
+        Assert.IsNull(_lastRemovedId, "Should not fire for failed remove");
+    }
+
+    // --- OnInventoryFull ---
+
+    [Test]
+    public void Add_ReachesCapacity_FiresOnInventoryFull()
+    {
+        _inventory = new Inventory(maxSlots: 2);
+        _inventory.OnInventoryFull += () => _fullEventFired = true;
+
+        _inventory.Add(new Item("sword"));
+        _inventory.Add(new Item("shield")); // reaches capacity
+
+        Assert.IsTrue(_fullEventFired);
+    }
+
+    [Test]
+    public void Add_BelowCapacity_DoesNotFireOnInventoryFull()
+    {
+        _inventory.Add(new Item("sword"));
+        Assert.IsFalse(_fullEventFired);
+    }
+
+    [Test]
+    public void Add_AlreadyFull_DoesNotFireOnInventoryFullAgain()
+    {
+        var inventory = new Inventory(maxSlots: 1);
+        int fullCount = 0;
+        inventory.OnInventoryFull += () => fullCount++;
+
+        inventory.Add(new Item("sword"));  // fills
+        inventory.Add(new Item("shield")); // rejected
+
+        Assert.AreEqual(1, fullCount, "Should fire only when first reaching capacity");
+    }
+
+    // --- Unsubscribe safety ---
+
+    [Test]
+    public void Add_AfterUnsubscribe_DoesNotFireHandler()
+    {
+        int count = 0;
+        Action<Item> handler = _ => count++;
+
+        _inventory.OnItemAdded += handler;
+        _inventory.Add(new Item("sword"));
+        Assert.AreEqual(1, count);
+
+        _inventory.OnItemAdded -= handler;
+        _inventory.Add(new Item("shield"));
+        Assert.AreEqual(1, count, "Handler should not fire after unsubscribe");
+    }
+}
+```
+
+---
+
+## Feature: Inventory Integration (Edit Mode)
+
+Tests verifying Inventory interaction with dependencies (reward service, persistence). 10 test cases.
+
+```csharp
+using NUnit.Framework;
+
+// --- Test Doubles ---
+
+public class MockRewardService : IRewardService
+{
+    public int GrantCallCount { get; private set; }
+    public string LastRewardId { get; private set; }
+    public bool ShouldFail { get; set; }
+
+    public bool GrantReward(string rewardId)
+    {
+        GrantCallCount++;
+        LastRewardId = rewardId;
+        return !ShouldFail;
+    }
+}
+
+public class MockPersistenceService : IPersistenceService
+{
+    public int SaveCallCount { get; set; }
+    public string LastSavedData { get; private set; }
+    public bool ShouldFail { get; set; }
+
+    public bool Save(string key, string data)
+    {
+        SaveCallCount++;
+        LastSavedData = data;
+        return !ShouldFail;
+    }
+
+    public string Load(string key) => null;
+}
+
+// --- Tests ---
+
+[TestFixture]
+public class InventoryIntegrationTests
+{
+    private Inventory _inventory;
+    private MockRewardService _mockRewards;
+    private MockPersistenceService _mockPersistence;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _mockRewards = new MockRewardService();
+        _mockPersistence = new MockPersistenceService();
+        _inventory = new Inventory(maxSlots: 10, _mockRewards, _mockPersistence);
+    }
+
+    // --- Reward integration ---
+
+    [Test]
+    public void Add_RewardItem_GrantsRewardViaService()
+    {
+        var rewardItem = new Item("chest", rewardId: "reward_001");
+        _inventory.Add(rewardItem);
+
+        Assert.AreEqual(1, _mockRewards.GrantCallCount);
+        Assert.AreEqual("reward_001", _mockRewards.LastRewardId);
+    }
+
+    [Test]
+    public void Add_NonRewardItem_DoesNotCallRewardService()
+    {
+        _inventory.Add(new Item("sword"));
+        Assert.AreEqual(0, _mockRewards.GrantCallCount);
+    }
+
+    [Test]
+    public void Add_RewardServiceFails_StillAddsItem()
+    {
+        _mockRewards.ShouldFail = true;
+        var result = _inventory.Add(new Item("chest", rewardId: "reward_001"));
+
+        Assert.IsTrue(result, "Item should be added even if reward fails");
+        Assert.AreEqual(1, _inventory.Count);
+    }
+
+    [Test]
+    public void Add_MultipleRewardItems_GrantsEachReward()
+    {
+        _inventory.Add(new Item("chest1", rewardId: "r1"));
+        _inventory.Add(new Item("chest2", rewardId: "r2"));
+
+        Assert.AreEqual(2, _mockRewards.GrantCallCount);
+        Assert.AreEqual("r2", _mockRewards.LastRewardId);
+    }
+
+    // --- Persistence integration ---
+
+    [Test]
+    public void Add_Item_AutoSavesInventory()
+    {
+        _inventory.Add(new Item("sword"));
+        Assert.AreEqual(1, _mockPersistence.SaveCallCount);
+    }
+
+    [Test]
+    public void Remove_Item_AutoSavesInventory()
+    {
+        _inventory.Add(new Item("sword", id: "item_001"));
+        _mockPersistence.SaveCallCount = 0; // reset after add
+
+        _inventory.Remove("item_001");
+        Assert.AreEqual(1, _mockPersistence.SaveCallCount);
+    }
+
+    [Test]
+    public void Add_PersistenceFails_StillAddsItem()
+    {
+        _mockPersistence.ShouldFail = true;
+        var result = _inventory.Add(new Item("sword"));
+
+        Assert.IsTrue(result, "Item should be added even if save fails");
+    }
+
+    [Test]
+    public void Add_WhenFull_DoesNotTriggerSave()
+    {
+        var inventory = new Inventory(1, _mockRewards, _mockPersistence);
+        inventory.Add(new Item("sword"));
+        _mockPersistence.SaveCallCount = 0;
+
+        inventory.Add(new Item("shield")); // rejected
+        Assert.AreEqual(0, _mockPersistence.SaveCallCount, "Should not save on rejected add");
+    }
+
+    [Test]
+    public void Remove_NonexistentItem_DoesNotTriggerSave()
+    {
+        _inventory.Remove("nonexistent");
+        Assert.AreEqual(0, _mockPersistence.SaveCallCount);
+    }
+
+    [Test]
+    public void Add_RewardAndPersistence_BothCalled()
+    {
+        _inventory.Add(new Item("chest", rewardId: "r1"));
+
+        Assert.AreEqual(1, _mockRewards.GrantCallCount, "Reward should be granted");
+        Assert.AreEqual(1, _mockPersistence.SaveCallCount, "Inventory should be saved");
+    }
+}
+```
+
+---
+
+## Feature: Player Movement (Play Mode)
+
+MonoBehaviour lifecycle tests requiring Play Mode. 12 test cases.
+
+```csharp
+using System.Collections;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+
+[TestFixture]
+public class PlayerMovementTests
+{
+    private GameObject _playerGo;
+    private PlayerMovement _movement;
+    private const float MoveSpeed = 5f;
+    private const float Tolerance = 0.01f;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _playerGo = new GameObject("TestPlayer");
+        _movement = _playerGo.AddComponent<PlayerMovement>();
+        _movement.MoveSpeed = MoveSpeed;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        if (_playerGo != null) Object.Destroy(_playerGo);
+    }
+
+    // --- Basic movement ---
+
+    [UnityTest]
+    public IEnumerator Move_Forward_PositionIncreases()
+    {
+        float startZ = _playerGo.transform.position.z;
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.IsTrue(_playerGo.transform.position.z > startZ,
+            "Z position should increase when moving forward");
+    }
+
+    [UnityTest]
+    public IEnumerator Move_Backward_PositionDecreases()
+    {
+        float startZ = _playerGo.transform.position.z;
+        _movement.Move(Vector3.back);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.IsTrue(_playerGo.transform.position.z < startZ,
+            "Z position should decrease when moving backward");
+    }
+
+    [UnityTest]
+    public IEnumerator Move_Right_XPositionIncreases()
+    {
+        float startX = _playerGo.transform.position.x;
+        _movement.Move(Vector3.right);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.IsTrue(_playerGo.transform.position.x > startX);
+    }
+
+    [UnityTest]
+    public IEnumerator Move_Zero_PositionUnchanged()
+    {
+        var startPos = _playerGo.transform.position;
+        _movement.Move(Vector3.zero);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.AreEqual(startPos.x, _playerGo.transform.position.x, Tolerance);
+        Assert.AreEqual(startPos.z, _playerGo.transform.position.z, Tolerance);
+    }
+
+    // --- Speed ---
+
+    [UnityTest]
+    public IEnumerator Move_WithZeroSpeed_PositionUnchanged()
+    {
+        _movement.MoveSpeed = 0f;
+        var startPos = _playerGo.transform.position;
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.AreEqual(startPos.z, _playerGo.transform.position.z, Tolerance);
+    }
+
+    [UnityTest]
+    public IEnumerator Move_HigherSpeed_GreaterDisplacement()
+    {
+        _movement.MoveSpeed = MoveSpeed;
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+        float distNormal = _playerGo.transform.position.z;
+
+        // Reset
+        Object.Destroy(_playerGo);
+        _playerGo = new GameObject("FastPlayer");
+        _movement = _playerGo.AddComponent<PlayerMovement>();
+        _movement.MoveSpeed = MoveSpeed * 3f;
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+        float distFast = _playerGo.transform.position.z;
+
+        Assert.IsTrue(distFast > distNormal, "Higher speed should produce greater displacement");
+    }
+
+    // --- Diagonal ---
+
+    [UnityTest]
+    public IEnumerator Move_Diagonal_BothAxesChange()
+    {
+        var startPos = _playerGo.transform.position;
+        _movement.Move(new Vector3(1, 0, 1).normalized);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.IsTrue(_playerGo.transform.position.x > startPos.x);
+        Assert.IsTrue(_playerGo.transform.position.z > startPos.z);
+    }
+
+    // --- Grounded / Jump ---
+
+    [UnityTest]
+    public IEnumerator Jump_WhenGrounded_YPositionIncreases()
+    {
+        _playerGo.AddComponent<Rigidbody>();
+        var startY = _playerGo.transform.position.y;
+        _movement.Jump();
+        yield return new WaitForSeconds(0.1f);
+
+        Assert.IsTrue(_playerGo.transform.position.y > startY,
+            "Y position should increase after jump");
+    }
+
+    [UnityTest]
+    public IEnumerator Jump_WhenAirborne_DoesNotDoubleJump()
+    {
+        _playerGo.AddComponent<Rigidbody>();
+        _movement.Jump();
+        yield return null;
+
+        float yAfterFirstJump = _playerGo.transform.position.y;
+        _movement.Jump(); // should be rejected
+        yield return null;
+
+        Assert.AreEqual(yAfterFirstJump, _playerGo.transform.position.y, 0.5f,
+            "Should not gain extra height from double jump");
+    }
+
+    // --- Disabled state ---
+
+    [UnityTest]
+    public IEnumerator Move_WhenDisabled_PositionUnchanged()
+    {
+        _movement.enabled = false;
+        var startPos = _playerGo.transform.position;
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        Assert.AreEqual(startPos.x, _playerGo.transform.position.x, Tolerance);
+        Assert.AreEqual(startPos.z, _playerGo.transform.position.z, Tolerance);
+    }
+
+    // --- Facing direction ---
+
+    [UnityTest]
+    public IEnumerator Move_Forward_FacesForward()
+    {
+        _movement.Move(Vector3.forward);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        float angle = Vector3.Angle(_playerGo.transform.forward, Vector3.forward);
+        Assert.IsTrue(angle < 10f, "Player should face movement direction");
+    }
+
+    [UnityTest]
+    public IEnumerator Move_Right_FacesRight()
+    {
+        _movement.Move(Vector3.right);
+        yield return new WaitForFixedUpdate();
+        yield return null;
+
+        float angle = Vector3.Angle(_playerGo.transform.forward, Vector3.right);
+        Assert.IsTrue(angle < 10f, "Player should face right after moving right");
+    }
+}
+```
+
+---
+
+## Feature: Spawner System (Play Mode)
+
+Coroutine-based spawning with timing and capacity. 10 test cases.
+
+```csharp
+using System.Collections;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
+
+[TestFixture]
+public class SpawnerTests
+{
+    private GameObject _spawnerGo;
+    private EnemySpawner _spawner;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _spawnerGo = new GameObject("TestSpawner");
+        _spawner = _spawnerGo.AddComponent<EnemySpawner>();
+        _spawner.SpawnDelay = 0.1f;
+        _spawner.MaxEnemies = 5;
+        _spawner.EnemyPrefab = new GameObject("EnemyTemplate");
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        if (_spawnerGo != null) Object.Destroy(_spawnerGo);
+        // Clean up spawned enemies
+        foreach (var go in GameObject.FindObjectsByType<EnemyComponent>(FindObjectsSortMode.None))
+        {
+            Object.Destroy(go.gameObject);
+        }
+    }
+
+    // --- Basic spawning ---
+
+    [UnityTest]
+    public IEnumerator StartSpawning_AfterDelay_CreatesOneEnemy()
+    {
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.15f);
+
+        Assert.AreEqual(1, _spawner.SpawnCount);
+    }
+
+    [UnityTest]
+    public IEnumerator StartSpawning_BeforeDelay_NoEnemiesSpawned()
+    {
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.05f);
+
+        Assert.AreEqual(0, _spawner.SpawnCount);
+    }
+
+    [UnityTest]
+    public IEnumerator StartSpawning_MultipleDelays_SpawnsMultiple()
+    {
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.35f);
+
+        Assert.IsTrue(_spawner.SpawnCount >= 3, $"Expected >= 3 spawns, got {_spawner.SpawnCount}");
+    }
+
+    // --- Capacity ---
+
+    [UnityTest]
+    public IEnumerator StartSpawning_AtMaxCapacity_StopsSpawning()
+    {
+        _spawner.MaxEnemies = 2;
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.5f);
+
+        Assert.AreEqual(2, _spawner.SpawnCount, "Should stop at max capacity");
+    }
+
+    [UnityTest]
+    public IEnumerator StartSpawning_ZeroMax_NeverSpawns()
+    {
+        _spawner.MaxEnemies = 0;
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.3f);
+
+        Assert.AreEqual(0, _spawner.SpawnCount);
+    }
+
+    // --- Stop ---
+
+    [UnityTest]
+    public IEnumerator StopSpawning_PreventsNewSpawns()
+    {
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.15f);
+        int countAtStop = _spawner.SpawnCount;
+
+        _spawner.StopSpawning();
+        yield return new WaitForSeconds(0.3f);
+
+        Assert.AreEqual(countAtStop, _spawner.SpawnCount,
+            "No new spawns should occur after stop");
+    }
+
+    [UnityTest]
+    public IEnumerator StopSpawning_WhenNotStarted_NoError()
+    {
+        _spawner.StopSpawning();
+        yield return null;
+        Assert.Pass("StopSpawning should be safe to call when not started");
+    }
+
+    // --- Restart ---
+
+    [UnityTest]
+    public IEnumerator StartSpawning_AfterStop_ResumesSpawning()
+    {
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.15f);
+        _spawner.StopSpawning();
+        int countAtStop = _spawner.SpawnCount;
+
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.15f);
+
+        Assert.IsTrue(_spawner.SpawnCount > countAtStop, "Should resume spawning after restart");
+    }
+
+    // --- Spawn position ---
+
+    [UnityTest]
+    public IEnumerator Spawn_Enemy_SpawnsAtSpawnerPosition()
+    {
+        _spawnerGo.transform.position = new Vector3(10, 0, 10);
+        _spawner.StartSpawning();
+        yield return new WaitForSeconds(0.15f);
+
+        var enemies = GameObject.FindObjectsByType<EnemyComponent>(FindObjectsSortMode.None);
+        Assert.IsTrue(enemies.Length > 0);
+        Assert.AreEqual(10f, enemies[0].transform.position.x, 0.1f,
+            "Enemy should spawn at spawner X position");
+    }
+
+    // --- IsSpawning state ---
+
+    [UnityTest]
+    public IEnumerator IsSpawning_AfterStart_ReturnsTrue()
+    {
+        _spawner.StartSpawning();
+        yield return null;
+        Assert.IsTrue(_spawner.IsSpawning);
+    }
+}
+```
+
+---
+
+## Patterns: Mocking Dependencies
+
+Reusable patterns for creating test doubles.
+
+```csharp
+// --- Interface-based mock with tracking ---
+
+public class MockAudioService : IAudioService
+{
+    public int PlayCount { get; private set; }
+    public string LastClipPlayed { get; private set; }
+    public float LastVolume { get; private set; }
+    public bool ShouldThrow { get; set; }
+
+    public void PlaySFX(string clipId, float volume = 1f)
+    {
+        if (ShouldThrow) throw new InvalidOperationException("Audio system unavailable");
+        PlayCount++;
+        LastClipPlayed = clipId;
+        LastVolume = volume;
+    }
+
+    public void StopAll() { PlayCount = 0; }
+}
+
+// --- Configurable mock for return values ---
+
+public class MockDatabaseService : IDatabaseService
+{
+    public Dictionary<string, string> StoredData { get; } = new();
+    public bool ShouldReturnNull { get; set; }
+
+    public string Get(string key)
+    {
+        if (ShouldReturnNull) return null;
+        return StoredData.TryGetValue(key, out var val) ? val : null;
+    }
+
+    public void Set(string key, string value) => StoredData[key] = value;
+}
+
+// --- MonoBehaviour test double ---
+
+[TestFixture]
+public class PlayerControllerTests
+{
+    private GameObject _playerGo;
+    private PlayerController _controller;
+    private MockAudioService _mockAudio;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _playerGo = new GameObject("TestPlayer");
+        _controller = _playerGo.AddComponent<PlayerController>();
+        _mockAudio = new MockAudioService();
+        _controller.Initialize(_mockAudio);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        Object.Destroy(_playerGo);
+    }
+
+    [Test]
+    public void TakeDamage_PlaysDamageSound()
+    {
+        _controller.TakeDamage(10);
+        Assert.AreEqual("sfx_damage", _mockAudio.LastClipPlayed);
+    }
+
+    [Test]
+    public void TakeDamage_AudioServiceUnavailable_DoesNotThrow()
+    {
+        _mockAudio.ShouldThrow = true;
+        Assert.DoesNotThrow(() => _controller.TakeDamage(10),
+            "Should handle audio failure gracefully");
+    }
+}
+```
+
+---
+
+## Patterns: Parameterized Tests
+
+Data-driven testing with `[TestCase]` and `[TestCaseSource]`.
 
 ```csharp
 [TestFixture]
 public class DamageCalculatorTests
 {
-    // Multiple inputs tested with one method
+    // --- TestCase: inline values ---
+
     [TestCase(100, 30, 70)]
     [TestCase(100, 0, 100)]
     [TestCase(100, 100, 0)]
-    [TestCase(100, 150, 0)]
+    [TestCase(100, 150, 0)]   // overkill clamps
+    [TestCase(0, 10, 0)]      // already dead
+    [TestCase(1, 1, 0)]       // exact kill
     public void CalculateFinalHealth_VariousDamage_ReturnsExpected(
         int maxHp, int damage, int expected)
     {
@@ -76,243 +933,184 @@ public class DamageCalculatorTests
         Assert.AreEqual(expected, result);
     }
 
-    // Floating point with tolerance (Rule 6)
-    [TestCase(10f, 0.3f, 7f, 0.01f)]
-    public void CalculatePercentDamage_FloatValues_WithinTolerance(
+    // --- TestCase: float with tolerance ---
+
+    [TestCase(100f, 0.5f, 50f, 0.01f)]
+    [TestCase(100f, 1.0f, 0f, 0.01f)]
+    [TestCase(100f, 0.0f, 100f, 0.01f)]
+    [TestCase(200f, 0.25f, 150f, 0.01f)]
+    public void PercentDamage_VariousPercents_WithinTolerance(
         float hp, float percent, float expected, float tolerance)
     {
         var result = DamageCalculator.PercentDamage(hp, percent);
         Assert.AreEqual(expected, result, tolerance);
     }
+
+    // --- TestCaseSource: complex data ---
+
+    private static IEnumerable<TestCaseData> ElementalDamageData()
+    {
+        yield return new TestCaseData(Element.Fire, Element.Ice, 2.0f)
+            .SetName("Fire vs Ice = 2x");
+        yield return new TestCaseData(Element.Fire, Element.Fire, 0.5f)
+            .SetName("Fire vs Fire = 0.5x");
+        yield return new TestCaseData(Element.Fire, Element.Earth, 1.0f)
+            .SetName("Fire vs Earth = 1x");
+        yield return new TestCaseData(Element.Ice, Element.Fire, 0.5f)
+            .SetName("Ice vs Fire = 0.5x");
+    }
+
+    [TestCaseSource(nameof(ElementalDamageData))]
+    public void GetElementalMultiplier_VariousMatchups_ReturnsCorrect(
+        Element attacker, Element defender, float expectedMultiplier)
+    {
+        var result = DamageCalculator.GetElementalMultiplier(attacker, defender);
+        Assert.AreEqual(expectedMultiplier, result, 0.001f);
+    }
 }
 ```
 
-## Edit Mode — Event Testing
+---
 
-Code Analysis Checklist item 4: Events.
+## Patterns: State Machine Testing
+
+Testing state transitions — valid, invalid, re-entry.
 
 ```csharp
 [TestFixture]
-public class HealthEventTests
+public class EnemyAIStateTests
 {
-    private Health _health;
-    private bool _deathFired;
-    private int _damageReceived;
+    private EnemyAI _ai;
 
     [SetUp]
     public void SetUp()
     {
-        _health = new Health();
-        _health.SetMax(100);
-        _deathFired = false;
-        _damageReceived = 0;
-        _health.OnDeath += () => _deathFired = true;
-        _health.OnDamaged += (amount) => _damageReceived = amount;
+        _ai = new EnemyAI();
     }
 
-    [TearDown]
-    public void TearDown()
+    // --- Initial state ---
+
+    [Test]
+    public void EnemyAI_OnCreate_StartsInIdleState()
     {
-        _health.OnDeath -= () => _deathFired = true;
-        _health.OnDamaged -= (amount) => _damageReceived = amount;
+        Assert.AreEqual(AIState.Idle, _ai.CurrentState);
+    }
+
+    // --- Valid transitions ---
+
+    [Test]
+    public void Idle_DetectsPlayer_TransitionsToChase()
+    {
+        _ai.OnPlayerDetected();
+        Assert.AreEqual(AIState.Chase, _ai.CurrentState);
     }
 
     [Test]
-    public void Health_DiesAtZero_FiresOnDeathEvent()
+    public void Chase_InAttackRange_TransitionsToAttack()
     {
-        _health.TakeDamage(100);
-        Assert.IsTrue(_deathFired);
+        _ai.OnPlayerDetected();
+        _ai.OnEnterAttackRange();
+        Assert.AreEqual(AIState.Attack, _ai.CurrentState);
     }
 
     [Test]
-    public void Health_TakesDamage_FiresOnDamagedWithAmount()
+    public void Attack_PlayerLeavesRange_TransitionsToChase()
     {
-        _health.TakeDamage(25);
-        Assert.AreEqual(25, _damageReceived);
+        _ai.OnPlayerDetected();
+        _ai.OnEnterAttackRange();
+        _ai.OnLeaveAttackRange();
+        Assert.AreEqual(AIState.Chase, _ai.CurrentState);
     }
 
     [Test]
-    public void Health_DamageWhileAlive_DoesNotFireOnDeath()
+    public void Chase_LosesPlayer_TransitionsToIdle()
     {
-        _health.TakeDamage(50);
-        Assert.IsFalse(_deathFired);
+        _ai.OnPlayerDetected();
+        _ai.OnPlayerLost();
+        Assert.AreEqual(AIState.Idle, _ai.CurrentState);
     }
-}
-```
 
-## Edit Mode — Mocking Dependencies
-
-Rule 3: Interface-based dependency handling.
-
-```csharp
-// Test double for an interface dependency
-public class MockRewardService : IRewardService
-{
-    public int GrantCallCount { get; private set; }
-    public string LastRewardId { get; private set; }
-
-    public bool GrantReward(string rewardId)
-    {
-        GrantCallCount++;
-        LastRewardId = rewardId;
-        return true;
-    }
-}
-
-[TestFixture]
-public class QuestCompleterTests
-{
     [Test]
-    public void CompleteQuest_ValidQuest_GrantsReward()
+    public void AnyState_TakesLethalDamage_TransitionsToDead()
     {
-        var mockRewards = new MockRewardService();
-        var completer = new QuestCompleter(mockRewards);
+        _ai.OnPlayerDetected();
+        _ai.OnLethalDamage();
+        Assert.AreEqual(AIState.Dead, _ai.CurrentState);
+    }
 
-        completer.Complete("quest_001");
+    // --- Invalid transitions ---
 
-        Assert.AreEqual(1, mockRewards.GrantCallCount);
-        Assert.AreEqual("quest_001_reward", mockRewards.LastRewardId);
+    [Test]
+    public void Idle_EnterAttackRange_StaysIdle()
+    {
+        _ai.OnEnterAttackRange(); // invalid without chase first
+        Assert.AreEqual(AIState.Idle, _ai.CurrentState,
+            "Should not enter attack from idle");
+    }
+
+    [Test]
+    public void Dead_DetectsPlayer_StaysDead()
+    {
+        _ai.OnLethalDamage();
+        _ai.OnPlayerDetected();
+        Assert.AreEqual(AIState.Dead, _ai.CurrentState,
+            "Dead state should be terminal");
+    }
+
+    [Test]
+    public void Dead_AnyInput_StaysDead()
+    {
+        _ai.OnLethalDamage();
+        _ai.OnEnterAttackRange();
+        _ai.OnLeaveAttackRange();
+        _ai.OnPlayerLost();
+        Assert.AreEqual(AIState.Dead, _ai.CurrentState);
+    }
+
+    // --- Re-entry ---
+
+    [Test]
+    public void Idle_DetectLoseDetect_ReturnsToChase()
+    {
+        _ai.OnPlayerDetected();
+        _ai.OnPlayerLost();
+        Assert.AreEqual(AIState.Idle, _ai.CurrentState);
+
+        _ai.OnPlayerDetected();
+        Assert.AreEqual(AIState.Chase, _ai.CurrentState, "Should re-enter chase");
+    }
+
+    // --- State change event ---
+
+    [Test]
+    public void StateChange_FiresOnStateChanged()
+    {
+        AIState? receivedState = null;
+        _ai.OnStateChanged += state => receivedState = state;
+
+        _ai.OnPlayerDetected();
+
+        Assert.AreEqual(AIState.Chase, receivedState);
     }
 }
 ```
 
-## Edit Mode — Exception Testing
-
-Rule 6: `Assert.Throws<T>`.
-
-```csharp
-[Test]
-public void Inventory_AddNullItem_ThrowsArgumentNull()
-{
-    var inventory = new Inventory(maxSlots: 10);
-
-    Assert.Throws<ArgumentNullException>(() =>
-        inventory.Add(null));
-}
-
-[Test]
-public void Inventory_AddWhenFull_ReturnsFalse()
-{
-    var inventory = new Inventory(maxSlots: 1);
-    inventory.Add(new Item("sword"));
-
-    var result = inventory.Add(new Item("shield"));
-
-    Assert.IsFalse(result, "Should reject item when full");
-}
-```
-
-## Play Mode — MonoBehaviour Lifecycle
-
-Rule 5: Use Play Mode when Unity lifecycle is needed.
-
-```csharp
-[UnityTest]
-public IEnumerator PlayerMovement_MoveForward_PositionChanges()
-{
-    var go = new GameObject("TestPlayer");
-    var movement = go.AddComponent<PlayerMovement>();
-    var startPos = go.transform.position;
-
-    movement.Move(Vector3.forward);
-    yield return new WaitForFixedUpdate();
-
-    Assert.IsTrue(go.transform.position.z > startPos.z,
-        "Player should move forward on Z axis");
-    Object.Destroy(go);
-}
-```
-
-## Play Mode — Coroutine Test
-
-Rule 7: `[UnityTest]` returning `IEnumerator`.
-
-```csharp
-[UnityTest]
-public IEnumerator Spawner_SpawnWithDelay_CreatesObjectAfterWait()
-{
-    var go = new GameObject("TestSpawner");
-    var spawner = go.AddComponent<EnemySpawner>();
-    spawner.SpawnDelay = 0.2f;
-
-    spawner.StartSpawning();
-    yield return new WaitForSeconds(0.3f);
-
-    Assert.AreEqual(1, spawner.SpawnCount);
-    Object.Destroy(go);
-}
-```
-
-## Play Mode — Physics Interaction
-
-```csharp
-[UnityTest]
-public IEnumerator Projectile_HitsTarget_DealsDamage()
-{
-    var target = new GameObject("Target");
-    target.AddComponent<BoxCollider>();
-    var health = target.AddComponent<HealthComponent>();
-    health.Initialize(100);
-
-    var projectile = new GameObject("Bullet");
-    projectile.AddComponent<SphereCollider>();
-    var rb = projectile.AddComponent<Rigidbody>();
-    var dmg = projectile.AddComponent<DamageOnContact>();
-    dmg.Damage = 25;
-
-    projectile.transform.position = target.transform.position + Vector3.back * 2f;
-    rb.linearVelocity = Vector3.forward * 50f;
-
-    yield return new WaitForSeconds(0.5f);
-
-    Assert.AreEqual(75, health.Current,
-        "Target health should decrease by projectile damage");
-    Object.Destroy(target);
-    Object.Destroy(projectile);
-}
-```
+---
 
 ## Test Directory Structure
 
-Place all test scripts under `Assets/Scripts/Test/`. Do NOT create `.asmdef` files — the project manages assembly definitions externally.
-
 ```
 Assets/Scripts/Test/
-├── EditMode/     # Pure C# logic tests (no Unity API)
-└── PlayMode/     # MonoBehaviour, coroutine, physics, UI tests
+├── EditMode/
+│   ├── InventoryTests.cs
+│   ├── InventoryEventTests.cs
+│   ├── InventoryIntegrationTests.cs
+│   ├── DamageCalculatorTests.cs
+│   └── EnemyAIStateTests.cs
+└── PlayMode/
+    ├── PlayerMovementTests.cs
+    ├── SpawnerTests.cs
+    └── PlayerControllerTests.cs
 ```
 
-## Test Logic Generation — Worked Example
-
-Given a class to test, here is how rules produce test cases:
-
-**Source code:**
-```csharp
-public class Inventory
-{
-    public int MaxSlots { get; }
-    public int Count => _items.Count;
-    public event Action<Item> OnItemAdded;
-
-    public Inventory(int maxSlots) { ... }
-    public bool Add(Item item) { ... }
-    public bool Remove(string itemId) { ... }
-    public Item GetById(string itemId) { ... }
-}
-```
-
-**Applying Code Analysis Checklist:**
-
-| Checklist Item | Test Cases Generated |
-|:---|:---|
-| Constructor | `Inventory_CreatedWithSlots_HasZeroCount`, `Inventory_NegativeSlots_ThrowsArgument` |
-| Add (happy) | `Add_ValidItem_ReturnsTrue`, `Add_ValidItem_IncrementsCount` |
-| Add (boundary) | `Add_WhenFull_ReturnsFalse`, `Add_NullItem_ThrowsArgumentNull` |
-| Add (event) | `Add_ValidItem_FiresOnItemAdded` |
-| Remove (happy) | `Remove_ExistingItem_ReturnsTrue`, `Remove_ExistingItem_DecrementsCount` |
-| Remove (error) | `Remove_NonexistentId_ReturnsFalse`, `Remove_NullId_ThrowsArgumentNull` |
-| GetById (happy) | `GetById_ExistingItem_ReturnsItem` |
-| GetById (error) | `GetById_NonexistentId_ReturnsNull` |
-| Collection | `Inventory_Empty_CountIsZero`, `Inventory_MultipleItems_CountMatches` |
-
-This table maps directly to TEST_PLAN_TEMPLATE.md § Test Cases.
+Do NOT create `.asmdef` files — the project manages assembly definitions externally.

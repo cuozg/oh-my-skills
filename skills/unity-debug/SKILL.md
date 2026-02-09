@@ -5,335 +5,213 @@ description: "Deep investigation and debugging of Unity errors. Use when: (1) Us
 
 # Unity Debug
 
-Investigate Unity errors deeply, add strategic Debug.Log statements, identify root causes, and produce detailed debug reports.
+Investigate Unity errors deeply — understand the requirement, trace logic chains, build smart debug flows, and identify root causes to guide resolution.
 
-## Output Requirement (MANDATORY)
+## Core Philosophy
 
-**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-debug/assets/DEBUG_REPORT_TEMPLATE.md)
-
-Save output to: `Documents/Debugs/DEBUG_{ErrorName}_{YYYYMMDD}.md`
-
-Read the template first, then populate all sections.
-
-## ⚠️ CRITICAL CONSTRAINT: READ-ONLY DEBUGGING
-
-**This skill is STRICTLY for investigation and diagnosis, NOT for fixing code.**
-
-### What You CAN Do:
-- ✅ Add `Debug.Log` statements to capture runtime state
-- ✅ Read and analyze code to understand execution flow
-- ✅ Investigate root causes and document findings
-- ✅ Provide fix recommendations **in the report file ONLY**
-
-### What You CANNOT Do:
-- ❌ **NEVER** modify logic code, fix bugs, or refactor
-- ❌ **NEVER** apply quick fixes or proper fixes directly to code
-- ❌ **NEVER** change any code except adding `Debug.Log` statements
-- ❌ **NEVER** delete, rename, or restructure existing code
-
-### Why This Matters:
-The user must decide whether to apply fixes. Your role is to:
-1. Diagnose the problem thoroughly
-2. Add debug logging to capture evidence
-3. Document all findings and proposed solutions in `Documents/Debugs/DEBUG_*.md`
-4. **Let the user review and apply fixes themselves**
+This skill is about **understanding**, not reporting. The goal is to:
+1. Deeply understand what the user expects vs. what actually happens
+2. Systematically investigate the logic chain that produces the bug
+3. Build targeted debug flows to capture evidence and isolate root causes
+4. Arrive at a clear root cause with actionable fix recommendations
 
 ## Workflow
 
 ```
-Input (Stack trace / Error description)
+Input (Error / Unexpected behavior)
           │
           ▼
-┌─────────────────────────┐
-│ 1. GATHER INTEL         │
-│    Parse error, locate  │
-│    files, understand    │
-│    context              │
-└───────────┬─────────────┘
+┌─────────────────────────────┐
+│ 1. UNDERSTAND REQUIREMENT   │  What should happen vs. what does?
+└───────────┬─────────────────┘
             ▼
-┌─────────────────────────┐
-│ 2. INVESTIGATE LOGIC    │
-│    Use unity-investigate│
-│    -code skill to trace │
-│    execution flow       │
-└───────────┬─────────────┘
+┌─────────────────────────────┐
+│ 2. INVESTIGATE LOGIC        │  Trace execution, map data flow
+└───────────┬─────────────────┘
             ▼
-┌─────────────────────────┐
-│ 3. ADD DEBUG.LOG        │
-│    Strategic logging at │
-│    entry/exit points,   │
-│    state transitions    │
-│    ✅ ONLY code change  │
-│       allowed!          │
-└───────────┬─────────────┘
+┌─────────────────────────────┐
+│ 3. BUILD DEBUG FLOW         │  Strategic logging + runtime checks
+└───────────┬─────────────────┘
             ▼
-┌─────────────────────────┐
-│ 4. ROOT CAUSE ANALYSIS  │
-│    Identify WHY error   │
-│    happens, not just    │
-│    what triggers it     │
-└───────────┬─────────────┘
+┌─────────────────────────────┐
+│ 4. ROOT CAUSE ANALYSIS      │  Why, not just what
+└───────────┬─────────────────┘
             ▼
-┌─────────────────────────┐
-│ 5. DOCUMENT SOLUTIONS   │
-│    Write fixes to       │
-│    report file ONLY     │
-│    ❌ NO code changes!  │
-└───────────┬─────────────┘
-            ▼
-┌─────────────────────────┐
-│ 6. GENERATE REPORT      │
-│    Save to Documents/   │
-│    Debugs/DEBUG_*.md    │
-│    User decides to      │
-│    apply fixes          │
-└─────────────────────────┘
+┌─────────────────────────────┐
+│ 5. GUIDE RESOLUTION         │  Recommend fix + hand off
+└─────────────────────────────┘
 ```
 
-## Step 1: Gather Intel
+## Step 1: Understand the Requirement
 
-Parse error input to extract:
+Clarify the gap between expected and actual behavior before touching code.
+
+**From a stack trace / error message — extract:**
 
 | Field | Source | Example |
 |-------|--------|---------|
 | Error Type | Exception name | `NullReferenceException` |
-| Message | Error description | `Object reference not set` |
-| File | Stack trace | `PlayerController.cs` |
-| Line | Stack trace | `line 42` |
+| Message | Error text | `Object reference not set` |
+| File:Line | Stack trace | `PlayerController.cs:42` |
 | Call Stack | Full trace | Method chain |
 | Frequency | User/console | `Every frame` / `On button click` |
 
-**From stack trace:**
-```
-NullReferenceException: Object reference not set to an instance of an object
-  at PlayerController.UpdateHealth () [0x00012] in Assets/Scripts/Player/PlayerController.cs:42
-  at GameManager.OnPlayerDamaged () [0x00008] in Assets/Scripts/Managers/GameManager.cs:156
-```
+**From a behavior description — clarify:**
+- What does the user **expect** to happen?
+- What **actually** happens instead?
+- Reproduction steps (when, where, how often)
+- Recent changes that might be related
+- Is the behavior consistent or intermittent?
 
-Extract: `PlayerController.cs:42`, called from `GameManager.cs:156`
-
-**From user description:**
-- Reproduce steps
-- When it occurs (startup, specific action, random)
-- Related recent changes
+**Key questions to ask yourself (or the user if unclear):**
+- What is the correct behavior for this code path?
+- Under what conditions should this code execute?
+- What state must exist for this to work correctly?
 
 ## Step 2: Investigate Logic
 
-Load `unity-investigate` skill for deep analysis:
+Trace the execution path from trigger to failure point.
 
-1. **Read error file** - Code around error line with context (±50 lines)
-2. **Trace callers** - Use `grep_search` or `lsp_find_references` for call sites
-3. **Map data flow** - Track variables involved in error from source to crash point
-4. **Check lifecycle** - Identify Unity lifecycle timing issues (Awake vs Start vs Enable)
-5. **Find side effects** - Singletons, static state, event subscriptions
+**Tools to use:**
+- `lsp_goto_definition` / `lsp_find_references` — trace call graph
+- `grep` / `ast_grep_search` — find patterns, usages, related code
+- `unity-investigate` skill — delegate when investigation spans multiple systems
 
-**Key questions:**
-- What state must exist for this code to work?
-- What could make that state null/invalid?
-- When is this state supposed to be initialized?
-- What other code modifies this state?
+**Investigation checklist:**
 
-## Step 3: Add Debug.Log Statements (ONLY ALLOWED CODE CHANGE)
+1. **Read the crash site** — code around the error line with ±50 lines of context
+2. **Trace callers** — who calls this method? Under what conditions?
+3. **Map data flow** — track the variable(s) involved from source to crash point
+4. **Check lifecycle** — Unity lifecycle timing (Awake → OnEnable → Start order)
+5. **Find state mutations** — what else modifies the involved state? Singletons, statics, events?
+6. **Check async boundaries** — coroutines, async/await, callbacks that cross frame boundaries
 
-⚠️ **This is the ONLY step where you modify code files.**
+**State questions to answer:**
+- What state must exist for this code path to succeed?
+- What could invalidate that state?
+- When is the state initialized vs. when is it consumed?
+- What other code paths modify this state?
 
-Add strategic logging to capture runtime state. Follow these patterns:
+## Step 3: Build a Smart Debug Flow
 
-### Entry/Exit Logging
+Add targeted instrumentation to capture evidence. This is the primary code modification step.
+
+### Debug Flow Patterns
+
+**Entry/Exit — bracket the problem:**
 ```csharp
-public void ProcessDamage(int damage, DamageType type)
-{
-    Debug.Log($"[DEBUG] ProcessDamage ENTER: damage={damage}, type={type}, currentHealth={_health}");
-    
-    // ... existing code ...
-    
-    Debug.Log($"[DEBUG] ProcessDamage EXIT: newHealth={_health}, isDead={IsDead}");
-}
+Debug.Log($"[DEBUG] ProcessDamage ENTER: damage={damage}, type={type}, health={_health}");
+// ... existing code ...
+Debug.Log($"[DEBUG] ProcessDamage EXIT: health={_health}, isDead={IsDead}");
 ```
 
-### Null Check Logging
+**Null Guard — expose missing state:**
 ```csharp
-Debug.Log($"[DEBUG] _player is {(_player != null ? "valid" : "NULL")}");
-Debug.Log($"[DEBUG] _targetEnemy is {(_targetEnemy != null ? _targetEnemy.name : "NULL")}");
+Debug.Log($"[DEBUG] _player={(_player != null ? "valid" : "NULL")}, _target={(_targetEnemy != null ? _targetEnemy.name : "NULL")}");
 ```
 
-### State Transition Logging
+**State Transition — catch mutations:**
 ```csharp
-Debug.Log($"[DEBUG] State change: {_previousState} -> {_currentState}");
-Debug.Log($"[DEBUG] Before assignment: field={_field?.ToString() ?? "null"}");
+Debug.Log($"[DEBUG] State: {_prevState} → {_currentState}");
+Debug.Log($"[DEBUG] Before: field={_field?.ToString() ?? "null"}");
 _field = newValue;
-Debug.Log($"[DEBUG] After assignment: field={_field?.ToString() ?? "null"}");
+Debug.Log($"[DEBUG] After: field={_field?.ToString() ?? "null"}");
 ```
 
-### Collection Logging
+**Collection Bounds — prevent index errors:**
 ```csharp
-Debug.Log($"[DEBUG] items count={items?.Count ?? -1}");
-Debug.Log($"[DEBUG] array length={array?.Length ?? -1}, accessing index={index}");
+Debug.Log($"[DEBUG] items.Count={items?.Count ?? -1}, index={index}");
 ```
 
-### Lifecycle Logging
+**Lifecycle — catch ordering issues:**
 ```csharp
-void Awake() => Debug.Log($"[DEBUG] {GetType().Name}.Awake() called, gameObject={gameObject.name}");
-void Start() => Debug.Log($"[DEBUG] {GetType().Name}.Start() called");
-void OnEnable() => Debug.Log($"[DEBUG] {GetType().Name}.OnEnable() called");
-void OnDisable() => Debug.Log($"[DEBUG] {GetType().Name}.OnDisable() called");
-void OnDestroy() => Debug.Log($"[DEBUG] {GetType().Name}.OnDestroy() called");
+void Awake() => Debug.Log($"[DEBUG] {GetType().Name}.Awake on {gameObject.name}");
+void OnEnable() => Debug.Log($"[DEBUG] {GetType().Name}.OnEnable");
+void Start() => Debug.Log($"[DEBUG] {GetType().Name}.Start");
 ```
 
-### Conditional Debug (Unity 2022+)
+**Conditional (strip from builds):**
 ```csharp
 [System.Diagnostics.Conditional("UNITY_EDITOR")]
-private void DebugLog(string message) => Debug.Log($"[DEBUG] {message}");
+private void DebugLog(string msg) => Debug.Log($"[DEBUG] {msg}");
 ```
 
-**Logging Guidelines:**
-- Prefix with `[DEBUG]` for easy filtering/removal later
-- Include method name and relevant variable values
+### Debug Flow Guidelines
+
+- Prefix ALL debug logs with `[DEBUG]` for easy filtering/removal
 - Log BEFORE and AFTER critical operations
+- Include method name + relevant variable values (not just "here")
 - Log collection counts before index access
 - Log object validity before method calls
+- Place logs strategically — too many obscure the signal
+
+### Runtime Verification via MCP
+
+After adding debug logs, use MCP tools to run and capture output:
+
+```
+1. coplay-mcp_check_compile_errors         → Verify debug logs compile
+2. coplay-mcp_play_game                    → Reproduce the issue
+3. coplay-mcp_get_unity_logs(search_term="[DEBUG]") → Capture debug output
+4. coplay-mcp_stop_game                    → Analyze results
+```
 
 ## Step 4: Root Cause Analysis
 
-Identify the underlying cause, not just the symptom:
+Identify the underlying cause, not just the symptom.
+
+**Analysis framework:**
+
+| Level | Question |
+|-------|----------|
+| **Immediate** | What null/invalid value triggered the error? |
+| **Proximate** | Why was that value null/invalid at that moment? |
+| **Root** | What design/logic flaw allowed this state to exist? |
+| **Contributing** | Timing, concurrency, external dependencies? |
+
+**Common root cause categories:**
 
 | Symptom | Typical Root Causes |
 |---------|---------------------|
-| NullReferenceException | Uninitialized field, destroyed object, missing reference, race condition |
-| IndexOutOfRangeException | Off-by-one error, collection modified during iteration, stale index |
-| MissingReferenceException | Object destroyed but reference held, async operation completed after destroy |
-| InvalidOperationException | State machine in wrong state, collection modified during enumeration |
-| StackOverflowException | Recursive call without exit condition, circular dependencies |
+| NullReferenceException | Uninitialized field, destroyed object, race condition, missing reference |
+| IndexOutOfRange | Off-by-one, stale index, collection modified during iteration |
+| MissingReferenceException | Object destroyed during async op, held reference to destroyed object |
+| InvalidOperationException | Wrong state machine state, collection modified during enumeration |
+| StackOverflowException | Recursive call without base case, circular dependencies |
 
-**Analysis Framework:**
-1. **Immediate cause** - What null/invalid value triggered it?
-2. **Proximate cause** - Why was that value null/invalid at that moment?
-3. **Root cause** - What design/logic flaw allowed this state?
-4. **Contributing factors** - Timing, concurrency, external dependencies?
+For detailed patterns and solutions, see [references/common_errors.md](references/common_errors.md).
 
-## Step 5: Document Solutions (IN REPORT ONLY)
+## Step 5: Guide Resolution
 
-⚠️ **CRITICAL: Do NOT modify any code in this step. All solutions go in the report file.**
+Present findings and recommend fixes directly to the user. Do NOT generate report files.
 
-For each identified cause, **document** in the report:
+**For each identified cause, communicate:**
 
-1. **Quick Fix** - Minimal change to prevent crash (guard clause, null check)
-2. **Proper Fix** - Address root cause with proper architecture
-3. **Preventive Measures** - How to avoid similar issues in future
+1. **What's happening** — the root cause in plain language
+2. **Quick fix** — minimal change to prevent the crash (guard clause, null check)
+3. **Proper fix** — address the root cause with correct architecture
+4. **Prevention** — how to avoid this class of bug in the future
 
-**Example documentation in report:**
-```markdown
-### Problem
-`_playerData` is null when `UpdateUI()` is called because `Start()` runs before 
-`GameManager.Initialize()` completes the async data load.
+**When the fix is straightforward** — apply it directly (or delegate to `unity-code` / `unity-fix-errors`).
 
-### Quick Fix (Prevent crash)
-**File:** `Assets/Scripts/UI/PlayerUI.cs`
-**Line:** 42
+**When the fix is complex or architectural** — explain the root cause, propose options, let the user decide.
 
-```csharp
-// BEFORE:
-public void UpdateUI()
-{
-    _healthBar.SetValue(_playerData.Health);
-    // ... rest of method
-}
+**Clean up** — after the issue is resolved, remove `[DEBUG]` log statements (or suggest the user does).
 
-// AFTER:
-public void UpdateUI()
-{
-    if (_playerData == null)
-    {
-        Debug.LogWarning("[UpdateUI] _playerData not yet loaded, skipping update");
-        return;
-    }
-    _healthBar.SetValue(_playerData.Health);
-    // ... rest of method
-}
-```
+## Skill Integration
 
-**Trade-offs:** Silently skips update if data not ready; UI may show stale values.
+| Scenario | Delegate To |
+|----------|-------------|
+| Deep system tracing across multiple files/systems | `unity-investigate` |
+| Implementing the actual fix | `unity-code` or `unity-fix-errors` |
+| Performance-related bugs | `unity-optimize-performance` |
 
-### Proper Fix (Address root cause)
-**File:** `Assets/Scripts/UI/PlayerUI.cs`
+## MCP Tools for Investigation
 
-```csharp
-// Subscribe to initialization event instead of polling
-private void OnEnable()
-{
-    GameManager.OnDataLoaded += HandleDataLoaded;
-}
-
-private void OnDisable()
-{
-    GameManager.OnDataLoaded -= HandleDataLoaded;
-}
-
-private void HandleDataLoaded(PlayerData data)
-{
-    _playerData = data;
-    UpdateUI();
-}
-```
-
-**Why this is better:** Event-driven approach ensures UI updates only when data is actually available.
-
-### Preventive Measures
-- [ ] Use dependency injection or event-driven initialization
-- [ ] Document initialization order requirements
-- [ ] Add runtime assertions in debug builds
-```
-
-**Remember:** The user will review these recommendations and decide which fixes to apply. Your job is to provide clear, actionable documentation.
-
-## Step 6: Generate Debug Report
-
-Save report to `Documents/Debugs/DEBUG_{ErrorName}_{YYYYMMDD}.md`
-
-Use template: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-debug/assets/DEBUG_REPORT_TEMPLATE.md)
-
-```bash
-mkdir -p Documents/Debugs
-```
-
-Report structure:
-1. Error Summary (type, file, line, frequency)
-2. Stack Trace (formatted)
-3. Investigation Findings (data flow, lifecycle, side effects)
-4. Debug.Log Additions (files modified, logs added)
-5. Root Cause Analysis (immediate, proximate, root)
-6. Solutions (quick fix, proper fix, prevention)
-7. References (related code, documentation)
-
-## Common Unity Error Patterns
-
-See [.claude/skills/unity-debug/references/common_errors.md](.claude/skills/unity-debug/references/common_errors.md) for detailed patterns and solutions for:
-- NullReferenceException patterns
-- Async/await pitfalls
-- Unity lifecycle issues
-- Serialization problems
-- Event subscription leaks
-
-## Best Practices
-
-- **Never guess** - Always trace to source with evidence
-- **Log strategically** - Too many logs obscure the problem
-- **Preserve context** - Include variable values, not just "here"
-- **Clean up** - Remove debug logs after issue resolved (or use `[Conditional]`)
-- **Document** - Debug reports help with future similar issues
-- **READ-ONLY** - Never modify code except for Debug.Log statements
-- **User decides** - All fixes documented in report; user applies them
-
----
-
-## MCP Tools Integration
-
-Use `coplay-mcp_*` tools for Unity Editor interaction during investigation.
-
-| Operation | MCP Tool |
-|-----------|----------|
+| Operation | Tool |
+|-----------|------|
 | Read console errors | `coplay-mcp_get_unity_logs(show_errors=true)` |
-| Filter specific logs | `coplay-mcp_get_unity_logs(search_term="[DEBUG]")` |
+| Filter debug output | `coplay-mcp_get_unity_logs(search_term="[DEBUG]")` |
 | Inspect object state | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
 | Browse hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` |
 | Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
@@ -342,15 +220,14 @@ Use `coplay-mcp_*` tools for Unity Editor interaction during investigation.
 | Play to reproduce | `coplay-mcp_play_game` |
 | Stop after repro | `coplay-mcp_stop_game` |
 
-### Investigation Flow
+### Full Investigation Loop
 
 ```
 1. coplay-mcp_get_unity_logs(show_errors=true)             → Capture error + stack trace
-2. coplay-mcp_list_game_objects_in_hierarchy(nameFilter=..) → Locate relevant objects
-3. coplay-mcp_get_game_object_info(gameObjectPath=..)      → Inspect component state
-4. [Add Debug.Log statements]
-5. coplay-mcp_check_compile_errors                         → Verify logs compile
-6. coplay-mcp_play_game                                    → Reproduce issue
-7. coplay-mcp_get_unity_logs(search_term="[DEBUG]")        → Capture debug output
-8. coplay-mcp_stop_game                                    → Stop and analyze
+2. [Trace code: lsp_goto_definition, lsp_find_references]  → Map execution path
+3. [Add Debug.Log statements]                              → Instrument code
+4. coplay-mcp_check_compile_errors                         → Verify instrumentation compiles
+5. coplay-mcp_play_game                                    → Reproduce issue
+6. coplay-mcp_get_unity_logs(search_term="[DEBUG]")        → Capture evidence
+7. coplay-mcp_stop_game                                    → Analyze and conclude
 ```
