@@ -57,6 +57,15 @@ Submit **ONE GitHub review** as `/tmp/review.json`:
 - [ ] [Data structure] round-trips correctly
 - [ ] No breaking serialization changes
 
+#### Asset & Configuration Verification
+- [ ] No missing script references in changed prefabs
+- [ ] RaycastTarget disabled on decorative/non-interactive UI elements
+- [ ] Materials use correct shaders (no default pink/magenta)
+- [ ] Texture import settings match platform requirements (compression, max size, NPOT)
+- [ ] Canvas render mode and sorting order correct
+- [ ] No duplicate components on changed GameObjects
+- [ ] Prefab variant overrides are intentional (not accidental resets)
+
 ### Breaking Changes ([COUNT])
 - [One-line per critical issue]
 
@@ -77,7 +86,7 @@ Submit **ONE GitHub review** as `/tmp/review.json`:
 
 Every inline comment follows the **Issue → Evidence → Why → Fix** structure. Keep each section to 1-2 lines max.
 
-### Critical
+### 🔴 Critical
 
 ```markdown
 **[Issue Name]**: [What's wrong in one line]
@@ -90,7 +99,7 @@ Every inline comment follows the **Issue → Evidence → Why → Fix** structur
 \`\`\`
 ```
 
-### Major
+### 🟡 Major
 
 ```markdown
 **[Issue Name]**: [What's wrong in one line]
@@ -103,7 +112,7 @@ Every inline comment follows the **Issue → Evidence → Why → Fix** structur
 \`\`\`
 ```
 
-### Minor
+### 🔵 Minor
 
 ```markdown
 **[Issue Name]**: [What to improve]
@@ -115,13 +124,37 @@ Every inline comment follows the **Issue → Evidence → Why → Fix** structur
 \`\`\`
 ```
 
+### Prefab/Asset Issue (YAML-based)
+
+```markdown
+**RaycastTarget on Decorative Image**: `m_RaycastTarget: 1` on non-interactive Image blocks touch input on elements behind it.
+
+**Evidence**: `BG_Image` at line 847 has `m_RaycastTarget: 1` but no `Button`, `Toggle`, or `EventTrigger` component.
+**Why**: Invisible raycast hit area intercepts taps meant for buttons underneath — causes "unresponsive UI" bugs.
+
+\`\`\`suggestion
+  m_RaycastTarget: 0
+\`\`\`
+```
+
+### Missing Script Reference (Prefab)
+
+```markdown
+**Missing Script Reference**: Prefab contains a MonoBehaviour with `m_Script: {fileID: 0}`.
+
+**Evidence**: Line 23 in `Assets/Prefabs/UI/DialogPanel.prefab` — component has null script GUID.
+**Why**: Causes `MissingReferenceException` at runtime and yellow warning in Console. Likely a deleted/moved script.
+
+Recommended: Remove the broken component or re-assign the correct script.
+```
+
 ---
 
 ## Complete Example
 
 ```json
 {
-  "body": "## Code Review - PR #25103\n\n**Scope**: WHIP-55760 - Fix showdown hub display\n\nWell-structured change. Two issues to address before merge.\n\n### Acceptance Criteria\n\n#### UI Verification\n- [ ] Showdown hub shows active tournaments correctly\n- [ ] List filters inactive tournaments\n- [ ] UI updates on tournament status change\n\n#### Functional Verification\n- [ ] `GetActiveTournamentList()` returns only active tournaments\n- [ ] Handles null/empty tournament list gracefully\n- [ ] Works when called from `ShowdownHubController`\n\n#### Performance Verification\n- [ ] No frame drops filtering tournament list\n- [ ] Memory stable with multiple tournaments\n\n#### Data Verification\n- [ ] Tournament data structure unchanged\n- [ ] No serialization breaking changes\n\n### Potential Issues (1)\n- Method visibility `private → public` creates cross-controller coupling\n\n### Code Quality (1)\n- Missing null check on `persistentShowdownController`\n\n### Impact Analysis\n- Files investigated: 2\n- Breaking call sites: 0",
+  "body": "## Code Review - PR #25103\n\n**Scope**: WHIP-55760 - Fix showdown hub display\n\nWell-structured change. Two issues to address before merge.\n\n### Acceptance Criteria\n\n#### UI Verification\n- [ ] Showdown hub shows active tournaments correctly\n- [ ] List filters inactive tournaments\n- [ ] UI updates on tournament status change\n\n#### Functional Verification\n- [ ] `GetActiveTournamentList()` returns only active tournaments\n- [ ] Handles null/empty tournament list gracefully\n- [ ] Works when called from `ShowdownHubController`\n\n#### Performance Verification\n- [ ] No frame drops filtering tournament list\n- [ ] Memory stable with multiple tournaments\n\n#### Data Verification\n- [ ] Tournament data structure unchanged\n- [ ] No serialization breaking changes\n\n#### Asset & Configuration Verification\n- [ ] No missing script references in changed prefabs\n- [ ] RaycastTarget disabled on decorative UI elements\n- [ ] Materials and shaders assigned correctly\n\n### Potential Issues (1)\n- Method visibility `private → public` creates cross-controller coupling\n\n### Code Quality (1)\n- Missing null check on `persistentShowdownController`\n\n### Impact Analysis\n- Files investigated: 2\n- Breaking call sites: 0",
   "event": "COMMENT",
   "comments": [
     {
