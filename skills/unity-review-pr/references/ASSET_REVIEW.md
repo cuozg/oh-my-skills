@@ -1,6 +1,46 @@
 # Asset Review Checklist
 
-Load this reference when PR modifies `.mat`, `.shader`, `.meta` (textures), `.controller`, `.anim`, or audio files. Each issue follows: **Issue → Evidence → Why → Fix → Priority**.
+Load this reference when PR modifies `.mat`, `.shader`, `.meta` (textures), `.controller`, `.anim`, or audio files.
+
+---
+
+## Output Format — MANDATORY
+
+> [!CAUTION]
+> **Every asset issue MUST follow the three-part format defined in [REVIEW_TEMPLATE.md](REVIEW_TEMPLATE.md). No exceptions.**
+
+Every inline comment for an asset issue MUST contain ALL three parts:
+
+1. **Issue**: Clear, specific description of the problem — what is wrong and where
+2. **Why**: Root cause or concrete impact — crash, memory waste, visual bug, performance hit
+3. **Suggestion**: Actionable fix — either a `suggestion` code block with corrected YAML/code, or a concrete remediation step
+
+**Omitting any part = incomplete review. Never post an asset issue without all three.**
+
+### Three-Part Format — Inline Comment Template
+
+```markdown
+**[Issue Name]**: [What's wrong — one specific line]
+
+**Why**: [Root cause and concrete impact]
+
+\`\`\`suggestion
+[Fixed YAML, code, or setting value]
+\`\`\`
+```
+
+For 🔴 Critical and 🟡 Major, also include **Evidence**:
+
+```markdown
+**[Issue Name]**: [What's wrong — one specific line]
+
+**Evidence**: [Exact file, line, YAML key, or grep match proving this]
+**Why**: [Root cause and concrete impact]
+
+\`\`\`suggestion
+[Fixed YAML, code, or setting value]
+\`\`\`
+```
 
 ---
 
@@ -12,6 +52,7 @@ Load this reference when PR modifies `.mat`, `.shader`, `.meta` (textures), `.co
 4. [Audio](#4-audio)
 5. [Component Properties (Non-Code)](#5-component-properties-non-code)
 6. [Grep Patterns](#6-grep-patterns)
+7. [Inline Comment Examples](#7-inline-comment-examples)
 
 ---
 
@@ -180,3 +221,109 @@ for f in $(gh pr diff <number> --name-only | grep -E '\.(prefab|unity)$'); do
   grep -n "m_PlayOnAwake: 1" "$f" 2>/dev/null                 # audio auto-play
 done
 ```
+
+---
+
+## 7. Inline Comment Examples
+
+These show the **exact format** every asset issue must use in the review JSON `comments[].body`. Each example maps to a checklist item above. Copy the pattern; adapt the specifics.
+
+### 🔴 Material — Missing Shader
+
+```markdown
+**Missing Shader**: Material `Assets/Materials/CharacterSkin.mat` has `m_Shader: {fileID: 0}` — renders pink/magenta at runtime.
+
+**Evidence**: Line 12 in `CharacterSkin.mat` — shader reference is null GUID.
+**Why**: Object appears as solid pink in builds. Blocks visual correctness for any renderer using this material.
+
+\`\`\`suggestion
+m_Shader: {fileID: 4800000, guid: abc123def456, type: 3}
+\`\`\`
+```
+
+### 🟡 Texture — Read/Write Enabled
+
+```markdown
+**Read/Write Enabled on Texture**: `Assets/Textures/UI/BannerBG.png.meta` has `isReadable: 1` but no script calls `GetPixels()` or `ReadPixels()` on this texture.
+
+**Evidence**: `isReadable: 1` at line 8 in `.meta` file. Grep found zero `GetPixels`/`ReadPixels` references to this texture asset.
+**Why**: Doubles GPU memory — Unity keeps a CPU-side copy. On mobile, this wastes 2–8 MB per large texture.
+
+\`\`\`suggestion
+  isReadable: 0
+\`\`\`
+```
+
+### 🟡 Texture — Mipmaps on UI Sprite
+
+```markdown
+**Mipmaps Enabled on UI Sprite**: `Assets/Textures/UI/IconGold.png.meta` has `enableMipMap: 1` on a Sprite used in screen-space UI.
+
+**Why**: Adds ~33% memory overhead. UI sprites render at screen resolution — mipmaps provide no visual benefit and waste VRAM.
+
+\`\`\`suggestion
+  enableMipMap: 0
+\`\`\`
+```
+
+### 🟡 Animation — Always Animate Culling
+
+```markdown
+**Always Animate on Off-Screen Object**: Animator on `EnemySpawner/EnemyPrefab` uses `m_CullingMode: 0` (Always Animate).
+
+**Evidence**: Line 342 in `Assets/Prefabs/Enemies/EnemyPrefab.prefab`.
+**Why**: CPU evaluates animation bones every frame even when off-screen. For prefabs spawned in large numbers, this causes measurable frame time regression.
+
+\`\`\`suggestion
+  m_CullingMode: 2
+\`\`\`
+```
+
+### 🟡 Audio — PlayOnAwake Unintentional
+
+```markdown
+**AudioSource PlayOnAwake Enabled**: `ButtonClick` AudioSource on `Assets/Prefabs/UI/SettingsPanel.prefab` has `m_PlayOnAwake: 1`.
+
+**Why**: Sound plays immediately when prefab is instantiated or scene loads — not on button click as intended. Causes unexpected audio on screen transitions.
+
+\`\`\`suggestion
+  m_PlayOnAwake: 0
+\`\`\`
+```
+
+### 🟡 Component — ParticleSystem Prewarm
+
+```markdown
+**ParticleSystem Prewarm Enabled**: `HitEffect` ParticleSystem at `Assets/Prefabs/VFX/HitEffect.prefab` has `prewarm: 1` with 500+ particles.
+
+**Evidence**: `prewarm: 1` at line 67, `maxParticles: 500` at line 89.
+**Why**: First enable simulates the full particle lifetime in a single frame — causes 8–15ms spike on mid-tier mobile devices.
+
+\`\`\`suggestion
+  prewarm: 0
+\`\`\`
+```
+
+### 🔵 Texture — Oversized Max Size
+
+```markdown
+**Oversized maxTextureSize**: `Assets/Textures/Icons/StarSmall.png.meta` has `maxTextureSize: 2048` but source image is 64×64.
+
+**Why**: No visual benefit beyond source resolution. Wasted import setting may confuse future reviewers about intended quality.
+
+\`\`\`suggestion
+  maxTextureSize: 64
+\`\`\`
+```
+
+### Validation Checklist — Self-Check Before Posting
+
+Before submitting any asset issue, verify:
+
+- [ ] **Issue** line present? — States WHAT is wrong and WHERE (file + setting)
+- [ ] **Why** line present? — Explains root cause or concrete impact (memory, crash, visual bug)
+- [ ] **Suggestion** present? — Contains `suggestion` code block with fixed value OR explicit remediation step
+- [ ] Severity emoji matches? — 🔴 Critical / 🟡 Major / 🔵 Minor
+- [ ] For 🔴/🟡: **Evidence** line present? — Exact file, line number, YAML key
+
+**If any checkbox fails → do not post. Complete the missing part first.**

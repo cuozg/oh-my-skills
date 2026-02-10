@@ -102,6 +102,7 @@ Use `@explore` or `@librarian` to:
 - Verify shader/material assignments are valid
 - Check texture import settings match platform requirements
 - Validate component properties (AudioSource, Animator, ParticleSystem settings)
+- **Every asset issue MUST use the three-part format**: Issue, Why, Suggestion (see ASSET_REVIEW.md §7 and REVIEW_TEMPLATE.md)
 
 ### Phase 3: Generate Acceptance Criteria
 
@@ -125,6 +126,7 @@ Build `/tmp/review.json` per **[REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.m
 4. Each comment: `path`, `line` (right side of diff), `side: "RIGHT"`, `body` (formatted per template)
 5. Include `suggestion` code blocks for actionable fixes
 6. Add Impact Analysis (files investigated, breaking call sites found)
+7. **For asset issues**: Verify every comment passes the self-check in [ASSET_REVIEW.md §7](references/ASSET_REVIEW.md) — Issue ✓ Why ✓ Suggestion ✓
 
 **Line number rules:** Use right-side line number. For deleted lines, use last line of surrounding context. `side` always `"RIGHT"`.
 
@@ -161,6 +163,7 @@ gh api -X POST -H "Accept: application/vnd.github+json" \
 5. Submit using `post_review.sh` — verify posted successfully
 6. Each issue = separate `comments` entry
 7. Submit even if PR is merged/closed
+8. **Every asset issue comment MUST include all three parts: Issue, Why, Suggestion** — verify against the self-check in [ASSET_REVIEW.md §7](references/ASSET_REVIEW.md) before posting
 
 ### ❌ Never
 
@@ -172,6 +175,7 @@ gh api -X POST -H "Accept: application/vnd.github+json" \
 6. Miss Unity-specific patterns (Update allocations, async safety, lifecycle)
 7. Ignore RaycastTarget on decorative Image/Text in UI prefabs
 8. Skip prefab/material/texture checks when those files are in the diff
+9. **Post an asset issue missing Issue, Why, or Suggestion** — incomplete asset comments are rejected
 
 **Review is incomplete until each issue is a resolvable comment on GitHub.**
 
