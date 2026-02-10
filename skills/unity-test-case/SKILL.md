@@ -5,104 +5,107 @@ description: "Expert QA professional for Unity game projects. Deep investigate g
 
 # Unity Test Case Generator
 
-Generate comprehensive, professional test case documents in HTML format for Unity game features and systems.
+Generate test case documents in HTML for Unity game features. The template uses a dark theme, responsive layout, and interactive checkboxes for quick Pass/Fail marking.
 
 ## Workflow
 
-1. **Investigate** the target feature/system using `unity-investigate` skill or by reading relevant code
-2. **Analyze** game logic, state transitions, edge cases, and integration points
-3. **Design** test cases using patterns from `references/test-case-patterns.md`
-4. **Apply** QA methodology from `references/qa-methodology.md` for edge case identification
-5. **Generate** HTML document using the template in `assets/test-case-template.html`
-6. **Save** output to `Documents/TestCases/{FeatureName}_TestCases.html`
+1. **Investigate** the feature using `unity-investigate` skill or by reading code
+2. **Analyze** logic, state transitions, edge cases, and integrations
+3. **Design** test cases using `references/test-case-patterns.md`
+4. **Apply** edge case heuristics from `references/qa-methodology.md`
+5. **Generate** HTML using `assets/test-case-template.html`
+6. **Save** to `Documents/TestCases/{FeatureName}_TestCases.html`
 
 ## Investigation Phase
 
-Before generating test cases, deeply investigate the feature:
+Before writing test cases, investigate the feature:
 
-1. Read all relevant C# scripts for the feature
-2. Map the complete state machine / logic flow
-3. Identify all entry points (surfacing points, triggers)
-4. List all configurable parameters and their valid ranges
+1. Read all relevant C# scripts
+2. Map state machines and logic flows
+3. Identify entry points and triggers
+4. List configurable parameters and valid ranges
 5. Find integration points with other systems
-6. Note any server communication or data persistence
+6. Note server communication or data persistence
 
-Key questions to answer:
-- What are ALL the ways a user can interact with this feature?
-- What data drives the feature behavior? (configs, server data, player state)
-- What other systems does this feature depend on or affect?
+Key questions:
+- How can a user interact with this feature?
+- What data drives behavior? (configs, server data, player state)
+- What other systems does this depend on or affect?
 - What happens at boundaries? (zero, max, overflow, timeout)
 - What happens during interruptions? (disconnect, backgrounding, crash)
 
 ## Test Case Design
 
-### Section Organization
+### Sections
 
-Organize test cases into these sections (include only relevant sections):
+Use only relevant sections:
 
 | Section | Code | Focus |
 |---------|------|-------|
-| Surfacing Points | SP | Where/when the feature appears or triggers |
-| UI/UX | UI | Visual correctness, layout, badges, animations |
-| Functional | FUNC | Business logic, rules, calculations, state transitions |
-| Integration | INTG | Interaction with other game systems |
-| Edge Cases | EDGE | Boundary conditions, error states, interruptions |
-| Performance | PERF | Frame rate, memory, loading times |
-| Data Integrity | DATA | Save/load, server sync, persistence |
+| Surfacing Points | SP | Where/when the feature appears |
+| UI/UX | UI | Layout, badges, animations |
+| Functional | FUNC | Logic, rules, calculations |
+| Integration | INTG | Interaction with other systems |
+| Edge Cases | EDGE | Boundaries, errors, interruptions |
+| Performance | PERF | FPS, memory, load times |
+| Data Integrity | DATA | Save/load, sync, persistence |
 
 ### ID Convention
 
-Format: `{MODULE}-{SECTION}-{SEQ}`
+Format: `{MODULE}-{SECTION}-{SEQ}` (e.g. `SSL-SP-001`, `MATCH-FUNC-012`)
 
-Derive MODULE as 2-5 uppercase chars from feature name. Examples:
-- `SSL-SP-001` (Sale System Lite, Surfacing Points, #1)
-- `MATCH-FUNC-012` (Match System, Functional, #12)
+### Priority
 
-### Priority Assignment
-
-- **Critical**: Core loop broken, data loss, crash, payment failure
-- **High**: Major feature broken, progression blocker, significant UI break
-- **Medium**: Minor deviation, non-blocking UI, edge case failure
-- **Low**: Cosmetic, typo, rare edge case with workaround
+- **Critical**: Crash, data loss, payment failure, core loop broken
+- **High**: Major feature broken, progression blocker
+- **Medium**: Minor deviation, non-blocking UI issue
+- **Low**: Cosmetic, rare edge case with workaround
 
 ### Continuation Rows
 
-For multi-phase test scenarios, use continuation rows (same section, no Title) to group related steps under one logical test. This matches the reference CSV pattern.
+Group multi-phase scenarios under one test using continuation rows (same section, no Title).
 
-## HTML Output Generation
+## HTML Output
 
-Read the template from `assets/test-case-template.html` and generate the complete HTML document by:
+Read `assets/test-case-template.html` and generate the document:
 
 1. Replace all `{{PLACEHOLDER}}` values with actual data
-2. Repeat the section block for each test section
-3. Repeat the table row block for each test case
-4. Calculate summary statistics (totals by priority)
+2. Repeat section blocks for each test section
+3. Repeat table rows for each test case
+4. Calculate summary stats (totals by priority)
 5. Calculate coverage percentages per section
-6. Set all Result badges to "Not Run" (default state)
+6. Result column uses interactive checkboxes — leave unchecked (shows "Fail" by default; checking marks "Pass")
+7. For print output, a static "Not Run" badge is shown instead of checkboxes
+
+### Template Features
+
+- **Dark theme**: Dark background with light text for comfortable reading
+- **Responsive columns**: Flexbox layout with percentage widths and min-widths — adjusts to screen size
+- **Result checkboxes**: Interactive Pass/Fail toggle per test case (screen only)
+- **Print support**: Reverts to light theme with static result badges when printed
+- **Horizontal scroll**: Table wraps in a scrollable container on narrow screens
 
 ### Output Location
 
 Save to: `Documents/TestCases/{FeatureName}_TestCases.html`
 
-Create the `Documents/TestCases/` directory if it does not exist.
+Create `Documents/TestCases/` if it does not exist.
 
 ## References
 
-- **QA methodology and edge case heuristics**: Read `references/qa-methodology.md` for test design techniques, priority classification, and the CRUCSPIC-STMP edge case mnemonic
-- **Test case patterns and writing style**: Read `references/test-case-patterns.md` for ID conventions, section organization patterns, writing style guide, and common test patterns by feature type
-- **HTML template**: Use `assets/test-case-template.html` as the base template for output generation
+- **QA methodology**: `references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP mnemonic
+- **Test patterns**: `references/test-case-patterns.md` — ID conventions, writing style, common patterns
+- **HTML template**: `assets/test-case-template.html` — dark-themed responsive template with checkboxes
 
 ## Quality Checklist
 
-Before finalizing, verify:
-
-- [ ] Every user-facing interaction has at least one test case
+- [ ] Every user interaction has at least one test case
 - [ ] Happy path covered for each flow
 - [ ] Error/failure path covered for each transaction
 - [ ] Boundary values tested for numeric inputs
-- [ ] State transitions verified (especially invalid transitions blocked)
-- [ ] Multi-step scenarios use continuation rows properly
-- [ ] Priority assignments are consistent and justified
+- [ ] State transitions verified (invalid transitions blocked)
+- [ ] Multi-step scenarios use continuation rows
+- [ ] Priority assignments are consistent
 - [ ] Preconditions are specific enough to reproduce
 - [ ] Steps are atomic (one action per step)
 - [ ] Expected results are observable and verifiable
