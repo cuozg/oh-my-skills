@@ -33,14 +33,20 @@ Follow the skill's instructions exactly.
 - Run lsp_diagnostics on changed files
 - Verify build/tests pass
 - Use `/handoff` if context is getting long (before compaction strikes)
+- **Comply with all `.claude/rules/`** — specifically:
+  - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
+  - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components, Awaitable over Coroutines, avoid Update(), cache references
+  - `unity-asset-rules.md`: Follow `Assets/_Project/` structure, PascalCase naming, texture/model optimization, Prefab workflow (nested, variants, verify in Prefab Mode)
 
 ### MUST NOT DO:
 - **NEVER commit or push to git** (non-negotiable)
+- **NEVER perform destructive actions** (file/asset deletion, scene overwrites) without explicit user confirmation
 - Skip loading the skill first
 - Ignore the loaded skill instructions
 - Suppress type errors with `as any`, `@ts-ignore`
 - Refactor while fixing bugs
 - Leave code in broken state
+- Use shell commands for Unity Editor tasks (use `unityMCP` instead)
 
 ---
 
