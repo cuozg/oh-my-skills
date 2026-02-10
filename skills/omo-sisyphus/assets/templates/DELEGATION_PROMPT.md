@@ -35,10 +35,10 @@ Follow the skill's instructions exactly.
 - Use `/handoff` if context is getting long (before compaction strikes)
 
 ### MUST NOT DO:
+- **NEVER commit or push to git** (non-negotiable)
 - Skip loading the skill first
 - Ignore the loaded skill instructions
 - Suppress type errors with `as any`, `@ts-ignore`
-- Commit unless explicitly requested
 - Refactor while fixing bugs
 - Leave code in broken state
 
