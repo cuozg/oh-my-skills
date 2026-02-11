@@ -7,6 +7,24 @@ description: "High-level planning for Unity features with multi-file output and 
 
 Create implementation plans for Unity features with architecture, task breakdown, estimates, dependencies, timeline, and complete code patches.
 
+## Purpose
+
+High-level planning for Unity features with multi-file output and patch generation — providing a structured, repeatable workflow that produces consistent results.
+
+## Input
+
+- **Required**: A clear description of the task or problem to address.
+- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-plan" | Executes the primary workflow end-to-end |
+| "Apply unity-plan to <target>" | Scopes execution to a specific file or module |
+| "Check unity-plan output" | Reviews and validates previous results |
+
+
 **IMPORTANT**: This skill is for **planning only**. Do NOT implement or execute any work — but DO generate complete code patches showing all changes.
 
 ---

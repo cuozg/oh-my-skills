@@ -7,6 +7,24 @@ description: "WebGL deployment. Use when: (1) Configuring/optimizing WebGL build
 
 WebGL platform specialist.
 
+## Purpose
+
+WebGL deployment — providing a structured, repeatable workflow that produces consistent results.
+
+## Input
+
+- **Required**: A clear description of the task or problem to address.
+- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-web-deploy" | Executes the primary workflow end-to-end |
+| "Apply unity-web-deploy to <target>" | Scopes execution to a specific file or module |
+| "Check unity-web-deploy output" | Reviews and validates previous results |
+
+
 ## Output Requirement (MANDATORY)
 
 **Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](.claude/skills/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md)

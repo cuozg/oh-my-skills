@@ -7,6 +7,19 @@ description: "Execute implementation plans from HTML files with 100% accuracy. U
 
 Execute implementation plans with **100% accuracy**. Apply code changes exactly as shown in the HTML plan file.
 
+## Purpose
+
+Execute implementation plans from HTML files with 100% accuracy — providing a structured, repeatable workflow that produces consistent results.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-plan-executor" | Executes the primary workflow end-to-end |
+| "Apply unity-plan-executor to <target>" | Scopes execution to a specific file or module |
+| "Check unity-plan-executor output" | Reviews and validates previous results |
+
+
 ## Input Requirement
 
 **Plan HTML file**: `Documents/Plans/[FeatureName]_PLAN.html`

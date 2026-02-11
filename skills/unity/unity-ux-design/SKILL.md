@@ -7,6 +7,11 @@ description: "Generate UX screen specification documents for Unity UI/UX design.
 
 Generate structured UX screen specification documents that define UI layouts, interactions, and responsive behavior for Unity projects.
 
+## Purpose
+
+Generate UX screen specification documents for Unity UI/UX design — providing a structured, repeatable workflow that produces consistent results.
+
+
 ## Workflow
 
 1. **Gather Requirements** - Understand the screen purpose, target device, and aspect ratio

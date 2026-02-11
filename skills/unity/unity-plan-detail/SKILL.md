@@ -7,6 +7,19 @@ description: "Generate 100% complete code changes for each task in a plan. Use w
 
 Walk through every task in a plan file and generate **100% complete code changes**.
 
+## Purpose
+
+Generate 100% complete code changes for each task in a plan — providing a structured, repeatable workflow that produces consistent results.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-plan-detail" | Executes the primary workflow end-to-end |
+| "Apply unity-plan-detail to <target>" | Scopes execution to a specific file or module |
+| "Check unity-plan-detail output" | Reviews and validates previous results |
+
+
 **CRITICAL**: This skill produces **per-task code only**. It does NOT:
 - Repeat the high-level plan (architecture, epics, acceptance criteria)
 - Generate summaries or explanations beyond task scope

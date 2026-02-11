@@ -7,6 +7,15 @@ description: "Create Mermaid diagrams. Use when: (1) Documenting logic flows, (2
 
 Visualize complex systems using Mermaid.js syntax.
 
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run mermaid" | Executes the primary workflow end-to-end |
+| "Apply mermaid to <target>" | Scopes execution to a specific file or module |
+| "Check mermaid output" | Reviews and validates previous results |
+
+
 ## Purpose
 
 Generate accurate Mermaid.js diagrams (flowcharts, sequence, class, state) from system descriptions, code analysis, or architecture documentation, following the `DIAGRAM_OUTPUT.md` template.

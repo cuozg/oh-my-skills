@@ -7,6 +7,24 @@ description: "Generate Technical Design Documents. Use when: (1) Formalizing pla
 
 Generate Technical Design Documents from implementation plans.
 
+## Purpose
+
+Generate Technical Design Documents — providing a structured, repeatable workflow that produces consistent results.
+
+## Input
+
+- **Required**: A clear description of the task or problem to address.
+- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-write-tdd" | Executes the primary workflow end-to-end |
+| "Apply unity-write-tdd to <target>" | Scopes execution to a specific file or module |
+| "Check unity-write-tdd output" | Reviews and validates previous results |
+
+
 ## Output Requirement (MANDATORY)
 
 **Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.claude/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)

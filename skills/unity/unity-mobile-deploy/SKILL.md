@@ -7,6 +7,24 @@ description: "iOS/Android development. Use when: (1) Touch controls/gestures, (2
 
 iOS and Android platform specialist.
 
+## Purpose
+
+iOS/Android development — providing a structured, repeatable workflow that produces consistent results.
+
+## Input
+
+- **Required**: A clear description of the task or problem to address.
+- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-mobile-deploy" | Executes the primary workflow end-to-end |
+| "Apply unity-mobile-deploy to <target>" | Scopes execution to a specific file or module |
+| "Check unity-mobile-deploy output" | Reviews and validates previous results |
+
+
 ## Output Requirement (MANDATORY)
 
 **Every build report MUST follow the template**: [MOBILE_BUILD_REPORT.md](.claude/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md)

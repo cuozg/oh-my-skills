@@ -7,6 +7,24 @@ description: "Create Unity project documentation. Use when: (1) Creating/updatin
 
 Create clear, maintainable documentation for Unity projects.
 
+## Purpose
+
+Create Unity project documentation — providing a structured, repeatable workflow that produces consistent results.
+
+## Input
+
+- **Required**: A clear description of the task or problem to address.
+- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
+
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-write-docs" | Executes the primary workflow end-to-end |
+| "Apply unity-write-docs to <target>" | Scopes execution to a specific file or module |
+| "Check unity-write-docs output" | Reviews and validates previous results |
+
+
 ## Output Requirement (MANDATORY)
 
 **Every document MUST follow one of the templates**:

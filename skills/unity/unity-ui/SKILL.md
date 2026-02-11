@@ -7,6 +7,15 @@ description: "Implement UX designs from HTML documents into fully functional Uni
 
 Translate HTML/CSS UX design documents into Unity UI prefabs with 100% design fidelity.
 
+## Examples
+
+| Trigger | What Happens |
+|---------|-------------|
+| "Run unity-ui" | Executes the primary workflow end-to-end |
+| "Apply unity-ui to <target>" | Scopes execution to a specific file or module |
+| "Check unity-ui output" | Reviews and validates previous results |
+
+
 ## Purpose
 
 Convert UX design documents (HTML/CSS) into fully functional Unity UI prefabs with pixel-perfect fidelity — every color, size, spacing, font, and interaction matches the spec exactly.
