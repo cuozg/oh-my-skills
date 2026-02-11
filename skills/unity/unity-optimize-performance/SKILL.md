@@ -7,6 +7,27 @@ description: "Fix Unity performance issues. Use when: (1) Low/inconsistent FPS, 
 
 Diagnose and resolve performance bottlenecks across logic, graphics, and memory.
 
+## Purpose
+
+Identify and fix Unity performance issues — low FPS, GC spikes, memory leaks, slow load times — using profiler data and systematic code/asset audits.
+
+## Input
+
+- **Required**: Performance complaint or metric target (e.g., "game drops to 15 FPS during combat", "memory grows to 2GB")
+- **Optional**: Target platform, profiler captures, specific scenes/systems to audit
+
+## Output
+
+A performance report saved to `Documents/Performance/PERFORMANCE_REPORT_[Area]_[YYYYMMDD].md` (per `PERFORMANCE_REPORT.md` template) documenting: profiler findings, bottleneck root causes, fixes applied, and before/after metrics.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Game drops to 15 FPS during combat" | Profile worst CPU frames, find Update-heavy scripts, cache GetComponent calls, report before/after FPS |
+| "Memory keeps growing, never goes down" | Audit GC frames, find leaked event subscriptions and un-pooled instantiations, fix and verify |
+| "Loading screen takes 30 seconds" | Profile async load, find blocking I/O, implement addressable batching, measure improvement |
+
 ## Output Requirement (MANDATORY)
 
 **Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](.claude/skills/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md)

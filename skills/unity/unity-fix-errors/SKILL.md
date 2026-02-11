@@ -7,6 +7,27 @@ description: "Diagnose and fix Unity errors. Use when: (1) Console shows compile
 
 Systematically identify and resolve Unity technical issues.
 
+## Purpose
+
+Diagnose and fix Unity errors — compiler errors, runtime exceptions, broken Play Mode behavior, and failed builds — using a structured triage-to-fix workflow.
+
+## Input
+
+- **Required**: Error message, stack trace, or description of broken behavior
+- **Optional**: Console logs, affected scripts, repro steps, build target
+
+## Output
+
+A debug report saved to `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md` (per `DEBUG_REPORT_TEMPLATE.md`) documenting: error classification, root cause, fix applied, and verification result.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "NullReferenceException in PlayerController.cs line 42" | Trace the null ref, identify missing assignment, apply fix, verify with compile check |
+| "Build fails on Android with 'shader not supported'" | Check shader compatibility, replace with URP fallback, rebuild |
+| "Game freezes when opening inventory" | Check for infinite loops / deadlocks in inventory code, add guard, verify in Play Mode |
+
 ## Output Requirement (MANDATORY)
 
 **Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](.claude/skills/unity-fix-errors/assets/templates/DEBUG_REPORT_TEMPLATE.md)

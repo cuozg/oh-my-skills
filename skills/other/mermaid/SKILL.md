@@ -7,6 +7,19 @@ description: "Create Mermaid diagrams. Use when: (1) Documenting logic flows, (2
 
 Visualize complex systems using Mermaid.js syntax.
 
+## Purpose
+
+Generate accurate Mermaid.js diagrams (flowcharts, sequence, class, state) from system descriptions, code analysis, or architecture documentation, following the `DIAGRAM_OUTPUT.md` template.
+
+## Input
+
+- **Required**: System or flow to visualize — description, code references, or architecture overview
+- **Optional**: Preferred diagram type (flowchart, sequence, class, state), specific entities to include
+
+## Output
+
+Mermaid diagram(s) embedded in ` ```mermaid ` code blocks, following the `DIAGRAM_OUTPUT.md` template. Diagrams are embedded inline or saved to the relevant documentation file.
+
 ## Output Requirement (MANDATORY)
 
 **Every diagram MUST follow the template**: [DIAGRAM_OUTPUT.md](.claude/skills/mermaid/assets/templates/DIAGRAM_OUTPUT.md)

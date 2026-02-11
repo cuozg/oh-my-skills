@@ -7,6 +7,26 @@ description: "Local PR reviews for Unity projects without GitHub posting. Use wh
 
 Review PRs against Unity coding standards and output results as a markdown file.
 
+## Purpose
+
+Perform offline or draft code reviews for Unity projects without posting to GitHub — generating a local markdown report with severity-categorized findings, acceptance criteria, and actionable fix suggestions.
+
+## Input
+
+| Input Type | Detection | Commands |
+|:-----------|:----------|:---------|
+| **PR number** | Numeric or `#N` format | `gh pr diff --patch <number>` |
+| **Branch name** | Branch identifier | `git diff main...HEAD` |
+| **Uncommitted changes** | No arguments | `git diff`, `git diff --cached`, `git status --short` |
+
+## Examples
+
+| User Request | Skill Action |
+|:-------------|:-------------|
+| "Review PR #25141 locally" | Fetch diff, analyze against Unity conventions, save to `Documents/Reviews/PR_25141_review.md` |
+| "Draft review of my changes" | Run `git diff`, categorize issues by severity, generate local markdown report |
+| "Offline review of feature/combat branch" | Diff against main, flag Unity anti-patterns, write structured review file |
+
 ## Output Requirement (MANDATORY)
 
 **Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)

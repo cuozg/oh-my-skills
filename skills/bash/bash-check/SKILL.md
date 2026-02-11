@@ -7,6 +7,27 @@ description: "Validate and check bash shell scripts for correctness and compatib
 
 Validate bash shell scripts for syntax errors, shell compatibility, and potential runtime issues.
 
+## Purpose
+
+Catch script defects before execution — syntax errors, shell incompatibilities, unsafe variable handling, and missing error guards — so broken scripts never reach production.
+
+## Input
+
+- **Required**: Absolute or relative path to a `.sh` (or shell script) file.
+- **Optional**: Target shell version or POSIX-compliance flag if portability is a concern.
+
+## Output
+
+A structured check report (following the CHECK_REPORT.md template) delivered directly to the user, categorizing all findings by severity (Error / Warning / Info) with actionable fix suggestions.
+
+## Examples
+
+| Trigger | Input | What Happens |
+|---------|-------|--------------|
+| "Check this script for errors" | `scripts/deploy.sh` | Runs `bash -n`, shellcheck, manual review; returns report |
+| "Is this script POSIX compatible?" | `utils/backup.sh` | Focuses on bashisms and portability checks |
+| "Validate all scripts in ci/" | `ci/*.sh` | Iterates and reports per-file |
+
 ## Output Requirement (MANDATORY)
 
 **Every check report MUST follow the template**: [CHECK_REPORT.md](.claude/skills/bash-check/assets/templates/CHECK_REPORT.md)

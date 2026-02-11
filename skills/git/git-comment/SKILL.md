@@ -7,6 +7,19 @@ description: "Generate comprehensive commit comments from pull requests or commi
 
 Generate professional, structured commit comments by analyzing code changes from pull requests or specific commits.
 
+## Purpose
+
+Produce clear, reviewer-friendly commit documentation from raw diffs — turning cryptic changesets into structured summaries with high-level intent, per-file details, and behavioral impact.
+
+## Input
+
+- **Required**: A PR number/URL **or** a commit SHA to analyze.
+- **Optional**: Repository path (defaults to current repo), output format preference.
+
+## Output
+
+A structured commit comment (following the COMMIT_COMMENT.md template) with High Level Summary (type, impact, breaking changes) and Specific Details (per-file changes, logic changes, technical notes), delivered directly to the user.
+
 ## Output Requirement (MANDATORY)
 
 **Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](.claude/skills/git-comment/assets/templates/COMMIT_COMMENT.md)

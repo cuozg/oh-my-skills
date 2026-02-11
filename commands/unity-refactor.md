@@ -1,29 +1,70 @@
 ---
 description: Refactor Unity C# code - extract, rename, restructure, decouple
 agent: build
+skill: unity/unity-refactor
 ---
 
-Load the `unity/unity-refactor` skill and perform the requested refactoring.
+## FIRST: Load Required Skill
+
+**BEFORE you do anything**, you MUST read and follow this skill:
+`@.opencode/skills/unity/unity-refactor/SKILL.md`
+
+This skill contains the rules, patterns, and workflow you MUST use.
+
+---
 
 ## Task
 
+Perform the requested refactoring:
+
 $ARGUMENTS
 
-## Refactoring Types
+**YOU MUST USE THE `unity/unity-refactor` SKILL** that has been loaded.
+Follow the skill's instructions exactly.
 
-- **Extract** - Pull methods, classes, or interfaces from complex code
-- **Rename** - Rename symbols across the project safely
-- **Restructure** - Reorganize MonoBehaviour hierarchies
-- **Simplify** - Reduce complexity, deep nesting, long methods
-- **Decouple** - Reduce tight coupling between systems
-- **Replace anti-patterns** - Singletons, polling, magic numbers
-- **Move** - Relocate code between files or namespaces
-- **Clean up** - Remove dead code, obsolete patterns
-- **Optimize** - Performance-oriented refactoring (GC, Update, allocations)
+## Expected Outcome
 
-## Safety Requirements
+- Code safely refactored without changing functionality
+- All callers and dependencies identified and updated
+- No compiler errors (verified with `lsp_diagnostics`)
+- Success criteria: Behavior preserved, code improved, zero regressions
 
-1. Investigate before changing - understand all callers and dependencies
-2. Use LSP tools (find references, goto definition) to ensure safety
-3. Verify no compiler errors with `lsp_diagnostics` after each change
-4. Preserve existing behavior - refactoring must not change functionality
+## Context
+
+- **Required skill**: `unity/unity-refactor` — you loaded this above
+- Refactoring types: extract, rename, restructure, simplify, decouple, replace anti-patterns, move, clean up, optimize
+
+## Requirements
+
+### MUST DO:
+
+- Follow `unity/unity-refactor` skill EXACTLY as loaded above
+- Create todos BEFORE starting
+- Mark tasks in_progress/completed
+- Investigate before changing — understand all callers and dependencies
+- Use LSP tools (find references, goto definition) to ensure safety
+- Run `lsp_diagnostics` on changed files after each change
+- Preserve existing behavior — refactoring must not change functionality
+- Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
+- Use `/handoff` if context is getting long (before compaction strikes)
+- **Comply with all `.claude/rules/`** — specifically:
+  - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
+  - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components, Awaitable over Coroutines
+  - `unity-asset-rules.md`: Follow `Assets/_Project/` structure, PascalCase naming, Prefab workflow
+
+### MUST NOT DO:
+
+- **NEVER commit or push to git** (non-negotiable)
+- **NEVER perform destructive actions** (file/asset deletion, scene overwrites) without explicit user confirmation
+- Skip loading the skill first
+- Ignore the loaded skill instructions
+- Change functionality while refactoring
+- Leave code in broken state
+- Use shell commands for Unity Editor tasks (use `unityMCP` instead)
+
+<!--
+DELEGATION CONSTRAINT (for the orchestrator, not the subagent):
+This prompt MUST be sent via:
+  call_omo_agent(subagent_type="sisyphus", ...)
+Using any other subagent_type is FORBIDDEN.
+-->

@@ -7,6 +7,27 @@ description: "Install software, packages, and tools with automatic retry and fal
 
 Install software and tools with automatic verification and fallback strategies when installation fails.
 
+## Purpose
+
+Reliably install CLI tools, packages, and development dependencies across macOS and Linux — automatically retrying with fallback package managers when the primary method fails.
+
+## Input
+
+- **Required**: Package or tool name to install (e.g., `shellcheck`, `jq`, `node`).
+- **Optional**: Specific version, target platform, or preferred package manager.
+
+## Output
+
+A structured installation report (following the INSTALL_REPORT.md template) delivered directly to the user, confirming installed version, install path, and any post-install steps — or documenting all failed attempts with next-step suggestions.
+
+## Examples
+
+| Trigger | Input | What Happens |
+|---------|-------|--------------|
+| "Install shellcheck" | `shellcheck` | Detects OS, tries brew/apt, verifies with `shellcheck --version` |
+| "Set up Node.js v20" | `node`, version=20 | Tries brew/nvm/apt, pins version, verifies |
+| "Install failed, try another way" | Prior failed package | Escalates to next strategy (direct download, source build) |
+
 ## Output Requirement (MANDATORY)
 
 **Every installation report MUST follow the template**: [INSTALL_REPORT.md](.claude/skills/bash-install/assets/templates/INSTALL_REPORT.md)

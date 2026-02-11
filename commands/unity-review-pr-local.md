@@ -1,26 +1,66 @@
 ---
 description: Review code changes locally and generate a markdown review report
 agent: build
+skill: unity/unity-review-pr-local
 ---
 
-Load the `unity/unity-review-pr-local` skill and review changes locally.
+## FIRST: Load Required Skill
+
+**BEFORE you do anything**, you MUST read and follow this skill:
+`@.opencode/skills/unity/unity-review-pr-local/SKILL.md`
+
+This skill contains the rules, patterns, and workflow you MUST use.
+
+---
 
 ## Task
 
+Review changes locally:
+
 $ARGUMENTS
 
-## Workflow
+**YOU MUST USE THE `unity/unity-review-pr-local` SKILL** that has been loaded.
+Follow the skill's instructions exactly.
 
-1. **Identify changes** - Analyze uncommitted changes, a specific branch, or commit range
-2. **Review** against Unity conventions, performance patterns, and best practices
-3. **Generate** a local markdown review file (not posted to GitHub)
-4. **Categorize** findings by severity: critical, major, minor, suggestion
+## Expected Outcome
 
-## Output
+- Local markdown review file generated (NOT posted to GitHub)
+- Findings categorized by severity: critical, major, minor, suggestion
+- Summary, per-file comments, performance considerations, architecture feedback
+- Success criteria: Comprehensive review completed, actionable feedback provided
 
-Generate a review markdown file with:
-- Summary of changes
-- Per-file review comments
-- Performance considerations
-- Architecture feedback
-- Suggested improvements
+## Context
+
+- **Required skill**: `unity/unity-review-pr-local` — you loaded this above
+- Analyze uncommitted changes, a specific branch, or commit range
+
+## Requirements
+
+### MUST DO:
+
+- Follow `unity/unity-review-pr-local` skill EXACTLY as loaded above
+- Create todos BEFORE starting
+- Mark tasks in_progress/completed
+- Review against Unity conventions, performance patterns, and best practices
+- Use `Read` on every analyzed file to ensure accuracy
+- Use `/handoff` if context is getting long (before compaction strikes)
+- **Comply with all `.claude/rules/`** — specifically:
+  - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
+  - `unity-csharp-conventions.md`: Review code against naming/architecture conventions
+  - `unity-asset-rules.md`: Review asset changes against structure/naming/optimization conventions
+
+### MUST NOT DO:
+
+- **NEVER commit or push to git** (non-negotiable)
+- **NEVER perform destructive actions** (file/asset deletion, scene overwrites) without explicit user confirmation
+- Skip loading the skill first
+- Ignore the loaded skill instructions
+- Post review comments to GitHub (this is a LOCAL review)
+- Leave review incomplete
+
+<!--
+DELEGATION CONSTRAINT (for the orchestrator, not the subagent):
+This prompt MUST be sent via:
+  call_omo_agent(subagent_type="sisyphus", ...)
+Using any other subagent_type is FORBIDDEN.
+-->

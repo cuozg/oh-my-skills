@@ -7,6 +7,29 @@ description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @hephaestus a
 **ALWAYS spawn exactly the @hephaestus agent from oh-my-opencode (omo) to handle prompts via tool calls.**
 **ALWAYS search for skill and use them to handle the task**
 
+## Purpose
+
+Route incoming prompts to the correct specialized skill(s) by analyzing intent, discovering available skills via `.claude/skills/*/SKILL.md` frontmatter, and spawning the @hephaestus agent to execute the matched workflow.
+
+## Input
+
+- **Required**: User prompt describing a task (e.g., "Fix the NullReferenceException in PlayerController")
+- **Optional**: Additional context such as file paths, error messages, or PR links
+
+## Output
+
+A routing report (per `ROUTING_REPORT.md` template) documenting the matched skill(s), routing rationale, and execution result. No file is saved — output is inline in the task log.
+
+## Examples
+
+| User Prompt | Matched Skill(s) | Rationale |
+|:---|:---|:---|
+| "Fix the NullReferenceException in PlayerController" | `unity-fix-errors` | Error/crash with exception name |
+| "Plan a new inventory system" | `unity-plan` | Large feature → full planning pipeline |
+| "Review PR #123" | `unity-review-pr` | Explicit PR review request |
+| "How does the matchmaking system work?" | `unity-investigate` | "How does X work" trigger |
+| "Create a Mermaid diagram of the auth flow" | `mermaid` | Diagram/visualize trigger |
+
 ## Output Requirement (MANDATORY)
 
 **Every routing decision MUST follow the template**: [ROUTING_REPORT.md](.claude/skills/omo-hephaestus/assets/templates/ROUTING_REPORT.md)

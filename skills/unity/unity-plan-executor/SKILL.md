@@ -104,6 +104,15 @@ Detailed description of changes:
    - Check if files need to be created first
    - Apply in dependency order
 
+## Output
+
+Successful execution produces:
+1. **All code changes applied** — files modified, created, or deleted exactly per the plan
+2. **Clean compilation** — `coplay-mcp_check_compile_errors` returns zero errors
+3. **Git commit** — single commit with descriptive message covering all changes
+
+No separate report file is generated. The git commit message serves as the execution record.
+
 ## Execution Checklist
 
 Before completing:

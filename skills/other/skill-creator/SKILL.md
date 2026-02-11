@@ -7,6 +7,27 @@ description: "Guide for creating effective skills. This skill should be used whe
 
 This skill provides guidance for creating effective skills.
 
+## Purpose
+
+Guide the creation or improvement of modular skill packages (SKILL.md + bundled resources) that extend AI agent capabilities with specialized knowledge, workflows, and tool integrations.
+
+## Input
+
+- **Required**: Skill concept — what domain or task the skill covers, with concrete usage examples
+- **Optional**: Existing skill folder to update, reference materials, scripts, or assets to bundle
+
+## Output
+
+A validated and packaged `.skill` file produced by `package_skill.py`, containing `SKILL.md` with proper YAML frontmatter and any bundled `scripts/`, `references/`, and `assets/`.
+
+## Examples
+
+| Task | Input | Output |
+|:---|:---|:---|
+| New skill | "Create a skill for PDF rotation" | `pdf-editor/` folder with SKILL.md + `scripts/rotate_pdf.py` → `pdf-editor.skill` |
+| Update skill | "Add examples section to bash-check skill" | Updated `SKILL.md` → re-validated → `bash-check.skill` |
+| Iterate | "The BigQuery skill doesn't handle joins well" | Updated `references/schema.md` + SKILL.md → `big-query.skill` |
+
 ## Output Requirement (MANDATORY)
 
 **Every skill MUST be validated using**: `.claude/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder>`

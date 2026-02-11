@@ -7,6 +7,26 @@ description: "Expert Unity Developer code reviewer. Reviews PRs, commits, branch
 
 Review code changes as an **expert Unity Developer**. Each issue → separate inline comment the author must resolve before merge.
 
+## Purpose
+
+Automate expert-level Unity code reviews on GitHub PRs, commits, branches, or uncommitted changes — catching Unity-specific anti-patterns, performance regressions, and architectural issues that generic reviewers miss.
+
+## Output
+
+A GitHub PR review submitted via `post_review.sh`, containing:
+- Summary body with PR scope, severity counts, acceptance criteria, and impact analysis
+- Individual inline comments per issue (one comment = one issue), formatted per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md)
+- Approval decision: `APPROVE`, `COMMENT`, or `REQUEST_CHANGES`
+
+## Examples
+
+| User Request | Skill Action |
+|:-------------|:-------------|
+| "Review PR #25141" | Fetch diff via `gh pr diff`, load matching reference files, investigate callers/impact, generate review JSON, submit via `post_review.sh` |
+| "Check changes on branch feature/combat" | Run `git diff feature/combat...HEAD`, analyze diff against Unity patterns, post review |
+| "Review my uncommitted changes" | Run `git diff` + `git diff --cached`, apply all review criteria, submit inline comments |
+| "Review commit abc1234" | Run `git show abc1234`, investigate changed methods for callers, generate review |
+
 ## Output Requirement (MANDATORY)
 
 > [!CAUTION]

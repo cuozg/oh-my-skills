@@ -7,6 +7,27 @@ description: "Bridge art and code. Use when: (1) Authoring/optimizing shaders (H
 
 Bridge artistic vision and technical implementation.
 
+## Purpose
+
+Solve problems at the intersection of art and engineering — shaders, asset pipelines, procedural generation, and rendering optimization — so artists get intuitive tools and players get performant visuals.
+
+## Input
+
+- **Required**: Description of the art/technical challenge (shader need, pipeline bottleneck, PCG request)
+- **Optional**: Target render pipeline (URP/HDRP/Built-in), reference images, performance budget
+
+## Output
+
+Shader code (HLSL or Shader Graph), asset postprocessor scripts, or procedural generation tools placed in the appropriate project directory. All outputs follow `ASSET_POSTPROCESSOR_TEMPLATE.md` where applicable and validate via Frame Debugger / Profiler.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Optimize draw calls for the environment" | Audit materials, enable GPU instancing, merge static meshes, report before/after batch count |
+| "Auto-enforce texture import rules" | Write an AssetPostprocessor setting max size, compression format, and sRGB per naming convention |
+| "Create a dissolve shader for enemy death" | Author URP HLSL shader with dissolve edge glow, noise texture, `_DissolveAmount` property |
+
 ## Output Requirement (MANDATORY)
 
 **Every asset postprocessor MUST follow the template**: [ASSET_POSTPROCESSOR_TEMPLATE.md](.claude/skills/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md)

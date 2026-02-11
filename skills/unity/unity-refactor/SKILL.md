@@ -7,6 +7,31 @@ description: "Unity Refactoring Expert. Orchestrate investigation, safe code tra
 
 Safe, verified refactoring of Unity C# code — from analysis through execution to verification.
 
+## Purpose
+
+Improve Unity C# code structure — readability, testability, performance, or architecture — without changing external behavior, using small verified steps.
+
+## Input
+
+- **Required**: Code to refactor (files, classes, or methods) and the refactoring goal (readability, decouple, performance, etc.)
+- **Optional**: Constraints (preserve public API, backward compatibility), target architecture pattern
+
+## Output
+
+Two documents saved to `Documents/Refactorings/`:
+1. `REFACTORING_PLAN_[Subject]_[YYYYMMDD].md` — scope, risk, investigation findings, step plan
+2. `REFACTORING_CHECKLIST_[Subject]_[YYYYMMDD].md` — execution tracking across all 5 phases
+
+Plus the refactored code itself, compiling cleanly with all tests passing.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Extract the damage calculation into its own class" | Investigate callers via LSP, write characterization tests, extract to `DamageCalculator`, verify compilation + tests |
+| "Replace the AudioManager singleton with DI" | Map all `AudioManager.Instance` refs, introduce `IAudioService` interface, inject via constructor, update callers |
+| "Reduce nesting in `EnemyAI.UpdateBehavior()`" | Flatten 5-level nesting with guard clauses and extracted methods, verify behavior unchanged |
+
 ## Output Requirement (MANDATORY)
 
 **Every refactoring MUST produce two documents**:

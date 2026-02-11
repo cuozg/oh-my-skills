@@ -7,6 +7,15 @@ description: "Implement UX designs from HTML documents into fully functional Uni
 
 Translate HTML/CSS UX design documents into Unity UI prefabs with 100% design fidelity.
 
+## Purpose
+
+Convert UX design documents (HTML/CSS) into fully functional Unity UI prefabs with pixel-perfect fidelity — every color, size, spacing, font, and interaction matches the spec exactly.
+
+## Input
+
+- **Required**: HTML/CSS design document specifying the UI screen or component
+- **Optional**: Sprite assets, font files, target resolution, platform constraints (mobile/desktop)
+
 ## Core Principle
 
 > **The design document is the source of truth.** Every color, size, spacing value, font, and interaction specified in the design MUST appear exactly in the prefab. Never approximate, assume, or skip.
@@ -246,6 +255,17 @@ Load these as needed during implementation:
 | [html-to-prefab-patterns.md](references/html-to-prefab-patterns.md) | Mapping HTML patterns to prefab hierarchies | Buttons, cards, forms, nav, modals, tabs, grids, scroll |
 | [unity-ui-best-practices.md](references/unity-ui-best-practices.md) | Setting up canvas, anchors, layout, performance | Canvas setup, RectTransform, layout groups, TMP, performance |
 | [specification-mapping.md](references/specification-mapping.md) | Converting CSS values to Unity properties | Colors, typography, spacing, sizing, borders, interactions |
+
+## Output
+
+Successful implementation produces:
+1. **Unity prefab** — saved to the project's prefab directory, matching the design hierarchy exactly
+2. **All components configured** — RectTransform, LayoutGroups, Image, TextMeshProUGUI, Button, etc. with exact values from the design spec
+3. **Performance settings applied** — `raycastTarget=false` on all non-interactive elements, RectMask2D for scroll views
+4. **Validation passed** — all items in `PREFAB_CREATION_CHECKLIST.md` verified
+5. **Assumptions documented** — any design ambiguities noted in implementation notes
+
+No separate report files are generated. The prefab itself is the deliverable.
 
 ## Templates
 

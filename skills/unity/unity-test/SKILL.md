@@ -7,6 +7,23 @@ description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play 
 
 Generate comprehensive test suites for Unity C# code using Unity Test Framework (UTFramework).
 
+## Purpose
+
+Create thorough, maintainable test suites for Unity C# code — Edit Mode and Play Mode tests with proper mocking, covering happy paths, edge cases, and error conditions.
+
+## Input
+
+- **Required**: Class, method, or feature to test
+- **Optional**: Existing test assembly, test mode preference (Edit/Play), coverage target percentage
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Write tests for PlayerHealth.cs" | Generate Edit Mode tests: TakeDamage clamps, death event fires, heal caps at max, zero-damage no-op |
+| "Add Play Mode tests for the inventory UI" | Generate Play Mode tests: open/close, add/remove items, drag-drop, full-stack interaction |
+| "Test the matchmaking service" | Generate Edit Mode tests with mocked network layer: queue, match found, timeout, cancel |
+
 ## Workflow
 
 ### Step 1: Analyze Requirement
@@ -215,6 +232,16 @@ public void CalculateHealth_AfterDamage_ReturnsExpected(int max, int damage, int
 - Use `unity-investigate` to trace logic before writing tests
 - Use `unity-code` for implementation patterns the tests should validate
 - Use `unity-fix-errors` or `unity-debug` when tests reveal issues
+
+## Output
+
+Successful test generation produces:
+1. **Test scripts** — C# files placed in `Assets/Scripts/Test/EditMode/` or `Assets/Scripts/Test/PlayMode/` per classification
+2. **Clean compilation** — `coplay-mcp_check_compile_errors` returns zero errors after adding tests
+3. **Naming convention** — all test methods follow `[Subject]_[Scenario]_[ExpectedResult]`
+4. **No `.asmdef` files** — project manages assembly definitions externally
+
+No separate test plan documents are generated. The test code itself is the deliverable.
 
 ## References
 

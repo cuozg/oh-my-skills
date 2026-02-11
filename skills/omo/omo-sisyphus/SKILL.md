@@ -7,6 +7,26 @@ description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_a
 
 Generate Sisyphus-compatible prompts and delegate via `call_omo_agent(subagent_type="sisyphus")`.
 
+## Purpose
+
+Orchestrate complex, multi-step tasks by generating structured delegation prompts and dispatching them to the Sisyphus agent, ensuring mandatory skill loading, context preservation via `/handoff`, and Atlas manual review compliance.
+
+## Input
+
+- **Required**: Task description with clear intent (e.g., "Implement player health bar UI", "Fix compilation errors in GameManager")
+- **Required**: Skill selection — must map intent to one skill from the Skill Selection table
+- **Optional**: `session_id` for boulder continuation of a previous Sisyphus session (must be validated)
+
+## Examples
+
+| User Request | Selected Skill | Delegation Mode |
+|:---|:---|:---|
+| "Implement the inventory system from the plan" | `unity-plan-executor` | Sync (need result) |
+| "Write unit tests for PlayerController" | `unity-test` | Sync |
+| "Review PR #25141 for performance issues" | `unity-review-pr` | Sync |
+| "Optimize the particle system and refactor the UI" | `unity-optimize-performance` + `unity-refactor` | Background (parallel) |
+| "Create a FlatBuffers schema for match data" | `flatbuffers-coder` | Sync |
+
 ## Hard Constraints
 
 | Rule | Detail |
@@ -214,6 +234,18 @@ call_omo_agent(
 | Subagent skips `Read` on modified files | Delegation prompt MUST require `Read` on all changed files _(Atlas review)_ |
 | Passing unvalidated `session_id` | Verify session exists via `session_list()`/`session_info()` before resuming |
 | Omitting file read verification in prompts | Include "Use `Read` on every modified file before completion" in MUST DO |
+
+---
+
+## Output
+
+Successful delegation produces:
+1. **Delegation log** — subagent_type, action, skill, and expected outcome stated before each `call_omo_agent()`
+2. **Subagent result** — the completed work from Sisyphus (code changes, reports, plans, etc.)
+3. **File verification** — all modified files confirmed read by subagent before completion (Atlas review compliance)
+4. **No git commits** — orchestrator and subagent never commit; user handles git explicitly
+
+The orchestrator does NOT generate separate report files. Results are communicated directly.
 
 ---
 

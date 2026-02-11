@@ -7,6 +7,27 @@ description: "Expert Unity Developer implementation. Write clean, commented, per
 
 Implement game logic for Unity games as an expert developer. Every script must be **commented, clean, and smart** — code that passes review on the first attempt.
 
+## Purpose
+
+Write production-quality Unity C# scripts that are clean, commented, and performant — eliminating all anti-patterns before code review.
+
+## Input
+
+- **Required**: Feature description or implementation task (what to build and where it fits)
+- **Optional**: Target assembly (`.asmdef`), related scripts, ScriptableObject configs, design constraints
+
+## Output
+
+One or more C# scripts placed in the appropriate `Assets/Scripts/` subdirectory, following `SCRIPT_TEMPLATE.md`. All scripts pass the Pre-Completion Checklist and `coplay-mcp_check_compile_errors` with zero errors.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Create a health component for the player" | Write `PlayerHealth.cs` with XML docs, serialized fields, events, cached refs, null checks — ready for review |
+| "Add an object pool for projectiles" | Write `ProjectilePool.cs` using `ObjectPool<T>`, pre-warm in Awake, return-to-pool on disable |
+| "Implement async scene loading with progress" | Write `SceneLoader.cs` using `Awaitable`, null checks after each await, progress callback via `Action<float>` |
+
 ## Output Requirement (MANDATORY)
 
 **Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.claude/skills/unity-code/references/SCRIPT_TEMPLATE.md)

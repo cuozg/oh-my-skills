@@ -7,6 +7,23 @@ description: "Expert QA professional for Unity game projects. Deep investigate g
 
 Generate test case documents in HTML for Unity game features. The template uses a dark theme, responsive layout, and interactive checkboxes for quick Pass/Fail marking.
 
+## Purpose
+
+Generate comprehensive QA test case documents for Unity game features — analyzing game logic, state transitions, edge cases, and integrations to ensure thorough manual test coverage.
+
+## Input
+
+- **Required**: Game feature or system to create test cases for (e.g., "daily reward system", "PvP matchmaking")
+- **Optional**: Feature spec document, existing test cases to extend, priority areas
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Create test cases for the daily reward system" | Investigate reward logic, generate cases for: first claim, streak, missed day, timezone edge, server sync |
+| "QA plan for the new PvP mode" | Analyze matchmaking + combat + scoring, generate cases covering queue, match, disconnect, rank update |
+| "Test cases for IAP purchase flow" | Trace purchase → verify → grant, generate cases for: success, cancel, network error, duplicate receipt |
+
 ## Workflow
 
 1. **Investigate** the feature using `unity-investigate` skill or by reading code
@@ -96,6 +113,16 @@ Create `Documents/TestCases/` if it does not exist.
 - **QA methodology**: `references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP mnemonic
 - **Test patterns**: `references/test-case-patterns.md` — ID conventions, writing style, common patterns
 - **HTML template**: `assets/test-case-template.html` — dark-themed responsive template with checkboxes
+
+## Output
+
+Successful test case generation produces:
+1. **HTML document** — saved to `Documents/TestCases/{FeatureName}_TestCases.html`
+2. **Summary statistics** — total cases by priority (Critical/High/Medium/Low), coverage percentage per section
+3. **Interactive checkboxes** — each test case has Pass/Fail toggle for manual QA execution
+4. **Print-ready** — light theme with static result badges when printed
+
+Create `Documents/TestCases/` directory if it does not exist.
 
 ## Quality Checklist
 

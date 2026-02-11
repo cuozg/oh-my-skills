@@ -7,6 +7,29 @@ description: "FlatBuffers for Unity. Use when: (1) Creating/updating .fbs schema
 
 Manage schemas, code generation, and binary data conversion.
 
+## Purpose
+
+Create and maintain FlatBuffers schemas (`.fbs`), generate C# classes, and convert JSON data to binary format for efficient runtime deserialization in Unity.
+
+## Input
+
+- **Required**: Schema requirements — table name, fields with types, and key field
+- **Optional**: JSON data file for binary conversion, existing `.fbs` file for updates
+
+## Output
+
+- `.fbs` schema file saved to `FlatBuffers/New_Fbs/`
+- Generated C# classes in `FlatBuffers/Gen_Cs/` (deployed to `Assets/Scripts/Game/Managers/FlatBuffers/`)
+- Binary data in `FlatBuffers/Output_Bin/` (deployed to `Assets/StreamingAssets/Blueprints/`)
+
+## Examples
+
+| Task | Input | Output |
+|:---|:---|:---|
+| New schema | "Create a schema for match rewards with ID, type, amount" | `MatchRewardsFlatBuffer.fbs` with root table + data table |
+| Update schema | "Add a `rarity` field to ItemFlatBuffer" | Updated `.fbs` + regenerated C# |
+| Full pipeline | "Generate binary from rewards.json" | Schema → C# → binary in StreamingAssets |
+
 ## Output Requirement (MANDATORY)
 
 **Every schema MUST follow the template**: [FBS_TEMPLATE.md](.claude/skills/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md)

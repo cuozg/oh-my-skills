@@ -7,6 +7,27 @@ description: "Create Unity Editor tools. Use when: (1) Custom Editor Windows/Ins
 
 Extend the Unity Editor with tools and automation.
 
+## Purpose
+
+Create custom Unity Editor extensions — windows, inspectors, asset postprocessors, and menu items — that streamline developer and artist workflows.
+
+## Input
+
+- **Required**: Description of the Editor tool or automation needed (pain point, target workflow)
+- **Optional**: Target component types, asset types, UI framework preference (UI Toolkit vs IMGUI)
+
+## Output
+
+Editor scripts placed in `Assets/Scripts/Editor/`, following the appropriate template (`EDITOR_WINDOW_TEMPLATE.md` or `CUSTOM_INSPECTOR_TEMPLATE.md`). Scripts compile cleanly and support Undo, Dark/Light themes, and domain reloads.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Create a batch renamer for GameObjects" | Build an EditorWindow with UI Toolkit: find/replace, prefix/suffix, undo support |
+| "Custom inspector for EnemyConfig SO" | Build a CustomEditor with validated fields, preview, and help boxes |
+| "Auto-set texture import settings on import" | Write an AssetPostprocessor that enforces max size, compression, and naming rules |
+
 ## Output Requirement (MANDATORY)
 
 **Every editor tool MUST follow one of the templates**:

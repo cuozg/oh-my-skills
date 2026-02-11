@@ -7,6 +7,27 @@ description: "Optimize and refactor bash shell scripts for clarity, performance,
 
 Analyze and optimize bash scripts for better performance, clarity, and maintainability.
 
+## Purpose
+
+Eliminate performance bottlenecks (unnecessary subshells, external commands, inefficient loops) and improve readability in bash scripts by applying modern bash idioms and best practices.
+
+## Input
+
+- **Required**: Path to a `.sh` (or shell script) file to optimize.
+- **Optional**: Optimization focus — `performance`, `clarity`, `safety`, or `all` (default).
+
+## Output
+
+A structured optimization report (following the OPTIMIZATION_REPORT.md template) delivered directly to the user, listing each change with before/after code snippets, categorized by Performance / Clarity / Safety / Style.
+
+## Examples
+
+| Trigger | Input | What Happens |
+|---------|-------|--------------|
+| "Optimize this build script" | `scripts/build.sh` | Full analysis; replaces external commands with built-ins, simplifies conditionals |
+| "Speed up this script" | `ci/test-runner.sh`, focus=performance | Targets subshell reduction, loop optimization, fork overhead |
+| "Clean up this legacy script" | `tools/migrate.sh`, focus=clarity | Renames variables, extracts functions, adds strict mode |
+
 ## Output Requirement (MANDATORY)
 
 **Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](.claude/skills/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md)

@@ -7,6 +7,27 @@ description: "Deep investigation of Unity projects as an expert Unity developer.
 
 Deep investigation of Unity projects — logic, data, assets, animation, VFX, audio, physics, UI, networking, performance, and all technical systems.
 
+## Purpose
+
+Deeply analyze how Unity project systems work — trace execution flows, map data pipelines, extract business rules, and document findings so developers understand the codebase.
+
+## Input
+
+- **Required**: Question or system to investigate (e.g., "How does matchmaking work?", "What triggers the daily reward popup?")
+- **Optional**: Starting file/class, specific aspect to focus on (data flow, lifecycle, serialization)
+
+## Output
+
+An investigation report saved to `Documents/Investigations/` (per `INVESTIGATION_REPORT.md` template) documenting: system overview, execution flow, data structures, side effects, and key findings.
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "How does the matchmaking system work?" | Trace from UI button → API call → server response → match start, document full flow |
+| "What triggers the daily reward popup?" | Find all callers, trace conditions (login time, cooldown, server flag), map decision tree |
+| "Where is player data serialized?" | Map save/load paths, identify serialization format, document schema and migration logic |
+
 ## Output Requirement (MANDATORY)
 
 **Every investigation MUST follow the template**: `assets/templates/INVESTIGATION_REPORT.md`

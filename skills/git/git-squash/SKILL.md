@@ -7,6 +7,19 @@ description: "Squash multiple related commits into organized, well-documented co
 
 Intelligently group, squash, and document related commits to create a clean, meaningful commit history.
 
+## Purpose
+
+Transform messy, work-in-progress commit histories into clean, logical commit groups — so PRs and branches tell a coherent story when merged.
+
+## Input
+
+- **Required**: A commit range (start..end), a count of recent commits (`-n`), or a PR number.
+- **Optional**: Grouping strategy (`by-feature`, `by-type`, or `auto`), target branch for rebase.
+
+## Output
+
+A squash plan (following the SQUASH_PLAN.md template) presented for user approval before execution, showing commit groupings, target messages, and the rebase/reset strategy to be used.
+
 ## Output Requirement (MANDATORY)
 
 **Every squash plan MUST follow the template**: [SQUASH_PLAN.md](.claude/skills/git-squash/assets/templates/SQUASH_PLAN.md)

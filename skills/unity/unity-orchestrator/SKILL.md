@@ -7,6 +7,19 @@ description: "Master Unity technical lead. Use for ALL Unity requests. Analyzes 
 
 Route tasks to specialized skills and coordinate complex implementations.
 
+## Purpose
+
+Classify incoming Unity-related requests by intent, route them to the correct specialized skill(s), and coordinate multi-step implementations that span multiple skills.
+
+## Input
+
+- **Required**: User prompt describing a Unity task (error fix, feature request, review, investigation, etc.)
+- **Optional**: File paths, error messages, PR links, or other context
+
+## Output
+
+A routing decision (per `ROUTING_DECISION.md` template) documenting the matched skill(s), routing rationale, and orchestration plan. No file is saved — output is inline in the orchestration log.
+
 ## Output Requirement (MANDATORY)
 
 **Every routing decision MUST follow the template**: [ROUTING_DECISION.md](.claude/skills/unity-orchestrator/assets/templates/ROUTING_DECISION.md)
@@ -134,3 +147,27 @@ Route `coplay-mcp_*` tools to the correct specialist skill. Key tool-to-skill ma
 | `coplay-mcp_create_material` / `assign_shader_to_material` | `unity-tech-art` |
 | `coplay-mcp_list_game_objects_in_hierarchy` / `get_game_object_info` | `unity-investigate`, `unity-debug` |
 | `coplay-mcp_get_unity_editor_state` | Any skill needing project context |
+
+## Examples
+
+### Example 1: Error with known stack trace
+```
+User: "NullReferenceException in PlayerController.cs line 42"
+```
+→ Route to `unity-fix-errors` (has stack trace + error message)
+→ If root cause unclear after diagnosis, chain to `unity-investigate`
+
+### Example 2: Multi-skill feature request
+```
+User: "Add a daily reward calendar UI with server sync"
+```
+→ Route to `unity-plan` (large feature, needs breakdown)
+→ Plan chains: `unity-plan` → `unity-plan-detail` → `unity-plan-executor`
+→ Combine with `flatbuffers-coder` (if schema needed) + `unity-code` (logic) + `unity-ui` (UI)
+
+### Example 3: Ambiguous request
+```
+User: "The game feels sluggish"
+```
+→ Route to `unity-optimize-performance` (performance complaint, no specific error)
+→ Use `coplay-mcp_get_worst_cpu_frames` + `coplay-mcp_get_worst_gc_frames` for data

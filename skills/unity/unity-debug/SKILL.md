@@ -7,6 +7,27 @@ description: "Deep investigation and debugging of Unity errors. Use when: (1) Us
 
 Investigate Unity errors deeply — understand the requirement, trace logic chains, build smart debug flows, and identify root causes to guide resolution.
 
+## Purpose
+
+Deeply investigate Unity errors and unexpected behaviors to understand WHY they occur — trace logic chains, build targeted debug flows, and produce root cause analysis that guides resolution.
+
+## Input
+
+- **Required**: Error description — stack trace, error message, or description of unexpected behavior
+- **Optional**: Expected vs actual behavior, repro steps, affected scenes/prefabs, recent code changes
+
+## Output
+
+A root cause analysis with: requirement understanding, logic chain trace, debug flow design, evidence collected, and identified root cause. Output follows the skill's internal debug methodology (no separate template file).
+
+## Examples
+
+| User Request | Skill Action |
+|:---|:---|
+| "Why does the player teleport when jumping near walls?" | Trace physics + movement logic, add conditional logging, identify collision resolver conflict |
+| "Explain this stack trace from matchmaking" | Walk through each frame, map to code, identify the race condition causing the crash |
+| "Score doesn't update after killing enemies" | Trace event chain: kill event → score handler → UI binding, find broken subscription |
+
 ## Core Philosophy
 
 This skill is about **understanding**, not reporting. The goal is to:
@@ -201,6 +222,16 @@ For detailed patterns and solutions, see [references/common_errors.md](reference
 ## Step 5: Guide Resolution
 
 Present findings and recommend fixes directly to the user. Do NOT generate report files.
+
+**Output format** — communicate findings as structured inline text:
+
+| Section | Content |
+|---------|---------|
+| **Root Cause** | One-sentence description of the underlying issue |
+| **Evidence** | Debug log output or code path that confirms the cause |
+| **Quick Fix** | Minimal change to stop the crash (guard clause, null check) |
+| **Proper Fix** | Address the root cause architecturally |
+| **Prevention** | How to avoid this class of bug going forward |
 
 **For each identified cause, communicate:**
 
