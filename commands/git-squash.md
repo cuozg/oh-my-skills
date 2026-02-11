@@ -1,7 +1,8 @@
 ---
 description: Squash and organize commits into clean, well-documented history
-agent: build
+agent: sisyphus
 skill: git/git-squash
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

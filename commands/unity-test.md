@@ -1,7 +1,8 @@
 ---
 description: Create and run Unity tests with Edit/Play Mode support
-agent: build
+agent: sisyphus
 skill: unity/unity-test
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

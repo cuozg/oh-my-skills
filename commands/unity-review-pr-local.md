@@ -1,7 +1,8 @@
 ---
 description: Review code changes locally and generate a markdown review report
-agent: build
+agent: sisyphus
 skill: unity/unity-review-pr-local
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

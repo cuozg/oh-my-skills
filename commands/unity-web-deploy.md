@@ -1,7 +1,8 @@
 ---
 description: WebGL build configuration, browser optimization, and deployment
-agent: build
+agent: sisyphus
 skill: unity/unity-web-deploy
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

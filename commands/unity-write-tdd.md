@@ -1,7 +1,8 @@
 ---
 description: Generate formal Technical Design Documents for Unity features
-agent: build
+agent: sisyphus
 skill: unity/unity-write-tdd
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

@@ -1,7 +1,8 @@
 ---
 description: Deep investigation and debugging of Unity errors with root cause analysis
-agent: build
+agent: sisyphus
 skill: unity/unity-debug
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

@@ -1,7 +1,8 @@
 ---
 description: Diagnose and fix Unity compiler errors, exceptions, and build failures
-agent: build
+agent: sisyphus
 skill: unity/unity-fix-errors
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

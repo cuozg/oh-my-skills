@@ -1,7 +1,8 @@
 ---
 description: Find and fix Unity performance bottlenecks (FPS, memory, load times)
-agent: build
+agent: sisyphus
 skill: unity/unity-optimize-performance
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

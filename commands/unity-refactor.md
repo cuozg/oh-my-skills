@@ -1,7 +1,8 @@
 ---
 description: Refactor Unity C# code - extract, rename, restructure, decouple
-agent: build
+agent: sisyphus
 skill: unity/unity-refactor
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

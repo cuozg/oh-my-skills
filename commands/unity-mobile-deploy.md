@@ -1,7 +1,8 @@
 ---
 description: iOS/Android build configuration, optimization, and deployment
-agent: build
+agent: sisyphus
 skill: unity/unity-mobile-deploy
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

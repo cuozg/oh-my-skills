@@ -1,7 +1,8 @@
 ---
 description: Plan Unity features with structured HTML output and diff patches
-agent: build
+agent: sisyphus
 skill: unity/unity-plan
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

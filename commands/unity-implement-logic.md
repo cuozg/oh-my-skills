@@ -1,7 +1,8 @@
 ---
 description: Implement C# game logic with Unity best practices
-agent: build
+agent: sisyphus
 skill: unity/unity-code
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

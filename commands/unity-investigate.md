@@ -1,7 +1,8 @@
 ---
 description: Deep-dive code analysis of Unity systems, logic flow, and architecture
-agent: build
+agent: sisyphus
 skill: unity/unity-investigate
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

@@ -1,7 +1,8 @@
 ---
 description: Generate project documentation (README, architecture, API references)
-agent: build
+agent: sisyphus
 skill: unity/unity-write-docs
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

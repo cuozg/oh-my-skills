@@ -1,7 +1,8 @@
 ---
 description: Generate structured commit comments from PRs or commit hashes
-agent: build
+agent: sisyphus
 skill: git/git-comment
+subtask: true
 ---
 
 ## FIRST: Load Required Skill

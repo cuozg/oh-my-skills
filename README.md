@@ -8,6 +8,18 @@ Configuration files for AI agents to work effectively with this Unity project.
 git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ```
 
+## Antigravity Setup
+
+To enable these workflows as **Antigravity slash commands** (e.g., `/unity-plan`) and register the specialized **skills**, link the directories to the project's agent folder:
+
+```bash
+mkdir -p .agent
+ln -s ../.opencode/commands .agent/workflows
+ln -s ../.opencode/skills .agent/skills
+ln -s ../.opencode/rules .agent/rules
+```
+
+
 ## Quick Start
 
 1. **Code Review**: *"Review PR #25141 for performance issues."* (uses `unity-review-pr`)

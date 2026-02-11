@@ -1,7 +1,8 @@
 ---
 description: Review pull requests on GitHub with Unity-specific best practices
-agent: build
+agent: sisyphus
 skill: unity/unity-review-pr
+subtask: true
 ---
 
 ## FIRST: Load Required Skill
