@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Generates structured prompts with mandatory skill loading and /handoff context preservation. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
+description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Supports boulder continuation for Sisyphus sessions (v3.5.0+). Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
 ---
 
 # Sisyphus Orchestrator
@@ -15,6 +15,8 @@ Generate Sisyphus-compatible prompts and delegate via `call_omo_agent(subagent_t
 | **Skill loading** | Every prompt MUST begin with "FIRST: Load Required Skill" section. |
 | **Skill Loading Requirement** | When Sisyphus receives a delegated prompt, it MUST execute the "FIRST: Load Required Skill" section before proceeding with any analysis, prompt generation, or task execution. Skill loading is a prerequisite gate—no negotiations, no exceptions. |
 | **Context preservation** | Use `/handoff` when context is long. Include in all prompts. |
+| **Atlas manual review** | Delegated prompts MUST instruct subagent to use `Read` on all modified files before reporting completion. The orchestrator (Atlas) will verify file reads occurred. Omitting this causes review rejection. |
+| **Boulder continuation** | Sisyphus sessions can now participate in boulder continuation (v3.5.0+). Pass valid `session_id` to resume previous Sisyphus sessions. Ensure `session_ids` are validated — invalid IDs cause delegation chain failures. |
 
 ---
 
@@ -94,6 +96,44 @@ All delegated prompts MUST enforce compliance with `.claude/rules/`. Include the
 | `use skill <name> ...` | `<name>` |
 | No specific skill | Justify omission |
 
+> **Note (v3.5.0):** Sisyphus-Junior can now use `TaskCreate`/`TaskUpdate`/`TaskList` internally for task tracking. No skill routing change needed — this is an executor capability, not a user-facing intent.
+
+---
+
+## v3.5.0 Enhancements
+
+> oh-my-opencode v3.5.0 "Atlas Trusts No One" (2026-02-10)
+
+### Sisyphus Boulder Continuation
+
+Sisyphus sessions can now participate in boulder continuation (previously Atlas-only). To resume a previous Sisyphus session, pass `session_id` to `call_omo_agent()`:
+
+```python
+call_omo_agent(
+    subagent_type="sisyphus",
+    session_id="ses_abc123",  # Resume previous session
+    description="Continue implementation",
+    run_in_background=False,
+    prompt="..."
+)
+```
+
+- Validate `session_id` before passing — invalid IDs cause delegation chain failures
+- Use `session_list()` or `session_info()` to verify session exists
+- 500ms session idle dedup window prevents double-firing of continuation hooks
+
+### Sisyphus-Junior TaskCreate/Update/List
+
+Sisyphus-Junior (the executor) can now use `TaskCreate`, `TaskUpdate`, and `TaskList` tools directly without triggering the delegation tool block. This enables better task tracking within delegated work.
+
+### Skill @path Auto-Resolution
+
+Relative `@scripts/` paths in delegation prompt templates now auto-resolve to absolute paths. No manual path construction needed — use `@scripts/my_script.py` in templates and they resolve correctly.
+
+### Session ID Validation
+
+`session_ids` validation is now enforced in boulder continuation. Invalid or stale session IDs are rejected with clear error messages instead of silently failing. Always verify session validity before resuming.
+
 ---
 
 ## Workflow
@@ -127,7 +167,7 @@ Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. 
 1. Start with "FIRST: Load Required Skill" section pointing to `.claude/skills/[skill-name]/SKILL.md`
 2. Include atomic task description
 3. Include concrete expected outcome
-4. MUST DO: "Follow skill EXACTLY", create todos, run diagnostics, comply with `.claude/rules/`
+4. MUST DO: "Follow skill EXACTLY", create todos, run diagnostics, use `Read` on all modified files, comply with `.claude/rules/`
 5. MUST NOT DO: "NEVER commit or push to git", skip skill, suppress type errors, destructive actions without confirmation
 6. Include "Use `/handoff` if context is getting long"
 7. Include rule compliance reminder referencing all 3 rule files
@@ -171,6 +211,9 @@ call_omo_agent(
 | Destructive actions without confirmation | Require explicit user confirmation _(agent-behavior: Safety First)_ |
 | Ignoring C# naming conventions | Enforce PascalCase/_camelCase per `unity-csharp-conventions.md` |
 | Skipping Discover phase | Follow Discover → Plan → Execute → Collaborate _(agent-behavior)_ |
+| Subagent skips `Read` on modified files | Delegation prompt MUST require `Read` on all changed files _(Atlas review)_ |
+| Passing unvalidated `session_id` | Verify session exists via `session_list()`/`session_info()` before resuming |
+| Omitting file read verification in prompts | Include "Use `Read` on every modified file before completion" in MUST DO |
 
 ---
 
@@ -182,9 +225,11 @@ call_omo_agent(
 - [ ] Correct skill selected for action type
 - [ ] Prompt has "FIRST: Load Required Skill" section
 - [ ] MUST DO includes "Follow skill EXACTLY as loaded above"
+- [ ] MUST DO includes "Use `Read` on every modified file before reporting completion" _(Atlas review)_
 - [ ] MUST DO includes "Comply with all `.claude/rules/` (agent-behavior, unity-csharp-conventions, unity-asset-rules)"
 - [ ] MUST NOT DO includes "NEVER commit or push to git"
 - [ ] MUST NOT DO includes "NEVER perform destructive actions without explicit user confirmation"
 - [ ] `/handoff` mentioned for context preservation
 - [ ] Background vs sync mode is intentional
 - [ ] Interaction pattern follows Discover → Plan → Execute → Collaborate
+- [ ] If resuming session: `session_id` validated via `session_list()`/`session_info()`

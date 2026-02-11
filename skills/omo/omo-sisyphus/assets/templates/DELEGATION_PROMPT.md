@@ -31,6 +31,7 @@ Follow the skill's instructions exactly.
 - Mark tasks in_progress/completed
 - Match existing codebase patterns
 - Run lsp_diagnostics on changed files
+- Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Verify build/tests pass
 - Use `/handoff` if context is getting long (before compaction strikes)
 - **Comply with all `.claude/rules/`** — specifically:
