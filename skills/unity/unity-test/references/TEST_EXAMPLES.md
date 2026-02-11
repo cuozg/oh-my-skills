@@ -1099,18 +1099,205 @@ public class EnemyAIStateTests
 
 ## Test Directory Structure
 
+### Recommended Structure (Editor/ folder for EditMode)
+
 ```
 Assets/Scripts/Test/
-├── EditMode/
-│   ├── InventoryTests.cs
-│   ├── InventoryEventTests.cs
-│   ├── InventoryIntegrationTests.cs
-│   ├── DamageCalculatorTests.cs
-│   └── EnemyAIStateTests.cs
-└── PlayMode/
+├── Editor/                              ← RECOMMENDED for EditMode tests (no .asmdef needed)
+│   ├── FeatureA/
+│   │   ├── InventoryTests.cs
+│   │   ├── InventoryEventTests.cs
+│   │   └── InventoryIntegrationTests.cs
+│   ├── FeatureB/
+│   │   ├── DamageCalculatorTests.cs
+│   │   └── EnemyAIStateTests.cs
+│   └── Helpers/
+│       └── TestDoubles.cs
+└── PlayMode/                            ← Requires .asmdef
+    ├── PlayModeTests.asmdef
     ├── PlayerMovementTests.cs
     ├── SpawnerTests.cs
     └── PlayerControllerTests.cs
 ```
 
-Do NOT create `.asmdef` files — the project manages assembly definitions externally.
+Tests in `Editor/` compile into `Assembly-CSharp-Editor` which **automatically** includes NUnit, UnityEngine.TestRunner, and UnityEditor.TestRunner references. No `.asmdef` configuration needed.
+
+### Legacy Structure (EditMode/ with .asmdef)
+
+```
+Assets/Scripts/Test/
+├── EditMode/
+│   ├── EditModeTests.asmdef             ← Must be correctly configured
+│   ├── InventoryTests.cs
+│   └── ...
+└── PlayMode/
+    ├── PlayModeTests.asmdef
+    └── ...
+```
+
+This approach works but requires a correctly configured `.asmdef`. See [Assembly Definition Examples](#assembly-definition-examples) below.
+
+> **⚠️ WARNING**: If the `.asmdef` is misconfigured (e.g., `Assembly-CSharp.dll` in `precompiledReferences`), tests compile without errors but the Test Runner shows "No tests to show". The `Editor/` folder approach eliminates this risk entirely.
+
+---
+
+## Assembly Definition Examples
+
+Every test folder requires an `.asmdef` file to compile correctly. Without it, test scripts compile into `Assembly-CSharp` which lacks NUnit references, causing `CS0246` errors.
+
+### EditMode `.asmdef` (`Assets/Scripts/Test/EditMode/EditModeTests.asmdef`)
+
+```json
+{
+    "name": "EditModeTests",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+```
+
+**Key fields explained:**
+
+| Field | Value | Purpose |
+|:------|:------|:--------|
+| `references` | `UnityEngine.TestRunner`, `UnityEditor.TestRunner` | Access to `[UnityTest]`, `UnityEngine.TestTools` |
+| `includePlatforms` | `["Editor"]` | EditMode tests only run in the Unity Editor |
+| `overrideReferences` | `true` | Enables explicit `precompiledReferences` |
+| `precompiledReferences` | `["nunit.framework.dll"]` | NUnit access — `[Test]`, `Assert`, `[TestFixture]` |
+| `defineConstraints` | `["UNITY_INCLUDE_TESTS"]` | Only compiled when Test Framework is active |
+| `autoReferenced` | `false` | Prevents game code from accidentally depending on tests |
+
+### PlayMode `.asmdef` (`Assets/Scripts/Test/PlayMode/PlayModeTests.asmdef`)
+
+```json
+{
+    "name": "PlayModeTests",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+```
+
+**Difference from EditMode**: `includePlatforms` is empty `[]` so PlayMode tests can also run on build targets (device testing).
+
+### Referencing Game Code
+
+If you need test classes to access game code:
+
+- **Game code has NO `.asmdef`** (default `Assembly-CSharp`): Tests can access it implicitly — no changes needed.
+- **Game code has its OWN `.asmdef`** (e.g., `GameCore`): Add `"GameCore"` to the test `.asmdef`'s `references` array.
+- **NEVER** add `"Assembly-CSharp.dll"` to `precompiledReferences` — it is not a precompiled DLL.
+
+---
+
+## Invalid `.asmdef` Configuration — What NOT to Do
+
+The following `.asmdef` configuration **will cause "No tests to show"** in the Test Runner even though tests compile without errors:
+
+### ❌ BROKEN: `Assembly-CSharp.dll` in precompiledReferences
+
+```json
+{
+    "name": "EditModeTests",
+    "rootNamespace": "",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Assembly-CSharp.dll",
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+```
+
+**Why this fails**: `Assembly-CSharp` is Unity's default compilation assembly — it is **not** a precompiled DLL that exists in the `Library/ScriptAssemblies/` as a redistributable reference. Adding it to `precompiledReferences` corrupts the assembly resolution metadata, making the Test Runner unable to recognize the assembly as a test assembly.
+
+**Symptoms**:
+- ✅ Tests compile successfully (no CS0246 errors)
+- ❌ Test Runner window → EditMode tab → "No tests to show"
+- ❌ No error messages anywhere — completely silent failure
+
+**Fix options**:
+1. **Best**: Delete the `.asmdef` and move tests to an `Editor/` folder
+2. **Alternative**: Remove `"Assembly-CSharp.dll"` from `precompiledReferences` (keep only `"nunit.framework.dll"`)
+
+---
+
+## Before Creating EditMode Tests — Pre-Creation Checklist
+
+Run through this checklist **before** writing any new EditMode test:
+
+### Folder Setup
+
+- [ ] **Choose folder location**: `Assets/Scripts/Test/Editor/` (recommended) or custom folder with valid `.asmdef`
+- [ ] **If using `Editor/` folder**: No `.asmdef` needed — skip to "Write Tests"
+- [ ] **If using custom folder**: Create `.asmdef` following the [EditMode template](#editmode-asmdef-assetsscriptstesteditmodeedimodeteststsasmdef)
+
+### `.asmdef` Validation (only if NOT using `Editor/` folder)
+
+- [ ] `overrideReferences` is `true`
+- [ ] `precompiledReferences` contains ONLY `"nunit.framework.dll"` — NO `Assembly-CSharp.dll`
+- [ ] `references` contains `"UnityEngine.TestRunner"` AND `"UnityEditor.TestRunner"`
+- [ ] `defineConstraints` contains `"UNITY_INCLUDE_TESTS"`
+- [ ] `includePlatforms` is `["Editor"]`
+- [ ] `autoReferenced` is `false`
+
+### Write Tests
+
+- [ ] Test class has `[TestFixture]` attribute
+- [ ] Test methods have `[Test]` attribute
+- [ ] `using NUnit.Framework;` is present
+- [ ] Test naming follows `[Subject]_[Scenario]_[ExpectedResult]`
+
+### Verify Discovery
+
+- [ ] Open `Window > General > Test Runner > EditMode` tab
+- [ ] Confirm tests appear in the test tree
+- [ ] Run one test to verify execution
+- [ ] If "No tests to show" → check `.asmdef` for `Assembly-CSharp.dll` in `precompiledReferences`, or move tests to `Editor/` folder
+
