@@ -212,18 +212,18 @@ public void CalculateHealth_AfterDamage_ReturnsExpected(int max, int damage, int
 
 | Operation | MCP Tool |
 |:----------|:---------|
-| Check compilation | `coplay-mcp_check_compile_errors` |
-| Read test logs | `coplay-mcp_get_unity_logs(search_term="Test")` |
-| Run editor script | `coplay-mcp_execute_script(filePath)` |
-| Play mode tests | `coplay-mcp_play_game` / `coplay-mcp_stop_game` |
-| Verify scene state | `coplay-mcp_list_game_objects_in_hierarchy` |
+| Check compilation | `unityMCP_check_compile_errors` |
+| Read test logs | `unityMCP_get_unity_logs(search_term="Test")` |
+| Run editor script | `unityMCP_execute_script(filePath)` |
+| Play mode tests | `unityMCP_play_game` / `unityMCP_stop_game` |
+| Verify scene state | `unityMCP_list_game_objects_in_hierarchy` |
 
 ### Execution Flow
 
 ```
-1. coplay-mcp_check_compile_errors        → Ensure tests compile
-2. coplay-mcp_execute_script(test_runner)  → Run tests via editor script
-3. coplay-mcp_get_unity_logs(show_errors=true) → Check results
+1. unityMCP_check_compile_errors        → Ensure tests compile
+2. unityMCP_execute_script(test_runner)  → Run tests via editor script
+3. unityMCP_get_unity_logs(show_errors=true) → Check results
 4. On failure: read logs, fix, repeat
 ```
 
@@ -237,7 +237,7 @@ public void CalculateHealth_AfterDamage_ReturnsExpected(int max, int damage, int
 
 Successful test generation produces:
 1. **Test scripts** — C# files placed in `Assets/Scripts/Test/EditMode/` or `Assets/Scripts/Test/PlayMode/` per classification
-2. **Clean compilation** — `coplay-mcp_check_compile_errors` returns zero errors after adding tests
+2. **Clean compilation** — `unityMCP_check_compile_errors` returns zero errors after adding tests
 3. **Naming convention** — all test methods follow `[Subject]_[Scenario]_[ExpectedResult]`
 4. **No `.asmdef` files** — project manages assembly definitions externally
 

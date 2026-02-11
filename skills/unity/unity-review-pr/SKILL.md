@@ -207,17 +207,17 @@ Optionally verify compilation and runtime behavior after reviewing code changes.
 
 | Operation | MCP Tool | Use Case |
 | --------- | -------- | -------- |
-| Check compilation | `coplay-mcp_check_compile_errors` | Verify PR changes compile cleanly |
-| Read console | `coplay-mcp_get_unity_logs(show_errors=true)` | Check for runtime errors post-merge |
-| Play/stop game | `coplay-mcp_play_game` / `coplay-mcp_stop_game` | Smoke-test PR changes in Editor |
-| Inspect hierarchy | `coplay-mcp_list_game_objects_in_hierarchy()` | Verify scene structure changes |
-| Get object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | Validate component/property changes |
+| Check compilation | `unityMCP_check_compile_errors` | Verify PR changes compile cleanly |
+| Read console | `unityMCP_get_unity_logs(show_errors=true)` | Check for runtime errors post-merge |
+| Play/stop game | `unityMCP_play_game` / `unityMCP_stop_game` | Smoke-test PR changes in Editor |
+| Inspect hierarchy | `unityMCP_list_game_objects_in_hierarchy()` | Verify scene structure changes |
+| Get object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | Validate component/property changes |
 
 ### Post-Review Verification (Optional)
 
 ```
-1. coplay-mcp_check_compile_errors         → confirm PR compiles
-2. coplay-mcp_get_unity_logs(show_errors=true) → check for warnings/errors
-3. coplay-mcp_play_game                    → smoke-test if needed
-4. coplay-mcp_stop_game                    → end test session
+1. unityMCP_check_compile_errors         → confirm PR compiles
+2. unityMCP_get_unity_logs(show_errors=true) → check for warnings/errors
+3. unityMCP_play_game                    → smoke-test if needed
+4. unityMCP_stop_game                    → end test session
 ```

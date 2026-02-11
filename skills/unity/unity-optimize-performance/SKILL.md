@@ -38,11 +38,11 @@ Read the template first, then populate all sections.
 
 ## Optimization Workflow
 
-1. **Baseline**: `coplay-mcp_list_game_objects_in_hierarchy()` for object counts, `coplay-mcp_get_unity_logs()` for high-freq logs
+1. **Baseline**: `unityMCP_list_game_objects_in_hierarchy()` for object counts, `unityMCP_get_unity_logs()` for high-freq logs
 2. **Detect**: `grep_search` for expensive patterns in scripts
-3. **Audit Graphics**: `coplay-mcp_list_objects_with_high_polygon_count()` for heavy meshes
+3. **Audit Graphics**: `unityMCP_list_objects_with_high_polygon_count()` for heavy meshes
 4. **Implement**: Object pooling, cache refs, optimize algorithms, combine materials
-5. **Validate**: `coplay-mcp_play_game`, check frame timing via `coplay-mcp_get_worst_cpu_frames`, ensure no visual regressions
+5. **Validate**: `unityMCP_play_game`, check frame timing via `unityMCP_get_worst_cpu_frames`, ensure no visual regressions
 6. **Document**: Update docs via `/unity-write-docs` if architecture changed
 
 ## Red Flags to Find
@@ -83,29 +83,29 @@ grep -r "new " --include="*.cs" | grep "Update"
 
 ## MCP Tools Integration
 
-Prefer `coplay-mcp_*` tools for profiling and scene analysis.
+Prefer `unityMCP_*` tools for profiling and scene analysis.
 
 | Operation | MCP Tool | Replaces |
 |-----------|----------|----------|
-| Object counts | `coplay-mcp_list_game_objects_in_hierarchy()` | `manage_scene(get_hierarchy)` |
-| High-poly objects | `coplay-mcp_list_objects_with_high_polygon_count(threshold=1000)` | Manual mesh audit |
-| Console logs | `coplay-mcp_get_unity_logs()` | `read_console` |
-| CPU profiling | `coplay-mcp_get_worst_cpu_frames` | Manual profiler |
-| GC profiling | `coplay-mcp_get_worst_gc_frames` | Manual profiler |
-| Play/stop | `coplay-mcp_play_game` / `coplay-mcp_stop_game` | `manage_editor` |
-| Check compile | `coplay-mcp_check_compile_errors` | `refresh_unity` |
-| Editor state | `coplay-mcp_get_unity_editor_state` | Manual checks |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | `manage_asset` |
+| Object counts | `unityMCP_list_game_objects_in_hierarchy()` | `manage_scene(get_hierarchy)` |
+| High-poly objects | `unityMCP_list_objects_with_high_polygon_count(threshold=1000)` | Manual mesh audit |
+| Console logs | `unityMCP_get_unity_logs()` | `read_console` |
+| CPU profiling | `unityMCP_get_worst_cpu_frames` | Manual profiler |
+| GC profiling | `unityMCP_get_worst_gc_frames` | Manual profiler |
+| Play/stop | `unityMCP_play_game` / `unityMCP_stop_game` | `manage_editor` |
+| Check compile | `unityMCP_check_compile_errors` | `refresh_unity` |
+| Editor state | `unityMCP_get_unity_editor_state` | Manual checks |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | `manage_asset` |
 
 ### Performance Audit Flow
 
 ```
-1. coplay-mcp_list_game_objects_in_hierarchy()          → Count objects, find bloat
-2. coplay-mcp_list_objects_with_high_polygon_count()    → Identify heavy meshes
-3. coplay-mcp_play_game                                 → Start profiling session
-4. coplay-mcp_get_worst_cpu_frames                      → Find CPU bottlenecks
-5. coplay-mcp_get_worst_gc_frames                       → Find GC allocation spikes
-6. coplay-mcp_stop_game                                 → Stop profiling
+1. unityMCP_list_game_objects_in_hierarchy()          → Count objects, find bloat
+2. unityMCP_list_objects_with_high_polygon_count()    → Identify heavy meshes
+3. unityMCP_play_game                                 → Start profiling session
+4. unityMCP_get_worst_cpu_frames                      → Find CPU bottlenecks
+5. unityMCP_get_worst_gc_frames                       → Find GC allocation spikes
+6. unityMCP_stop_game                                 → Stop profiling
 7. [Apply optimizations]
-8. coplay-mcp_check_compile_errors                      → Verify changes compile
+8. unityMCP_check_compile_errors                      → Verify changes compile
 ```

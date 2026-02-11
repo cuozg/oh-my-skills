@@ -109,10 +109,10 @@ Understand the code deeply before changing it. Use `unity-investigate` skill.
 
 | Operation | Tool |
 |:---|:---|
-| Check compilation | `coplay-mcp_check_compile_errors` |
-| Scene hierarchy | `coplay-mcp_list_game_objects_in_hierarchy` |
-| Object inspection | `coplay-mcp_get_game_object_info` |
-| Console logs | `coplay-mcp_get_unity_logs` |
+| Check compilation | `unityMCP_check_compile_errors` |
+| Scene hierarchy | `unityMCP_list_game_objects_in_hierarchy` |
+| Object inspection | `unityMCP_get_game_object_info` |
+| Console logs | `unityMCP_get_unity_logs` |
 
 ---
 
@@ -130,7 +130,7 @@ Execute changes in small, compilable steps. **Never make large, sweeping changes
    - `ast_grep_replace` for structural pattern replacement
 4. **Verify after each step**:
    - `lsp_diagnostics` on changed files → zero errors
-   - `coplay-mcp_check_compile_errors` → clean compilation
+   - `unityMCP_check_compile_errors` → clean compilation
    - Run relevant tests → still passing
 
 ### Refactoring Step Sequence
@@ -141,7 +141,7 @@ For each change in the plan:
 1. Identify the smallest atomic change
 2. Apply the change (edit, rename, move)
 3. Run lsp_diagnostics on changed files
-4. Run coplay-mcp_check_compile_errors
+4. Run unityMCP_check_compile_errors
 5. Run affected tests if available
 6. Log in REFACTORING_CHECKLIST.md Phase 3 Step Log
 7. Proceed to next change
@@ -180,7 +180,7 @@ Confirm the refactoring preserved behavior and improved code quality.
 ### 4.1 Compilation Check
 
 ```
-1. coplay-mcp_check_compile_errors → zero errors
+1. unityMCP_check_compile_errors → zero errors
 2. lsp_diagnostics on ALL changed files → zero errors, zero new warnings
 ```
 

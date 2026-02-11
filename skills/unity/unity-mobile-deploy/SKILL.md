@@ -60,24 +60,24 @@ Read the template first, then populate all sections.
 
 ## MCP Tools Integration
 
-Use `coplay-mcp_*` tools for build configuration, profiling, and validation.
+Use `unityMCP_*` tools for build configuration, profiling, and validation.
 
 | Operation | MCP Tool |
 |-----------|----------|
-| Editor/build state | `coplay-mcp_get_unity_editor_state` |
-| Check compilation | `coplay-mcp_check_compile_errors` |
-| Run build script | `coplay-mcp_execute_script(filePath="...")` |
-| Console output | `coplay-mcp_get_unity_logs()` |
-| CPU profiling | `coplay-mcp_get_worst_cpu_frames` |
-| GC profiling | `coplay-mcp_get_worst_gc_frames` |
-| High-poly audit | `coplay-mcp_list_objects_with_high_polygon_count()` |
-| Installed packages | `coplay-mcp_list_packages` |
+| Editor/build state | `unityMCP_get_unity_editor_state` |
+| Check compilation | `unityMCP_check_compile_errors` |
+| Run build script | `unityMCP_execute_script(filePath="...")` |
+| Console output | `unityMCP_get_unity_logs()` |
+| CPU profiling | `unityMCP_get_worst_cpu_frames` |
+| GC profiling | `unityMCP_get_worst_gc_frames` |
+| High-poly audit | `unityMCP_list_objects_with_high_polygon_count()` |
+| Installed packages | `unityMCP_list_packages` |
 
 ### Mobile Build Verification Flow
 
 ```
-1. coplay-mcp_get_unity_editor_state            → Confirm build target (iOS/Android)
-2. coplay-mcp_check_compile_errors              → Verify clean compilation
-3. coplay-mcp_execute_script(filePath="...")     → Run platform-specific build script
-4. coplay-mcp_get_unity_logs(show_errors=true)  → Check for build errors
+1. unityMCP_get_unity_editor_state            → Confirm build target (iOS/Android)
+2. unityMCP_check_compile_errors              → Verify clean compilation
+3. unityMCP_execute_script(filePath="...")     → Run platform-specific build script
+4. unityMCP_get_unity_logs(show_errors=true)  → Check for build errors
 ```

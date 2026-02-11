@@ -18,7 +18,7 @@ Write production-quality Unity C# scripts that are clean, commented, and perform
 
 ## Output
 
-One or more C# scripts placed in the appropriate `Assets/Scripts/` subdirectory, following `SCRIPT_TEMPLATE.md`. All scripts pass the Pre-Completion Checklist and `coplay-mcp_check_compile_errors` with zero errors.
+One or more C# scripts placed in the appropriate `Assets/Scripts/` subdirectory, following `SCRIPT_TEMPLATE.md`. All scripts pass the Pre-Completion Checklist and `unityMCP_check_compile_errors` with zero errors.
 
 ## Examples
 
@@ -40,7 +40,7 @@ Place scripts in the appropriate `Assets/Scripts/` subdirectory. Read the templa
 2. **Plan**: Outline classes, interfaces, and data flow before writing code
 3. **Implement**: Follow [UNITY_CSHARP_PATTERNS.md](.claude/skills/unity-code/references/UNITY_CSHARP_PATTERNS.md) and `.claude/rules/`
 4. **Self-Review**: Run the [Pre-Completion Checklist](#pre-completion-checklist) — fix every violation
-5. **Compile**: `coplay-mcp_check_compile_errors` — fix errors with `unity-fix-errors`
+5. **Compile**: `unityMCP_check_compile_errors` — fix errors with `unity-fix-errors`
 
 ---
 
@@ -247,35 +247,35 @@ For detailed patterns and examples, see [UNITY_CSHARP_PATTERNS.md](.claude/skill
 
 ### Final Verification
 - [ ] Run `lsp_diagnostics` on all changed files — zero errors
-- [ ] Run `coplay-mcp_check_compile_errors` — compilation succeeds
+- [ ] Run `unityMCP_check_compile_errors` — compilation succeeds
 - [ ] Review own code as if running `unity-review-pr` — no flaggable issues
 
 ---
 
 ## MCP Tools Integration
 
-Prefer `coplay-mcp_*` tools over manual file/shell operations for Unity Editor interaction.
+Prefer `unityMCP_*` tools over manual file/shell operations for Unity Editor interaction.
 
 | Operation | MCP Tool | Replaces |
 |:----------|:---------|:---------|
-| Check compilation | `coplay-mcp_check_compile_errors` | Manual refresh + console check |
-| Read console logs | `coplay-mcp_get_unity_logs` | Manual console inspection |
-| Add component | `coplay-mcp_add_component(gameobject_path, component_type)` | Manual Inspector work |
-| Set component property | `coplay-mcp_set_property(gameobject_path, component_type, property_name, value)` | Manual Inspector edits |
-| Create GameObject | `coplay-mcp_create_game_object(name, position)` | Manual hierarchy creation |
-| Create prefab | `coplay-mcp_create_prefab(gameobject_path, prefab_name, prefab_path)` | Manual prefab creation |
-| Run C# in Editor | `coplay-mcp_execute_script(filePath)` | Manual menu items / test runs |
-| Play/Stop game | `coplay-mcp_play_game` / `coplay-mcp_stop_game` | Manual play button |
-| Get editor state | `coplay-mcp_get_unity_editor_state` | Manual inspection |
-| Inspect hierarchy | `coplay-mcp_list_game_objects_in_hierarchy` | Manual scene browsing |
-| Get object info | `coplay-mcp_get_game_object_info(gameObjectPath)` | Manual component inspection |
+| Check compilation | `unityMCP_check_compile_errors` | Manual refresh + console check |
+| Read console logs | `unityMCP_get_unity_logs` | Manual console inspection |
+| Add component | `unityMCP_add_component(gameobject_path, component_type)` | Manual Inspector work |
+| Set component property | `unityMCP_set_property(gameobject_path, component_type, property_name, value)` | Manual Inspector edits |
+| Create GameObject | `unityMCP_create_game_object(name, position)` | Manual hierarchy creation |
+| Create prefab | `unityMCP_create_prefab(gameobject_path, prefab_name, prefab_path)` | Manual prefab creation |
+| Run C# in Editor | `unityMCP_execute_script(filePath)` | Manual menu items / test runs |
+| Play/Stop game | `unityMCP_play_game` / `unityMCP_stop_game` | Manual play button |
+| Get editor state | `unityMCP_get_unity_editor_state` | Manual inspection |
+| Inspect hierarchy | `unityMCP_list_game_objects_in_hierarchy` | Manual scene browsing |
+| Get object info | `unityMCP_get_game_object_info(gameObjectPath)` | Manual component inspection |
 
 ### Post-Implementation Verification Flow
 
 ```
-1. coplay-mcp_check_compile_errors          → Fix any errors
-2. coplay-mcp_get_unity_logs(show_errors=true) → Check for runtime warnings
-3. coplay-mcp_play_game                     → Test in Play Mode
-4. coplay-mcp_get_unity_logs                → Check runtime logs
-5. coplay-mcp_stop_game                     → Stop Play Mode
+1. unityMCP_check_compile_errors          → Fix any errors
+2. unityMCP_get_unity_logs(show_errors=true) → Check for runtime warnings
+3. unityMCP_play_game                     → Test in Play Mode
+4. unityMCP_get_unity_logs                → Check runtime logs
+5. unityMCP_stop_game                     → Stop Play Mode
 ```

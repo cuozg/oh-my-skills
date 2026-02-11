@@ -69,15 +69,15 @@ Use MCP tools to gather technical context for accurate TDD specifications.
 
 | Operation | MCP Tool | Use Case |
 | --------- | -------- | -------- |
-| Project context | `coplay-mcp_get_unity_editor_state` | Unity version, pipeline, build target for constraints |
-| Scene structure | `coplay-mcp_list_game_objects_in_hierarchy()` | Understand existing architecture |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | Document component configurations |
-| List packages | `coplay-mcp_list_packages` | Document dependency requirements |
+| Project context | `unityMCP_get_unity_editor_state` | Unity version, pipeline, build target for constraints |
+| Scene structure | `unityMCP_list_game_objects_in_hierarchy()` | Understand existing architecture |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | Document component configurations |
+| List packages | `unityMCP_list_packages` | Document dependency requirements |
 
 ### TDD Context Gathering
 
 ```
-1. coplay-mcp_get_unity_editor_state          → platform constraints
-2. coplay-mcp_list_game_objects_in_hierarchy() → existing systems
-3. coplay-mcp_list_packages                   → dependency map
+1. unityMCP_get_unity_editor_state          → platform constraints
+2. unityMCP_list_game_objects_in_hierarchy() → existing systems
+3. unityMCP_list_packages                   → dependency map
 ```

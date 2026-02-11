@@ -76,8 +76,8 @@ For files marked as NEW:
 
 | Check | Action | On Failure |
 |-------|--------|------------|
-| **Compile** | `coplay-mcp_check_compile_errors` | Fix immediately |
-| **Console** | `coplay-mcp_get_unity_logs(show_errors=true)` | Address errors |
+| **Compile** | `unityMCP_check_compile_errors` | Fix immediately |
+| **Console** | `unityMCP_get_unity_logs(show_errors=true)` | Address errors |
 
 ### Phase 5: Git Commit
 
@@ -121,7 +121,7 @@ Detailed description of changes:
 
 Successful execution produces:
 1. **All code changes applied** — files modified, created, or deleted exactly per the plan
-2. **Clean compilation** — `coplay-mcp_check_compile_errors` returns zero errors
+2. **Clean compilation** — `unityMCP_check_compile_errors` returns zero errors
 3. **Git commit** — single commit with descriptive message covering all changes
 
 No separate report file is generated. The git commit message serves as the execution record.

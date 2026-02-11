@@ -289,20 +289,20 @@ Before completing, verify:
 
 ## MCP Tools Integration
 
-Use `coplay-mcp_*` tools during the **Investigate Codebase** phase (Step 3) to gather project context.
+Use `unityMCP_*` tools during the **Investigate Codebase** phase (Step 3) to gather project context.
 
 | Operation | MCP Tool |
 |-----------|----------|
-| Project state | `coplay-mcp_get_unity_editor_state` |
-| Scene hierarchy | `coplay-mcp_list_game_objects_in_hierarchy()` |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
-| Installed packages | `coplay-mcp_list_packages` |
+| Project state | `unityMCP_get_unity_editor_state` |
+| Scene hierarchy | `unityMCP_list_game_objects_in_hierarchy()` |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` |
+| Installed packages | `unityMCP_list_packages` |
 
 ### Codebase Assessment Flow
 
 ```
-1. coplay-mcp_get_unity_editor_state           → Unity version, active scene, build target
-2. coplay-mcp_list_game_objects_in_hierarchy()  → Understand existing scene structure
-3. coplay-mcp_list_packages                     → Identify available packages/dependencies
+1. unityMCP_get_unity_editor_state           → Unity version, active scene, build target
+2. unityMCP_list_game_objects_in_hierarchy()  → Understand existing scene structure
+3. unityMCP_list_packages                     → Identify available packages/dependencies
 4. [Proceed with plan generation]
 ```

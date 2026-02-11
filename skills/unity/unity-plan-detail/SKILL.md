@@ -183,11 +183,11 @@ HTML escape: `& → &amp;` `< → &lt;` `> → &gt;`
 
 ## MCP Tools Integration
 
-Use `coplay-mcp_*` tools during codebase investigation (Step 2.3) and for verification.
+Use `unityMCP_*` tools during codebase investigation (Step 2.3) and for verification.
 
 | Operation | MCP Tool |
 |-----------|----------|
-| Editor state | `coplay-mcp_get_unity_editor_state` |
-| Scene hierarchy | `coplay-mcp_list_game_objects_in_hierarchy()` |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
-| Check compilation | `coplay-mcp_check_compile_errors` |
+| Editor state | `unityMCP_get_unity_editor_state` |
+| Scene hierarchy | `unityMCP_list_game_objects_in_hierarchy()` |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` |
+| Check compilation | `unityMCP_check_compile_errors` |

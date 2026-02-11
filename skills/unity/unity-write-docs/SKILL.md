@@ -77,18 +77,18 @@ Use MCP tools to gather project context for accurate documentation.
 
 | Operation | MCP Tool | Use Case |
 | --------- | -------- | -------- |
-| Project context | `coplay-mcp_get_unity_editor_state` | Get Unity version, render pipeline, build target |
-| List packages | `coplay-mcp_list_packages` | Document installed dependencies |
-| Scene structure | `coplay-mcp_list_game_objects_in_hierarchy()` | Document scene hierarchy |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` | Document component setups |
-| Prefab catalog | `coplay-mcp_list_all_prefabs_with_bounding_boxes()` | Document prefab inventory |
-| Capture visuals | `coplay-mcp_capture_scene_object(gameObjectPath="...")` | Screenshot for documentation |
+| Project context | `unityMCP_get_unity_editor_state` | Get Unity version, render pipeline, build target |
+| List packages | `unityMCP_list_packages` | Document installed dependencies |
+| Scene structure | `unityMCP_list_game_objects_in_hierarchy()` | Document scene hierarchy |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | Document component setups |
+| Prefab catalog | `unityMCP_list_all_prefabs_with_bounding_boxes()` | Document prefab inventory |
+| Capture visuals | `unityMCP_capture_scene_object(gameObjectPath="...")` | Screenshot for documentation |
 
 ### Documentation Context Flow
 
 ```
-1. coplay-mcp_get_unity_editor_state          → project metadata
-2. coplay-mcp_list_packages                   → dependency list
-3. coplay-mcp_list_game_objects_in_hierarchy() → scene overview
-4. coplay-mcp_capture_scene_object()          → visual references
+1. unityMCP_get_unity_editor_state          → project metadata
+2. unityMCP_list_packages                   → dependency list
+3. unityMCP_list_game_objects_in_hierarchy() → scene overview
+4. unityMCP_capture_scene_object()          → visual references
 ```

@@ -127,7 +127,7 @@ For multi-step coordination patterns, see [ORCHESTRATION_PATTERNS.md](.claude/sk
 
 - **Performance First**: Always consider frame budget impact
 - **Safety First**: Non-destructive operations, verify before execution  
-- **Tool Mastery**: Use `coplay-mcp_*` tools for Editor automation tasks
+- **Tool Mastery**: Use `unityMCP_*` tools for Editor automation tasks
 - **Document "Why"**: Explain architectural decisions, not just "what"
 - **Test Coverage**: Verify changes don't break existing functionality
 
@@ -135,18 +135,18 @@ For multi-step coordination patterns, see [ORCHESTRATION_PATTERNS.md](.claude/sk
 
 ## MCP Tools Integration
 
-Route `coplay-mcp_*` tools to the correct specialist skill. Key tool-to-skill mappings:
+Route `unityMCP_*` tools to the correct specialist skill. Key tool-to-skill mappings:
 
 | MCP Tool | Route To |
 |----------|----------|
-| `coplay-mcp_check_compile_errors` | `unity-code`, `unity-fix-errors`, `unity-test` |
-| `coplay-mcp_get_unity_logs` | `unity-fix-errors`, `unity-debug`, `unity-optimize-performance` |
-| `coplay-mcp_play_game` / `stop_game` | `unity-fix-errors`, `unity-debug`, `unity-test` |
-| `coplay-mcp_execute_script` | `unity-test`, `unity-editor-tools` |
-| `coplay-mcp_get_worst_cpu_frames` / `get_worst_gc_frames` | `unity-optimize-performance` |
-| `coplay-mcp_create_material` / `assign_shader_to_material` | `unity-tech-art` |
-| `coplay-mcp_list_game_objects_in_hierarchy` / `get_game_object_info` | `unity-investigate`, `unity-debug` |
-| `coplay-mcp_get_unity_editor_state` | Any skill needing project context |
+| `unityMCP_check_compile_errors` | `unity-code`, `unity-fix-errors`, `unity-test` |
+| `unityMCP_get_unity_logs` | `unity-fix-errors`, `unity-debug`, `unity-optimize-performance` |
+| `unityMCP_play_game` / `stop_game` | `unity-fix-errors`, `unity-debug`, `unity-test` |
+| `unityMCP_execute_script` | `unity-test`, `unity-editor-tools` |
+| `unityMCP_get_worst_cpu_frames` / `get_worst_gc_frames` | `unity-optimize-performance` |
+| `unityMCP_create_material` / `assign_shader_to_material` | `unity-tech-art` |
+| `unityMCP_list_game_objects_in_hierarchy` / `get_game_object_info` | `unity-investigate`, `unity-debug` |
+| `unityMCP_get_unity_editor_state` | Any skill needing project context |
 
 ## Examples
 
@@ -170,4 +170,4 @@ User: "Add a daily reward calendar UI with server sync"
 User: "The game feels sluggish"
 ```
 → Route to `unity-optimize-performance` (performance complaint, no specific error)
-→ Use `coplay-mcp_get_worst_cpu_frames` + `coplay-mcp_get_worst_gc_frames` for data
+→ Use `unityMCP_get_worst_cpu_frames` + `unityMCP_get_worst_gc_frames` for data

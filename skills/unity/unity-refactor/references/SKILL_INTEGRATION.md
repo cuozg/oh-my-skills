@@ -154,8 +154,8 @@ Post-Refactor:
 
 | Tool | Use In Refactoring |
 |:---|:---|
-| `coplay-mcp_check_compile_errors` | Verify compilation after changes |
-| `coplay-mcp_get_unity_logs` | Check for runtime errors |
+| `unityMCP_check_compile_errors` | Verify compilation after changes |
+| `unityMCP_get_unity_logs` | Check for runtime errors |
 | `unityMCP_run_tests` | Execute test suite |
 | `unityMCP_get_test_job` | Poll test results |
 | `unityMCP_validate_script` | Validate script structure |

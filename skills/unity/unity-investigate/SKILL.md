@@ -149,26 +149,26 @@ Present key findings to the user. Highlight risks, technical debt, and improveme
 
 ## MCP Tools Integration
 
-Use `coplay-mcp_*` tools for runtime inspection during investigation.
+Use `unityMCP_*` tools for runtime inspection during investigation.
 
 | Operation | MCP Tool |
 |-----------|----------|
-| Scene hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` |
-| Object details | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
-| Component filter | `coplay-mcp_list_game_objects_in_hierarchy(componentFilter="...")` |
-| Console logs | `coplay-mcp_get_unity_logs()` |
-| Editor state | `coplay-mcp_get_unity_editor_state` |
-| Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
-| UI screenshot | `coplay-mcp_capture_ui_canvas()` |
-| Play to test | `coplay-mcp_play_game` / `coplay-mcp_stop_game` |
-| Installed packages | `coplay-mcp_list_packages` |
+| Scene hierarchy | `unityMCP_list_game_objects_in_hierarchy(nameFilter="...")` |
+| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` |
+| Component filter | `unityMCP_list_game_objects_in_hierarchy(componentFilter="...")` |
+| Console logs | `unityMCP_get_unity_logs()` |
+| Editor state | `unityMCP_get_unity_editor_state` |
+| Scene screenshot | `unityMCP_capture_scene_object(gameObjectPath="...")` |
+| UI screenshot | `unityMCP_capture_ui_canvas()` |
+| Play to test | `unityMCP_play_game` / `unityMCP_stop_game` |
+| Installed packages | `unityMCP_list_packages` |
 
 ### Investigation Discovery Flow
 
 ```
-1. coplay-mcp_get_unity_editor_state                           → Project context
-2. coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")  → Find target objects
-3. coplay-mcp_get_game_object_info(gameObjectPath="...")       → Inspect components/state
-4. coplay-mcp_capture_scene_object(gameObjectPath="...")       → Visual reference
+1. unityMCP_get_unity_editor_state                           → Project context
+2. unityMCP_list_game_objects_in_hierarchy(nameFilter="...")  → Find target objects
+3. unityMCP_get_game_object_info(gameObjectPath="...")       → Inspect components/state
+4. unityMCP_capture_scene_object(gameObjectPath="...")       → Visual reference
 5. [Trace code via LSP tools + grep]
 ```

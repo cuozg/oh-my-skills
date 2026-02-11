@@ -188,10 +188,10 @@ private void DebugLog(string msg) => Debug.Log($"<color=yellow>[DEBUG] {msg}</co
 After adding debug logs, use MCP tools to run and capture output:
 
 ```
-1. coplay-mcp_check_compile_errors         → Verify debug logs compile
-2. coplay-mcp_play_game                    → Reproduce the issue
-3. coplay-mcp_get_unity_logs(search_term="[DEBUG]") → Capture debug output
-4. coplay-mcp_stop_game                    → Analyze results
+1. unityMCP_check_compile_errors         → Verify debug logs compile
+2. unityMCP_play_game                    → Reproduce the issue
+3. unityMCP_get_unity_logs(search_term="[DEBUG]") → Capture debug output
+4. unityMCP_stop_game                    → Analyze results
 ```
 
 ## Step 4: Root Cause Analysis
@@ -258,24 +258,24 @@ Present findings and recommend fixes directly to the user. Do NOT generate repor
 
 | Operation | Tool |
 |-----------|------|
-| Read console errors | `coplay-mcp_get_unity_logs(show_errors=true)` |
-| Filter debug output | `coplay-mcp_get_unity_logs(search_term="[DEBUG]")` |
-| Inspect object state | `coplay-mcp_get_game_object_info(gameObjectPath="...")` |
-| Browse hierarchy | `coplay-mcp_list_game_objects_in_hierarchy(nameFilter="...")` |
-| Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
-| Editor state | `coplay-mcp_get_unity_editor_state` |
-| Check compilation | `coplay-mcp_check_compile_errors` |
-| Play to reproduce | `coplay-mcp_play_game` |
-| Stop after repro | `coplay-mcp_stop_game` |
+| Read console errors | `unityMCP_get_unity_logs(show_errors=true)` |
+| Filter debug output | `unityMCP_get_unity_logs(search_term="[DEBUG]")` |
+| Inspect object state | `unityMCP_get_game_object_info(gameObjectPath="...")` |
+| Browse hierarchy | `unityMCP_list_game_objects_in_hierarchy(nameFilter="...")` |
+| Scene screenshot | `unityMCP_capture_scene_object(gameObjectPath="...")` |
+| Editor state | `unityMCP_get_unity_editor_state` |
+| Check compilation | `unityMCP_check_compile_errors` |
+| Play to reproduce | `unityMCP_play_game` |
+| Stop after repro | `unityMCP_stop_game` |
 
 ### Full Investigation Loop
 
 ```
-1. coplay-mcp_get_unity_logs(show_errors=true)             → Capture error + stack trace
+1. unityMCP_get_unity_logs(show_errors=true)             → Capture error + stack trace
 2. [Trace code: lsp_goto_definition, lsp_find_references]  → Map execution path
 3. [Add Debug.Log statements]                              → Instrument code
-4. coplay-mcp_check_compile_errors                         → Verify instrumentation compiles
-5. coplay-mcp_play_game                                    → Reproduce issue
-6. coplay-mcp_get_unity_logs(search_term="[DEBUG]")        → Capture evidence
-7. coplay-mcp_stop_game                                    → Analyze and conclude
+4. unityMCP_check_compile_errors                         → Verify instrumentation compiles
+5. unityMCP_play_game                                    → Reproduce issue
+6. unityMCP_get_unity_logs(search_term="[DEBUG]")        → Capture evidence
+7. unityMCP_stop_game                                    → Analyze and conclude
 ```

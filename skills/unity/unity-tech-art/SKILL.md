@@ -65,26 +65,26 @@ See [PIPELINE_AUTOMATION_GUIDE.md](.claude/skills/unity-tech-art/references/PIPE
 
 ## MCP Tools Integration
 
-Use `coplay-mcp_*` tools for material/shader/texture operations and visual validation.
+Use `unityMCP_*` tools for material/shader/texture operations and visual validation.
 
 | Operation | MCP Tool |
 |-----------|----------|
-| Create material | `coplay-mcp_create_material(material_name="..", color="..", material_path="..")` |
-| Assign material | `coplay-mcp_assign_material(gameobject_path="..", material_name="..")` |
-| Assign shader | `coplay-mcp_assign_shader_to_material(material_path="..", shader_path="..")` |
-| Material to FBX | `coplay-mcp_assign_material_to_fbx(fbx_path="..", material_path="..")` |
-| Generate texture | `coplay-mcp_generate_3d_model_texture(...)` |
-| Scene screenshot | `coplay-mcp_capture_scene_object(gameObjectPath="...")` |
-| High-poly audit | `coplay-mcp_list_objects_with_high_polygon_count(threshold=1000)` |
-| Check compilation | `coplay-mcp_check_compile_errors` |
-| Run editor script | `coplay-mcp_execute_script(filePath="...")` |
+| Create material | `unityMCP_create_material(material_name="..", color="..", material_path="..")` |
+| Assign material | `unityMCP_assign_material(gameobject_path="..", material_name="..")` |
+| Assign shader | `unityMCP_assign_shader_to_material(material_path="..", shader_path="..")` |
+| Material to FBX | `unityMCP_assign_material_to_fbx(fbx_path="..", material_path="..")` |
+| Generate texture | `unityMCP_generate_3d_model_texture(...)` |
+| Scene screenshot | `unityMCP_capture_scene_object(gameObjectPath="...")` |
+| High-poly audit | `unityMCP_list_objects_with_high_polygon_count(threshold=1000)` |
+| Check compilation | `unityMCP_check_compile_errors` |
+| Run editor script | `unityMCP_execute_script(filePath="...")` |
 
 ### Shader/Material Workflow
 
 ```
-1. coplay-mcp_create_material(...)                → Create new material
-2. coplay-mcp_assign_shader_to_material(...)      → Apply custom shader
-3. coplay-mcp_assign_material(...)                → Assign to object
-4. coplay-mcp_capture_scene_object(...)           → Visual validation
-5. coplay-mcp_list_objects_with_high_polygon_count → Rendering audit
+1. unityMCP_create_material(...)                → Create new material
+2. unityMCP_assign_shader_to_material(...)      → Apply custom shader
+3. unityMCP_assign_material(...)                → Assign to object
+4. unityMCP_capture_scene_object(...)           → Visual validation
+5. unityMCP_list_objects_with_high_polygon_count → Rendering audit
 ```
