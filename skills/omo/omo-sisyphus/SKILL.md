@@ -45,13 +45,16 @@ Orchestrate complex, multi-step tasks by generating structured delegation prompt
 > [!CAUTION]
 > **The following actions are ABSOLUTELY FORBIDDEN — no exceptions, no overrides.**
 
-- **NEVER** run `git commit` in any form
+- **NEVER** add co-author, committer, or any AI-related metadata to git commits
+- **NEVER** include `Co-authored-by:`, `Tool-generated-by:`, or similar attribution lines in commit messages
 - **NEVER** run `git push` to any remote
 - **NEVER** run destructive git write operations (merge, rebase, tag, etc.)
-- **NEVER** instruct the subagent to commit or push
+- **NEVER** instruct the subagent to push to remotes or add AI metadata to commits
 - **NEVER** perform destructive actions (file/asset deletion, scene overwrites) without explicit user confirmation _(agent-behavior: Safety First)_
+- Commits MUST include only: message, changed files, timestamp — no author, co-author, or tool metadata
+- Commits are allowed ONLY to the current branch
 - These restrictions apply to BOTH the orchestrator AND any delegated subagent
-- Include `"NEVER commit or push to git"` in every delegation prompt's MUST NOT DO section
+- Include `"NEVER push to git remotes or add AI metadata to commits"` in every delegation prompt's MUST NOT DO section
 
 Violation of any restriction above is a **critical failure**.
 
@@ -113,6 +116,7 @@ All delegated prompts MUST enforce compliance with `.claude/rules/`. Include the
 | UI implementation from design | `unity-ui` |
 | Documentation | `unity-write-docs` |
 | Technical Design Document | `unity-write-tdd` |
+| Generate and commit code changes | `git-commit` |
 | `use skill <name> ...` | `<name>` |
 | No specific skill | Justify omission |
 
@@ -203,6 +207,68 @@ Use in delegation prompts when a specific category should be temporarily suppres
 
 ---
 
+## Git Integration
+
+### Git Commit Capability
+
+omo-sisyphus can now generate commit messages and commit changes to the current branch. All commits are **clean** — no AI metadata, no co-authors, no tool attribution.
+
+#### Commit Rules
+
+- Commits are allowed to the **current branch only** (never push to remotes)
+- Commit messages must be **short, meaningful, and imperative**
+- Use **bullet points** for multiple changes in the body
+- **Zero metadata**: no `Co-authored-by:`, `Tool-generated-by:`, or similar lines
+
+#### Commit Message Format
+
+```
+<type>: <subject>
+
+<body (optional, use bullets)>
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `perf`, `style`
+
+#### Examples
+
+**Good**:
+```
+fix: resolve null reference in PlayerManager initialization
+```
+
+```
+refactor: decouple UI from data managers
+
+- Extract data access to interfaces
+- Implement adapter pattern for data sources
+- Update controllers to use adapters
+```
+
+**Bad** (NEVER do this):
+```
+fix: resolve null reference in PlayerManager initialization
+
+Co-authored-by: Claude AI <claude@anthropic.com>
+Tool-generated-by: oh-my-opencode
+```
+
+#### Delegation with Commits
+
+When delegating tasks that include committing, use the `git-commit` skill for atomic commits with generated messages. Include in the delegation prompt:
+
+```
+MUST DO:
+- Generate clean commit message (no AI metadata)
+- Commit to current branch only
+
+MUST NOT DO:
+- NEVER add Co-authored-by or AI attribution
+- NEVER push to remote
+```
+
+---
+
 ## Workflow
 
 ### 1. Plan Delegation
@@ -235,7 +301,7 @@ Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. 
 2. Include atomic task description
 3. Include concrete expected outcome
 4. MUST DO: "Follow skill EXACTLY", create todos, run diagnostics, use `Read` on all modified files, comply with `.claude/rules/`
-5. MUST NOT DO: "NEVER commit or push to git", skip skill, suppress type errors, destructive actions without confirmation
+5. MUST NOT DO: "NEVER push to git remotes or add AI metadata to commits", skip skill, suppress type errors, destructive actions without confirmation
 6. Include "Use `/handoff` if context is getting long"
 7. Include rule compliance reminder referencing all 3 rule files
 
@@ -268,8 +334,10 @@ call_omo_agent(
 |-----|------|
 | `subagent_type="explore"` | `subagent_type="sisyphus"` |
 | Missing skill load section | "FIRST: Load Required Skill" at top |
-| No git restrictions in MUST NOT DO | "NEVER commit or push to git" |
-| Instructing subagent to commit | Explicitly forbidding commits |
+| No git restrictions in MUST NOT DO | "NEVER push to git remotes or add AI metadata to commits" |
+| Instructing subagent to push to remote | Explicitly forbidding push and AI metadata |
+| Including co-author or AI metadata in commits | Clean commit messages with no tool/AI information |
+| `Co-authored-by: Claude AI` in commit | Simple message: `fix: resolve null reference` |
 | Generic prompt without skill ref | Prompt references loaded skill |
 | Sisyphus skips skill loading | Sisyphus MUST load skill as first action; failure to load is critical failure |
 | Prompt generation before loading skill | Always load skill first, THEN generate prompts based on loaded skill context |
@@ -291,7 +359,7 @@ Successful delegation produces:
 1. **Delegation log** — subagent_type, action, skill, and expected outcome stated before each `call_omo_agent()`
 2. **Subagent result** — the completed work from Sisyphus (code changes, reports, plans, etc.)
 3. **File verification** — all modified files confirmed read by subagent before completion (Atlas review compliance)
-4. **No git commits** — orchestrator and subagent never commit; user handles git explicitly
+4. **Clean commits** — if committing: message contains only type, subject, and optional body (no AI metadata, no co-authors)
 
 The orchestrator does NOT generate separate report files. Results are communicated directly.
 
@@ -307,10 +375,12 @@ The orchestrator does NOT generate separate report files. Results are communicat
 - [ ] MUST DO includes "Follow skill EXACTLY as loaded above"
 - [ ] MUST DO includes "Use `Read` on every modified file before reporting completion" _(Atlas review)_
 - [ ] MUST DO includes "Comply with all `.claude/rules/` (agent-behavior, unity-csharp-conventions, unity-asset-rules)"
-- [ ] MUST NOT DO includes "NEVER commit or push to git"
+- [ ] MUST NOT DO includes "NEVER push to git remotes or add AI metadata to commits"
 - [ ] MUST NOT DO includes "NEVER perform destructive actions without explicit user confirmation"
 - [ ] `/handoff` mentioned for context preservation
 - [ ] Background vs sync mode is intentional
 - [ ] Interaction pattern follows Discover → Plan → Execute → Collaborate
 - [ ] If resuming session: `session_id` validated via `session_list()`/`session_info()`
 - [ ] If categories disabled: documented in delegation prompt Context section _(v3.5.2)_
+- [ ] If committing code: verified commit message has no co-author or AI metadata
+- [ ] If committing code: message is short, meaningful, uses imperative mood and bullets for multiple changes
