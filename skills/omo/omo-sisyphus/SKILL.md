@@ -116,7 +116,7 @@ All delegated prompts MUST enforce compliance with `.claude/rules/`. Include the
 | `use skill <name> ...` | `<name>` |
 | No specific skill | Justify omission |
 
-> **Note (v3.5.0):** Sisyphus-Junior can now use `TaskCreate`/`TaskUpdate`/`TaskList` internally for task tracking. No skill routing change needed — this is an executor capability, not a user-facing intent.
+> **Note (v3.5.0):** Sisyphus can now use `TaskCreate`/`TaskUpdate`/`TaskList` internally for task tracking. No skill routing change needed — this is an executor capability, not a user-facing intent.
 
 ---
 
@@ -142,9 +142,9 @@ call_omo_agent(
 - Use `session_list()` or `session_info()` to verify session exists
 - 500ms session idle dedup window prevents double-firing of continuation hooks
 
-### Sisyphus-Junior TaskCreate/Update/List
+### Sisyphus TaskCreate/Update/List
 
-Sisyphus-Junior (the executor) can now use `TaskCreate`, `TaskUpdate`, and `TaskList` tools directly without triggering the delegation tool block. This enables better task tracking within delegated work.
+Sisyphus (the executor) can now use `TaskCreate`, `TaskUpdate`, and `TaskList` tools directly without triggering the delegation tool block. This enables better task tracking within delegated work.
 
 ### Skill @path Auto-Resolution
 
