@@ -1,6 +1,6 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Supports boulder continuation for Sisyphus sessions (v3.5.0+). Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
+description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Supports boulder continuation for Sisyphus sessions (v3.5.0+), category disable control, and improved session_id safety guards (v3.5.2). Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
 ---
 
 # Sisyphus Orchestrator
@@ -154,6 +154,53 @@ Relative `@scripts/` paths in delegation prompt templates now auto-resolve to ab
 
 `session_ids` validation is now enforced in boulder continuation. Invalid or stale session IDs are rejected with clear error messages instead of silently failing. Always verify session validity before resuming.
 
+> **v3.5.2 update:** Optional chaining guard added on `session_ids` in boulder state reads — prevents crashes when session references are null/undefined. The orchestrator no longer needs defensive null checks before accessing session state; the framework handles it internally.
+
+---
+
+## v3.5.2 Enhancements
+
+> oh-my-opencode v3.5.2 (2026-02-11)
+
+### Auto-Update Safety
+
+- Pinned plugin versions are now respected — auto-update skips when a version is explicitly locked in config
+- If an update install fails, the config pin reverts to the previous version to prevent mismatch between config and disk
+- No orchestrator action needed — this is framework-level safety for plugin management
+
+### Subagent Lifecycle Fixes
+
+- Fixed zombie sessions caused by `permission.question=deny` override in subagent spawning — delegated Sisyphus sessions now terminate cleanly when permissions block execution
+- Added optional chaining guard on `session_ids` to prevent crashes in boulder state reads (see [Session ID Validation](#session-id-validation) above)
+
+### MCP Tool Guard
+
+- Tool after-hooks now safely guard `output.output` for MCP tools that return non-standard shapes
+- Prevents crashes when MCP tools return unexpected response structures during delegated work
+- No orchestrator action needed — the framework handles malformed MCP responses transparently
+
+### Atlas Intelligence
+
+- Boulder verification reminders now include a notepad reading step — Atlas checks its own notes before prompting the orchestrator for continuation
+- Results in more context-aware continuation prompts and fewer redundant verification questions
+
+### Category Control
+
+New `disable` field in `CategoryConfigSchema` allows turning off entire delegation categories without removing their config.
+
+Use in delegation prompts when a specific category should be temporarily suppressed:
+
+```python
+# Example: disable the "quick" category for a session
+# (configured in oh-my-opencode settings, not in call_omo_agent)
+# CategoryConfigSchema: { "quick": { "disable": true } }
+```
+
+- **What it does**: Prevents tasks from being routed to a disabled category, even if the category config remains in place
+- **When to use**: Temporarily suppress a category during debugging, maintenance, or when a category's subagent is misbehaving
+- **Delegation impact**: If a category is disabled, tasks that would normally route there will fall through to `unspecified-low` or `unspecified-high` instead
+- **In delegation prompts**: Document any disabled categories in the Context section so the subagent understands routing constraints
+
 ---
 
 ## Workflow
@@ -234,6 +281,7 @@ call_omo_agent(
 | Subagent skips `Read` on modified files | Delegation prompt MUST require `Read` on all changed files _(Atlas review)_ |
 | Passing unvalidated `session_id` | Verify session exists via `session_list()`/`session_info()` before resuming |
 | Omitting file read verification in prompts | Include "Use `Read` on every modified file before completion" in MUST DO |
+| Ignoring disabled categories in delegation context | Document disabled categories in Context section so subagent understands routing constraints |
 
 ---
 
@@ -265,3 +313,4 @@ The orchestrator does NOT generate separate report files. Results are communicat
 - [ ] Background vs sync mode is intentional
 - [ ] Interaction pattern follows Discover → Plan → Execute → Collaborate
 - [ ] If resuming session: `session_id` validated via `session_list()`/`session_info()`
+- [ ] If categories disabled: documented in delegation prompt Context section _(v3.5.2)_
