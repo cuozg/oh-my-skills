@@ -25,6 +25,10 @@ WebGL deployment — providing a structured, repeatable workflow that produces c
 | "Check unity-web-deploy output" | Reviews and validates previous results |
 
 
+## Output
+
+A WebGL build report saved to `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md` following [WEBGL_BUILD_REPORT.md](assets/templates/WEBGL_BUILD_REPORT.md), plus any WebGL-specific code changes (JS plugins, interop managers, compression configs).
+
 ## Output Requirement (MANDATORY)
 
 **Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](.claude/skills/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md)

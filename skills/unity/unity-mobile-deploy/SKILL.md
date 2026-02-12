@@ -25,6 +25,10 @@ iOS/Android development — providing a structured, repeatable workflow that pro
 | "Check unity-mobile-deploy output" | Reviews and validates previous results |
 
 
+## Output
+
+A mobile build report saved to `Documents/Builds/MOBILE_BUILD_[Platform]_[YYYYMMDD].md` following [MOBILE_BUILD_REPORT.md](assets/templates/MOBILE_BUILD_REPORT.md), plus any platform-specific code changes (touch controls, native plugins, optimization patches).
+
 ## Output Requirement (MANDATORY)
 
 **Every build report MUST follow the template**: [MOBILE_BUILD_REPORT.md](.claude/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md)

@@ -25,6 +25,16 @@ Create Unity project documentation — providing a structured, repeatable workfl
 | "Check unity-write-docs output" | Reviews and validates previous results |
 
 
+## Output
+
+Markdown documentation files saved to the appropriate project location:
+- `README.md` — Project overview and setup (root directory)
+- `Docs/ARCHITECTURE.md` — System design documentation
+- `Docs/API.md` — Public interface references
+- `CONTRIBUTING.md` — Developer guidelines (root directory)
+
+Each document follows the corresponding template from `assets/templates/`.
+
 ## Output Requirement (MANDATORY)
 
 **Every document MUST follow one of the templates**:

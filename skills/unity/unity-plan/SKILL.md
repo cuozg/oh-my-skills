@@ -16,6 +16,17 @@ High-level planning for Unity features with multi-file output and patch generati
 - **Required**: A clear description of the task or problem to address.
 - **Optional**: Relevant file paths, constraints, or context that narrows the scope.
 
+## Output
+
+A folder of 6 HTML files + 1 patch file at `documents/plans/{plan-name}/`:
+- `overview.html` — Architecture, summary cards, technical approach
+- `tasks.html` — Epic/task breakdown with full walkthroughs
+- `estimates.html` — Per-epic effort estimates and resource allocation
+- `dependencies.html` — Dependency graph, risk matrix, blockers
+- `timeline.html` — Phased implementation schedule with milestones
+- `patch.html` — Visual diff viewer for all code changes
+- `changes.patch` — Raw unified diff containing 100% of code changes
+
 ## Examples
 
 | Trigger | What Happens |
