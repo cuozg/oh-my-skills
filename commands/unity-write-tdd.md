@@ -47,7 +47,7 @@ Follow the skill's instructions exactly.
 - Include code snippets for key interfaces
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Reference correct naming/architecture conventions in TDD
   - `unity-asset-rules.md`: Reference asset conventions in TDD

@@ -22,7 +22,7 @@ A routing decision (per `ROUTING_DECISION.md` template) documenting the matched 
 
 ## Output Requirement (MANDATORY)
 
-**Every routing decision MUST follow the template**: [ROUTING_DECISION.md](.claude/skills/unity-orchestrator/assets/templates/ROUTING_DECISION.md)
+**Every routing decision MUST follow the template**: [ROUTING_DECISION.md](.opencode/skills/unity-orchestrator/assets/templates/ROUTING_DECISION.md)
 
 Output the routing decision as part of the orchestration log. No file save required.
 
@@ -94,7 +94,7 @@ User wants new feature?
 | Data-driven system | `flatbuffers-coder` + `unity-code` |
 | Documented architecture | `unity-write-docs` + `mermaid` |
 
-For full skill catalog, see [SKILL_CATALOG.md](.claude/skills/unity-orchestrator/references/SKILL_CATALOG.md).
+For full skill catalog, see [SKILL_CATALOG.md](.opencode/skills/unity-orchestrator/references/SKILL_CATALOG.md).
 
 ## Orchestration Protocol
 
@@ -121,7 +121,7 @@ After completion:
 - Check cross-cutting concerns (performance, memory, platform compatibility)
 - Run tests if applicable (`unity-test`)
 
-For multi-step coordination patterns, see [ORCHESTRATION_PATTERNS.md](.claude/skills/unity-orchestrator/references/ORCHESTRATION_PATTERNS.md).
+For multi-step coordination patterns, see [ORCHESTRATION_PATTERNS.md](.opencode/skills/unity-orchestrator/references/ORCHESTRATION_PATTERNS.md).
 
 ## Guiding Principles
 

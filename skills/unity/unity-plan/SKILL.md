@@ -94,7 +94,7 @@ Read every template file in `assets/templates/`. Note the `<!-- INSTRUCTION: ...
 Use the **`unity-investigate`** skill:
 
 ```
-Read and follow: .claude/skills/unity-investigate/SKILL.md
+Read and follow: .opencode/skills/unity/unity-investigate/SKILL.md
 ```
 
 Focus on: existing systems affected, files needing modification, technical debt, reusable components, entry points and execution flows.
@@ -208,7 +208,7 @@ documents/plans/{plan-name}/
 4. All navigation uses relative paths with `PLAN_` prefix matching template file names (`./PLAN_OVERVIEW.html`, `./PLAN_TASKS.html`, `./PLAN_ESTIMATES.html`, `./PLAN_DEPENDENCIES.html`, `./PLAN_TIMELINE.html`, `./PLAN_PATCH.html`)
 5. The "View Patch" tab opens `patch.html` which shows a visual diff viewer with download link to raw `changes.patch`
 
-**WARNING**: Do NOT open files from `.claude/skills/unity-plan/assets/templates/`. Those are internal templates with placeholder text. Clicking navigation tabs will cause `ERR_FILE_NOT_FOUND` because sibling files don't exist at that location.
+**WARNING**: Do NOT open files from `.opencode/skills/unity/unity-plan/assets/templates/`. Those are internal templates with placeholder text. Clicking navigation tabs will cause `ERR_FILE_NOT_FOUND` because sibling files don't exist at that location.
 
 ### Navigation: Pure HTML Only
 

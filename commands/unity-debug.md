@@ -48,7 +48,7 @@ Follow the skill's instructions exactly.
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Verify build/tests pass
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components, Awaitable over Coroutines, avoid Update(), cache references
   - `unity-asset-rules.md`: Follow `Assets/_Project/` structure, PascalCase naming, Prefab workflow

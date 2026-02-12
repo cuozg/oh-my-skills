@@ -46,7 +46,7 @@ Follow the skill's instructions exactly.
 - Run `lsp_diagnostics` on changed files
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components
   - `unity-asset-rules.md`: Follow asset optimization guidelines for WebGL builds

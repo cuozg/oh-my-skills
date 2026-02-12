@@ -47,7 +47,7 @@ Follow the skill's instructions exactly.
 - Investigate the existing codebase to understand current architecture
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Plan code changes following naming/architecture conventions
   - `unity-asset-rules.md`: Plan asset changes following structure/naming/optimization conventions

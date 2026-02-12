@@ -50,7 +50,7 @@ If no specific focus is mentioned, run the full audit (dependencies, null-checks
 - Use LSP tools to verify critical findings
 - Generate a markdown report in `Documents/Audits/`
 - Use `/handoff` if context is getting long
-- **Comply with all `.claude/rules/`**
+- **Comply with all `.opencode/rules/`**
 
 ### MUST NOT DO:
 

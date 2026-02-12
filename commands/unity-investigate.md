@@ -47,7 +47,7 @@ Follow the skill's instructions exactly.
 - Provide code references with file paths and line numbers
 - Use `Read` on every analyzed file to ensure accuracy
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Understand and reference naming/architecture conventions
   - `unity-asset-rules.md`: Understand asset conventions when analyzing resource management

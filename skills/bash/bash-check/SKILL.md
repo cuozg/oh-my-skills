@@ -30,7 +30,7 @@ A structured check report (following the CHECK_REPORT.md template) delivered dir
 
 ## Output Requirement (MANDATORY)
 
-**Every check report MUST follow the template**: [CHECK_REPORT.md](.claude/skills/bash-check/assets/templates/CHECK_REPORT.md)
+**Every check report MUST follow the template**: [CHECK_REPORT.md](.opencode/skills/bash/bash-check/assets/templates/CHECK_REPORT.md)
 
 Output the report directly to the user. No file save required.
 

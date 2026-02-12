@@ -27,7 +27,7 @@ Generate Technical Design Documents — providing a structured, repeatable workf
 
 ## Output Requirement (MANDATORY)
 
-**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.claude/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)
+**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)
 
 Save output to: `Documents/TDDs/TDD_[FeatureName].md`
 
@@ -35,7 +35,7 @@ Read the template first, then populate all sections.
 
 ## Output
 
-Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.claude/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md).
+Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md).
 
 ## Workflow
 

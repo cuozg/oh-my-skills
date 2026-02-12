@@ -45,7 +45,7 @@ Follow the skill's instructions exactly.
 - Review against Unity conventions, performance patterns, and best practices
 - Use `Read` on every analyzed file to ensure accuracy
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Review code against naming/architecture conventions
   - `unity-asset-rules.md`: Review asset changes against structure/naming/optimization conventions

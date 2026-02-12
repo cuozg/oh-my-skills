@@ -1,6 +1,6 @@
 ---
 name: unity-optimize-performance
-description: "Fix Unity performance issues. Use when: (1) Low/inconsistent FPS, (2) High memory usage or leaks, (3) Slow load times, (4) Need to audit .claude/skills/unity-optimize-performance/scripts/assets for performance risks."
+description: "Fix Unity performance issues. Use when: (1) Low/inconsistent FPS, (2) High memory usage or leaks, (3) Slow load times, (4) Need to audit .opencode/skills/unity-optimize-performance/scripts/assets for performance risks."
 ---
 
 # Unity Performance Optimizer
@@ -30,7 +30,7 @@ A performance report saved to `Documents/Performance/PERFORMANCE_REPORT_[Area]_[
 
 ## Output Requirement (MANDATORY)
 
-**Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](.claude/skills/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md)
+**Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](.opencode/skills/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md)
 
 Save output to: `Documents/Performance/PERFORMANCE_REPORT_[Area]_[YYYYMMDD].md`
 

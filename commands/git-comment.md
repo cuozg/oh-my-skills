@@ -44,7 +44,7 @@ Follow the skill's instructions exactly.
 - Mark tasks in_progress/completed
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Follow naming/architecture conventions when analyzing code
   - `unity-asset-rules.md`: Understand asset conventions when documenting asset-related changes

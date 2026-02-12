@@ -22,7 +22,7 @@ A structured commit comment (following the COMMIT_COMMENT.md template) with High
 
 ## Output Requirement (MANDATORY)
 
-**Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](.claude/skills/git-comment/assets/templates/COMMIT_COMMENT.md)
+**Every commit comment MUST follow the template**: [COMMIT_COMMENT.md](.opencode/skills/git/git-comment/assets/templates/COMMIT_COMMENT.md)
 
 Output the comment directly to the user. No file save required.
 

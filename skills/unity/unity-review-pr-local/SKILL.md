@@ -29,7 +29,7 @@ Perform offline or draft code reviews for Unity projects without posting to GitH
 
 ## Output Requirement (MANDATORY)
 
-**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)
+**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.opencode/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)
 
 Save output to: `Documents/Reviews/PR_<number>_review.md`
 
@@ -53,7 +53,7 @@ Read the template first, then populate all sections.
 ## Review Workflow
 
 1. **Fetch**: `gh pr diff --patch <number> > pr_diff.patch` (or `git diff main...HEAD` for local branches)
-2. **Analyze**: Check against `.claude/rules/` conventions
+2. **Analyze**: Check against `.opencode/rules/` conventions
 3. **Audit**: Flag manifest changes, memory patterns, Update allocations
 4. **Draft**: Categorize issues, write suggestion blocks
 5. **Generate**: Create `Documents/Reviews/PR_<number>_review.md` using the template
@@ -132,7 +132,7 @@ Generate markdown file at `Documents/Reviews/PR_<number>_review.md`:
 - **COMMENT**: Only 🔵/💚 issues
 - **REQUEST_CHANGES**: Any 🔴 issues
 
-See [OUTPUT_TEMPLATE.md](.claude/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.
+See [OUTPUT_TEMPLATE.md](.opencode/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.
 
 ---
 

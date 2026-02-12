@@ -1,6 +1,6 @@
 ---
 name: omo-hephaestus
-description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @hephaestus agent via tool call to handle prompts. Self-routing: analyzes prompts, discovers skills by scanning .claude/skills/*/SKILL.md, routes to appropriate skill(s). Triggers: any task, delegation, multi-skill workflows."
+description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @hephaestus agent via tool call to handle prompts. Self-routing: analyzes prompts, discovers skills by scanning .opencode/skills/*/SKILL.md, routes to appropriate skill(s). Triggers: any task, delegation, multi-skill workflows."
 ---
 # Hephaestus Agent Skill
 
@@ -9,7 +9,7 @@ description: "Agent spawner for oh-my-opencode (omo). ALWAYS spawn @hephaestus a
 
 ## Purpose
 
-Route incoming prompts to the correct specialized skill(s) by analyzing intent, discovering available skills via `.claude/skills/*/SKILL.md` frontmatter, and spawning the @hephaestus agent to execute the matched workflow.
+Route incoming prompts to the correct specialized skill(s) by analyzing intent, discovering available skills via `.opencode/skills/*/SKILL.md` frontmatter, and spawning the @hephaestus agent to execute the matched workflow.
 
 ## Input
 
@@ -32,7 +32,7 @@ A routing report (per `ROUTING_REPORT.md` template) documenting the matched skil
 
 ## Output Requirement (MANDATORY)
 
-**Every routing decision MUST follow the template**: [ROUTING_REPORT.md](.claude/skills/omo-hephaestus/assets/templates/ROUTING_REPORT.md)
+**Every routing decision MUST follow the template**: [ROUTING_REPORT.md](.opencode/skills/omo/omo-hephaestus/assets/templates/ROUTING_REPORT.md)
 
 Output the routing report as part of the task execution log. No file save required.
 
@@ -46,17 +46,17 @@ Read the template first, then populate all sections.
 
 1. **Spawn @hephaestus** - ALWAYS invoke via tool call: `@hephaestus <prompt>`
 2. **Analyze prompt** - Parse user request and identify intent
-3. **Discover skills** - Scan `.claude/skills/*/SKILL.md` frontmatter for available skills
+3. **Discover skills** - Scan `.opencode/skills/*/SKILL.md` frontmatter for available skills
 4. **Route to skill** - Match intent to skill(s) using trigger patterns
 5. **Load skill** - Load the matching skill's SKILL.md
 6. **Execute** - Handle tasks with structured /skill-name `<prompt>`
 
 ## Skill Discovery Protocol
 
-Scan the `.claude/skills/` directory and read YAML frontmatter from each `SKILL.md`:
+Scan the `.opencode/skills/` directory and read YAML frontmatter from each `SKILL.md`:
 
 ```
-.claude/skills/*/SKILL.md → extract name + description → match triggers
+.opencode/skills/{category}/*/SKILL.md → extract name + description → match triggers
 ```
 
 ## Available Skills
@@ -127,7 +127,7 @@ User prompt received
 
 - Parse user prompt
 - Identify intent and required skills
-- Scan `.claude/skills/` to discover available skills
+- Scan `.opencode/skills/` to discover available skills
 
 ### 2. Route Phase
 

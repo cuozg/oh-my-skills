@@ -51,7 +51,7 @@ If a plan exists in `Documents/Plans/` or `Documents/Tasks/`, follow it exactly.
 - Verify build/tests pass
 - Use Unity 6 features where appropriate (Awaitable, New Input System)
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components, Awaitable over Coroutines, avoid Update(), cache references
   - `unity-asset-rules.md`: Follow `Assets/_Project/` structure, PascalCase naming, texture/model optimization, Prefab workflow

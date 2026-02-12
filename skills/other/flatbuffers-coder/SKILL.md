@@ -32,7 +32,7 @@ Create and maintain FlatBuffers schemas (`.fbs`), generate C# classes, and conve
 
 ## Output Requirement (MANDATORY)
 
-**Every schema MUST follow the template**: [FBS_TEMPLATE.md](.claude/skills/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md)
+**Every schema MUST follow the template**: [FBS_TEMPLATE.md](.opencode/skills/other/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md)
 
 Save schemas to: `FlatBuffers/New_Fbs/[Name].fbs`
 

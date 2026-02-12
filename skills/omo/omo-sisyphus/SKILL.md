@@ -62,7 +62,7 @@ Violation of any restriction above is a **critical failure**.
 
 ## Project Rules Compliance (MANDATORY)
 
-All delegated prompts MUST enforce compliance with `.claude/rules/`. Include these requirements in every delegation:
+All delegated prompts MUST enforce compliance with `.opencode/rules/`. Include these requirements in every delegation:
 
 ### From `agent-behavior.md`
 
@@ -297,10 +297,10 @@ When delegated a prompt:
 
 Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. Every prompt MUST:
 
-1. Start with "FIRST: Load Required Skill" section pointing to `.claude/skills/[skill-name]/SKILL.md`
+1. Start with "FIRST: Load Required Skill" section pointing to `.opencode/skills/[category]/[skill-name]/SKILL.md`
 2. Include atomic task description
 3. Include concrete expected outcome
-4. MUST DO: "Follow skill EXACTLY", create todos, run diagnostics, use `Read` on all modified files, comply with `.claude/rules/`
+4. MUST DO: "Follow skill EXACTLY", create todos, run diagnostics, use `Read` on all modified files, comply with `.opencode/rules/`
 5. MUST NOT DO: "NEVER push to git remotes or add AI metadata to commits", skip skill, suppress type errors, destructive actions without confirmation
 6. Include "Use `/handoff` if context is getting long"
 7. Include rule compliance reminder referencing all 3 rule files
@@ -341,7 +341,7 @@ call_omo_agent(
 | Generic prompt without skill ref | Prompt references loaded skill |
 | Sisyphus skips skill loading | Sisyphus MUST load skill as first action; failure to load is critical failure |
 | Prompt generation before loading skill | Always load skill first, THEN generate prompts based on loaded skill context |
-| No rule compliance in delegation | Include `.claude/rules/` compliance in MUST DO |
+| No rule compliance in delegation | Include `.opencode/rules/` compliance in MUST DO |
 | Using shell commands for Editor tasks | Use `unityMCP` tools _(agent-behavior: Tool Mastery)_ |
 | Destructive actions without confirmation | Require explicit user confirmation _(agent-behavior: Safety First)_ |
 | Ignoring C# naming conventions | Enforce PascalCase/_camelCase per `unity-csharp-conventions.md` |
@@ -374,7 +374,7 @@ The orchestrator does NOT generate separate report files. Results are communicat
 - [ ] Prompt has "FIRST: Load Required Skill" section
 - [ ] MUST DO includes "Follow skill EXACTLY as loaded above"
 - [ ] MUST DO includes "Use `Read` on every modified file before reporting completion" _(Atlas review)_
-- [ ] MUST DO includes "Comply with all `.claude/rules/` (agent-behavior, unity-csharp-conventions, unity-asset-rules)"
+- [ ] MUST DO includes "Comply with all `.opencode/rules/` (agent-behavior, unity-csharp-conventions, unity-asset-rules)"
 - [ ] MUST NOT DO includes "NEVER push to git remotes or add AI metadata to commits"
 - [ ] MUST NOT DO includes "NEVER perform destructive actions without explicit user confirmation"
 - [ ] `/handoff` mentioned for context preservation
@@ -384,3 +384,103 @@ The orchestrator does NOT generate separate report files. Results are communicat
 - [ ] If categories disabled: documented in delegation prompt Context section _(v3.5.2)_
 - [ ] If committing code: verified commit message has no co-author or AI metadata
 - [ ] If committing code: message is short, meaningful, uses imperative mood and bullets for multiple changes
+
+---
+
+## Path Resolution & DEEPLINK Reference
+
+> **Why this section exists**: Path resolution failures are the #1 cause of skill loader cascading retries. This section documents the correct path formats for all references used in delegation prompts.
+
+### Directory Structure
+
+Skills and rules live under `.opencode/`, NOT `.claude/`:
+
+```
+<project-root>/
+├── .opencode/
+│   ├── skills/                          # All skills
+│   │   ├── unity/                       # Unity development skills
+│   │   │   ├── unity-code/SKILL.md
+│   │   │   ├── unity-investigate/SKILL.md
+│   │   │   └── ...
+│   │   ├── omo/                         # Orchestration skills
+│   │   │   ├── omo-sisyphus/SKILL.md
+│   │   │   └── omo-hephaestus/SKILL.md
+│   │   ├── other/                       # Utility skills
+│   │   ├── bash/                        # Bash skills
+│   │   └── git/                         # Git skills
+│   ├── rules/                           # Project rules
+│   │   ├── agent-behavior.md
+│   │   ├── unity-csharp-conventions.md
+│   │   └── unity-asset-rules.md
+│   └── commands/                        # Slash commands
+└── Assets/                              # Unity project assets
+    └── Scripts/                         # C# source files
+```
+
+### Skill Path Format
+
+When referencing skills in delegation prompts, use this format:
+
+```
+.opencode/skills/{category}/{skill-name}/SKILL.md
+```
+
+**Examples:**
+```
+.opencode/skills/unity/unity-investigate/SKILL.md    ← correct
+.opencode/skills/omo/omo-sisyphus/SKILL.md           ← correct
+.opencode/skills/other/flatbuffers-coder/SKILL.md    ← correct
+
+.claude/skills/unity-investigate/SKILL.md            ← WRONG (no .claude dir, missing category)
+.claude/skills/omo-sisyphus/SKILL.md                 ← WRONG
+```
+
+Alternatively, use the `skill(name="{category}/{skill-name}")` tool which handles path resolution automatically.
+
+### DEEPLINK Format
+
+DEEPLINKs are `@`-prefixed references to files within delegation prompts. They come in two types:
+
+#### 1. Unity Asset DEEPLINKs
+For referencing Unity project files (C# scripts, prefabs, scenes, etc.):
+```
+@Assets/Scripts/R44/RBE/RBETaskTile_R44.cs
+@Assets/Prefabs/UI/MyPrefab.prefab
+```
+These resolve relative to the Unity project root (same directory as `.opencode/`).
+
+#### 2. Skill Asset DEEPLINKs
+For referencing files within a skill's own directory:
+```
+@scripts/my_helper.py           → resolves to <skill-base-dir>/scripts/my_helper.py
+@assets/templates/TEMPLATE.md   → resolves to <skill-base-dir>/assets/templates/TEMPLATE.md
+```
+These resolve relative to the skill's base directory (where SKILL.md lives).
+
+#### DEEPLINK Resolution Order
+
+When the skill loader encounters a DEEPLINK, it resolves in this order:
+1. **Absolute path** — if path starts with `/`, use as-is
+2. **Skill-relative** — if path starts with `@scripts/` or `@assets/`, resolve from skill base dir
+3. **Project-relative** — if path starts with `@Assets/`, resolve from project root
+4. **Fallback** — try `.opencode/` prefix, then project root
+
+#### Common DEEPLINK Errors and Fixes
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `Cannot find .claude/skills/...` | Wrong base directory | Change `.claude/` to `.opencode/` |
+| `Skill not found: unity-investigate` | Missing category in path | Use `unity/unity-investigate` (with category prefix) |
+| `@scripts/ path not found` | Skill has no scripts/ dir | Check skill directory structure first |
+| Cascading retries on skill load | Invalid path triggers fallback chain | Use absolute path or `skill()` tool |
+| `DEEPLINK unresolved: @Assets/Scripts/...` | Path is correct but file doesn't exist | Verify file exists with `Read` or `glob` first |
+
+### Rule Paths
+
+Always reference rules with `.opencode/rules/` prefix:
+```
+.opencode/rules/agent-behavior.md
+.opencode/rules/unity-csharp-conventions.md
+.opencode/rules/unity-asset-rules.md
+```

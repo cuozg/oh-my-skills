@@ -1,6 +1,6 @@
 # Unity Skill Catalog
 
-Complete catalog of specialized skills in `.claude/skills/`.
+Complete catalog of specialized skills in `.opencode/skills/`.
 
 ## Core Skills
 

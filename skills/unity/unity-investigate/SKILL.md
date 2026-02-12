@@ -32,7 +32,7 @@ An investigation report saved to `Documents/Investigations/` (per `INVESTIGATION
 
 **Every investigation MUST follow the template**: `assets/templates/INVESTIGATION_REPORT.md`
 
-1. Read the template at `.claude/skills/unity-investigate/assets/templates/INVESTIGATION_REPORT.md`
+1. Read the template at `.opencode/skills/unity-investigate/assets/templates/INVESTIGATION_REPORT.md`
 2. Populate ALL applicable sections (delete sections that don't apply)
 3. Save output to: `Documents/Investigations/INVESTIGATION_[SubjectName]_[YYYYMMDD].md`
 
@@ -45,7 +45,7 @@ An investigation report saved to `Documents/Investigations/` (per `INVESTIGATION
 4. Define **boundaries** — what's included vs excluded
 
 ### Phase 2: Discovery
-1. Run `.claude/skills/unity-investigate/scripts/trace_logic.sh [Target]` to map references
+1. Run `.opencode/skills/unity-investigate/scripts/trace_logic.sh [Target]` to map references
 2. Use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`) to trace the call graph
 3. Use `grep` and `glob` to find related assets, prefabs, ScriptableObjects, and configurations
 4. Use `ast_grep_search` for structural code patterns

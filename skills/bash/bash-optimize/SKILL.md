@@ -30,7 +30,7 @@ A structured optimization report (following the OPTIMIZATION_REPORT.md template)
 
 ## Output Requirement (MANDATORY)
 
-**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](.claude/skills/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md)
+**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](.opencode/skills/bash/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md)
 
 Output the report directly to the user. No file save required.
 

@@ -30,14 +30,14 @@ Shader code (HLSL or Shader Graph), asset postprocessor scripts, or procedural g
 
 ## Output Requirement (MANDATORY)
 
-**Every asset postprocessor MUST follow the template**: [ASSET_POSTPROCESSOR_TEMPLATE.md](.claude/skills/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md)
+**Every asset postprocessor MUST follow the template**: [ASSET_POSTPROCESSOR_TEMPLATE.md](.opencode/skills/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md)
 
 Place scripts in `Assets/Scripts/Editor/`. Read the template first, then populate all sections.
 
 ## Workflow
 
 1. **Assess**: Is bottleneck artistic (workflow) or technical (performance)?
-2. **Implement**: Use [ASSET_POSTPROCESSOR_TEMPLATE.md](.claude/skills/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md), follow [SHADER_OPTIMIZATION_GUIDE.md](.claude/skills/unity-tech-art/references/SHADER_OPTIMIZATION_GUIDE.md)
+2. **Implement**: Use [ASSET_POSTPROCESSOR_TEMPLATE.md](.opencode/skills/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md), follow [SHADER_OPTIMIZATION_GUIDE.md](.opencode/skills/unity-tech-art/references/SHADER_OPTIMIZATION_GUIDE.md)
 3. **Validate**: Frame Debugger, Profiler for rendering impact
 4. **Polish**: XML docs, help boxes, proper asset cleanup
 
@@ -59,7 +59,7 @@ Place scripts in `Assets/Scripts/Editor/`. Read the template first, then populat
 - **Deterministic PCG**: Controllable seeds for reproducible results
 - **Undo Groups**: Wrap all editor operations
 
-See [PIPELINE_AUTOMATION_GUIDE.md](.claude/skills/unity-tech-art/references/PIPELINE_AUTOMATION_GUIDE.md) for automation patterns.
+See [PIPELINE_AUTOMATION_GUIDE.md](.opencode/skills/unity-tech-art/references/PIPELINE_AUTOMATION_GUIDE.md) for automation patterns.
 
 ---
 

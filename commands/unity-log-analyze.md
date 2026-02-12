@@ -50,7 +50,7 @@ If no specific logs are provided, fetch them from the Unity Editor using `coplay
 - Group duplicates and count occurrences
 - Provide fix suggestions for top errors
 - Use `/handoff` if context is getting long
-- **Comply with all `.claude/rules/`**
+- **Comply with all `.opencode/rules/`**
 
 ### MUST NOT DO:
 

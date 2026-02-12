@@ -30,7 +30,7 @@ One or more C# scripts placed in the appropriate `Assets/Scripts/` subdirectory,
 
 ## Output Requirement (MANDATORY)
 
-**Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.claude/skills/unity-code/references/SCRIPT_TEMPLATE.md)
+**Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.opencode/skills/unity/unity-code/references/SCRIPT_TEMPLATE.md)
 
 Place scripts in the appropriate `Assets/Scripts/` subdirectory. Read the template first, then populate all sections.
 
@@ -38,7 +38,7 @@ Place scripts in the appropriate `Assets/Scripts/` subdirectory. Read the templa
 
 1. **Clarify**: Identify dependencies, target assembly (`.asmdef`), affected systems
 2. **Plan**: Outline classes, interfaces, and data flow before writing code
-3. **Implement**: Follow [UNITY_CSHARP_PATTERNS.md](.claude/skills/unity-code/references/UNITY_CSHARP_PATTERNS.md) and `.claude/rules/`
+3. **Implement**: Follow [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code/references/UNITY_CSHARP_PATTERNS.md) and `.opencode/rules/`
 4. **Self-Review**: Run the [Pre-Completion Checklist](#pre-completion-checklist) — fix every violation
 5. **Compile**: `unityMCP_check_compile_errors` — fix errors with `unity-fix-errors`
 
@@ -203,7 +203,7 @@ private void Awake()
 }
 ```
 
-For detailed patterns and examples, see [UNITY_CSHARP_PATTERNS.md](.claude/skills/unity-code/references/UNITY_CSHARP_PATTERNS.md).
+For detailed patterns and examples, see [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code/references/UNITY_CSHARP_PATTERNS.md).
 
 ---
 

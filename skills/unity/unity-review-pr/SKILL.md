@@ -33,7 +33,7 @@ A GitHub PR review submitted via `post_review.sh`, containing:
 > **MUST follow [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) for output format — no variations.**
 > All review logic, criteria, and decision rules live HERE — the template is output format only.
 
-Submit using: `.claude/skills/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
+Submit using: `.opencode/skills/unity/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
 
 ## Input
 
@@ -153,7 +153,7 @@ Build `/tmp/review.json` per **[REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.m
 ### Phase 5: Submit
 
 ```bash
-.claude/skills/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json
+.opencode/skills/unity/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json
 ```
 
 Verify submission succeeds. If it fails, check: valid JSON, correct PR number, line numbers exist in diff.

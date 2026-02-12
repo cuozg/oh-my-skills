@@ -31,7 +31,7 @@ A mobile build report saved to `Documents/Builds/MOBILE_BUILD_[Platform]_[YYYYMM
 
 ## Output Requirement (MANDATORY)
 
-**Every build report MUST follow the template**: [MOBILE_BUILD_REPORT.md](.claude/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md)
+**Every build report MUST follow the template**: [MOBILE_BUILD_REPORT.md](.opencode/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md)
 
 Save output to: `Documents/Builds/MOBILE_BUILD_[Platform]_[YYYYMMDD].md`
 
@@ -40,9 +40,9 @@ Read the template first, then populate all sections.
 ## Workflow
 
 1. **Profile**: Target devices, min specs, permissions, native services
-2. **Implement**: Platform-aware managers (see [MOBILE_INTEROP_PATTERNS.md](.claude/skills/unity-mobile-deploy/references/MOBILE_INTEROP_PATTERNS.md))
-3. **Optimize**: Real hardware profiling, textures, shaders, memory (see [MOBILE_OPTIMIZATION_GUIDE.md](.claude/skills/unity-mobile-deploy/references/MOBILE_OPTIMIZATION_GUIDE.md))
-4. **Deploy**: Build report via [MOBILE_BUILD_REPORT.md](.claude/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md), validate Gradle/Xcode
+2. **Implement**: Platform-aware managers (see [MOBILE_INTEROP_PATTERNS.md](.opencode/skills/unity-mobile-deploy/references/MOBILE_INTEROP_PATTERNS.md))
+3. **Optimize**: Real hardware profiling, textures, shaders, memory (see [MOBILE_OPTIMIZATION_GUIDE.md](.opencode/skills/unity-mobile-deploy/references/MOBILE_OPTIMIZATION_GUIDE.md))
+4. **Deploy**: Build report via [MOBILE_BUILD_REPORT.md](.opencode/skills/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md), validate Gradle/Xcode
 
 ## Platform Specifics
 

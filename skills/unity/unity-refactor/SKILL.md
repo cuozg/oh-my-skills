@@ -199,16 +199,16 @@ Confirm the refactoring preserved behavior and improved code quality.
 
 ```bash
 # Check for anti-patterns and code quality issues
-python .claude/skills/unity-refactor/scripts/validate_refactoring.py <path-to-changed-files>
+python .opencode/skills/unity-refactor/scripts/validate_refactoring.py <path-to-changed-files>
 
 # Or check only git-changed files
-python .claude/skills/unity-refactor/scripts/validate_refactoring.py --git-diff
+python .opencode/skills/unity-refactor/scripts/validate_refactoring.py --git-diff
 
 # Check test coverage for refactored code
-python .claude/skills/unity-refactor/scripts/check_test_coverage.py <source-dir> <test-dir>
+python .opencode/skills/unity-refactor/scripts/check_test_coverage.py <source-dir> <test-dir>
 
 # Or check a single file
-python .claude/skills/unity-refactor/scripts/check_test_coverage.py \
+python .opencode/skills/unity-refactor/scripts/check_test_coverage.py \
   --source <file.cs> --test-dir <test-dir>
 ```
 

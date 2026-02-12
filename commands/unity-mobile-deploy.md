@@ -47,7 +47,7 @@ Follow the skill's instructions exactly.
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Consider backward compatibility
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, use `unityMCP` over shell, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components
   - `unity-asset-rules.md`: Textures max 2048 mobile (ASTC 6x6), models <100k tris/scene, follow `Assets/_Project/` structure

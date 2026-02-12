@@ -30,7 +30,7 @@ A validated and packaged `.skill` file produced by `package_skill.py`, containin
 
 ## Output Requirement (MANDATORY)
 
-**Every skill MUST be validated using**: `.claude/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder>`
+**Every skill MUST be validated using**: `.opencode/skills/other/skill-creator/scripts/package_skill.py <path/to/skill-folder>`
 
 The output is a validated `.skill` package file. No other output format accepted.
 
@@ -101,7 +101,7 @@ Every SKILL.md consists of:
 Executable code (Python/Bash/etc.) for tasks that require deterministic reliability or are repeatedly rewritten.
 
 - **When to include**: When the same code is being rewritten repeatedly or deterministic reliability is needed
-- **Example**: `.claude/skills/skill-creator/scripts/rotate_pdf.py` for PDF rotation tasks
+- **Example**: `.opencode/skills/other/skill-creator/scripts/rotate_pdf.py` for PDF rotation tasks
 - **Benefits**: Token efficient, deterministic, may be executed without loading into context
 - **Note**: Scripts may still need to be read by Claude for patching or environment-specific adjustments
 
@@ -110,7 +110,7 @@ Executable code (Python/Bash/etc.) for tasks that require deterministic reliabil
 Documentation and reference material intended to be loaded as needed into context to inform Claude's process and thinking.
 
 - **When to include**: For documentation that Claude should reference while working
-- **Examples**: `.claude/skills/skill-creator/references/finance.md` for financial schemas, `.claude/skills/skill-creator/references/mnda.md` for company NDA template, `.claude/skills/skill-creator/references/policies.md` for company policies, `.claude/skills/skill-creator/references/api_docs.md` for API specifications
+- **Examples**: `.opencode/skills/other/skill-creator/references/finance.md` for financial schemas, `.opencode/skills/other/skill-creator/references/mnda.md` for company NDA template, `.opencode/skills/other/skill-creator/references/policies.md` for company policies, `.opencode/skills/other/skill-creator/references/api_docs.md` for API specifications
 - **Use cases**: Database schemas, API documentation, domain knowledge, company policies, detailed workflow guides
 - **Benefits**: Keeps SKILL.md lean, loaded only when Claude determines it's needed
 - **Best practice**: If files are large (>10k words), include grep search patterns in SKILL.md
@@ -121,7 +121,7 @@ Documentation and reference material intended to be loaded as needed into contex
 Files not intended to be loaded into context, but rather used within the output Claude produces.
 
 - **When to include**: When the skill needs files that will be used in the final output
-- **Examples**: `.claude/skills/skill-creator/assets/logo.png` for brand assets, `.claude/skills/skill-creator/assets/slides.pptx` for PowerPoint templates, `.claude/skills/skill-creator/assets/frontend-template/` for HTML/React boilerplate, `.claude/skills/skill-creator/assets/font.ttf` for typography
+- **Examples**: `.opencode/skills/other/skill-creator/assets/logo.png` for brand assets, `.opencode/skills/other/skill-creator/assets/slides.pptx` for PowerPoint templates, `.opencode/skills/other/skill-creator/assets/frontend-template/` for HTML/React boilerplate, `.opencode/skills/other/skill-creator/assets/font.ttf` for typography
 - **Use cases**: Templates, images, icons, boilerplate code, fonts, sample documents that get copied or modified
 - **Benefits**: Separates output resources from documentation, enables Claude to use files without loading them into context
 
@@ -265,17 +265,17 @@ To turn concrete examples into an effective skill, analyze each example by:
 Example: When building a `pdf-editor` skill to handle queries like "Help me rotate this PDF," the analysis shows:
 
 1. Rotating a PDF requires re-writing the same code each time
-2. A `.claude/skills/skill-creator/scripts/rotate_pdf.py` script would be helpful to store in the skill
+2. A `.opencode/skills/other/skill-creator/scripts/rotate_pdf.py` script would be helpful to store in the skill
 
 Example: When designing a `frontend-webapp-builder` skill for queries like "Build me a todo app" or "Build me a dashboard to track my steps," the analysis shows:
 
 1. Writing a frontend webapp requires the same boilerplate HTML/React each time
-2. An `.claude/skills/skill-creator/assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill
+2. An `.opencode/skills/other/skill-creator/assets/hello-world/` template containing the boilerplate HTML/React project files would be helpful to store in the skill
 
 Example: When building a `big-query` skill to handle queries like "How many users have logged in today?" the analysis shows:
 
 1. Querying BigQuery requires re-discovering the table schemas and relationships each time
-2. A `.claude/skills/skill-creator/references/schema.md` file documenting the table schemas would be helpful to store in the skill
+2. A `.opencode/skills/other/skill-creator/references/schema.md` file documenting the table schemas would be helpful to store in the skill
 
 To establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.
 
@@ -296,7 +296,7 @@ python .opencode/tools/skill-scaffold.py <skill-name> --type <unity|bash|git|oth
 **Fallback — basic scaffold** (generic templates):
 
 ```bash
-.opencode/skills/skill-creator/scripts/init_skill.py <skill-name> --path <output-directory>
+.opencode/skills/other/skill-creator/scripts/init_skill.py <skill-name> --path <output-directory>
 ```
 
 The script:
@@ -316,8 +316,8 @@ When editing the (newly-generated or existing) skill, remember that the skill is
 
 Consult these helpful guides based on your skill's needs:
 
-- **Multi-step processes**: See .claude/skills/skill-creator/references/workflows.md for sequential workflows and conditional logic
-- **Specific output formats or quality standards**: See .claude/skills/skill-creator/references/output-patterns.md for template and example patterns
+- **Multi-step processes**: See .opencode/skills/other/skill-creator/references/workflows.md for sequential workflows and conditional logic
+- **Specific output formats or quality standards**: See .opencode/skills/other/skill-creator/references/output-patterns.md for template and example patterns
 
 These files contain established best practices for effective skill design.
 
@@ -366,7 +366,7 @@ python .opencode/tools/skill-deps.py <path/to/skill-folder> --skills-root .openc
 **Package the skill**:
 
 ```bash
-.opencode/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder> [output-directory]
+.opencode/skills/other/skill-creator/scripts/package_skill.py <path/to/skill-folder> [output-directory]
 ```
 
 The packaging script will:

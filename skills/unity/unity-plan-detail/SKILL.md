@@ -37,7 +37,7 @@ A plan HTML file from `unity-plan`, typically at `Documents/Plans/[FeatureName]_
 
 HTML file at `Documents/Tasks/[FeatureName]_DETAIL.html` following template exactly:
 
-**Template**: `.claude/skills/unity-plan-detail/assets/templates/DETAIL_OUTPUT.html`
+**Template**: `.opencode/skills/unity/unity-plan-detail/assets/templates/DETAIL_OUTPUT.html`
 
 Read template first. Copy exact HTML/CSS. Replace only placeholders.
 
@@ -75,7 +75,7 @@ Write comprehensive description:
 
 1. **Read actual source files** using `unity-investigate` skill:
    ```
-   Read and follow: .claude/skills/unity-investigate/SKILL.md
+   Read and follow: .opencode/skills/unity/unity-investigate/SKILL.md
    ```
 
 2. **For existing files**:

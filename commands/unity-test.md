@@ -49,7 +49,7 @@ Follow the skill's instructions exactly.
 - Run `lsp_diagnostics` on changed files
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, Proactive suggestions, Discover → Plan → Execute → Collaborate
   - `unity-csharp-conventions.md`: Test naming `[Subject]_[Scenario]_[ExpectedResult]`, `Tests/EditMode/` and `Tests/PlayMode/`
   - `unity-asset-rules.md`: Follow `Assets/_Project/` structure for test placement

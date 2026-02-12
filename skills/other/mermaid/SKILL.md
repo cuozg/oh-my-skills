@@ -31,7 +31,7 @@ Mermaid diagram(s) embedded in ` ```mermaid ` code blocks, following the `DIAGRA
 
 ## Output Requirement (MANDATORY)
 
-**Every diagram MUST follow the template**: [DIAGRAM_OUTPUT.md](.claude/skills/mermaid/assets/templates/DIAGRAM_OUTPUT.md)
+**Every diagram MUST follow the template**: [DIAGRAM_OUTPUT.md](.opencode/skills/other/mermaid/assets/templates/DIAGRAM_OUTPUT.md)
 
 Embed diagrams in context or save to the relevant documentation file.
 
@@ -50,7 +50,7 @@ Read the template first, then populate all sections.
 
 1. **Analyze**: Identify entities and relationships
 2. **Choose Type**: Match to diagram type above
-3. **Author**: Use patterns from [.claude/skills/mermaid/references/MERMAID_PATTERNS.md](.claude/skills/mermaid/references/MERMAID_PATTERNS.md)
+3. **Author**: Use patterns from [.opencode/skills/other/mermaid/references/MERMAID_PATTERNS.md](.opencode/skills/other/mermaid/references/MERMAID_PATTERNS.md)
 4. **Validate**: Check syntax, ensure accuracy
 5. **Embed**: Wrap in ` ```mermaid ` code blocks
 

@@ -45,7 +45,7 @@ Follow the skill's instructions exactly.
 - Verify the result with `git log` before completing
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_
 - Use `/handoff` if context is getting long (before compaction strikes)
-- **Comply with all `.claude/rules/`** — specifically:
+- **Comply with all `.opencode/rules/`** — specifically:
   - `agent-behavior.md`: Safety First, require confirmation for destructive operations
   - `unity-csharp-conventions.md`: Follow conventions when analyzing code changes
   - `unity-asset-rules.md`: Understand asset conventions when grouping changes
