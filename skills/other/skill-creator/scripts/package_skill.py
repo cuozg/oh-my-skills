@@ -11,9 +11,37 @@ Example:
 """
 
 import sys
+import subprocess
+import json
 import zipfile
 from pathlib import Path
 from quick_validate import validate_skill
+
+
+def _check_dependencies(skill_path):
+    """Warn about missing cross-skill dependencies before packaging."""
+    tools_dir = Path(__file__).resolve().parent.parent.parent.parent / "tools"
+    deps_tool = tools_dir / "skill-deps.py"
+
+    if not deps_tool.exists():
+        return
+
+    try:
+        result = subprocess.run(
+            [sys.executable, str(deps_tool), str(skill_path), "--json"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        data = json.loads(result.stdout)
+        missing = data.get("missing", [])
+        if missing:
+            print("⚠️  Missing dependencies detected:")
+            for dep in missing:
+                print(f"   - {dep}")
+            print("   Package will still be created, but may not work standalone.\n")
+    except (subprocess.TimeoutExpired, json.JSONDecodeError, Exception):
+        pass
 
 
 def package_skill(skill_path, output_dir=None):
@@ -53,6 +81,8 @@ def package_skill(skill_path, output_dir=None):
         return None
     print(f"✅ {message}\n")
 
+    _check_dependencies(skill_path)
+
     # Determine output location
     skill_name = skill_path.name
     if output_dir:
@@ -65,9 +95,9 @@ def package_skill(skill_path, output_dir=None):
 
     # Create the .skill file (zip format)
     try:
-        with zipfile.ZipFile(skill_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(skill_filename, "w", zipfile.ZIP_DEFLATED) as zipf:
             # Walk through the skill directory
-            for file_path in skill_path.rglob('*'):
+            for file_path in skill_path.rglob("*"):
                 if file_path.is_file():
                     # Calculate the relative path within the zip
                     arcname = file_path.relative_to(skill_path.parent)
@@ -84,7 +114,9 @@ def package_skill(skill_path, output_dir=None):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
+        print(
+            "Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]"
+        )
         print("\nExample:")
         print("  python utils/package_skill.py skills/public/my-skill")
         print("  python utils/package_skill.py skills/public/my-skill ./dist")

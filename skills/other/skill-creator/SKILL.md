@@ -285,12 +285,18 @@ At this point, it is time to actually create the skill.
 
 Skip this step only if the skill being developed already exists, and iteration or packaging is needed. In this case, continue to the next step.
 
-When creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.
+When creating a new skill from scratch, prefer the **skill-scaffold** tool for type-aware scaffolding, or fall back to `init_skill.py` for basic scaffolding.
 
-Usage:
+**Preferred — type-aware scaffold** (generates domain-specific templates):
 
 ```bash
-.claude/skills/skill-creator/scripts/init_skill.py <skill-name> --path <output-directory>
+python .opencode/tools/skill-scaffold.py <skill-name> --type <unity|bash|git|other> --path <output-directory> [--json]
+```
+
+**Fallback — basic scaffold** (generic templates):
+
+```bash
+.opencode/skills/skill-creator/scripts/init_skill.py <skill-name> --path <output-directory>
 ```
 
 The script:
@@ -345,16 +351,22 @@ Write instructions for using the skill and its bundled resources.
 
 ### Step 5: Packaging a Skill
 
-Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:
+Once development of the skill is complete, run validation and dependency analysis before packaging.
+
+**Pre-package checks** (optional but recommended):
 
 ```bash
-.claude/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder>
+# Deep structural validation (parallel checks, auto-fix support)
+python .opencode/tools/skill-validator.py <path/to/skill-folder> [--fix] [--json]
+
+# Dependency analysis (catch missing refs before packaging)
+python .opencode/tools/skill-deps.py <path/to/skill-folder> --skills-root .opencode/skills [--json]
 ```
 
-Optional output directory specification:
+**Package the skill**:
 
 ```bash
-.claude/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder> ./dist
+.opencode/skills/skill-creator/scripts/package_skill.py <path/to/skill-folder> [output-directory]
 ```
 
 The packaging script will:
@@ -380,3 +392,15 @@ After testing the skill, users may request improvements. Often this happens righ
 2. Notice struggles or inefficiencies
 3. Identify how SKILL.md or bundled resources should be updated
 4. Implement changes and test again
+
+## Tool Integration Points
+
+Three tools in `.opencode/tools/` accelerate the skill-creator workflow:
+
+| Tool | Purpose | When Called |
+|:---|:---|:---|
+| `skill-scaffold.py` | Type-aware scaffolding (unity/bash/git/other templates) | Step 3 — instead of or alongside `init_skill.py` |
+| `skill-validator.py` | Deep parallel validation (frontmatter, body, orphans, refs) | Step 5 — before packaging |
+| `skill-deps.py` | Dependency graph + missing reference detection | Step 5 — before packaging |
+
+All tools support `--json` for programmatic output. Each has a matching `.ts` stub in `.opencode/tools/` for OpenCode tool integration.
