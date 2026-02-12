@@ -26,13 +26,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
-# ---------------------------------------------------------------------------
-# Shared frontmatter extraction (replaces duplication across scripts)
-# ---------------------------------------------------------------------------
-
-
 def extract_frontmatter(skill_md_path):
-    """Extract raw frontmatter dict and body from SKILL.md."""
     content = skill_md_path.read_text(encoding="utf-8")
     if not content.startswith("---"):
         return None, content, "No YAML frontmatter found"
@@ -50,10 +44,6 @@ def extract_frontmatter(skill_md_path):
         return None, content, f"YAML parse error: {e}"
 
 
-# ---------------------------------------------------------------------------
-# Individual validation checks (run in parallel)
-# ---------------------------------------------------------------------------
-
 ALLOWED_PROPERTIES = {"name", "description", "license", "allowed-tools", "metadata"}
 MAX_NAME_LEN = 64
 MAX_DESC_LEN = 1024
@@ -61,7 +51,6 @@ MAX_BODY_LINES = 500
 
 
 def check_frontmatter(fm):
-    """Validate frontmatter fields."""
     issues = []
 
     unexpected = set(fm.keys()) - ALLOWED_PROPERTIES
@@ -111,17 +100,14 @@ def check_frontmatter(fm):
 
 
 def check_body(body, skill_dir):
-    """Check SKILL.md body for quality issues."""
     issues = []
     lines = body.split("\n")
 
-    # Line count check
     if len(lines) > MAX_BODY_LINES:
         issues.append(
             ("warning", f"Body has {len(lines)} lines (guideline: <{MAX_BODY_LINES})")
         )
 
-    # Unfilled TODO placeholders
     todo_lines = [
         (i + 1, line.strip()) for i, line in enumerate(lines) if "[TODO" in line
     ]
@@ -132,18 +118,31 @@ def check_body(body, skill_dir):
         for lineno, text in todo_lines[:3]:
             issues.append(("info", f"  Line {lineno}: {text[:80]}"))
 
-    # Check for referenced files
-    file_refs = re.findall(r"(?:scripts|references|assets)/[^\s\)\"']+", body)
-    for ref in file_refs:
-        ref_path = skill_dir / ref
-        if not ref_path.exists():
-            issues.append(("error", f"Referenced file missing: {ref}"))
+    # Skip backtick-wrapped example paths and code blocks
+    in_code_block = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_code_block = not in_code_block
+            continue
+        if in_code_block:
+            continue
+        for m in re.finditer(r"(?:scripts|references|assets)/[^\s\)\"'`]+", line):
+            ref = m.group(0)
+            pre = line[: m.start()]
+            if pre.count("`") % 2 == 1:
+                continue
+            ref = ref.rstrip(".,;:)")
+            if not ref or ref.endswith("/"):
+                continue
+            ref_path = skill_dir / ref
+            if not ref_path.exists():
+                issues.append(("error", f"Referenced file missing: {ref}"))
 
     return issues
 
 
 def check_orphaned_files(skill_dir, body):
-    """Find files in resource dirs not referenced in SKILL.md body or frontmatter."""
     issues = []
     resource_dirs = ["scripts", "references", "assets"]
     body_lower = body.lower()
@@ -155,7 +154,6 @@ def check_orphaned_files(skill_dir, body):
         for fpath in dir_path.rglob("*"):
             if fpath.is_file() and not fpath.name.startswith("."):
                 rel = str(fpath.relative_to(skill_dir))
-                # Check if referenced by filename or relative path
                 if (
                     fpath.name.lower() not in body_lower
                     and rel.lower() not in body_lower
@@ -166,7 +164,6 @@ def check_orphaned_files(skill_dir, body):
 
 
 def check_structure(skill_dir):
-    """Validate directory structure basics."""
     issues = []
 
     skill_md = skill_dir / "SKILL.md"
@@ -174,7 +171,6 @@ def check_structure(skill_dir):
         issues.append(("error", "SKILL.md not found"))
         return issues
 
-    # Check for extraneous documentation files
     bad_docs = [
         "README.md",
         "CHANGELOG.md",
@@ -187,7 +183,6 @@ def check_structure(skill_dir):
                 ("warning", f"Extraneous doc file: {bad} (should not exist in skills)")
             )
 
-    # Check script permissions
     scripts_dir = skill_dir / "scripts"
     if scripts_dir.is_dir():
         for script in scripts_dir.glob("*.py"):
@@ -197,13 +192,7 @@ def check_structure(skill_dir):
     return issues
 
 
-# ---------------------------------------------------------------------------
-# Auto-fix (optional)
-# ---------------------------------------------------------------------------
-
-
 def auto_fix(skill_dir, issues):
-    """Attempt trivial fixes. Returns list of fixes applied."""
     fixes = []
     scripts_dir = skill_dir / "scripts"
     if scripts_dir.is_dir():
@@ -214,30 +203,21 @@ def auto_fix(skill_dir, issues):
     return fixes
 
 
-# ---------------------------------------------------------------------------
-# Main orchestrator
-# ---------------------------------------------------------------------------
-
-
 def validate_skill(skill_path, do_fix=False):
-    """Run all validation checks in parallel. Returns (passed, issues, fixes)."""
     skill_dir = Path(skill_path).resolve()
     all_issues = []
 
-    # Phase 0: structure check (must pass before other checks)
     struct_issues = check_structure(skill_dir)
     all_issues.extend(struct_issues)
     if any(sev == "error" for sev, _ in struct_issues):
         return False, all_issues, []
 
-    # Read SKILL.md once
     skill_md = skill_dir / "SKILL.md"
     fm, body, fm_error = extract_frontmatter(skill_md)
     if fm_error:
         all_issues.append(("error", fm_error))
         return False, all_issues, []
 
-    # Phase 1: Run checks in parallel
     with ThreadPoolExecutor(max_workers=4) as executor:
         futures = {
             executor.submit(check_frontmatter, fm): "frontmatter",
@@ -251,7 +231,6 @@ def validate_skill(skill_path, do_fix=False):
             except Exception as e:
                 all_issues.append(("error", f"Check '{label}' failed: {e}"))
 
-    # Phase 2: Auto-fix if requested
     fixes = auto_fix(skill_dir, all_issues) if do_fix else []
 
     has_errors = any(sev == "error" for sev, _ in all_issues)
@@ -259,7 +238,6 @@ def validate_skill(skill_path, do_fix=False):
 
 
 def format_human(passed, issues, fixes, skill_path):
-    """Human-readable output."""
     lines = [f"# Skill Validation: {Path(skill_path).name}", ""]
 
     if passed:
@@ -267,7 +245,6 @@ def format_human(passed, issues, fixes, skill_path):
     else:
         lines.append("❌ FAILED")
 
-    # Group by severity
     for sev in ("error", "warning", "info"):
         sev_issues = [(s, m) for s, m in issues if s == sev]
         if sev_issues:
@@ -285,7 +262,6 @@ def format_human(passed, issues, fixes, skill_path):
 
 
 def format_json(passed, issues, fixes, skill_path):
-    """JSON output for programmatic consumption."""
     return json.dumps(
         {
             "skill": Path(skill_path).name,
