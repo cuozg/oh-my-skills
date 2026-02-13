@@ -88,6 +88,12 @@ Project rules are at `.opencode/rules/`:
 <!--
 DELEGATION CONSTRAINT (for the orchestrator, not the subagent):
 This prompt MUST be sent via:
-  call_omo_agent(subagent_type="sisyphus", ...)
+  call_omo_agent(
+      subagent_type="sisyphus",
+      load_skills=["{category}/{skill-name}"],  # REQUIRED — use category/skill-name format
+      description="...",
+      prompt="<this prompt>"
+  )
 Using any other subagent_type is FORBIDDEN.
+Omitting load_skills will cause "Invalid arguments" errors.
 -->
