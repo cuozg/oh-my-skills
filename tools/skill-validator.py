@@ -127,7 +127,9 @@ def check_body(body, skill_dir):
             continue
         if in_code_block:
             continue
-        for m in re.finditer(r"(?:scripts|references|assets)/[^\s\)\"'`]+", line):
+        for m in re.finditer(
+            r"(?:\.\./)*(scripts|references|assets)/[^\s\)\"'`]+", line
+        ):
             ref = m.group(0)
             pre = line[: m.start()]
             if pre.count("`") % 2 == 1:
@@ -135,7 +137,7 @@ def check_body(body, skill_dir):
             ref = ref.rstrip(".,;:)")
             if not ref or ref.endswith("/"):
                 continue
-            ref_path = skill_dir / ref
+            ref_path = (skill_dir / ref).resolve()
             if not ref_path.exists():
                 issues.append(("error", f"Referenced file missing: {ref}"))
 
