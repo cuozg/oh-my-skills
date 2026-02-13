@@ -1717,6 +1717,31 @@ Build a self-dismissing toast notification that slides in from the top:
 - [Performance Benchmarks](../references/performance-benchmarks.md) — animation and draw call targets
 - [Official Docs Links](../references/official-docs-links.md) — Unity 6 documentation index
 
+## Dragon Crashers Source Files
+
+All code examples in this skill reference real Dragon Crashers source files:
+
+| Source File | Patterns Demonstrated |
+|---|---|
+| `Assets/Scripts/UI/UIViews/HomeView.cs` | Tabbed Navigation (menu bar callback), Composite View |
+| `Assets/Scripts/UI/Controllers/HomeScreenController.cs` | Tabbed Navigation (screen switching coordinator) |
+| `Assets/Scripts/UI/Components/TabbedMenu.cs` | Tabbed Navigation (tab container + highlight) |
+| `Assets/Scripts/UI/Controllers/TabbedMenuController.cs` | Tabbed Navigation (selection logic, `TabbedMenuIDs` struct) |
+| `Assets/Scripts/UI/UIViews/ShopView.cs` | Inventory Grid (dynamic item instantiation from UXML template) |
+| `Assets/Scripts/UI/Controllers/ShopScreenController.cs` | Inventory Grid, Category Filtering (LINQ `Where`/`OrderBy`) |
+| `Assets/Scripts/UI/UIViews/SettingsView.cs` | Modal/Popup Dialog (reset-data confirmation modal) |
+| `Assets/Scripts/UI/UIViews/MenuBarView.cs` | Stateful Buttons (notification dot toggle), GeometryChangedEvent |
+| `Assets/Scripts/UI/UIViews/MailView.cs` | Message List (dynamic `VisualTreeAsset.Instantiate`), Composite View |
+| `Assets/Scripts/UI/UIViews/CharView.cs` | Scroll View with Snap, Composite View, Circular Navigation |
+| `Assets/Scripts/UI/Controllers/CharScreenController.cs` | Circular Navigation (index wrap, gear slot management) |
+| `Assets/Scripts/UI/UIViews/CharStatsView.cs` | GeometryChangedEvent (deferred stat bar sizing), Composite View |
+| `Assets/Scripts/UI/UIViews/UIView.cs` | Base class — `Show()`/`Hide()` with `async Task` animation |
+| `Assets/Scripts/UI/Components/HealthBarComponent.cs` | World-to-Panel Positioning (runtime panel utils) |
+| `Assets/Scripts/UI/Controllers/HealthBarController.cs` | World-to-Panel Positioning (camera transform, per-frame update) |
+| `Assets/Scripts/UI/UIManager.cs` | Screen controller orchestration underpinning all patterns |
+| `Assets/Scripts/UI/Events/UIEvents.cs` | Static event bus driving all pattern interactions |
+| `Assets/Scripts/UI/Events/ScreenEvents.cs` | Screen navigation events (tabbed nav, modal show/hide) |
+
 ## Official Documentation
 
 - [UI Toolkit Manual](https://docs.unity3d.com/6000.0/Documentation/Manual/UIElements.html)
