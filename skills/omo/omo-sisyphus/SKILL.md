@@ -1,20 +1,20 @@
 ---
 name: omo-sisyphus
-description: "Orchestrator that delegates tasks to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
+description: "Prompt-refining orchestrator that analyzes user requests, asks clarifying questions when ambiguous, shows a refined prompt preview, gets user confirmation, and then delegates to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Acts as a 'Prompt Engineer' layer — ensures every delegation has clear goals, correct skill selection, and explicit success criteria before dispatch. Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
 ---
 
-# Sisyphus Orchestrator
+# Sisyphus Orchestrator (Prompt Engineer)
 
-Delegate tasks to Sisyphus via `call_omo_agent(subagent_type="sisyphus")`.
+Analyze → Clarify → Refine → Confirm → Delegate via `call_omo_agent(subagent_type="sisyphus")`.
 
 ## Purpose
 
-Orchestrate complex, multi-step tasks by generating structured delegation prompts, dispatching them to Sisyphus, and ensuring mandatory skill loading, context preservation, and Atlas review compliance.
+Act as a "Prompt Engineer" orchestrator: analyze raw user requests for clarity, ask clarifying questions when ambiguous, present a refined prompt for user approval, and only then delegate to Sisyphus with the optimized prompt. Ensure mandatory skill loading, context preservation, and Atlas review compliance.
 
 ## Input
 
-- **Required**: Task description with clear intent
-- **Required**: Skill selection — map intent to a skill from the Complete Skill Inventory
+- **Required**: User's raw task request (any level of clarity)
+- **Auto-selected**: Skill(s) from the Complete Skill Inventory (based on intent analysis)
 - **Optional**: `session_id` for boulder continuation (validate via `session_list()`/`session_info()` first)
 
 ## Safety Rules (NON-NEGOTIABLE)
@@ -262,9 +262,96 @@ Comprehensive mapping from user intent to primary skill, with optional additions
 
 ---
 
-## Workflow
+## Prompt Refinement Workflow
 
-### 1. Plan Delegation
+Every delegation follows this 6-step flow. Never skip directly to delegation.
+
+```
+User Request (raw)
+    ↓
+Step 1: Analyze intent, clarity, completeness
+    ↓
+Step 2: IF ambiguous → Ask clarifying questions (via question tool)
+    ↓
+Step 3: Refine prompt (integrate answers + select skills)
+    ↓
+Step 4: Show refined prompt preview to user
+    ↓
+Step 5: Get confirmation (yes / no / edit)
+    ↓
+Step 6: IF confirmed → Delegate to Sisyphus with refined prompt
+```
+
+For detailed clarity scoring, ambiguity patterns, question templates, and before/after examples, see `references/prompt-refinement.md`.
+
+### Step 1: Analyze
+
+Score the request against 5 dimensions (Goal, Scope, Constraints, Success criteria, Context) on a 1-3 scale. Total < 12 → needs clarification. Total ≥ 12 → skip to Step 3.
+
+State the analysis internally:
+```
+Analysis:
+- Goal: [1-3] — [reasoning]
+- Scope: [1-3] — [reasoning]
+- Constraints: [1-3] — [reasoning]
+- Success: [1-3] — [reasoning]
+- Context: [1-3] — [reasoning]
+- Total: [5-15]
+- Intent → Primary skill: [skill-name]
+```
+
+### Step 2: Clarify (if needed)
+
+Use the `question` tool to ask 2-5 targeted questions. Pick from templates in `references/prompt-refinement.md`:
+- Goal clarification — what specific outcome?
+- Scope clarification — which files/systems?
+- Constraint clarification — patterns, performance, platform?
+- Success criteria — how to verify completion?
+- Approach — preference for implementation strategy?
+
+**Do NOT ask questions that can be answered by reading the codebase.** Use `explore` subagent or direct investigation for those.
+
+### Step 3: Refine
+
+Integrate user answers (if any) into a structured refined prompt. Select skills from the Intent → Skill Cross-Reference table. Compose:
+- Clear goal (one sentence)
+- Explicit scope (files/systems)
+- Selected skills with rationale
+- Expected outcome with verification criteria
+- Constraints including safety rules
+
+### Step 4: Show Preview
+
+Present the refined prompt to the user in this format:
+
+```
+## Refined Prompt Preview
+
+**Goal**: [Clear objective]
+**Scope**: [Specific files/systems]
+**Selected Skill(s)**: [primary] + [additional if needed]
+**Expected Outcome**: [Deliverables + success criteria]
+**Constraints**: [Tech + safety constraints]
+
+Ready to delegate? (yes / no / edit)
+```
+
+### Step 5: Confirm
+
+Use the `question` tool with options:
+- **Yes** → Proceed to delegation (Step 6)
+- **Edit** → User provides changes → return to Step 3
+- **No** → Ask "What should we do instead?" → restart from Step 1
+
+### Step 6: Delegate
+
+Only after confirmation. Follow the delegation mechanics below.
+
+---
+
+## Delegation Mechanics
+
+### Pre-flight Check
 
 Before every `call_omo_agent()`, state:
 
@@ -276,7 +363,7 @@ Delegating via call_omo_agent():
 - Expected outcome: [success criteria]
 ```
 
-### 2. Generate Prompt
+### Generate Prompt
 
 Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. Every prompt MUST:
 
@@ -286,7 +373,7 @@ Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. 
 4. MUST NOT DO: push to remotes, add AI metadata, destructive actions without confirmation
 5. Include "Use `/handoff` if context is getting long"
 
-### 3. Delegate
+### Delegate
 
 ```python
 # Sync — need result before next step
@@ -334,112 +421,37 @@ Not all tasks require Sisyphus. Choose the right agent:
 
 ### Spawning Examples
 
-**Example 1: Explore first, then implement**
+**Explore → Implement:**
 ```python
-# Understand the system before implementing
-explore_result = call_omo_agent(
-    subagent_type="explore",
-    description="Understand PlayerHealth system",
-    run_in_background=False,
-    prompt="Trace how player health is managed — find related scripts, data flow, UI bindings."
-)
-
-# Then delegate implementation with loaded skill
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-code"],  # REQUIRED
-    description="Add health regeneration feature",
-    run_in_background=False,
-    prompt="FIRST: Load Required Skill\n..."  # Fill DELEGATION_PROMPT.md template
-)
+call_omo_agent(subagent_type="explore", description="Understand PlayerHealth",
+    run_in_background=False, prompt="Trace player health — scripts, data flow, UI bindings.")
+call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-code"],
+    description="Add health regen", run_in_background=False, prompt="FIRST: Load Required Skill\n...")
 ```
 
-**Example 2: Parallel Sisyphus tasks**
+**Parallel background tasks:**
 ```python
-# Two independent tasks in parallel
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-optimize-performance"],  # REQUIRED
-    description="Optimize particle system",
-    run_in_background=True,
-    prompt="..."
-)
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-refactor"],  # REQUIRED
-    description="Refactor UI controllers",
-    run_in_background=True,
-    prompt="..."
-)
-# Collect: background_output(task_id="...")
+call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-optimize-performance"],
+    description="Optimize particles", run_in_background=True, prompt="...")
+call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-refactor"],
+    description="Refactor UI controllers", run_in_background=True, prompt="...")
 ```
 
-**Example 3: Multi-skill UI Toolkit delegation**
+**Multi-skill delegation:**
 ```python
-# Building a themed, responsive UI Toolkit screen with data binding
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=[
-        "unity/ui-toolkit/ui-toolkit-master",       # Core UI Toolkit knowledge
-        "unity/ui-toolkit/ui-toolkit-databinding",   # Data binding patterns
-        "unity/ui-toolkit/ui-toolkit-theming",       # Theme/design tokens
-        "unity/ui-toolkit/ui-toolkit-responsive",    # Responsive layout
-    ],
-    description="Build settings screen with UI Toolkit",
-    run_in_background=False,
-    prompt="FIRST: Load Required Skills\n..."
-)
-```
-
-**Example 4: Design-then-implement workflow**
-```python
-# Step 1: Generate UX spec
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-ux-design"],  # REQUIRED
-    description="Design lobby screen UX spec",
-    run_in_background=False,
-    prompt="FIRST: Load Required Skill\n..."
-)
-
-# Step 2: Implement from spec
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-ui", "unity/unity-code"],  # Multi-skill
-    description="Implement lobby screen from UX spec",
-    run_in_background=False,
-    prompt="FIRST: Load Required Skill\n..."
-)
-```
-
-**Example 5: Long task with /handoff**
-```python
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-code"],  # REQUIRED
-    description="Implement full lobby screen",
-    run_in_background=False,
-    prompt="""FIRST: Load Required Skill
-    Load: .opencode/skills/unity/unity-code/SKILL.md
-
-    Task: Implement lobby screen with player stats, matchmaking, and chat.
-
-    MUST DO:
-    - Use /handoff if context is getting long — preserves full context
-      for continuation in a new session. PREFER /handoff over compaction.
-    ..."""
-)
+call_omo_agent(subagent_type="sisyphus", load_skills=[
+    "unity/ui-toolkit/ui-toolkit-master", "unity/ui-toolkit/ui-toolkit-databinding",
+    "unity/ui-toolkit/ui-toolkit-theming"], description="Build settings screen",
+    run_in_background=False, prompt="FIRST: Load Required Skills\n...")
 ```
 
 ---
 
 ## Context Preservation
 
-**For long-running tasks, always use `/handoff`** instead of letting context compact:
-- `/handoff` creates a detailed summary preserving full context for the next session
 - Include "Use `/handoff` if context is getting long" in every delegation prompt
-- To resume: pass the previous `session_id` to `call_omo_agent()` (boulder continuation)
-- Always validate `session_id` via `session_list()`/`session_info()` before resuming
+- `/handoff` preserves full context for the next session
+- To resume: pass previous `session_id` to `call_omo_agent()` (validate via `session_list()` first)
 
 ---
 
@@ -447,6 +459,10 @@ call_omo_agent(
 
 | Bad | Good |
 |---|---|
+| Delegating without analyzing the request first | Run 6-step workflow: Analyze → Clarify → Refine → Preview → Confirm → Delegate |
+| Skipping clarifying questions on vague requests | Score clarity < 12 → ask questions via `question` tool |
+| Delegating without user confirmation | Always show refined prompt preview and get yes/no/edit |
+| Asking questions answerable by reading code | Use `explore` subagent for codebase investigation |
 | `subagent_type="explore"` for implementation | `subagent_type="sisyphus"` |
 | Missing `load_skills` parameter | `load_skills=["category/skill-name"]` — ALWAYS required |
 | `load_skills=["unity-code"]` (no category) | `load_skills=["unity/unity-code"]` (category/name) |
@@ -457,16 +473,21 @@ call_omo_agent(
 | Prompt generation before loading skill | Load skill first, then generate |
 | Subagent skips `Read` on modified files | Require `Read` on all changed files |
 | Passing unvalidated `session_id` | Verify via `session_list()` first |
+| Loading 5+ skills per delegation | Max 4 skills; split into sequential delegations |
 
 ---
 
 ## Output
 
-Successful delegation produces:
-1. **Delegation log** — subagent_type, action, skill, expected outcome (before each call)
-2. **Subagent result** — completed work from Sisyphus
-3. **File verification** — all modified files confirmed read (Atlas review compliance)
-4. **Clean commits** — if committing: no AI metadata, imperative messages only
+Successful orchestration produces:
+1. **Clarity analysis** — scored assessment of the raw request
+2. **Clarifying questions** — if needed, asked via `question` tool
+3. **Refined prompt preview** — shown to user for approval
+4. **User confirmation** — yes/no/edit recorded
+5. **Delegation log** — subagent_type, action, skill, expected outcome (before each call)
+6. **Subagent result** — completed work from Sisyphus
+7. **File verification** — all modified files confirmed read (Atlas review compliance)
+8. **Clean commits** — if committing: no AI metadata, imperative messages only
 
 ---
 
