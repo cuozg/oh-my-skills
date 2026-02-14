@@ -1,15 +1,15 @@
 ---
 name: omo-sisyphus
-description: "Prompt-refining orchestrator that analyzes user requests, asks clarifying questions when ambiguous, shows a refined prompt preview, gets user confirmation, and then delegates to Sisyphus agent via call_omo_agent(subagent_type='sisyphus'). Acts as a 'Prompt Engineer' layer — ensures every delegation has clear goals, correct skill selection, and explicit success criteria before dispatch. Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', complex multi-step requests."
+description: "Auto-improving prompt orchestrator that analyzes user requests, upgrades vague input into a technical specification before asking questions, shows a refined prompt preview, gets user confirmation, and then delegates to Sisyphus via call_omo_agent(subagent_type='sisyphus'). Acts as a 'Prompt Engineer' layer — ensures every delegation has clear goals, correct skill selection, and explicit success criteria before dispatch. Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', 'prompt engineer', 'enhance prompt', 'improve prompt', 'refine request', complex multi-step requests."
 ---
 
 # Sisyphus Orchestrator (Prompt Engineer)
 
-Analyze → Clarify → Refine → Confirm → Delegate via `call_omo_agent(subagent_type="sisyphus")`.
+Analyze → Auto-Improve → (Clarify only if blocked) → Confirm → Delegate via `call_omo_agent(subagent_type="sisyphus")`.
 
 ## Purpose
 
-Act as a "Prompt Engineer" orchestrator: analyze raw user requests for clarity, ask clarifying questions when ambiguous, present a refined prompt for user approval, and only then delegate to Sisyphus with the optimized prompt. Ensure mandatory skill loading, context preservation, and Atlas review compliance.
+Act as a "Prompt Engineer" orchestrator: analyze raw user requests, **auto-improve** them into a technical specification (Goal, Scope, Constraints, Skills, Verification) before asking any questions, present a refined prompt for user approval, and only then delegate to Sisyphus with the optimized prompt. Ask clarifying questions only when a **critical ambiguity** blocks progress. Ensure mandatory skill loading, context preservation, and Atlas review compliance.
 
 ## Input
 
@@ -72,7 +72,7 @@ load_skills=["unity/ui-toolkit/ui-toolkit-databinding"]    # NOT "unity/ui-toolk
 
 ## Quick Lookup — Common Tasks
 
-Find the right skill fast. For full descriptions, see the Complete Skill Inventory below.
+Find the right skill fast. For the complete 44-skill inventory, multi-skill loading patterns, and intent-to-skill cross-reference, see `references/skill-inventory.md`.
 
 | I want to... | `load_skills` value |
 |---|---|
@@ -96,233 +96,35 @@ Find the right skill fast. For full descriptions, see the Complete Skill Invento
 
 ---
 
-## Complete Skill Inventory
-
-All 44 available skills organized by category. Every `load_skills` value is the exact string to pass.
-
-### Unity — Core Development (16 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Unity Code | `unity/unity-code` | Write clean, performant C# — MonoBehaviours, ScriptableObjects, gameplay features | implement, create, code, build |
-| Unity Plan | `unity/unity-plan` | High-level planning with task breakdown, estimates, and patch generation | plan, estimate, breakdown, scope |
-| Unity Plan Detail | `unity/unity-plan-detail` | Generate 100% complete code changes per task from a plan | detail tasks, generate code per task |
-| Unity Plan Executor | `unity/unity-plan-executor` | Execute implementation plans from HTML files with exact fidelity | execute plan, apply plan |
-| Unity Investigate | `unity/unity-investigate` | Deep investigation — trace logic, data flow, serialization, systems | how does X work, trace, explain |
-| Unity Fix Errors | `unity/unity-fix-errors` | Diagnose and fix compiler errors, broken Play Mode, build failures | fix errors, compiler error, build fail |
-| Unity Debug | `unity/unity-debug` | Root cause analysis of runtime errors with debug reports | debug, stack trace, investigate crash |
-| Unity Test | `unity/unity-test` | Edit/Play Mode test automation, mocking, coverage | write tests, test coverage |
-| Unity Test Case | `unity/unity-test-case` | QA test case document generation for game features | test cases, QA plan, test document |
-| Unity Refactor | `unity/unity-refactor` | Safe code transformation — extract, rename, decouple, clean up | refactor, restructure, clean up |
-| Unity Optimize Performance | `unity/unity-optimize-performance` | Fix FPS drops, memory leaks, slow load times | optimize, performance, FPS, memory |
-| Unity Singleton Auditor | `unity/unity-singleton-auditor` | Audit Singleton usage — init order risks, circular deps, anti-patterns | audit singletons, singleton health |
-| Unity Log Analyzer | `unity/unity-log-analyzer` | Parse console logs — classify errors, group duplicates, suggest fixes | analyze logs, triage errors |
-| Unity Orchestrator | `unity/unity-orchestrator` | Master Unity tech lead — routes to specialized skills | general Unity request |
-| Unity Review PR | `unity/unity-review-pr` | PR review with Unity-specific patterns, performance, best practices | review PR, check changes |
-| Unity Review PR Local | `unity/unity-review-pr-local` | Local PR review as markdown — no GitHub posting | local review, offline review |
-
-### Unity — UI & UX (3 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Unity UI | `unity/unity-ui` | Implement UX designs from HTML docs into Unity prefabs with 100% fidelity | implement design, build prefab from HTML |
-| Unity UX Design | `unity/unity-ux-design` | Generate UX screen specs and production-ready scene/prefab hierarchies | UX spec, screen design, mobile game UI |
-| Unity Editor Tools | `unity/unity-editor-tools` | Custom Editor Windows, Inspectors, asset/scene validation utilities | editor window, inspector, editor tool |
-
-### Unity — Art & Rendering (1 skill)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Unity Tech Art | `unity/unity-tech-art` | Shaders (HLSL/Shader Graph), artist tools, asset pipelines, procedural content | shader, art pipeline, rendering |
-
-### Unity — Deployment (2 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Unity Mobile Deploy | `unity/unity-mobile-deploy` | iOS/Android — touch controls, mobile optimization, native features, builds | mobile, iOS, Android, touch |
-| Unity Web Deploy | `unity/unity-web-deploy` | WebGL — build config, C#/JS interop, browser issues, PWA | WebGL, browser, web build |
-
-### Unity — Documentation (2 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Unity Write Docs | `unity/unity-write-docs` | README, architecture docs, API references, onboarding guides | documentation, README, API docs |
-| Unity Write TDD | `unity/unity-write-tdd` | Technical Design Documents — architecture decisions, API specs, data schemas | TDD, tech spec, design document |
-
-### Unity — UI Toolkit Sub-Skills (9 skills)
-
-These are **nested sub-skills** under `unity/ui-toolkit/`. Use the full path in `load_skills`.
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| UI Toolkit Master | `unity/ui-toolkit/ui-toolkit-master` | Master guide — architecture, UXML/USS/C# triad, project structure | UI Toolkit, UXML, USS |
-| UI Toolkit Architecture | `unity/ui-toolkit/ui-toolkit-architecture` | Component-based architecture — custom controls, MVC/MVP, reusable templates | UI architecture, custom control, UxmlElement |
-| UI Toolkit Data Binding | `unity/ui-toolkit/ui-toolkit-databinding` | Unity 6 runtime data binding — IDataSource, [CreateProperty], binding modes | data binding, dataSource, CreateProperty |
-| UI Toolkit Debugging | `unity/ui-toolkit/ui-toolkit-debugging` | Debugger tools — UI Toolkit Debugger, Event Debugger, common pitfalls | debug UI, element not showing, event not firing |
-| UI Toolkit Mobile | `unity/ui-toolkit/ui-toolkit-mobile` | Mobile optimization — touch handling, safe areas, gestures, virtual keyboard | mobile UI, touch input, safe area |
-| UI Toolkit Patterns | `unity/ui-toolkit/ui-toolkit-patterns` | Common patterns — tabs, inventory grids, modals, stateful buttons, scroll snap | tab bar, inventory grid, modal popup |
-| UI Toolkit Performance | `unity/ui-toolkit/ui-toolkit-performance` | Performance — profiling, draw calls, element pooling, ListView virtualization | UI performance, draw calls, layout thrashing |
-| UI Toolkit Responsive | `unity/ui-toolkit/ui-toolkit-responsive` | Responsive design — flexbox, safe areas, breakpoints, screen adaptation | responsive, flexbox, safe area, adaptive |
-| UI Toolkit Theming | `unity/ui-toolkit/ui-toolkit-theming` | Theme Style Sheets (TSS) — design tokens, dark/light themes, runtime switching | theme, TSS, design tokens, dark mode |
-
-### Git (3 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Git Commit | `git/git-commit` | Generate clean commit messages, stage and commit — no AI metadata | commit, stage and commit |
-| Git Squash | `git/git-squash` | Squash commits into organized history for PR prep or release | squash, consolidate commits |
-| Git Comment | `git/git-comment` | Generate structured commit comments from PRs or commit hashes | PR comment, commit documentation |
-
-### Bash (3 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Bash Check | `bash/bash-check` | Validate bash scripts for syntax, compatibility, and style | check script, validate bash |
-| Bash Optimize | `bash/bash-optimize` | Optimize bash scripts for clarity, performance, and best practices | optimize script, refactor bash |
-| Bash Install | `bash/bash-install` | Install software with automatic retry and fallback strategies | install, setup dependencies |
-
-### Orchestration & Meta (2 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| Omo Sisyphus | `omo/omo-sisyphus` | This skill — orchestrate Sisyphus delegations | delegate to sisyphus |
-| Omo Hephaestus | `omo/omo-hephaestus` | Agent spawner — auto-routes prompts to appropriate skills | any task, delegation |
-
-### Other / Utility (3 skills)
-
-| Skill | `load_skills` value | Purpose | Triggers |
-|---|---|---|---|
-| FlatBuffers Coder | `other/flatbuffers-coder` | FlatBuffers for Unity — .fbs schemas, C# generation, JSON-to-binary | schema, flatbuffers, serialize |
-| Mermaid | `other/mermaid` | Create Mermaid diagrams — flowcharts, architecture, state machines | diagram, visualize, flowchart |
-| Skill Creator | `other/skill-creator` | Guide for creating or updating skills | create skill, update skill |
-
----
-
-## Multi-Skill Loading
-
-Some tasks benefit from loading multiple skills. Pass them all in `load_skills`.
-
-| Scenario | `load_skills` |
-|---|---|
-| Implement UI Toolkit screen with data binding | `["unity/unity-code", "unity/ui-toolkit/ui-toolkit-master", "unity/ui-toolkit/ui-toolkit-databinding"]` |
-| Build responsive mobile UI | `["unity/ui-toolkit/ui-toolkit-master", "unity/ui-toolkit/ui-toolkit-responsive", "unity/ui-toolkit/ui-toolkit-mobile"]` |
-| Plan feature + write TDD | `["unity/unity-plan", "unity/unity-write-tdd"]` |
-| Debug + investigate root cause | `["unity/unity-debug", "unity/unity-investigate"]` |
-| Implement + write tests | `["unity/unity-code", "unity/unity-test"]` |
-| Build themed UI Toolkit components | `["unity/ui-toolkit/ui-toolkit-master", "unity/ui-toolkit/ui-toolkit-theming", "unity/ui-toolkit/ui-toolkit-architecture"]` |
-| Refactor + optimize performance | `["unity/unity-refactor", "unity/unity-optimize-performance"]` |
-| Implement UI from UX spec | `["unity/unity-ui", "unity/unity-ux-design"]` |
-| Fix errors + commit | `["unity/unity-fix-errors", "git/git-commit"]` |
-| Review PR locally + generate comment | `["unity/unity-review-pr-local", "git/git-comment"]` |
-
----
-
-## Intent → Skill Cross-Reference
-
-Comprehensive mapping from user intent to primary skill, with optional additions.
-
-| User Intent | Primary Skill | Optional Additions |
-|---|---|---|
-| Write/implement C# code | `unity/unity-code` | `unity/unity-test` |
-| Plan/estimate/breakdown | `unity/unity-plan` | `unity/unity-write-tdd` |
-| Write tests | `unity/unity-test` | `unity/unity-code` |
-| Review PR (GitHub) | `unity/unity-review-pr` | — |
-| Review PR (local/offline) | `unity/unity-review-pr-local` | `git/git-comment` |
-| Execute task file | `unity/unity-plan-executor` | — |
-| Detail task plan | `unity/unity-plan-detail` | — |
-| Investigate codebase | `unity/unity-investigate` | — |
-| Fix compilation errors | `unity/unity-fix-errors` | `git/git-commit` |
-| Debug runtime issues | `unity/unity-debug` | `unity/unity-investigate` |
-| FlatBuffers schema | `other/flatbuffers-coder` | — |
-| Generate diagram | `other/mermaid` | — |
-| Check bash script | `bash/bash-check` | `bash/bash-optimize` |
-| Optimize bash script | `bash/bash-optimize` | `bash/bash-check` |
-| Install software/deps | `bash/bash-install` | — |
-| Create/update skill | `other/skill-creator` | — |
-| Shader/art pipeline | `unity/unity-tech-art` | — |
-| Editor tools/inspectors | `unity/unity-editor-tools` | — |
-| Performance optimization | `unity/unity-optimize-performance` | `unity/unity-refactor` |
-| Refactoring | `unity/unity-refactor` | `unity/unity-optimize-performance` |
-| Mobile deployment | `unity/unity-mobile-deploy` | — |
-| WebGL deployment | `unity/unity-web-deploy` | — |
-| Build UI from design | `unity/unity-ui` | `unity/unity-ux-design` |
-| Design UX screen | `unity/unity-ux-design` | `unity/unity-ui` |
-| Documentation | `unity/unity-write-docs` | — |
-| Technical Design Doc | `unity/unity-write-tdd` | `unity/unity-plan` |
-| Commit changes | `git/git-commit` | — |
-| Squash commits | `git/git-squash` | — |
-| Generate commit comment | `git/git-comment` | — |
-| Audit singletons | `unity/unity-singleton-auditor` | `unity/unity-refactor` |
-| Analyze console logs | `unity/unity-log-analyzer` | `unity/unity-fix-errors` |
-| Generate QA test cases | `unity/unity-test-case` | `unity/unity-investigate` |
-| Build UI Toolkit screens | `unity/ui-toolkit/ui-toolkit-master` | See UI Toolkit sub-skills |
-| Theme/design tokens | `unity/ui-toolkit/ui-toolkit-theming` | `unity/ui-toolkit/ui-toolkit-master` |
-| `use skill <name> ...` | `<category>/<name>` | — |
-| No specific skill | Justify omission; `load_skills=[]` | — |
-
----
-
 ## Prompt Refinement Workflow
 
-Every delegation follows this 6-step flow. Never skip directly to delegation.
+Every delegation follows this 7-step flow. **Auto-improve first; questions are a last resort.**
 
-```
-User Request (raw)
-    ↓
-Step 1: Analyze intent, clarity, completeness
-    ↓
-Step 2: IF ambiguous → Ask clarifying questions (via question tool)
-    ↓
-Step 3: Refine prompt (integrate answers + select skills)
-    ↓
-Step 4: Show refined prompt preview to user
-    ↓
-Step 5: Get confirmation (yes / no / edit)
-    ↓
-Step 6: IF confirmed → Delegate to Sisyphus with refined prompt
-```
+`Analyze → Auto-Improve → Clarify (only if blocked) → Refine → Preview → Confirm → Delegate`
 
-For detailed clarity scoring, ambiguity patterns, question templates, and before/after examples, see `references/prompt-refinement.md`.
+For detailed clarity scoring, ambiguity patterns, question templates, and before/after examples, see `references/prompt-refinement.md`. Use the Intent → Skill Cross-Reference in `references/skill-inventory.md` to select `load_skills` values.
 
 ### Step 1: Analyze
 
-Score the request against 5 dimensions (Goal, Scope, Constraints, Success criteria, Context) on a 1-3 scale. Total < 12 → needs clarification. Total ≥ 12 → skip to Step 3.
+Score the request against 5 dimensions (Goal, Scope, Constraints, Success criteria, Context) on a 1-3 scale. Total < 12 → needs clarification. Total ≥ 12 → skip to Step 2.
 
-State the analysis internally:
-```
-Analysis:
-- Goal: [1-3] — [reasoning]
-- Scope: [1-3] — [reasoning]
-- Constraints: [1-3] — [reasoning]
-- Success: [1-3] — [reasoning]
-- Context: [1-3] — [reasoning]
-- Total: [5-15]
-- Intent → Primary skill: [skill-name]
-```
+### Step 2: Auto-Improve (Technical Specification)
 
-### Step 2: Clarify (if needed)
+**Upgrade** the raw request into a Technical Specification using best practices and reasonable defaults. Infer likely intent, constraints, and success criteria. Only leave placeholders when truly unknown.
 
-Use the `question` tool to ask 2-5 targeted questions. Pick from templates in `references/prompt-refinement.md`:
-- Goal clarification — what specific outcome?
-- Scope clarification — which files/systems?
-- Constraint clarification — patterns, performance, platform?
-- Success criteria — how to verify completion?
-- Approach — preference for implementation strategy?
+**Format (mandatory):** Goal — Scope — Constraints — Skills — Verification
 
-**Do NOT ask questions that can be answered by reading the codebase.** Use `explore` subagent or direct investigation for those.
+### Step 3: Clarify (only if blocked)
 
-### Step 3: Refine
+Ask 1-3 targeted questions **only** if a critical ambiguity blocks progress after auto-improvement. Use `question` tool. Pick templates from `references/prompt-refinement.md`. **Do NOT ask questions answerable by reading the codebase** — use `explore` subagent instead.
 
-Integrate user answers (if any) into a structured refined prompt. Select skills from the Intent → Skill Cross-Reference table. Compose:
-- Clear goal (one sentence)
-- Explicit scope (files/systems)
-- Selected skills with rationale
-- Expected outcome with verification criteria
-- Constraints including safety rules
+### Step 4: Refine
 
-### Step 4: Show Preview
+Integrate user answers (if any) into the Technical Specification. Select skills from the Intent → Skill Cross-Reference. Compose: clear goal, explicit scope, selected skills with rationale, expected outcome, constraints including safety rules.
 
-Present the refined prompt to the user in this format:
+### Step 5: Show Preview
+
+Present to the user:
 
 ```
 ## Refined Prompt Preview
@@ -336,14 +138,14 @@ Present the refined prompt to the user in this format:
 Ready to delegate? (yes / no / edit)
 ```
 
-### Step 5: Confirm
+### Step 6: Confirm
 
 Use the `question` tool with options:
-- **Yes** → Proceed to delegation (Step 6)
-- **Edit** → User provides changes → return to Step 3
-- **No** → Ask "What should we do instead?" → restart from Step 1
+- **Yes** → Proceed to Step 7
+- **Edit** → User provides changes → return to Step 4
+- **No** → Ask what to do instead → restart from Step 1
 
-### Step 6: Delegate
+### Step 7: Delegate
 
 Only after confirmation. Follow the delegation mechanics below.
 
@@ -459,21 +261,18 @@ call_omo_agent(subagent_type="sisyphus", load_skills=[
 
 | Bad | Good |
 |---|---|
-| Delegating without analyzing the request first | Run 6-step workflow: Analyze → Clarify → Refine → Preview → Confirm → Delegate |
+| Delegating without analyzing the request first | Run 7-step workflow: Analyze → Auto-Improve → Clarify → Refine → Preview → Confirm → Delegate |
 | Skipping clarifying questions on vague requests | Score clarity < 12 → ask questions via `question` tool |
 | Delegating without user confirmation | Always show refined prompt preview and get yes/no/edit |
 | Asking questions answerable by reading code | Use `explore` subagent for codebase investigation |
-| `subagent_type="explore"` for implementation | `subagent_type="sisyphus"` |
+| `subagent_type="explore"` for implementation | `subagent_type="sisyphus"` — always for implementation |
 | Missing `load_skills` parameter | `load_skills=["category/skill-name"]` — ALWAYS required |
-| `load_skills=["unity-code"]` (no category) | `load_skills=["unity/unity-code"]` (category/name) |
-| `load_skills=["skill-creator"]` | `load_skills=["other/skill-creator"]` |
-| `load_skills=["ui-toolkit-master"]` (missing nested path) | `load_skills=["unity/ui-toolkit/ui-toolkit-master"]` |
-| Missing skill load section in prompt | "FIRST: Load Required Skill" at top |
-| No git restrictions in MUST NOT DO | Include push/metadata restrictions |
-| Prompt generation before loading skill | Load skill first, then generate |
-| Subagent skips `Read` on modified files | Require `Read` on all changed files |
-| Passing unvalidated `session_id` | Verify via `session_list()` first |
+| Wrong skill path format (missing category or nested path) | `"unity/unity-code"`, `"other/skill-creator"`, `"unity/ui-toolkit/ui-toolkit-master"` |
+| Missing "FIRST: Load Required Skill" in prompt | Always start delegation prompt with skill load instruction |
+| No git/safety restrictions in MUST NOT DO | Include push/metadata/destructive-action restrictions |
+| Passing unvalidated `session_id` | Verify via `session_list()` / `session_info()` first |
 | Loading 5+ skills per delegation | Max 4 skills; split into sequential delegations |
+| Subagent skips `Read` on modified files | Require `Read` on all changed files in MUST DO section |
 
 ---
 
