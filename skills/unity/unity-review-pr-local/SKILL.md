@@ -29,7 +29,7 @@ Perform offline or draft code reviews for Unity projects without posting to GitH
 
 ## Output Requirement (MANDATORY)
 
-**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.opencode/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)
+**Every review MUST follow the template**: [OUTPUT_TEMPLATE.md](.opencode/skills/unity/unity-review-pr-local/references/OUTPUT_TEMPLATE.md)
 
 Save output to: `Documents/Reviews/PR_<number>_review.md`
 
@@ -132,7 +132,7 @@ Generate markdown file at `Documents/Reviews/PR_<number>_review.md`:
 - **COMMENT**: Only 🔵/💚 issues
 - **REQUEST_CHANGES**: Any 🔴 issues
 
-See [OUTPUT_TEMPLATE.md](.opencode/skills/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.
+See [OUTPUT_TEMPLATE.md](.opencode/skills/unity/unity-review-pr-local/references/OUTPUT_TEMPLATE.md) for full template.
 
 ---
 

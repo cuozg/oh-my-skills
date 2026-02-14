@@ -1,6 +1,6 @@
 ---
 name: unity-optimize-performance
-description: "Fix Unity performance issues. Use when: (1) Low/inconsistent FPS, (2) High memory usage or leaks, (3) Slow load times, (4) Need to audit .opencode/skills/unity-optimize-performance/scripts/assets for performance risks."
+description: "(opencode-project - Skill) Fix Unity performance issues and optimize runtime efficiency. Use when: (1) Low/inconsistent FPS, (2) High memory usage or leaks, (3) Slow load times, (4) Need to audit assets for performance risks, (5) Reducing build size, (6) Profiling CPU/GPU bottlenecks. Triggers: 'performance', 'FPS drop', 'frame rate', 'lag', 'stutter', 'GC spike', 'garbage collection', 'memory leak', 'profiler', 'CPU bound', 'GPU bound', 'draw calls', 'batching', 'object pooling', 'async loading', 'Addressables', 'load time', 'optimization', 'overdraw', 'fill rate', 'texture memory', 'mesh optimization', 'optimize', 'slow', 'too many draw calls', 'build size', 'reduce memory', 'frame budget', 'spike', 'jank'."
 ---
 
 # Unity Performance Optimizer
@@ -30,7 +30,7 @@ A performance report saved to `Documents/Performance/PERFORMANCE_REPORT_[Area]_[
 
 ## Output Requirement (MANDATORY)
 
-**Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](.opencode/skills/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md)
+**Every performance report MUST follow the template**: [PERFORMANCE_REPORT.md](.opencode/skills/unity/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md)
 
 Save output to: `Documents/Performance/PERFORMANCE_REPORT_[Area]_[YYYYMMDD].md`
 

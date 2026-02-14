@@ -25,81 +25,21 @@ This skill covers **two approaches** to UI data binding in UI Toolkit:
 
 The project uses a **manual event-driven data flow** pattern: static `Action` delegates serve as an event bus, controllers subscribe/unsubscribe in `OnEnable`/`OnDisable`, and views update UI via direct `Q<T>()` queries and property assignment.
 
-### Data Flow Architecture
+> **Full data flow diagram, event bus code, controller lifecycle code, and shop purchase walkthrough**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#dragon-crashers-event-driven-approach)
 
-```
-┌──────────────┐   static Action    ┌──────────────────┐   method call    ┌──────────────┐
-│  User Input  │ ─────────────────▶ │   Controller     │ ───────────────▶ │    View      │
-│  (ClickEvent)│                    │  (MonoBehaviour)  │                  │  (UIView)    │
-└──────────────┘                    │                   │                  │              │
-                                    │ OnEnable:         │                  │ Q<Label>()   │
-┌──────────────┐   static Action    │  Event += Handler │  static Action   │ .text = val  │
-│  Manager     │ ◀─────────────────│ OnDisable:        │ ◀─────────────── │ .style.x = y │
-│ (GameData    │                    │  Event -= Handler │                  │              │
-│  Manager)    │ ─────────────────▶ │                   │                  │              │
-└──────────────┘   static Action    └──────────────────┘                  └──────────────┘
-       │                                                                         │
-       ▼                                                                         │
-┌──────────────┐                                                                 │
-│ SaveManager  │   JsonUtility.ToJson() / FromJsonOverwrite()                    │
-│ (persistence)│   GameData ↔ savegame.dat                                       │
-└──────────────┘                                                                 │
-       │                                                                         │
-       └─── SaveManager.GameDataLoaded (static event) ──────────────────────────┘
-```
+**Key components**:
 
-### 1. Event Bus — Static Action Delegates
+1. **Event Bus** — 10 static event classes in `Assets/Scripts/UI/Events/` (CharEvents, ShopEvents, HomeEvents, MailEvents, InventoryEvents, SettingsEvents, GameplayEvents, MainMenuUIEvents, MediaQueryEvents, ThemeEvents). Pattern: `public static Action<T>` delegates (never C# `event`), null-conditional invoke (`?.Invoke()`), one class per screen domain. Full listing: [Dragon Crashers Insights](../references/dragon-crashers-insights.md).
 
-Each screen domain has a dedicated static event class in `Assets/Scripts/UI/Events/`. All 10 event classes follow the same pattern:
+2. **Controller Subscription** — `MonoBehaviour`s subscribe in `OnEnable`, unsubscribe in `OnDisable`. UIView subclasses use Constructor/`Dispose()`. Every `+=` must have matching `-=`. See [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for full controller/view architecture.
 
-```csharp
-// Assets/Scripts/UI/Events/ShopEvents.cs — representative example
-public static class ShopEvents
-{
-    public static Action GoldSelected;                              // parameterless
-    public static Action<ShopItemSO, Vector2> ShopItemPurchasing;   // typed payload
-    public static Action<GameData> FundsUpdated;                    // data model payload
-}
-```
+3. **View Data Update** — Views extend `UIView`. Cache `Q()` queries in `SetVisualElements()`, update via direct property assignment (`label.text = value`). Dynamic lists clear and rebuild from `VisualTreeAsset.Instantiate()` templates.
 
-10 event classes exist in `Assets/Scripts/UI/Events/` (CharEvents, ShopEvents, HomeEvents, MailEvents, InventoryEvents, SettingsEvents, GameplayEvents, MainMenuUIEvents, MediaQueryEvents, ThemeEvents). Pattern: `public static Action<T>` delegates (never C# `event`), null-conditional invoke (`?.Invoke()`), one class per screen domain.
+4. **ScriptableObject as Data Source** — SOs (`ShopItemSO`, `EquipmentSO`, `CharacterBaseSO`, etc.) loaded via `Resources.LoadAll<T>(path)` and pushed to views through static events.
 
-> Full event class listing: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Architecture Components)
+5. **GameData Persistence** — `GameData` is a `[Serializable]` plain class for mutable player state. Persistence via `JsonUtility.ToJson()` / `FromJsonOverwrite()` through `SaveManager` → `FileManager`. UI notified via `SaveManager.GameDataLoaded?.Invoke(gameData)`.
 
-### 2. Controller Subscription Lifecycle
-
-> **Full controller/view architecture**: See [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for UIView base class, UIManager, and screen lifecycle. Examples below focus on the **data flow aspect** only.
-
-Controllers are `MonoBehaviour`s that subscribe in `OnEnable` and unsubscribe in `OnDisable`:
-
-```csharp
-// Assets/Scripts/UI/Controllers/ShopScreenController.cs — pattern
-void OnEnable()  { ShopEvents.ShopItemClicked += OnTryBuyItem; /* ... */ }
-void OnDisable() { ShopEvents.ShopItemClicked -= OnTryBuyItem; /* ... */ }
-void Start()     { LoadShopData(); ShopEvents.ShopUpdated?.Invoke(m_GoldShopItems); }
-```
-
-**Key conventions**: `OnEnable`/`OnDisable` for MonoBehaviours; Constructor/`Dispose()` for UIView subclasses. Every `+=` must have matching `-=`.
-
-### 3. View Data Update — Direct Q() + Property Assignment
-
-Views extend `UIView` (a non-MonoBehaviour base class). Pattern: cache Q() queries in `SetVisualElements()`, subscribe events in constructor, unsubscribe in `Dispose()`, update UI via direct property assignment (`label.text = value`, `element.style.backgroundImage = ...`).
-
-> Full HomeView/ShopView code: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Screen Implementations)
-
-**Dynamic list rendering** — ShopView clears and rebuilds from `VisualTreeAsset.Instantiate()` templates (see [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for full pattern).
-
-### 4. ScriptableObject as Data Source
-
-ScriptableObjects (`ShopItemSO`, `EquipmentSO`, `CharacterBaseSO`, `LevelSO`, `ChatSO`, `MailMessageSO`, `GameIconsSO`) are loaded via `Resources.LoadAll<T>(path)` and pushed to views through static events.
-
-### 5. GameData Persistence
-
-`GameData` (`Assets/Scripts/Data/GameData.cs`) is a `[Serializable]` plain class (not ScriptableObject) for mutable player state (gold, gems, potions, settings). Persistence: `JsonUtility.ToJson()` / `FromJsonOverwrite()` via `SaveManager` → `FileManager`. UI notified via `SaveManager.GameDataLoaded?.Invoke(gameData)`.
-
-### 6. Complete Data Flow — Shop Purchase
-
-User click → `ShopItemComponent` fires `ShopEvents.ShopItemClicked` → `ShopScreenController.OnTryBuyItem()` → fires `ShopItemPurchasing` → `GameDataManager.OnPurchaseItem()` → checks funds → YES: `PayTransaction()` + fires `TransactionProcessed`, `FundsUpdated`, `PotionsUpdated` → views update labels/animations; NO: fires `TransactionFailed`. SaveManager auto-saves on quit.
+6. **Shop Purchase Flow** — User click → `ShopItemComponent` fires `ShopEvents.ShopItemClicked` → `ShopScreenController.OnTryBuyItem()` → `GameDataManager.OnPurchaseItem()` → checks funds → fires `TransactionProcessed`/`FundsUpdated` or `TransactionFailed`.
 
 ### Cross-References
 
@@ -134,28 +74,9 @@ User click → `ShopItemComponent` fires `ShopEvents.ShopItemClicked` → `ShopS
 
 ## IDataSource Interface
 
-Data sources must implement `IDataSource` and `INotifyBindablePropertyChanged` to participate in the binding system. `ScriptableObject` and `MonoBehaviour` already implement `IDataSource`.
+Data sources must implement `IDataSource` and `INotifyBindablePropertyChanged` to participate in the binding system. `ScriptableObject` and `MonoBehaviour` already implement `IDataSource`. Pattern: `[CreateProperty]` on properties, guard → set → `Notify()` in setter, `EventHandler<BindablePropertyChangedEventArgs>` event.
 
-```csharp
-[CreateAssetMenu(menuName = "Data/PlayerData")]
-public class PlayerData : ScriptableObject, INotifyBindablePropertyChanged
-{
-    public event EventHandler<BindablePropertyChangedEventArgs> propertyChanged;
-
-    [CreateProperty]
-    public int Health
-    {
-        get => _health;
-        set { if (_health == value) return; _health = Mathf.Clamp(value, 0, MaxHealth); Notify(nameof(Health)); }
-    }
-
-    // Same pattern for PlayerName (string), MaxHealth (int) — guard, set, notify
-    [SerializeField] int _health = 100;
-
-    void Notify(string property) =>
-        propertyChanged?.Invoke(this, new BindablePropertyChangedEventArgs(property));
-}
-```
+> **Full PlayerData implementation**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#idatasource-implementation)
 
 ## [CreateProperty] Attribute
 
@@ -163,118 +84,21 @@ public class PlayerData : ScriptableObject, INotifyBindablePropertyChanged
 
 ## PropertyPath
 
-`PropertyPath` identifies which property on the data source maps to which property on the UI element.
+`PropertyPath` identifies which property on the data source maps to which property on the UI element. Supports simple (`"Health"`), nested (`"Stats.Strength"`), and indexed (`"Inventory[0].Name"`) paths. In UXML, use dot notation as `data-source-path`.
 
-```csharp
-// Simple property
-var path = new PropertyPath("Health");
-
-// Nested property (if data source has a nested object)
-var path = new PropertyPath("Stats.Strength");
-
-// Array/list element
-var path = new PropertyPath("Inventory[0].Name");
-
-// In UXML, use dot notation as data-source-path
-// data-source-path="Stats.Strength"
-```
+> **PropertyPath code examples**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#propertypath-examples)
 
 ## Setting Up Bindings in C#
 
-### Basic binding
+Pattern: Set `root.dataSource` on a container (children inherit), then `element.SetBinding("property", new DataBinding { ... })` for each bound element. Child elements can override with their own `dataSource`. Key `DataBinding` properties: `dataSource` (optional override), `dataSourcePath` (PropertyPath), `bindingMode`.
 
-```csharp
-using UnityEngine.UIElements;
-
-[RequireComponent(typeof(UIDocument))]
-public class HUDController : MonoBehaviour
-{
-    [SerializeField] PlayerData _playerData;
-
-    void OnEnable()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-
-        // Set data source on a container — children inherit it
-        root.dataSource = _playerData;
-
-        // Bind label text to PlayerName
-        var nameLabel = root.Q<Label>("player-name");
-        nameLabel.SetBinding("text", new DataBinding
-        {
-            dataSourcePath = new PropertyPath("PlayerName"),
-            bindingMode = BindingMode.OneWay
-        });
-
-        // Bind health bar value
-        var healthBar = root.Q<ProgressBar>("health-bar");
-        healthBar.SetBinding("value", new DataBinding
-        {
-            dataSourcePath = new PropertyPath("Health"),
-            bindingMode = BindingMode.OneWay
-        });
-    }
-}
-```
-
-### Per-element data source override
-
-```csharp
-// Child element can override inherited data source
-var shopPanel = root.Q("shop-panel");
-shopPanel.dataSource = _shopData; // different source for this subtree
-```
-
-### DataBinding properties
-
-```csharp
-var binding = new DataBinding
-{
-    dataSource = _playerData,               // optional: override inherited source
-    dataSourcePath = new PropertyPath("Health"),
-    bindingMode = BindingMode.TwoWay,       // direction
-};
-element.SetBinding("value", binding);
-```
+> **Full C# binding examples** (HUDController, per-element override, DataBinding properties): See [databinding-code-patterns.md](references/databinding-code-patterns.md#setting-up-bindings-in-c)
 
 ## Setting Up Bindings in UXML
 
-Bindings can be declared directly in UXML markup:
+Bindings can be declared in UXML using `data-source-type`, `binding-path`, and `<Bindings>` elements. Parent `data-source` attributes are inherited by children. Set the actual object reference in C# (`root.dataSource = _playerData`).
 
-```xml
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-    <ui:VisualElement data-source-type="PlayerData">
-
-        <!-- Bind text to PlayerName property -->
-        <ui:Label binding-path="PlayerName" />
-
-        <!-- Bind with explicit data-source-path -->
-        <ui:ProgressBar name="health-bar">
-            <Bindings>
-                <ui:DataBinding property="value"
-                                data-source-path="Health"
-                                binding-mode="OneWay" />
-            </Bindings>
-        </ui:ProgressBar>
-
-        <!-- Two-way binding on a slider -->
-        <ui:Slider name="volume-slider" low-value="0" high-value="1">
-            <Bindings>
-                <ui:DataBinding property="value"
-                                data-source-path="Volume"
-                                binding-mode="TwoWay" />
-            </Bindings>
-        </ui:Slider>
-
-    </ui:VisualElement>
-</ui:UXML>
-```
-
-The `data-source` and `data-source-type` attributes on a parent element are inherited by all children. Set the actual object reference in C#:
-
-```csharp
-root.dataSource = _playerData;
-```
+> **Full UXML binding examples** (Label, ProgressBar, Slider): See [databinding-code-patterns.md](references/databinding-code-patterns.md#setting-up-bindings-in-uxml)
 
 ## Type Converters
 
@@ -293,53 +117,7 @@ The binding system automatically converts between compatible types.
 
 ### Custom type converter
 
-When you need formatting (e.g., `100` → `"100 HP"`):
-
-```csharp
-using Unity.Properties;
-using UnityEngine.UIElements;
-
-[ConverterGroup("GameUI")]
-public static class GameUIConverters
-{
-    [Converter]
-    public static string IntToHealthString(ref int value)
-    {
-        return $"{value} HP";
-    }
-
-    [Converter]
-    public static string FloatToPercentString(ref float value)
-    {
-        return $"{value * 100f:F0}%";
-    }
-}
-```
-
-Register the converter group on a binding:
-
-```csharp
-var binding = new DataBinding
-{
-    dataSourcePath = new PropertyPath("Health"),
-    bindingMode = BindingMode.OneWay,
-    converterGroup = "GameUI"
-};
-nameLabel.SetBinding("text", binding);
-```
-
-Or in UXML:
-
-```xml
-<ui:Label name="health-text">
-    <Bindings>
-        <ui:DataBinding property="text"
-                        data-source-path="Health"
-                        binding-mode="OneWay"
-                        source-to-ui-converters="GameUI" />
-    </Bindings>
-</ui:Label>
-```
+> **Full custom converter code (C# + UXML registration)**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#type-converters) — `[ConverterGroup]`, `[Converter]` methods, and `source-to-ui-converters` UXML attribute.
 
 ## Binding Modes
 
@@ -349,99 +127,17 @@ Or in UXML:
 | `TwoWay` | Source ↔ UI | Input fields, sliders, toggles |
 | `OneWayToSource` | UI → Source | UI-only input that writes back to model |
 
-**Default is `TwoWay`** — explicitly set `OneWay` for display-only elements to avoid accidental writes.
-
-```csharp
-// Display label — read-only
-labelBinding.bindingMode = BindingMode.OneWay;
-
-// Settings slider — bidirectional
-sliderBinding.bindingMode = BindingMode.TwoWay;
-
-// Text input that only writes to model
-inputBinding.bindingMode = BindingMode.OneWayToSource;
-```
+**Default is `TwoWay`** — explicitly set `OneWay` for display-only elements to avoid accidental writes. See [databinding-code-patterns.md](references/databinding-code-patterns.md#binding-mode-code-examples) for usage examples.
 
 ## Binding Lifecycle
 
-### When bindings update
+> **Full lifecycle details, manual refresh, and performance considerations**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#binding-lifecycle) — update timing, manual refresh pattern, and when to use direct assignment vs binding.
 
-The binding system processes updates during the **panel update phase**, not immediately on property change:
-
-1. Property setter fires `NotifyPropertyChanged()`
-2. Binding system marks the binding as dirty
-3. On next panel update, dirty bindings resolve and push values to UI elements
-
-### Manual refresh
-
-Force an immediate binding update when needed:
-
-```csharp
-// Refresh all bindings on an element
-element.ClearBinding("text");
-element.SetBinding("text", binding);
-```
-
-### Performance considerations
-
-- Bindings are polled each panel update — keep data source count reasonable
-- Prefer `OneWay` over `TwoWay` when writes are not needed
-- Group related properties in a single data source to minimize source lookups
-- For high-frequency updates (60fps score counter), consider direct assignment over binding:
-
-```csharp
-// Direct assignment for per-frame updates — more efficient than binding
-void UpdateScore(int score)
-{
-    _scoreLabel.text = score.ToString();
-}
-```
-
-- Use binding for data that changes infrequently (player name, settings, inventory)
-- See [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) for broader optimization
+Key points: Bindings update during **panel update phase** (not immediately). Prefer `OneWay` for display-only. Use direct assignment (`label.text = value`) for 60fps data. See [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) for broader optimization.
 
 ## Complete Example
 
-Uses the `PlayerData` ScriptableObject from the IDataSource section above, extended with a `Gold` property.
-
-```csharp
-// Controller — HUDScreenController.cs
-[RequireComponent(typeof(UIDocument))]
-public class HUDScreenController : MonoBehaviour
-{
-    [SerializeField] PlayerData _data;
-
-    void OnEnable()
-    {
-        var root = GetComponent<UIDocument>().rootVisualElement;
-        root.dataSource = _data;
-
-        Bind(root, "player-name", "text", "PlayerName", BindingMode.OneWay);
-        Bind(root, "health-bar", "value", "Health", BindingMode.OneWay);
-        Bind(root, "gold-label", "text", "Gold", BindingMode.OneWay, "GameUI");
-    }
-
-    static void Bind(VisualElement root, string elemName, string prop,
-                     string path, BindingMode mode, string converter = null)
-    {
-        var binding = new DataBinding
-        {
-            dataSourcePath = new PropertyPath(path),
-            bindingMode = mode
-        };
-        if (converter != null) binding.converterGroup = converter;
-        root.Q(elemName).SetBinding(prop, binding);
-    }
-}
-
-// Converter — GameUIConverters.cs
-[ConverterGroup("GameUI")]
-public static class GameUIConverters
-{
-    [Converter]
-    public static string IntToFormattedString(ref int value) => value.ToString("N0");
-}
-```
+> **Full HUDScreenController + GameUIConverters code**: See [databinding-code-patterns.md](references/databinding-code-patterns.md#complete-example--hudscreencontroller) — complete controller with helper `Bind()` method and `[ConverterGroup]` converter.
 
 ## Common Pitfalls
 

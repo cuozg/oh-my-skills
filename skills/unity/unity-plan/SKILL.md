@@ -317,3 +317,9 @@ Use `unityMCP_*` tools during the **Investigate Codebase** phase (Step 3) to gat
 3. unityMCP_list_packages                     → Identify available packages/dependencies
 4. [Proceed with plan generation]
 ```
+
+## Handoff & Boundaries
+
+- **OWNS**: High-level feature planning — requirement analysis, epic/task breakdown, effort estimation, risk identification, dependency mapping, and timeline generation.
+- **Delegates to**: `unity-plan-detail` for generating per-task complete code changes. `unity-game-designer` for game design concept exploration before planning.
+- **Does NOT**: Generate per-task implementation code (that's `unity-plan-detail`). Does not execute plans (that's `unity-plan-executor`).

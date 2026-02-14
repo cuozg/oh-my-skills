@@ -1,6 +1,13 @@
 ---
+description: 'Execute Unity implementation plans from HTML files with 100% accuracy.
+  Apply exact code changes to C# scripts, MonoBehaviours, ScriptableObjects, prefabs,
+  and Unity assets. Use when: (1) Plan HTML file from Documents/Plans/*.html is ready,
+  (2) Code changes in split diff view must be applied exactly to Unity project, (3)
+  Implementing Unity features with no interpretation - execute exactly as shown, (4)
+  Applying scripted changes to Unity C# codebase. Triggers: ''execute plan'', ''apply
+  plan'', ''implement from HTML'', ''run plan executor'', ''apply Unity changes'',
+  ''execute implementation''.'
 name: unity-plan-executor
-description: "Execute implementation plans from HTML files with 100% accuracy. Use when: (1) Plan HTML file from Documents/Plans/*.html is ready, (2) Code changes shown in split diff view must be applied exactly, (3) No interpretation - implement exactly as shown."
 ---
 
 # Unity Plan Executor
@@ -27,6 +34,10 @@ Execute implementation plans from HTML files with 100% accuracy — providing a 
 The HTML file contains GitHub-style split diff views showing exact code changes to apply.
 
 ## Execution Protocol
+
+## Workflow
+
+<!-- Alias: See Execution Protocol below -->
 
 ### Phase 1: Parse HTML Plan File
 

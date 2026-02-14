@@ -1,6 +1,14 @@
 ---
+description: 'Audit Unity Singleton usage across C# scripts. Detect MonoBehaviour
+  initialization order risks, circular dependencies, missing null-checks, and Singleton
+  anti-patterns in Unity projects. Use when: (1) Reviewing Singleton health in Unity
+  codebase, (2) Detecting circular Singleton dependencies, (3) Finding unsafe Instance
+  access without null-checks, (4) Auditing Unity startup sequence and Awake/Start
+  order, (5) Identifying Singletons that should be ScriptableObjects or plain classes.
+  Triggers: ''audit singletons'', ''singleton health'', ''singleton dependencies'',
+  ''check singleton usage'', ''Unity initialization order'', ''MonoBehaviour singleton'',
+  ''singleton pattern review''.'
 name: unity-singleton-auditor
-description: "Audit Singleton usage across Unity projects. Detects initialization order risks, circular dependencies, missing null-checks, and Singleton anti-patterns. Use when: (1) Reviewing Singleton usage health, (2) Detecting circular Singleton dependencies, (3) Finding unsafe Instance access without null-checks, (4) Auditing initialization order in startup sequences, (5) Identifying Singletons that should be plain classes. Triggers: 'audit singletons', 'singleton health', 'singleton dependencies', 'check singleton usage', 'initialization order'."
 ---
 
 # Unity Singleton Auditor

@@ -1,6 +1,12 @@
 ---
+description: 'Generate Technical Design Documents for Unity projects. Document game
+  systems, architecture decisions, client/server logic, API specs, and data schemas.
+  Use when: (1) Formalizing Unity feature plans into specs, (2) Documenting MonoBehaviour/ScriptableObject
+  architectures, (3) Defining gameplay systems and data flow, (4) Specifying multiplayer
+  or backend integration, (5) Creating onboarding docs for Unity developers. Triggers:
+  ''write TDD'', ''technical design'', ''design document'', ''architecture spec'',
+  ''Unity system design'', ''API documentation''.'
 name: unity-write-tdd
-description: "Generate Technical Design Documents. Use when: (1) Formalizing plans into specs, (2) Documenting architecture decisions, (3) Defining client/server logic, (4) Specifying APIs and data schemas."
 ---
 
 # Unity TDD Writer
@@ -27,7 +33,7 @@ Generate Technical Design Documents — providing a structured, repeatable workf
 
 ## Output Requirement (MANDATORY)
 
-**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)
+**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)
 
 Save output to: `Documents/TDDs/TDD_[FeatureName].md`
 
@@ -35,7 +41,7 @@ Read the template first, then populate all sections.
 
 ## Output
 
-Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md).
+Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md).
 
 ## Workflow
 

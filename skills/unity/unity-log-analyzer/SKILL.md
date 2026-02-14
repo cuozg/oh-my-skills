@@ -120,3 +120,9 @@ Generate a markdown report:
 - `coplay-mcp_check_compile_errors` — verify compile state
 - `grep` — search codebase for error source patterns
 - `lsp_diagnostics` — cross-reference with LSP errors
+
+## Handoff & Boundaries
+
+- **OWNS**: Bulk parsing, classification, and grouping of Unity Editor console logs. Prioritizes errors, identifies patterns, maps to source files.
+- **Delegates to**: `unity-debug` for individual error deep investigation. `unity-fix-errors` for applying fixes to identified issues.
+- **Does NOT**: Fix errors directly. Does not perform deep single-error root cause analysis.

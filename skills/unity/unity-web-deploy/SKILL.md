@@ -1,6 +1,6 @@
 ---
 name: unity-web-deploy
-description: "WebGL deployment. Use when: (1) Configuring/optimizing WebGL builds, (2) C#/JavaScript interop, (3) Browser-specific issues (memory, audio, input), (4) PWA features."
+description: "(opencode-project - Skill) WebGL deployment and browser platform optimization. Use when: (1) Configuring/optimizing WebGL builds, (2) C#/JavaScript interop, (3) Browser-specific issues (memory, audio, input), (4) PWA features, (5) Hosting and serving Unity web builds, (6) Web-specific asset loading. Triggers: 'WebGL', 'web build', 'browser deploy', 'jslib', 'JavaScript plugin', 'C# JS interop', 'WebGL memory', 'browser audio', 'PWA', 'service worker', 'IndexedDB', 'WebGL template', 'compression format', 'Brotli', 'streaming assets web', 'CORS', 'web performance', 'WebGL 2', 'deploy to web', 'web deploy', 'Unity web', 'browser game', 'itch.io', 'web hosting Unity', 'emscripten', 'wasm'."
 ---
 
 # Unity Web Developer
@@ -84,3 +84,9 @@ Use `unityMCP_*` tools for build configuration, profiling, and validation.
 3. unityMCP_execute_script(filePath="...")     → Run WebGL build script
 4. unityMCP_get_unity_logs(show_errors=true)  → Check for build errors
 ```
+
+## Handoff & Boundaries
+
+- **OWNS**: WebGL-specific deployment — build configuration, C#/JavaScript interop, browser-specific issues (memory, audio, input), and PWA features.
+- **Delegates to**: `unity-build-pipeline` for general build automation and CI/CD. `unity-optimize-performance` for platform-agnostic performance optimization.
+- **Does NOT**: Handle iOS/Android builds (use `unity-mobile-deploy`). Does not handle general build scripting (use `unity-build-pipeline`).

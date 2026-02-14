@@ -1,6 +1,6 @@
 ---
 name: unity-write-docs
-description: "Create Unity project documentation. Use when: (1) Creating/updating README, (2) Documenting architectures, (3) Generating API references, (4) Writing onboarding guides, (5) Documenting Prefab/Scene setups."
+description: "(opencode-project - Skill) Create Unity project documentation. Use when: (1) Creating/updating README, (2) Documenting architectures, (3) Generating API references, (4) Writing onboarding guides, (5) Documenting Prefab/Scene setups, (6) Writing code comments and XML docs. Triggers: 'write docs', 'documentation', 'README', 'API reference', 'onboarding guide', 'architecture doc', 'system overview', 'code documentation', 'prefab documentation', 'scene documentation', 'wiki', 'changelog', 'contributing guide', 'technical writing', 'document this', 'explain this system', 'write a guide', 'how-to doc', 'XML summary', 'code comments', 'project docs'."
 ---
 
 # Unity Documentation
@@ -38,10 +38,10 @@ Each document follows the corresponding template from `assets/templates/`.
 ## Output Requirement (MANDATORY)
 
 **Every document MUST follow one of the templates**:
-- [README_TEMPLATE.md](.opencode/skills/unity-write-docs/assets/templates/README_TEMPLATE.md) — for project READMEs
-- [API_TEMPLATE.md](.opencode/skills/unity-write-docs/assets/templates/API_TEMPLATE.md) — for API references
-- [ARCHITECTURE_TEMPLATE.md](.opencode/skills/unity-write-docs/assets/templates/ARCHITECTURE_TEMPLATE.md) — for architecture docs
-- [GUIDE_TEMPLATE.md](.opencode/skills/unity-write-docs/assets/templates/GUIDE_TEMPLATE.md) — for onboarding/usage guides
+- [README_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/README_TEMPLATE.md) — for project READMEs
+- [API_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/API_TEMPLATE.md) — for API references
+- [ARCHITECTURE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/ARCHITECTURE_TEMPLATE.md) — for architecture docs
+- [GUIDE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/GUIDE_TEMPLATE.md) — for onboarding/usage guides
 
 Read the relevant template first, then populate all sections.
 
@@ -57,7 +57,7 @@ Read the relevant template first, then populate all sections.
 ## Workflow
 
 1. **Analyze**: `grep` for public APIs, ScriptableObjects, serialized fields
-2. **Generate**: Use templates from `.opencode/skills/unity-write-docs/assets/templates/`
+2. **Generate**: Use templates from `.opencode/skills/unity/unity-write-docs/assets/templates/`
 3. **Visualize**: Mermaid diagrams for hierarchies/flows
 4. **Validate**: Cross-reference with code signatures
 

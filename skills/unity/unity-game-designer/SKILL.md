@@ -7,6 +7,10 @@ description: "(opencode-project - Skill) Game design documentation and brainstor
 
 Game design documentation and mechanic brainstorming for Unity projects. Transform game concepts into structured, production-ready Game Design Documents with validated mechanics, economy models, and implementation roadmaps.
 
+## Purpose
+
+Design game mechanics, systems, and documentation for Unity projects — transforming concepts into structured, production-ready Game Design Documents with validated mechanics, economy models, and implementation roadmaps.
+
 ## Input
 
 - **Required**: Game concept, feature idea, or design problem to solve
@@ -126,3 +130,4 @@ When generating GDD sections, consider these Unity implementation details:
 | "Write a GDD for the tower defense we discussed" | Phase 1 → 3 | GDD from existing context |
 | "What monetization fits a casual match-3?" | Phase 2 (focused) | Economy pattern comparison |
 | "Add a guild system to our GDD" | Phase 3 (update) | Updated GDD with guild feature |
+

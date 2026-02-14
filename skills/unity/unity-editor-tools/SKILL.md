@@ -1,6 +1,6 @@
 ---
 name: unity-editor-tools
-description: "Create Unity Editor tools. Use when: (1) Custom Editor Windows/Inspectors, (2) Automating asset/scene validation, (3) Building engineer utilities (search, batch processors), (4) UI Toolkit (UXML/USS) interfaces."
+description: "(opencode-project - Skill) Create Unity Editor tools and extensions. Use when: (1) Custom Editor Windows/Inspectors, (2) Automating asset/scene validation, (3) Building engineer utilities (search, batch processors), (4) UI Toolkit (UXML/USS) editor interfaces, (5) Custom Gizmos and Handles, (6) Editor-only automation scripts. Triggers: 'editor window', 'custom inspector', 'PropertyDrawer', 'EditorWindow', 'ScriptableWizard', 'menu item', 'MenuItem', 'asset validation', 'scene validation', 'batch processor', 'editor utility', 'IMGUI', 'editor UI Toolkit', 'SerializedProperty', 'SerializedObject', 'OnInspectorGUI', 'CreateAssetMenu', 'editor automation', 'editor tool', 'custom tool', 'editor script', 'Gizmos', 'Handles', 'editor extension', 'toolbar button'."
 ---
 
 # Unity Editor Developer
@@ -31,8 +31,8 @@ Editor scripts placed in `Assets/Scripts/Editor/`, following the appropriate tem
 ## Output Requirement (MANDATORY)
 
 **Every editor tool MUST follow one of the templates**:
-- [EDITOR_WINDOW_TEMPLATE.md](.opencode/skills/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md) — for EditorWindow tools
-- [CUSTOM_INSPECTOR_TEMPLATE.md](.opencode/skills/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md) — for Custom Inspectors
+- [EDITOR_WINDOW_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md) — for EditorWindow tools
+- [CUSTOM_INSPECTOR_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md) — for Custom Inspectors
 
 Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, then populate all sections.
 
@@ -49,7 +49,7 @@ Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, the
 
 1. **Assess**: Identify pain point, choose Window vs Inspector
 2. **Architect**: UI Toolkit (modern) vs IMGUI (legacy), data persistence
-3. **Implement**: Use templates from `.opencode/skills/unity-editor-tools/assets/templates/`, patterns from [EDITOR_SCRIPTING_PATTERNS.md](.opencode/skills/unity-editor-tools/references/EDITOR_SCRIPTING_PATTERNS.md)
+3. **Implement**: Use templates from `.opencode/skills/unity/unity-editor-tools/assets/templates/`, patterns from [EDITOR_SCRIPTING_PATTERNS.md](.opencode/skills/unity/unity-editor-tools/references/EDITOR_SCRIPTING_PATTERNS.md)
 4. **Verify**: Test domain reloads, scene changes, profile if handling large data
 
 ## Best Practices
@@ -62,9 +62,9 @@ Place scripts in `Assets/Scripts/Editor/`. Read the relevant template first, the
 
 ## Templates
 
-- [EDITOR_WINDOW_TEMPLATE.md](.opencode/skills/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md)
-- [CUSTOM_INSPECTOR_TEMPLATE.md](.opencode/skills/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- [EDITOR_UI_TOOLKIT_GUIDE.md](.opencode/skills/unity-editor-tools/references/EDITOR_UI_TOOLKIT_GUIDE.md)
+- [EDITOR_WINDOW_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md)
+- [CUSTOM_INSPECTOR_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
+- [EDITOR_UI_TOOLKIT_GUIDE.md](.opencode/skills/unity/unity-editor-tools/references/EDITOR_UI_TOOLKIT_GUIDE.md)
 
 ---
 

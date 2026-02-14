@@ -1,6 +1,6 @@
 ---
 name: unity-fix-errors
-description: "Diagnose and fix Unity errors. Use when: (1) Console shows compiler errors/exceptions, (2) Play Mode behavior is broken, (3) Build fails, (4) Need structured debug report."
+description: "(opencode-project - Skill) Diagnose and fix Unity errors. Use when: (1) Console shows compiler errors/exceptions, (2) Play Mode behavior is broken, (3) Build fails, (4) Need structured debug report, (5) Assembly definition conflicts, (6) Package import errors. Triggers: 'fix error', 'compiler error', 'CS0', 'NullReferenceException', 'MissingReferenceException', 'build failed', 'play mode broken', 'stack trace', 'exception', 'runtime error', 'console error', 'red error', 'script error', 'assembly error', 'serialization error', 'missing script', 'broken prefab', 'fix this', 'not compiling', 'won\\'t compile', 'error in console', 'asmdef error', 'package error', 'type not found', 'namespace missing'."
 ---
 
 # Unity Debugger
@@ -64,6 +64,37 @@ Read the template first, then populate all sections.
 6. **Document** (Optional)
    - Save report to `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
    - Run `/unity-test` for system stability
+
+
+## Safety Constraints
+
+**This skill modifies Unity C# scripts and may trigger builds. Follow these safety rules:**
+
+1. **Always Backup Before Destructive Fixes**
+   - For scene/prefab modifications: User must confirm before applying
+   - For script changes affecting multiple systems: Show diff, wait for approval
+   - For build-related fixes: Explain impact on build pipeline
+
+2. **Verification is Mandatory**
+   - ALWAYS run `unityMCP_check_compile_errors` after code changes
+   - NEVER skip runtime validation (`unityMCP_play_game`) for gameplay errors
+   - Document what was tested in debug report
+
+3. **Rollback Strategy**
+   - If fix introduces new errors: Revert changes immediately
+   - If runtime validation fails: Document failure in report, propose alternative
+   - Keep original error message for reference
+
+4. **Scope Limiting**
+   - Fix ONLY the reported error - do not refactor surrounding code
+   - For "quick fix" requests: Apply minimal change, suggest proper fix separately
+   - For cascading errors: Fix root cause first, then validate dependents
+
+5. **User Confirmation Required For**
+   - Deleting or renaming public methods/fields (breaks serialization)
+   - Changing Unity component execution order
+   - Modifying build settings or project settings
+   - Applying fixes to third-party packages
 
 ## Common Fixes
 

@@ -1,6 +1,6 @@
 ---
 name: unity-plan-detail
-description: "Generate 100% complete code changes for each task in a plan. Use when: (1) A plan HTML file from unity-plan exists and needs per-task code, (2) Need fully implementable code for individual tasks, (3) Preparing executable task specs for unity-task-executor. Input: plan HTML from Documents/Plans/. Output: HTML with complete code per task in Documents/Tasks/."
+description: "Generate 100% complete code changes for each task in a plan. Use when: (1) A plan HTML file from unity-plan exists and needs per-task code, (2) Need fully implementable code for individual tasks, (3) Preparing executable task specs for unity-plan-executor. Input: plan HTML from Documents/Plans/. Output: HTML with complete code per task in Documents/Tasks/."
 ---
 
 # Unity Plan Detail

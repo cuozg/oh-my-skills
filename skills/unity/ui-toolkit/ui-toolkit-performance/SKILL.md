@@ -266,6 +266,8 @@ void OnClick(ClickEvent evt) { /* ... */ }
 
 ## Dragon Crashers: Project-Specific Performance Patterns
 
+### FpsCounter: Frame Rate Control
+
 For detailed performance analysis of Dragon Crashers patterns — FpsCounter ring buffer, HealthBarController world-to-panel cost, async/await vs coroutine GC tradeoffs, Instantiate-in-loop vs ListView thresholds, StopImmediatePropagation impact, and event subscription lifecycle — see **[Dragon Crashers Insights — Performance Analysis](../references/dragon-crashers-insights.md)** (section: Performance Analysis).
 
 **Key takeaways**: Cache `Camera.main` and all `Q<T>()` results; use transform (not layout) for positioning; prefer USS transitions over `async Task.Delay` loops; add `CancellationToken` to infinite async loops; use `ListView` for 50+ items; match subscribe/unsubscribe lifecycle symmetrically.
