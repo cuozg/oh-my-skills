@@ -30,8 +30,14 @@ export default tool({
     )
 
     if (args.list) {
-      const result = await Bun.$`python3 ${script} --list`.text()
-      return result.trim()
+      try {
+        const result = await Bun.$`python3 ${script} --list`.text()
+        return result.trim()
+      } catch (e: any) {
+        if (e?.stdout) return e.stdout.toString().trim()
+        if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+        return `Error: ${e?.message ?? String(e)}`
+      }
     }
 
     const outputDir = args.output_path
@@ -42,8 +48,14 @@ export default tool({
 
     const skillType = args.type || "tool"
 
-    const result =
-      await Bun.$`python3 ${script} ${args.skill_name} --type ${skillType} --path ${outputDir}`.text()
-    return result.trim()
+    try {
+      const result =
+        await Bun.$`python3 ${script} ${args.skill_name} --type ${skillType} --path ${outputDir}`.text()
+      return result.trim()
+    } catch (e: any) {
+      if (e?.stdout) return e.stdout.toString().trim()
+      if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+      return `Error: ${e?.message ?? String(e)}`
+    }
   },
 })

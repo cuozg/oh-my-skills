@@ -15,8 +15,14 @@ export default tool({
       ".opencode/tools/skill-finder.py"
     )
     const skillsDir = path.join(context.worktree, ".opencode/skills")
-    const result =
-      await Bun.$`python3 ${script} ${skillsDir} ${args.task}`.text()
-    return result.trim()
+    try {
+      const result =
+        await Bun.$`python3 ${script} ${skillsDir} ${args.task}`.text()
+      return result.trim()
+    } catch (e: any) {
+      if (e?.stdout) return e.stdout.toString().trim()
+      if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+      return `Error: ${e?.message ?? String(e)}`
+    }
   },
 })

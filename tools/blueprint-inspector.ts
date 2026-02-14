@@ -24,8 +24,14 @@ export default tool({
       context.worktree,
       ".opencode/tools/blueprint-inspector.py"
     )
-    const result =
-      await Bun.$`python3 ${script} ${filePath} ${samples}`.text()
-    return result.trim()
+    try {
+      const result =
+        await Bun.$`python3 ${script} ${filePath} ${samples}`.text()
+      return result.trim()
+    } catch (e: any) {
+      if (e?.stdout) return e.stdout.toString().trim()
+      if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+      return `Error: ${e?.message ?? String(e)}`
+    }
   },
 })

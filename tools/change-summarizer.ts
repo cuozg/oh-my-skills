@@ -26,7 +26,13 @@ export default tool({
     if (args.path_filter) {
       cmdArgs.push("--path-filter", args.path_filter)
     }
-    const result = await Bun.$`python3 ${cmdArgs}`.text()
-    return result.trim()
+    try {
+      const result = await Bun.$`python3 ${cmdArgs}`.text()
+      return result.trim()
+    } catch (e: any) {
+      if (e?.stdout) return e.stdout.toString().trim()
+      if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+      return `Error: ${e?.message ?? String(e)}`
+    }
   },
 })

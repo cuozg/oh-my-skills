@@ -28,8 +28,11 @@ export default tool({
       const result =
         await Bun.$`python3 ${script} ${tmpFile} ${severity}`.text()
       return result.trim()
+    } catch (e: any) {
+      if (e?.stdout) return e.stdout.toString().trim()
+      if (e?.stderr) return `Error: ${e.stderr.toString().trim()}`
+      return `Error: ${e?.message ?? String(e)}`
     } finally {
-      // Clean up
       try {
         await Bun.$`rm -f ${tmpFile}`
       } catch {}

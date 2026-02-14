@@ -91,14 +91,17 @@ def extract_file_references(content, skill_dir):
     """Extract file path references and check existence."""
     refs = []
     patterns = [
-        r'(?:scripts|references|assets)/[^\s\)\]"\'>,]+',
-        r'\.opencode/[^\s\)\]"\'>,]+',
-        r'Assets/[^\s\)\]"\'>,]+',
+        r'(?:scripts|references|assets)/[^\s\)\]"\'`>,{}]+',
+        r'\.opencode/[^\s\)\]"\'`>,{}]+',
+        r'Assets/[^\s\)\]"\'`>,{}]+',
     ]
     seen = set()
     for pattern in patterns:
         for match in re.finditer(pattern, content):
             path_str = match.group(0).rstrip(".")
+            # Skip directory-only references (ending with /)
+            if path_str.endswith("/"):
+                continue
             if path_str in seen:
                 continue
             seen.add(path_str)
