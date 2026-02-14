@@ -5,6 +5,8 @@ description: "Master guide for Unity UI Toolkit — the retained-mode UI framewo
 
 # UI Toolkit Master
 
+<!-- OWNERSHIP: Fundamentals, UXML/USS/C# triad, project structure, UIDocument, PanelSettings, learning path. Cross-ref other skills for all specialized topics. -->
+
 Root skill for the UI Toolkit series. Start here for fundamentals, then follow the learning path to specialized sub-skills.
 
 > **Based on**: Unity 6 (6000.0), Dragon Crashers official sample, and production mobile game patterns.
@@ -45,6 +47,7 @@ Progress through the series from fundamentals to advanced topics. Each level bui
 - [Official Docs Links](../references/official-docs-links.md) — curated Unity 6 documentation links by topic
 - [Code Templates](../references/code-templates.md) — 8 production-ready UXML/USS/C# templates
 - [Performance Benchmarks](../references/performance-benchmarks.md) — metrics, budgets, and zero-alloc patterns
+- [QuizU Patterns](../references/quizu-patterns.md) — EventRegistry, UIScreen base, Presenter pattern from Unity's QuizU sample
 
 ## UI Toolkit vs Legacy UI
 
@@ -273,392 +276,47 @@ Assets/
 │   └── PositionToVisualElement.cs # 3D-to-UI alignment (see below)
 ```
 
-### USS File Organization (Detailed)
+### USS File Organization
 
-The USS directory follows a 5-folder scope-based architecture. This is the actual file layout:
+DC uses a 5-folder scope-based USS architecture: `Base/` (7 design token files), `Screens/` (14 per-screen files), `Toolbars/`, `CustomElements/`, and `ThemeStyles/` (with Landscape/ and Portrait/ orientation overrides). See [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md#dc-uss-file-architecture) for the complete file listing and cascade rules.
 
-```
-Assets/UI/Uss/
-├── Base/                        # Design tokens — imported by all screens
-│   ├── Colors.uss               # Color custom properties
-│   ├── Text.uss                 # Typography: font sizes, weights, line heights
-│   ├── Common.uss               # Shared layout patterns, spacers, containers
-│   ├── Buttons.uss              # Button variants (primary, secondary, icon)
-│   ├── Sliders.uss              # Slider track, thumb, fill styles
-│   ├── Cursors.uss              # Cursor overrides (hover, drag)
-│   └── Dropdowns.uss            # Dropdown/popup styles
-├── Screens/                     # One USS per screen (14 files)
-│   ├── HomeScreen.uss           # Home screen layout + elements
-│   ├── CharScreen.uss           # Character screen
-│   ├── CharStats.uss            # Character stats sub-panel
-│   ├── ShopScreen.uss, ShopItem.uss
-│   ├── MailScreen.uss, MailItem.uss
-│   ├── Inventory.uss, SettingsScreen.uss
-│   ├── InfoScreen.uss
-│   ├── GameScreen.uss, GameWinLoseScreen.uss, PauseScreen.uss
-│   └── PopUpText.uss
-├── Toolbars/                    # Navigation bar styles
-│   ├── MenuBar.uss              # Bottom tab bar
-│   └── OptionsBar.uss           # Top toolbar (gold/gem/settings)
-├── CustomElements/              # Custom control-specific styles
-│   ├── HealthBar.uss            # Player health bar
-│   ├── HealthBarBoss.uss        # Boss variant
-│   ├── LevelMeter.uss           # Radial progress meter
-│   ├── LevelMeter.uxml          # Inline template for level meter
-│   └── SlideToggle.uss          # Custom toggle switch
-└── ThemeStyles/                 # Theme × orientation overrides
-    ├── Decoration-Default.uss   # Default seasonal decorations
-    ├── Decoration-Halloween.uss # Halloween theme overrides
-    ├── Decoration-Christmas.uss # Christmas theme overrides
-    ├── Landscape/               # 11 per-screen landscape overrides
-    │   ├── MainMenu-Landscape.uss
-    │   ├── HomeScreen-Landscape.uss
-    │   ├── CharScreen-Landscape.uss, CharStats-Landscape.uss
-    │   ├── ShopScreen-Landscape.uss, MailScreen-Landscape.uss
-    │   ├── InventoryScreen-Landscape.uss, SettingsScreen-Landscape.uss
-    │   ├── InfoScreen-Landscape.uss, GameScreen-Landscape.uss
-    │   └── MenuBar-Landscape.uss
-    └── Portrait/                # 11 per-screen portrait overrides (same naming)
-        ├── MainMenu-Portrait.uss
-        ├── HomeScreen-Portrait.uss
-        └── ... (mirrors Landscape/ structure)
-```
-
-**Key insight**: Orientation-specific overrides are loaded via TSS files, not media queries. The ThemeManager swaps the entire TSS at runtime based on `Screen.orientation`, which swaps in the correct Landscape/ or Portrait/ USS files.
+**Key insight**: Orientation-specific overrides are loaded via TSS files, not media queries. The ThemeManager swaps the entire TSS at runtime based on `Screen.orientation`.
 
 ### Core Architecture: Single UIDocument + UIView Pattern
 
-Dragon Crashers uses **one master UIDocument** with a single `MainMenu.uxml`. All screens are branches of this tree, toggled via `DisplayStyle.Flex/None`:
+Dragon Crashers uses **one master UIDocument** with a single `MainMenu.uxml`. All screens are branches of this tree, toggled via `DisplayStyle.Flex/None`. See [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md#dragon-crashers--architecture-in-practice) for full UIView base class, HomeView example, UIManager navigation, TabbedMenuController, and custom controls code.
 
-```csharp
-// from Assets/Scripts/UI/UIViews/UIManager.cs
-[RequireComponent(typeof(UIDocument))]
-public class UIManager : MonoBehaviour
-{
-    UIDocument m_MainMenuDocument;
-    UIView m_CurrentView;
-    UIView m_PreviousView;
-    List<UIView> m_AllViews = new List<UIView>();
-
-    // String IDs match UXML element names
-    public const string k_HomeViewName = "HomeScreen";
-    public const string k_CharViewName = "CharScreen";
-    public const string k_ShopViewName = "ShopScreen";
-    // ... one constant per screen
-
-    void OnEnable()
-    {
-        m_MainMenuDocument = GetComponent<UIDocument>();
-        SetupViews();       // Create all UIView instances
-        SubscribeToEvents(); // Wire up static event bus
-        ShowModalView(m_HomeView); // Start on home screen
-    }
-
-    void SetupViews()
-    {
-        VisualElement root = m_MainMenuDocument.rootVisualElement;
-
-        // Each view gets its branch of the visual tree
-        m_HomeView = new HomeView(root.Q<VisualElement>(k_HomeViewName));
-        m_CharView = new CharView(root.Q<VisualElement>(k_CharViewName));
-        m_ShopView = new ShopView(root.Q<VisualElement>(k_ShopViewName));
-        // ...
-
-        // Track for disposal
-        m_AllViews.Add(m_HomeView);
-        m_AllViews.Add(m_CharView);
-        // ...
-    }
-}
-```
-
-### UIView Base Class — Template Method Pattern
-
-Every screen/toolbar extends `UIView`, which enforces a consistent lifecycle:
-
-```csharp
-// from Assets/Scripts/UI/UIViews/UIView.cs
-public class UIView : IDisposable
-{
-    protected VisualElement m_TopElement;
-
-    public UIView(VisualElement topElement)
-    {
-        m_TopElement = topElement ?? throw new ArgumentNullException(nameof(topElement));
-        Initialize();
-    }
-
-    public virtual void Initialize()
-    {
-        Hide();                     // Hidden by default
-        SetVisualElements();        // Step 1: Query and cache elements
-        RegisterButtonCallbacks();  // Step 2: Wire up click handlers
-    }
-
-    protected virtual void SetVisualElements() { }    // Override to Q() elements
-    protected virtual void RegisterButtonCallbacks() { } // Override to register clicks
-
-    public virtual void Show() => m_TopElement.style.display = DisplayStyle.Flex;
-    public virtual void Hide() => m_TopElement.style.display = DisplayStyle.None;
-    public virtual void Dispose() { } // Override to unregister events
-}
-```
-
-### Concrete View Example
-
-```csharp
-// from Assets/Scripts/UI/UIViews/HomeView.cs
-public class HomeView : UIView
-{
-    VisualElement m_PlayLevelButton;
-    Label m_LevelNumber;
-    Label m_LevelLabel;
-
-    public HomeView(VisualElement topElement) : base(topElement)
-    {
-        // Subscribe to game events in constructor
-        HomeEvents.LevelInfoShown += OnShowLevelInfo;
-    }
-
-    protected override void SetVisualElements()
-    {
-        base.SetVisualElements();
-        // Cache all Q() calls — never call Q() in Update
-        m_PlayLevelButton = m_TopElement.Q("home-play__level-button");
-        m_LevelLabel = m_TopElement.Q<Label>("home-play__level-name");
-        m_LevelNumber = m_TopElement.Q<Label>("home-play__level-number");
-    }
-
-    protected override void RegisterButtonCallbacks()
-    {
-        m_PlayLevelButton.RegisterCallback<ClickEvent>(ClickPlayButton);
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-        HomeEvents.LevelInfoShown -= OnShowLevelInfo;
-        m_PlayLevelButton.UnregisterCallback<ClickEvent>(ClickPlayButton);
-    }
-
-    void ClickPlayButton(ClickEvent evt)
-    {
-        AudioManager.PlayDefaultButtonSound();
-        HomeEvents.PlayButtonClicked?.Invoke();
-    }
-}
-```
-
-### Modal vs Overlay Navigation
-
-UIManager implements two navigation modes:
-
-```csharp
-// from Assets/Scripts/UI/UIViews/UIManager.cs
-
-// MODAL: Hides current view, shows new one (full replacement)
-void ShowModalView(UIView newView)
-{
-    if (m_CurrentView != null)
-        m_CurrentView.Hide();
-
-    m_PreviousView = m_CurrentView;
-    m_CurrentView = newView;
-
-    if (m_CurrentView != null)
-    {
-        m_CurrentView.Show();
-        MainMenuUIEvents.CurrentViewChanged?.Invoke(m_CurrentView.GetType().Name);
-    }
-}
-
-// OVERLAY: Shows on top without hiding the current view
-void OnSettingsScreenShown()
-{
-    m_PreviousView = m_CurrentView; // Remember where we came from
-    m_SettingsView.Show();          // Show on top (doesn't hide current)
-}
-
-void OnSettingsScreenHidden()
-{
-    m_SettingsView.Hide();
-    if (m_PreviousView != null)
-    {
-        m_PreviousView.Show();
-        m_CurrentView = m_PreviousView;
-    }
-}
-```
-
-### Static Event Bus Pattern
-
-Dragon Crashers decouples UI from game logic via static `Action` delegates grouped by feature:
-
-```csharp
-// from Assets/Scripts/UI/Events/MainMenuUIEvents.cs
-public static class MainMenuUIEvents
-{
-    public static Action HomeScreenShown;      // Navigate to home
-    public static Action CharScreenShown;      // Navigate to character
-    public static Action ShopScreenShown;      // Navigate to shop
-    public static Action SettingsScreenShown;  // Open settings overlay
-    public static Action SettingsScreenHidden; // Close settings overlay
-    public static Action<string> CurrentViewChanged; // Notify view change
-}
-
-// from Assets/Scripts/UI/Events/HomeEvents.cs
-public static class HomeEvents
-{
-    public static Action<string> HomeMessageShown;
-    public static Action<LevelSO> LevelInfoShown;
-    public static Action PlayButtonClicked;
-}
-```
-
-**Key takeaway**: Controllers subscribe in `OnEnable()` and unsubscribe in `OnDisable()`. Views subscribe in their constructor and unsubscribe in `Dispose()`. This prevents memory leaks and dangling references.
-
-### Dual UIDocument Strategy
-
-Dragon Crashers uses **two UIDocument tiers** to separate menu UI from gameplay UI:
-
-1. **Menu UIDocument** — Single master UIDocument on `UIManager` holds all menu screens (`MainMenu.uxml`). All 10 views (5 modal, 2 overlay, 3 toolbar) are branches of this one document.
-2. **Gameplay UIDocuments** — Separate UIDocuments for in-game HUD elements (e.g., `HealthBarComponent` on individual GameObjects). These have their own UXML/USS and operate independently of the menu system.
-
-This separation ensures gameplay UI lifecycle is tied to gameplay GameObjects, while menu UI persists across the session. See [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for detailed multi-document patterns.
+**Key architectural decisions:**
+- UIView base class enforces lifecycle: `Initialize()` → `SetVisualElements()` (cache Q()) → `RegisterButtonCallbacks()`
+- UIManager implements modal (replace) and overlay (stack) navigation
+- Static `Action` event bus decouples View ↔ Controller communication
+- Custom controls use `UxmlFactory`/`UxmlTraits` (DC legacy) — use `[UxmlElement]` for new Unity 6 projects
 
 ### SafeAreaBorder — borderWidth Approach
 
 > **Source**: `Assets/Scripts/Utilities/SafeAreaBorder.cs`
 
-Unlike padding-based safe area solutions, Dragon Crashers uses **borderWidth** to create safe area insets. This preserves the content area's layout coordinates while visually masking unsafe regions:
+Unlike padding-based safe area solutions, Dragon Crashers uses **borderWidth** to create safe area insets. This preserves the content area's layout coordinates while visually masking unsafe regions with a configurable `m_BorderColor`. The `m_Multiplier` field (0–1) allows designers to dial inset strength.
 
-```csharp
-// from Assets/Scripts/Utilities/SafeAreaBorder.cs
-[ExecuteInEditMode]
-public class SafeAreaBorder : MonoBehaviour
-{
-    [SerializeField] UIDocument m_Document;
-    [SerializeField] Color m_BorderColor = Color.black;  // Visible border color
-    [SerializeField] string m_Element;                    // Target element name (empty = root)
-    [Range(0, 1f)]
-    [SerializeField] float m_Multiplier = 1f;             // Scale insets (useful for testing)
+**Why borderWidth instead of padding**: Padding pushes child content inward but children can still overflow; borderWidth creates a hard visual boundary. `GeometryChangedEvent` ensures recalculation on orientation change.
 
-    void ApplySafeArea()
-    {
-        Rect safeArea = Screen.safeArea;
-
-        // Calculate insets from Screen.safeArea
-        m_Root.style.borderTopWidth    = (Screen.height - safeArea.yMax) * m_Multiplier;
-        m_Root.style.borderBottomWidth = safeArea.y * m_Multiplier;
-        m_Root.style.borderLeftWidth   = safeArea.x * m_Multiplier;
-        m_Root.style.borderRightWidth  = (Screen.width - safeArea.xMax) * m_Multiplier;
-
-        // Color the border (black hides notch area, transparent shows background)
-        m_Root.style.borderBottomColor = m_BorderColor;
-        m_Root.style.borderTopColor    = m_BorderColor;
-        m_Root.style.borderLeftColor   = m_BorderColor;
-        m_Root.style.borderRightColor  = m_BorderColor;
-    }
-}
-```
-
-**Why borderWidth instead of padding?**
-- **Padding** pushes child content inward but children can still overflow into unsafe areas
-- **borderWidth** creates a hard visual boundary — the border area is rendered with `m_BorderColor`, cleanly masking notch/rounded-corner regions
-- The `m_Multiplier` field allows designers to dial the inset strength (0 = disabled, 1 = full safe area)
-- `GeometryChangedEvent` callback ensures recalculation on orientation change
-
-See [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md) and [ui-toolkit-mobile](../ui-toolkit-mobile/SKILL.md) for comprehensive safe area strategies.
+> **Full implementation & comparison**: See [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md#safe-area-handling) for the complete SafeAreaBorder code, padding-based alternative, and comparison table.
 
 ### Async/Await Fire-and-Forget Pattern
 
-> **Source**: `Assets/Scripts/UI/UIViews/OptionsBarView.cs`, `LevelMeterView.cs`, `ChatView.cs`
+Since UIView subclasses are plain C# (not MonoBehaviours), they cannot use coroutines. Dragon Crashers uses **async Task with fire-and-forget discard** (`_ = AsyncMethod()`) for UI animations like label counter lerp, radial progress, and typing effects. The sync event handler calls `_ = AsyncMethod()` to suppress CS4014 warnings, and the async method wraps logic in `try/catch` since unhandled exceptions in fire-and-forget Tasks are silently swallowed.
 
-Since `UIView` subclasses are plain C# classes (not MonoBehaviours), they cannot use coroutines. Dragon Crashers uses **async Task with fire-and-forget discard** for UI animations:
+**Unity 6+ improvement**: Replace `Task.Delay(TimeSpan.FromSeconds(Time.deltaTime))` with `await Awaitable.NextFrameAsync()` for proper frame synchronization.
 
-```csharp
-// from Assets/Scripts/UI/UIViews/OptionsBarView.cs
-void OnFundsUpdated(GameData gameData)
-{
-    // Fire and forget — discard suppresses CS4014 warning
-    _ = HandleFundsUpdatedAsync(gameData);
-}
-
-async Task HandleFundsUpdatedAsync(GameData gameData)
-{
-    try
-    {
-        uint startGold = (uint)Int32.Parse(m_GoldLabel.text);
-        await LerpRoutine(m_GoldLabel, startGold, gameData.gold, k_LerpTime);
-    }
-    catch (Exception ex)
-    {
-        Debug.LogError($"[OptionsBarView] HandleFundsUpdatedAsync error: {ex.Message}");
-    }
-}
-
-async Task LerpRoutine(Label label, uint startValue, uint endValue, float duration)
-{
-    float t = 0f;
-    while (Mathf.Abs((float)endValue - Mathf.Lerp(startValue, endValue, t)) > 0.05f)
-    {
-        t += Time.deltaTime / duration;
-        label.text = Mathf.Lerp(startValue, endValue, t).ToString("0");
-        await Task.Delay(TimeSpan.FromSeconds(Time.deltaTime));
-    }
-    label.text = endValue.ToString();
-}
-```
-
-**Pattern rules:**
-1. Event handler is synchronous (`void`), calls `_ = AsyncMethod()` to discard the Task
-2. Async method wraps logic in `try/catch` — unhandled exceptions in fire-and-forget Tasks are silently swallowed otherwise
-3. Uses `Task.Delay` for frame-like timing (not ideal — prefer `Awaitable.NextFrameAsync()` in Unity 6+)
-4. Views using this pattern: `OptionsBarView` (gold/gem counter lerp), `LevelMeterView` (radial progress animation), `ChatView` (message typing effect), `MailContentView` (mail animation)
-
-**Unity 6+ improvement**: Replace `Task.Delay(TimeSpan.FromSeconds(Time.deltaTime))` with `await Awaitable.NextFrameAsync()` for proper frame synchronization and cancellation support.
+> **Full code & usage examples**: See [ui-toolkit-patterns](../ui-toolkit-patterns/SKILL.md#async-task-fire-and-forget) for the complete pattern with LerpRoutine, views that use it, and error handling rules.
 
 ### PositionToVisualElement — 3D-to-UI Alignment
 
 > **Source**: `Assets/Scripts/Utilities/PositionToVisualElement.cs`
 
-Bridges 3D world-space GameObjects with UI Toolkit overlay elements. Positions a 3D object to align with a VisualElement's screen position:
+Bridges 3D world-space GameObjects with UI Toolkit overlay elements by converting panel coordinates → screen pixels → world position at a given depth. Used for aligning 3D characters behind UI cards, positioning particle effects at UI locations, and syncing 3D decorations with responsive layout. Reacts to both `GeometryChangedEvent` and `ThemeEvents.CameraUpdated` to survive orientation changes.
 
-```csharp
-// from Assets/Scripts/Utilities/PositionToVisualElement.cs
-public class PositionToVisualElement : MonoBehaviour
-{
-    [SerializeField] GameObject m_ObjectToMove;
-    [SerializeField] Camera m_Camera;
-    [SerializeField] float m_Depth = 10f;
-    [SerializeField] UIDocument m_Document;
-    [SerializeField] string m_ElementName;
-
-    public void MoveToElement()
-    {
-        // Step 1: Get UI element center in panel coordinates
-        Rect worldBound = m_TargetElement.worldBound;
-        Vector2 centerPosition = new Vector2(
-            worldBound.x + worldBound.width / 2,
-            worldBound.y + worldBound.height / 2);
-
-        // Step 2: Convert panel coords → screen pixels
-        Vector2 screenPos = centerPosition.GetScreenCoordinate(m_Document.rootVisualElement);
-
-        // Step 3: Screen pixels → world position at depth
-        Vector3 worldPosition = screenPos.ScreenPosToWorldPos(m_Camera, m_Depth);
-
-        m_ObjectToMove.transform.position = worldPosition;
-    }
-}
-```
-
-**Use cases:**
-- Aligning 3D character models behind UI cards
-- Positioning particle effects at UI element locations
-- Syncing 3D decorations with responsive UI layout changes
-
-The component reacts to both `GeometryChangedEvent` (UI layout changes) and `ThemeEvents.CameraUpdated` (camera swaps during theme/orientation changes), ensuring alignment survives orientation changes.
+> **Full implementation**: See [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md#3d-to-ui-alignment) for the complete PositionToVisualElement code and coordinate conversion pipeline.
 
 **Production metrics from Dragon Crashers:**
 - Visual tree depth: 8–12 levels per screen
@@ -760,30 +418,7 @@ public class MainMenuController : MonoBehaviour
 - [UI Toolkit vs uGUI](https://docs.unity3d.com/6000.0/Documentation/Manual/UI-system-compare.html)
 - See [all curated links](../references/official-docs-links.md) for topic-specific documentation
 
-## Dragon Crashers Source References
-
-Key files referenced in this skill:
-
-| File | Role |
-|------|------|
-| `Assets/Scripts/UI/UIViews/UIManager.cs` | Master UI coordinator — single UIDocument, view lifecycle, modal/overlay navigation |
-| `Assets/Scripts/UI/UIViews/UIView.cs` | Base view class — template method pattern (Initialize → SetVisualElements → RegisterButtonCallbacks) |
-| `Assets/Scripts/UI/UIViews/HomeView.cs` | Concrete view example — element caching, event subscription, disposal |
-| `Assets/Scripts/UI/UIViews/OptionsBarView.cs` | Async/await fire-and-forget pattern — animated label counter |
-| `Assets/Scripts/UI/UIViews/LevelMeterView.cs` | Async radial progress animation |
-| `Assets/Scripts/UI/UIViews/ChatView.cs` | Async typing effect animation |
-| `Assets/Scripts/Utilities/SafeAreaBorder.cs` | borderWidth-based safe area insets with configurable multiplier |
-| `Assets/Scripts/Utilities/PositionToVisualElement.cs` | 3D GameObject-to-UI element alignment bridge |
-| `Assets/Scripts/UI/Events/MainMenuUIEvents.cs` | Static event bus — screen navigation delegates |
-| `Assets/Scripts/UI/Events/HomeEvents.cs` | Per-feature event bus — home screen game logic events |
-| `Assets/Scripts/UI/Events/` | 10 event classes total: CharEvents, GameplayEvents, HomeEvents, InventoryEvents, MailEvents, MainMenuUIEvents, MediaQueryEvents, SettingsEvents, ShopEvents, ThemeEvents |
-| `Assets/UI/Uxml/MainMenu.uxml` | Master UXML document — all screens as branches |
-| `Assets/UI/Uss/Base/` | Design token USS files — Colors.uss, Text.uss, Common.uss, Buttons.uss, Sliders.uss, Cursors.uss, Dropdowns.uss |
-| `Assets/UI/Uss/Screens/` | Per-screen styles — 14 USS files |
-| `Assets/UI/Uss/CustomElements/` | Custom control styles — HealthBar.uss, HealthBarBoss.uss, LevelMeter.uss, SlideToggle.uss |
-| `Assets/UI/Uss/Toolbars/` | MenuBar.uss, OptionsBar.uss |
-| `Assets/UI/Uss/ThemeStyles/` | Theme overrides + Landscape/ (11 files) + Portrait/ (11 files) |
-| `Assets/UI/Themes/` | TSS files — 7-file orientation × theme matrix |
+> **Dragon Crashers Source References**: See [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: DC Source Files Reference) for the complete file listing of all UIView, Controller, Event, USS, UXML, and TSS files referenced in this skill.
 
 ## Sub-Skill Cross-Reference
 
@@ -799,3 +434,58 @@ Quick reference for which sub-skill covers each topic:
 | Profiling, draw calls, virtualization | [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) | ListView, UsageHints, GC-free patterns |
 | Touch/gesture, mobile budgets, haptics | [ui-toolkit-mobile](../ui-toolkit-mobile/SKILL.md) | PositionToVisualElement, mobile optimization |
 | UI Debugger, Event Debugger, diagnostics | [ui-toolkit-debugging](../ui-toolkit-debugging/SKILL.md) | Profiler markers, diagnostic code |
+
+## Coverage Gaps (Stub Guidance)
+
+The following topics are not yet covered by dedicated sub-skills. Use the guidance below as a starting point.
+
+### Accessibility
+
+UI Toolkit has limited built-in accessibility support compared to web. Key areas to address:
+
+| Area | Status in Unity 6 | Recommendation |
+|---|---|---|
+| **Screen readers** | No native support | Use `Label` with descriptive text; set `tooltip` for icon-only buttons |
+| **Focus navigation** | ✅ Built-in `focusable`, `tabIndex` | Set `tabIndex` on interactive elements; test keyboard-only navigation |
+| **High contrast** | No built-in detection | Create a high-contrast TSS with `var(--color-*)` overrides; swap via `PanelSettings.themeStyleSheet` |
+| **Touch target size** | Manual enforcement | Minimum 44×44px for all interactive elements (WCAG 2.5.5) |
+| **Color contrast** | Manual verification | Ensure 4.5:1 contrast ratio for text (WCAG AA); tools: WebAIM Contrast Checker |
+| **Reduced motion** | No `prefers-reduced-motion` | Add `--transition-duration: 0ms` override TSS; let user toggle in settings |
+
+```csharp
+// Minimum pattern: ensure focusable + tooltip on icon buttons
+iconButton.focusable = true;
+iconButton.tabIndex = 1;
+iconButton.tooltip = "Open inventory";
+```
+
+### Testing UI Toolkit
+
+No dedicated testing framework exists for UI Toolkit elements. Current approaches:
+
+| Approach | Scope | Setup |
+|---|---|---|
+| **Edit Mode tests** | UIDocument creation, element queries, class assertions | `[Test]` + `UIDocument` in code |
+| **Play Mode tests** | Full UI interaction, event simulation | `[UnityTest]` + scene with UIDocument |
+| **Event simulation** | Click, pointer, keyboard events | `using var evt = ClickEvent.GetPooled(); element.SendEvent(evt);` |
+| **Visual regression** | Screenshot comparison | `ScreenCapture.CaptureScreenshotAsTexture()` + image diff |
+
+```csharp
+// Edit Mode test pattern
+[Test]
+public void TabBar_SelectsCorrectTab()
+{
+    var doc = new UIDocument();
+    // ... setup UXML
+    var tab = root.Q<Button>("tab-inventory");
+    using var evt = ClickEvent.GetPooled();
+    tab.SendEvent(evt);
+    Assert.IsTrue(tab.ClassListContains("tab-bar__tab--active"));
+}
+```
+
+> ⚠️ `VisualElement.SendEvent()` requires the element to be attached to a panel. In Edit Mode, create a `UIDocument` or use `new RuntimePanel()`.
+
+### Localization
+
+No built-in localization. Use `com.unity.localization` package: bind `LocalizedString.StringChanged` to `Label.text`. USS `direction: rtl` for RTL (Unity 6+). Use `Font Asset` with fallback chain for CJK/Arabic. Use `CultureInfo` for date/number formatting in C#.

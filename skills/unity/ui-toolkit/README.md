@@ -4,6 +4,7 @@ A comprehensive 9-skill learning path for building production-quality UI with Un
 
 > **Based on**: Unity 6 (6000.0), Dragon Crashers official sample, and production mobile game patterns.
 > **Enhanced with**: Project-specific code examples, 16 architecture patterns, mobile optimization checklists, and common bug fixes from the Dragon Crashers UIToolkit demo.
+> **Architecture**: Each skill has a `<!-- OWNERSHIP -->` header declaring exclusive content. Cross-cutting components use DRY cross-references (`> **Full implementation**: See [component](../owner/SKILL.md#anchor)`) to eliminate duplication.
 
 ## Prerequisites
 
@@ -111,16 +112,16 @@ These reference files are shared across all 9 skills:
 
 | Reference | Description |
 |-----------|-------------|
-| [Dragon Crashers Insights](references/dragon-crashers-insights.md) | Patterns extracted from Unity's official UI Toolkit demo project |
+| [Dragon Crashers Insights](references/dragon-crashers-insights.md) | Redirect stub — points to authoritative locations across skills and references |
 | [Official Docs Links](references/official-docs-links.md) | Curated Unity 6 documentation links organized by topic |
-| [Code Templates](references/code-templates.md) | 8 production-ready templates (screens, controls, ListView, binding, theming) |
-| [Performance Benchmarks](references/performance-benchmarks.md) | Draw call targets, layout vs transform costs, memory profiles |
+| [Code Templates](references/code-templates.md) | 10 production-ready Unity 6+ templates (screens, controls, ListView, binding, theming) |
+| [Performance Benchmarks](references/performance-benchmarks.md) | Draw call targets, layout vs transform costs, memory profiles, DC production metrics |
 
 ### Project-Specific References (New)
 
 | Reference | Description |
 |-----------|-------------|
-| [Project Patterns](references/project-patterns.md) | 16 architecture patterns discovered in Dragon Crashers with code examples and selection guide |
+| [Project Patterns](references/project-patterns.md) | 16 architecture patterns discovered in Dragon Crashers — "what DC does" (vs code-templates' "what you should use") |
 | [Mobile Optimization Checklist](references/mobile-optimization-checklist.md) | Actionable mobile checklist with `[DC]` markers for Dragon Crashers-specific patterns |
 | [Common Bugs & Fixes](references/common-bugs-and-fixes.md) | 12 common UI Toolkit bugs with causes, fixes, and diagnostic flowchart |
 
@@ -172,6 +173,17 @@ Every enhanced skill in this series provides:
 - **Official documentation** — curated Unity 6 doc links
 - **Navigation footer** — prev/next/up links for series flow
 
+### Coverage Gaps (Stub Guidance in Master Skill)
+
+The master skill includes stub sections with recommendations for topics not yet covered by dedicated skills:
+
+| Topic | Status | Location |
+|-------|--------|----------|
+| Accessibility | Stub with 6-area table + focusable example | `ui-toolkit-master/SKILL.md` § Coverage Gaps |
+| Testing | Stub with 4-approach table + Edit Mode test example | `ui-toolkit-master/SKILL.md` § Coverage Gaps |
+| Localization | Stub with 5-area table + Unity Localization example | `ui-toolkit-master/SKILL.md` § Coverage Gaps |
+| Animation | ✅ Full decision matrix (6 techniques) | `ui-toolkit-patterns/SKILL.md` § Animation Decision Matrix |
+
 ## Key Project Patterns (Summary)
 
 The Dragon Crashers project uses these patterns extensively across all skills:
@@ -194,22 +206,23 @@ The Dragon Crashers project uses these patterns extensively across all skills:
 ```
 ui-toolkit/
 ├── README.md                                  # This file — overview, decision tree, quick start
+├── ANALYSIS-SUMMARY.md                        # Enhancement plan & post-enhancement metrics (COMPLETED)
 ├── references/                                # Shared reference materials (all skills)
-│   ├── dragon-crashers-insights.md            #   DC patterns & code examples
+│   ├── dragon-crashers-insights.md            #   Redirect stub → authoritative locations
 │   ├── official-docs-links.md                 #   Unity 6 documentation links
-│   ├── code-templates.md                      #   8 production-ready templates
-│   ├── performance-benchmarks.md              #   Metrics, budgets, benchmarks
-│   ├── project-patterns.md                    #   16 architecture patterns (NEW)
-│   ├── mobile-optimization-checklist.md       #   Mobile checklist with [DC] markers (NEW)
-│   └── common-bugs-and-fixes.md               #   12 common bugs & diagnostic flowchart (NEW)
+│   ├── code-templates.md                      #   10 production-ready Unity 6+ templates
+│   ├── performance-benchmarks.md              #   Metrics, budgets, benchmarks + DC production data
+│   ├── project-patterns.md                    #   16 DC architecture patterns ("what DC does")
+│   ├── mobile-optimization-checklist.md       #   Mobile checklist with [DC] markers
+│   └── common-bugs-and-fixes.md               #   12 common bugs & diagnostic flowchart
 ├── scripts/                                   # Shared utility scripts
-├── ui-toolkit-master/SKILL.md                 # 1. Foundations & mental model
-├── ui-toolkit-architecture/SKILL.md           # 2. Component design & composition
-├── ui-toolkit-responsive/SKILL.md             # 3. Adaptive layouts & flexbox
-├── ui-toolkit-theming/SKILL.md                # 4. Design tokens & style architecture
-├── ui-toolkit-databinding/SKILL.md            # 5. Event-driven data flow
-├── ui-toolkit-patterns/SKILL.md               # 6. Common UI implementations
-├── ui-toolkit-performance/SKILL.md            # 7. Optimization techniques
-├── ui-toolkit-mobile/SKILL.md                 # 8. Touch & platform optimization
-└── ui-toolkit-debugging/SKILL.md              # 9. Troubleshooting & diagnostics
+├── ui-toolkit-master/SKILL.md                 # 1. Foundations, mental model + gap stubs (~530 lines)
+├── ui-toolkit-architecture/SKILL.md           # 2. Component design, MVC, UIView, UIManager (573 lines)
+├── ui-toolkit-responsive/SKILL.md             # 3. Flexbox, safe area, orientation (701 lines)
+├── ui-toolkit-theming/SKILL.md                # 4. TSS/USS cascade, design tokens, compound themes (~810 lines)
+├── ui-toolkit-databinding/SKILL.md            # 5. Event-driven data flow, Unity 6 DataBinding (~701 lines)
+├── ui-toolkit-patterns/SKILL.md               # 6. Screen impls, animation matrix, UI patterns (~954 lines)
+├── ui-toolkit-performance/SKILL.md            # 7. Profiling, draw calls, GC-free, virtualization (607 lines)
+├── ui-toolkit-mobile/SKILL.md                 # 8. Touch, gestures, keyboard, haptics (~525 lines)
+└── ui-toolkit-debugging/SKILL.md              # 9. Debugger tools, diagnostics, event debugging (699 lines)
 ```

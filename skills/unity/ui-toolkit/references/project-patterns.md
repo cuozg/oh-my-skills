@@ -1,6 +1,12 @@
-# Dragon Crashers — UI Toolkit Architecture Patterns
+# Project Architecture Patterns — UI Toolkit
 
-16 production-grade UI Toolkit patterns extracted from the Dragon Crashers demo project. Each pattern includes the source file, a concise code example, and when to use it.
+> **PURPOSE**: Documents the 16 architectural patterns found in Dragon Crashers — what the DC project actually does.
+> For **ready-to-copy templates** for your own projects (Unity 6+ APIs), see [code-templates.md](code-templates.md).
+
+16 production-grade patterns from Dragon Crashers (idle RPG) + 7 patterns from QuizU (quiz app). Each includes source file, code example, and when to use it.
+
+> **Two reference projects**: Dragon Crashers (DC) patterns #1–16 below. QuizU patterns in [quizu-patterns.md](quizu-patterns.md) — single UIDocument + stack navigation, EventRegistry, Presenter pattern.
+> See the comparison table in quizu-patterns.md for architectural differences.
 
 ---
 
@@ -122,9 +128,12 @@ public void SetTheme(string themeName)
 
 ---
 
-## 5. Custom Controls (UxmlFactory / UxmlTraits)
+## 5. Custom Controls (UxmlFactory / UxmlTraits) — Legacy Pattern
 
 **Source**: `SlideToggle.cs`, `HealthBarComponent.cs`
+
+> ⚠️ **Legacy API**: Dragon Crashers uses the pre-Unity 6 `UxmlFactory`/`UxmlTraits` pattern shown below.
+> For **Unity 6+ projects**, prefer the `[UxmlElement]`/`[UxmlAttribute]` attribute-based API — see [code-templates.md → Custom Control Template](code-templates.md#custom-control-template).
 
 Project uses the pre-Unity 6 pattern with `UxmlFactory` and `UxmlTraits` (not `[UxmlElement]`).
 
@@ -451,6 +460,11 @@ void UpdatePosition()
 | 3D objects tracking UI | PositionToVisualElement | 16 |
 
 ---
+
+## Related References
+
+- **[quizu-patterns.md](quizu-patterns.md)** — 7 QuizU patterns (stack navigation, EventRegistry, Presenter)
+- **[dragon-crashers-insights.md](dragon-crashers-insights.md)** — DC project structure and key insights
 
 ## Related Skills
 

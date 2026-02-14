@@ -5,6 +5,8 @@ description: "Component-based architecture for Unity UI Toolkit. Covers UXML/USS
 
 # UI Toolkit Architecture
 
+<!-- OWNERSHIP: UIView base class, UIManager, event bus architecture, Controller+View MVC pattern, custom controls ([UxmlElement]/UxmlFactory), TabbedMenuController, template composition, Two UIDocument strategy. -->
+
 Component-based design patterns for scalable, maintainable UI Toolkit projects.
 
 > **Based on**: Unity 6 (6000.0), Dragon Crashers official sample, and production mobile game patterns.
@@ -167,44 +169,9 @@ public class UIView : IDisposable
 
 ### Concrete View — HomeView
 
-```csharp
-// from Assets/Scripts/UI/UIViews/HomeView.cs
-public class HomeView : UIView
-{
-    VisualElement m_PlayLevelButton; Label m_LevelNumber, m_LevelLabel;
-    ChatView m_ChatView;
+Views follow the UIView template: cache Q() calls in `SetVisualElements()`, register events in `RegisterButtonCallbacks()`, compose sub-views in constructor, unsubscribe in `Dispose()`. Views fire static events (e.g., `HomeEvents.PlayButtonClicked?.Invoke()`) — never contain business logic.
 
-    public HomeView(VisualElement topElement) : base(topElement)
-    {
-        m_ChatView = new ChatView(topElement);  // Compose sub-views in constructor
-        HomeEvents.LevelInfoShown += OnShowLevelInfo;
-    }
-
-    protected override void SetVisualElements()  // Cache Q() — called ONCE
-    {
-        base.SetVisualElements();
-        m_PlayLevelButton = m_TopElement.Q("home-play__level-button");
-        m_LevelLabel = m_TopElement.Q<Label>("home-play__level-name");
-        m_LevelNumber = m_TopElement.Q<Label>("home-play__level-number");
-    }
-
-    protected override void RegisterButtonCallbacks()
-    {
-        m_PlayLevelButton.RegisterCallback<ClickEvent>(evt => {
-            AudioManager.PlayDefaultButtonSound();
-            HomeEvents.PlayButtonClicked?.Invoke();
-        });
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-        HomeEvents.LevelInfoShown -= OnShowLevelInfo;
-    }
-}
-```
-
-**Key patterns:** Q() calls happen ONCE in `SetVisualElements()`. Events subscribed in constructor, unsubscribed in `Dispose()`. Views fire static events — never contain business logic.
+> Full code: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Architecture Components)
 
 ### Screen Controller — Thin Coordinator
 
@@ -374,39 +341,9 @@ Dragon Crashers uses BEM (Block__Element--Modifier): `.health-bar__container`, `
 
 ### Composite View Pattern — MailView
 
-Parent views own and manage sub-view lifecycles:
+Parent views own and manage sub-view lifecycles: query containers in `SetVisualElements()`, create sub-views in `Initialize()` AFTER base completes, cascade `Dispose()` to children. Example: `MailView` creates `MailTabView`, `MailboxView`, `MailContentView` from their respective container elements.
 
-```csharp
-// from Assets/Scripts/UI/UIViews/MailView.cs
-public class MailView : UIView
-{
-    VisualElement m_MailboxContainer, m_ContentContainer, m_TabContainer;
-    MailboxView m_MailboxView; MailContentView m_MailContentView; MailTabView m_MailTabView;
-
-    public MailView(VisualElement topElement): base(topElement) { }
-
-    protected override void SetVisualElements()
-    {
-        base.SetVisualElements();
-        m_MailboxContainer = m_TopElement.Q<VisualElement>("mailbox__container");
-        m_ContentContainer = m_TopElement.Q<VisualElement>("content__container");
-        m_TabContainer = m_TopElement.Q<VisualElement>("tabs__container");
-    }
-
-    public override void Initialize()
-    {
-        base.Initialize();  // runs SetVisualElements + RegisterButtonCallbacks
-        // Create sub-views AFTER containers are cached
-        m_MailTabView = new MailTabView(m_TabContainer); m_MailTabView.Show();
-        m_MailboxView = new MailboxView(m_MailboxContainer); m_MailboxView.Show();
-        m_MailContentView = new MailContentView(m_ContentContainer); m_MailContentView.Show();
-    }
-
-    public override void Dispose() { base.Dispose(); m_MailboxView.Dispose(); m_MailContentView.Dispose(); m_MailTabView.Dispose(); }
-}
-```
-
-**Rules:** Parent queries containers in `SetVisualElements()`, creates sub-views in `Initialize()` AFTER base completes, and cascades `Dispose()` to children.
+> Full code: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Architecture Components)
 
 ### Dynamic UI Generation — VisualTreeAsset.Instantiate()
 
@@ -502,22 +439,7 @@ public class UIManager : MonoBehaviour
 
 **Patterns:** Single UIDocument with subtree views. Modal replaces current; overlay stacks. `m_AllViews` ensures centralized lifecycle disposal.
 
-### Dragon Crashers Architecture Reference
-
-| File | Path | Role |
-|------|------|------|
-| UIView.cs | Assets/Scripts/UI/UIViews/ | Base class — template method pattern |
-| UIManager.cs | Assets/Scripts/UI/UIViews/ | Central manager — single-document modal navigation |
-| MailView.cs | Assets/Scripts/UI/UIViews/ | Composite view — manages 3 sub-views |
-| ShopView.cs | Assets/Scripts/UI/UIViews/ | Dynamic UI — VisualTreeAsset.Instantiate() |
-| HomeView.cs | Assets/Scripts/UI/UIViews/ | Concrete view — element caching + event wiring |
-| HomeScreenController.cs | Assets/Scripts/UI/Controllers/ | Thin controller — non-UI logic coordinator |
-| TabbedMenuController.cs | Assets/Scripts/UI/Controllers/ | Reusable sub-controller — CSS class toggling |
-| TabbedMenu.cs | Assets/Scripts/UI/Components/ | MonoBehaviour wrapper for TabbedMenuController |
-| HealthBarComponent.cs | Assets/Scripts/UI/Components/ | Custom control (⚠️ deprecated UxmlFactory) |
-| SlideToggle.cs | Assets/Scripts/UI/Components/ | Custom BaseField control (⚠️ deprecated UxmlFactory) |
-| ShopItemComponent.cs | Assets/Scripts/UI/Components/ | Button.userData + StopImmediatePropagation |
-| HomeEvents.cs | Assets/Scripts/UI/Events/ | Static event bus — decouples view ↔ controller |
+> **DC source file listing**: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: DC Source Files Reference)
 
 ## Scaling Guidelines
 
@@ -556,6 +478,7 @@ public class UIManager : MonoBehaviour
 ## Shared Resources
 
 - [Dragon Crashers Insights](../references/dragon-crashers-insights.md) — architecture patterns from Unity's sample
+- [QuizU Patterns](../references/quizu-patterns.md) — UIScreen stack navigation, EventRegistry, non-MonoBehaviour base class, Presenter pattern
 - [Code Templates](../references/code-templates.md) — base screen, custom control, screen manager templates
 - [Official Docs Links](../references/official-docs-links.md) — curated Unity 6 documentation
 

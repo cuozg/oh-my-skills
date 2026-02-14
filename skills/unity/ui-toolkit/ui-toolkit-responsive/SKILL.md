@@ -5,6 +5,8 @@ description: "Responsive design for Unity UI Toolkit. Covers flexbox layout, len
 
 # UI Toolkit Responsive Design
 
+<!-- OWNERSHIP: MediaQuery, SafeAreaBorder (borderWidth + padding approaches), PositionToVisualElement, flexbox deep dive, orientation handling, length units, adaptive layout patterns. -->
+
 > **Based on**: Unity 6 (6000.0), Dragon Crashers official sample
 
 Flexbox-based responsive layout techniques for Unity UI Toolkit. Covers layout properties, safe area, orientation handling, and adaptive patterns that scale across devices.
@@ -118,13 +120,8 @@ Handles notched displays (iPhone, Android punch-hole cameras).
 ### SafeAreaHandler.cs
 
 ```csharp
-using UnityEngine;
-using UnityEngine.UIElements;
-
-/// <summary>
 /// Applies Screen.safeArea as percentage-based padding to the root container.
 /// Attach to the same GameObject as UIDocument.
-/// </summary>
 [RequireComponent(typeof(UIDocument))]
 public class SafeAreaHandler : MonoBehaviour
 {
@@ -134,51 +131,25 @@ public class SafeAreaHandler : MonoBehaviour
     private void OnEnable()
     {
         var doc = GetComponent<UIDocument>();
-        _root = doc.rootVisualElement.Q<VisualElement>("screen-root");
-        if (_root == null)
-            _root = doc.rootVisualElement;
-
-        _root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-        ApplySafeArea();
-    }
-
-    private void OnDisable()
-    {
-        _root?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-    }
-
-    private void OnGeometryChanged(GeometryChangedEvent evt)
-    {
+        _root = doc.rootVisualElement.Q<VisualElement>("screen-root") ?? doc.rootVisualElement;
+        _root.RegisterCallback<GeometryChangedEvent>(e => ApplySafeArea());
         ApplySafeArea();
     }
 
     private void ApplySafeArea()
     {
-        Rect safeArea = Screen.safeArea;
-        if (safeArea == _lastSafeArea)
-            return;
+        Rect sa = Screen.safeArea;
+        if (sa == _lastSafeArea) return;
+        _lastSafeArea = sa;
 
-        _lastSafeArea = safeArea;
-
-        float screenW = Screen.width;
-        float screenH = Screen.height;
-
-        // Convert safe area to percentage-based padding
-        float left = safeArea.x / screenW * 100f;
-        float right = (screenW - safeArea.xMax) / screenW * 100f;
-        float top = (screenH - safeArea.yMax) / screenH * 100f;
-        float bottom = safeArea.y / screenH * 100f;
-
-        // Apply as percentage padding
-        _root.style.paddingLeft = new Length(left, LengthUnit.Percent);
-        _root.style.paddingRight = new Length(right, LengthUnit.Percent);
-        _root.style.paddingTop = new Length(top, LengthUnit.Percent);
-        _root.style.paddingBottom = new Length(bottom, LengthUnit.Percent);
+        float w = Screen.width, h = Screen.height;
+        _root.style.paddingLeft = new Length(sa.x / w * 100f, LengthUnit.Percent);
+        _root.style.paddingRight = new Length((w - sa.xMax) / w * 100f, LengthUnit.Percent);
+        _root.style.paddingTop = new Length((h - sa.yMax) / h * 100f, LengthUnit.Percent);
+        _root.style.paddingBottom = new Length(sa.y / h * 100f, LengthUnit.Percent);
     }
 }
 ```
-
-> **Usage**: Add `SafeAreaHandler` to the same GameObject as `UIDocument`. It targets `name="screen-root"` or falls back to the root element.
 
 ## Screen Adaptation Strategy
 
@@ -389,44 +360,23 @@ Use `ScreenSizeClassifier` classes as USS parent selectors: `screen-sm` (phones)
 
 ## Common Responsive Patterns
 
-### Responsive Card Grid
+### Card Grid + Sidebar Collapse
 
-```xml
-<ui:VisualElement class="card-grid">
-    <ui:VisualElement class="card-grid__item">
-        <ui:VisualElement class="card">
-            <ui:VisualElement class="card__image" />
-            <ui:Label class="card__title" text="Item Name" />
-        </ui:VisualElement>
-    </ui:VisualElement>
-</ui:VisualElement>
-```
 ```css
+/* Responsive card grid: 1-col → 2-col → 3-col via breakpoint classes */
 .card-grid { flex-direction: row; flex-wrap: wrap; padding: var(--spacing-sm); }
 .card-grid__item { width: 50%; padding: var(--spacing-xs); }
-.card { flex-grow: 1; background-color: var(--color-bg-secondary); border-radius: 8px; }
-.card__image { width: 100%; height: 120px; }
-.card__title { font-size: var(--font-size-md); padding: var(--spacing-sm); }
 .screen-sm .card-grid__item { width: 100%; }
 .screen-lg .card-grid__item { width: 33.3%; }
 .screen-xl .card-grid__item { width: 25%; }
 .screen-xl .card-grid { max-width: 1400px; align-self: center; }
-```
 
-### Sidebar Collapse + Action Bar
-
-```css
-/* Two-pane layout */
+/* Two-pane layout: sidebar collapses on small screens */
 .split-layout { flex-direction: row; flex-grow: 1; }
 .split-layout__sidebar { width: 280px; flex-shrink: 0; }
 .split-layout__main { flex-grow: 1; }
 .screen-sm .split-layout { flex-direction: column; }
 .screen-sm .split-layout__sidebar { width: 100%; max-height: 200px; }
-
-/* Action bar: row on wide, column on narrow */
-.action-bar { flex-direction: row; justify-content: space-between; padding: var(--spacing-md); }
-.screen-sm .action-bar { flex-direction: column; }
-.screen-sm .action-bar__btn { width: 100%; margin-bottom: var(--spacing-sm); }
 ```
 
 ## Dragon Crashers Project Patterns
@@ -437,42 +387,26 @@ The following sections document concrete responsive patterns from the Dragon Cra
 
 > **Source**: `Assets/Scripts/Utilities/MediaQuery.cs`, `Assets/Scripts/UI/Events/MediaQueryEvents.cs`
 
-Dragon Crashers uses a `MediaQuery` MonoBehaviour (`[ExecuteInEditMode]`) to detect orientation changes via aspect ratio threshold (`width/height >= 1.2f`), firing static events. Uses `GeometryChangedEvent` on UIDocument root — no `Update()` polling. Also hooks `SceneManager.sceneLoaded` for scene transitions.
+Dragon Crashers uses a `MediaQuery` MonoBehaviour (`[ExecuteInEditMode]`) to detect orientation changes via aspect ratio threshold (`width/height >= 1.2f`), firing static events. Uses `GeometryChangedEvent` on UIDocument root — no `Update()` polling.
 
 ```csharp
 public enum MediaAspectRatio { Undefined, Landscape, Portrait }
 
-// Static delegates (Assets/Scripts/UI/Events/MediaQueryEvents.cs)
+// Static delegates (MediaQueryEvents.cs) — subscribe to track orientation
 public class MediaQueryEvents
 {
     public static Action<Vector2> ResolutionUpdated;
     public static Action<MediaAspectRatio> AspectRatioUpdated;
-    public static Action CameraResized;
-    public static Action SafeAreaApplied;
 }
 
-// Detection logic (MediaQuery.cs)
+// Detection (MediaQuery.cs): Landscape when aspect >= 1.2
 public const float k_LandscapeMin = 1.2f;
-
 public static MediaAspectRatio CalculateAspectRatio(Vector2 resolution)
-{
-    if (Math.Abs(resolution.y) < float.Epsilon)
-        return MediaAspectRatio.Undefined;
-    float aspectRatio = resolution.x / resolution.y;
-    return (aspectRatio >= k_LandscapeMin) ? MediaAspectRatio.Landscape : MediaAspectRatio.Portrait;
-}
-```
+    => (resolution.x / resolution.y >= k_LandscapeMin) ? MediaAspectRatio.Landscape : MediaAspectRatio.Portrait;
 
-**Subscribing to orientation changes:**
-```csharp
+// Usage: subscribe in OnEnable, unsubscribe in OnDisable
 void OnEnable() => MediaQueryEvents.AspectRatioUpdated += OnAspectRatioUpdated;
 void OnDisable() => MediaQueryEvents.AspectRatioUpdated -= OnAspectRatioUpdated;
-
-void OnAspectRatioUpdated(MediaAspectRatio ratio)
-{
-    bool isLandscape = ratio == MediaAspectRatio.Landscape;
-    // Adapt layout, swap cameras, reposition elements, etc.
-}
 ```
 
 > **Cross-ref**: [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) for how `ThemeManager` consumes these events.
@@ -481,94 +415,31 @@ void OnAspectRatioUpdated(MediaAspectRatio ratio)
 
 > **Source**: `Assets/Scripts/Utilities/SafeAreaBorder.cs`
 
-Dragon Crashers implements safe area using **`borderWidth`** — not `padding`. Key distinction:
+Dragon Crashers implements safe area using **`borderWidth`** (not `padding`), allowing visible colored bars behind the notch. Key details:
 
-| Approach | How It Works | When to Use |
-|----------|-------------|-------------|
-| **borderWidth** (this project) | `borderTopWidth`, `borderLeftWidth`, etc. + `borderColor` | Need visible colored bars behind notch |
-| **padding** (generic approach above) | `paddingTop`, `paddingLeft`, etc. (percentage-based) | Children should naturally inset, no visible border |
+- Uses `Screen.safeArea` insets applied as `borderTopWidth`, `borderLeftWidth`, etc.
+- Configurable `m_Multiplier` (`[Range(0, 1)]`) and `m_BorderColor` via Inspector
+- `[ExecuteInEditMode]` — re-applies on `OnValidate()` and `GeometryChangedEvent`
+- `ExtensionMethods.GetScreenCoordinate()` compensates for border widths in coordinate conversions
 
-```csharp
-// SafeAreaBorder.cs — [ExecuteInEditMode], configurable via Inspector
-// m_Element: target named element (or rootVisualElement if empty)
-// m_Multiplier: 0–1 Range slider for adjusting safe area inset
-// m_BorderColor: configurable border color (default black)
+| Safe Area Approach | Mechanism | Use When |
+|-------------------|-----------|----------|
+| **borderWidth** (DC) | `borderTopWidth` + `borderColor` | Need visible colored bars behind notch |
+| **padding** (generic) | `paddingTop` as percentage | Children naturally inset, no visible border |
 
-void ApplySafeArea()
-{
-    Rect safeArea = Screen.safeArea;
-
-    float leftBorder   = safeArea.x;
-    float rightBorder  = Screen.width - safeArea.xMax;
-    float topBorder    = Screen.height - safeArea.yMax;
-    float bottomBorder = safeArea.y;
-
-    // Apply as borderWidth (NOT padding) with multiplier
-    m_Root.style.borderTopWidth    = topBorder * m_Multiplier;
-    m_Root.style.borderBottomWidth = bottomBorder * m_Multiplier;
-    m_Root.style.borderLeftWidth   = leftBorder * m_Multiplier;
-    m_Root.style.borderRightWidth  = rightBorder * m_Multiplier;
-
-    // Visible border color (e.g., black bars behind notch)
-    m_Root.style.borderBottomColor = m_BorderColor;
-    m_Root.style.borderTopColor    = m_BorderColor;
-    m_Root.style.borderLeftColor   = m_BorderColor;
-    m_Root.style.borderRightColor  = m_BorderColor;
-}
-
-// OnValidate re-applies when Inspector values change
-void OnValidate() => ApplySafeArea();
-```
-
-**Important**: `ExtensionMethods.GetScreenCoordinate()` adds `resolvedStyle.borderLeftWidth/borderTopWidth` when converting UI positions to screen coordinates, so click/position calculations remain accurate with safe area borders applied.
-
-> **Cross-ref**: [ui-toolkit-mobile](../ui-toolkit-mobile/SKILL.md) for device-specific safe area considerations.
+> **Cross-ref**: [ui-toolkit-mobile](../ui-toolkit-mobile/SKILL.md) for device-specific safe area considerations. Full code in [Dragon Crashers Insights](../references/dragon-crashers-insights.md).
 
 ### ThemeManager: Orientation-Aware Theming
 
 > **Source**: `Assets/Scripts/UI/Themes/ThemeManager.cs`
 
-Instead of toggling USS classes, Dragon Crashers swaps **entire PanelSettings + ThemeStyleSheet (TSS)** assets per orientation. This allows different reference resolutions, scale modes, and style hierarchies.
-
-**Theme naming convention**: `{Orientation}--{Variation}` (e.g., `Portrait--Default`, `Landscape--Christmas`). The `ThemeSettings` struct pairs a theme string key with a `ThemeStyleSheet` and `PanelSettings` asset.
-
-```csharp
-// ThemeManager listens to MediaQuery orientation changes
-void OnEnable()
-{
-    ThemeEvents.ThemeChanged += OnThemeChanged;
-    MediaQueryEvents.AspectRatioUpdated += OnAspectRatioUpdated;
-}
-
-// Build theme name from orientation + current variation suffix
-void OnAspectRatioUpdated(MediaAspectRatio mediaAspectRatio)
-{
-    string suffix = GetSuffix(m_CurrentTheme, "--");  // e.g., "--Default"
-    string newThemeName = mediaAspectRatio.ToString() + suffix;  // "Portrait--Default"
-    ApplyTheme(newThemeName);
-}
-
-// Swap both PanelSettings AND ThemeStyleSheet on the UIDocument
-public void ApplyTheme(string theme)
-{
-    SetPanelSettings(theme);    // m_Document.panelSettings = matched PanelSettings
-    SetThemeStyleSheet(theme);  // m_Document.panelSettings.themeStyleSheet = matched TSS
-}
-```
-
-**Why swap PanelSettings?** Portrait and Landscape may need different reference resolutions (1080×1920 vs 1920×1080), scale modes, or DPI settings. Swapping the entire asset handles all at once.
+Instead of toggling USS classes, Dragon Crashers swaps **entire PanelSettings + ThemeStyleSheet (TSS)** assets per orientation. Theme naming: `{Orientation}--{Variation}` (e.g., `Portrait--Default`). On `AspectRatioUpdated`, builds new theme name and calls `ApplyTheme()` which sets both `panelSettings` and `themeStyleSheet` on the `UIDocument`. **Why swap PanelSettings?** Portrait/Landscape need different reference resolutions, scale modes, or DPI settings.
 
 > **Cross-ref**: [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) for TSS structure, custom properties, and seasonal theme variations.
 
 ### GeometryChangedEvent Patterns
 
-Dragon Crashers uses `GeometryChangedEvent` as the primary trigger for layout-dependent initialization — never `Update()` polling.
-
-| Component | What It Does on GeometryChanged |
-|-----------|--------------------------------|
-| `MediaQuery` | Re-checks resolution and aspect ratio |
-| `SafeAreaBorder` | Re-applies border widths |
-| `PositionToVisualElement` | Repositions 3D objects to match UI |
+Dragon Crashers uses `GeometryChangedEvent` as the primary layout trigger — never `Update()` polling. Used by `MediaQuery` (resolution/aspect), `SafeAreaBorder` (border widths), `PositionToVisualElement` (3D repositioning).
 
 ```csharp
 // Pattern: Register in OnEnable, unregister in OnDisable, run initial setup immediately
@@ -578,109 +449,33 @@ void OnEnable()
     m_Root.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
     ApplyLayout(); // Initial setup
 }
-
 void OnDisable() => m_Root?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
 void OnGeometryChanged(GeometryChangedEvent evt) => ApplyLayout();
 ```
 
 Fires on: screen resize, orientation change, parent layout change, element added/removed, style changes affecting layout. Does **not** fire every frame.
 
-> **Cross-ref**: [ui-toolkit-patterns](../ui-toolkit-patterns/SKILL.md) for full event handling patterns.
-
 ### PositionToVisualElement: World-to-UI Alignment
 
 > **Source**: `Assets/Scripts/Utilities/PositionToVisualElement.cs`, `Assets/Scripts/Utilities/ExtensionMethods.cs`
 
-Aligns a 3D `GameObject` to a `VisualElement`. Used when 3D characters must stay anchored to UI slots across orientation changes.
-
-**Conversion chain**: `VisualElement.worldBound` → `GetScreenCoordinate()` (adjusts for borderWidth) → `ScreenPosToWorldPos()` (`Camera.ScreenToWorldPoint`) → `GameObject.transform.position`
-
-```csharp
-public void MoveToElement()
-{
-    // 1. Get UI element center in UI Toolkit coordinates
-    Rect worldBound = m_TargetElement.worldBound;
-    Vector2 centerPosition = new Vector2(
-        worldBound.x + worldBound.width / 2,
-        worldBound.y + worldBound.height / 2);
-
-    // 2. Convert to screen pixels (adjusts for SafeAreaBorder borderWidths)
-    Vector2 screenPos = centerPosition.GetScreenCoordinate(m_Document.rootVisualElement);
-
-    // 3. Convert screen position to 3D world position
-    Vector3 worldPosition = screenPos.ScreenPosToWorldPos(m_Camera, m_Depth);
-    m_ObjectToMove.transform.position = worldPosition;
-}
-
-// Camera updates on orientation change via ThemeEvents
-void OnEnable()
-{
-    ThemeEvents.CameraUpdated += OnCameraUpdated;
-    m_TargetElement.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-}
-
-void OnCameraUpdated(Camera camera) { m_Camera = camera; MoveToElement(); }
-void OnGeometryChanged(GeometryChangedEvent evt) => MoveToElement();
-```
+Aligns a 3D `GameObject` to a `VisualElement` across orientation changes. **Conversion chain**: `VisualElement.worldBound` → `GetScreenCoordinate()` (adjusts for borderWidth) → `Camera.ScreenToWorldPoint` → `transform.position`. Re-runs on `GeometryChangedEvent` and `ThemeEvents.CameraUpdated` (camera swaps on orientation change). Full code in [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Screen Implementations).
 
 ## Common Pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Fixed `px` width on containers | Doesn't adapt to screen size | Use `%` or `flex-grow` |
-| Ignoring `Screen.safeArea` | Content hidden behind notch | Apply `SafeAreaHandler` on root |
-| Hardcoded `left`/`top` positions | Breaks on different resolutions | Use flexbox layout instead |
-| Checking orientation in `Update()` | Wastes CPU every frame | Use `GeometryChangedEvent` |
-| Pixel sizes for all spacing | Inconsistent across DPI | Use USS custom property tokens |
-| Deep nesting for layout | Performance cost, hard to maintain | Flatten hierarchy, use flex properties |
-| `position: absolute` for layout | Overlaps on different sizes | Reserve for overlays/modals only |
-| Separate UXML per orientation | Double maintenance cost | Single UXML + USS class toggling or TSS swapping |
-| Using padding for safe area when border color needed | Can't show colored bars behind notch | Use `borderWidth` + `borderColor` (Dragon Crashers approach) |
-| Not accounting for borderWidth in screen coordinate conversion | Click positions offset by safe area borders | Add `resolvedStyle.borderLeftWidth/borderTopWidth` before normalizing |
-| Hardcoded camera reference for UI-to-world alignment | Breaks on orientation change when camera swaps | Subscribe to `ThemeEvents.CameraUpdated` to receive new camera |
-
-## Exercise: Responsive Product Card Grid
-
-Build a product card grid that adapts from 1 column (phone) to 2 columns (tablet) to 3 columns (desktop).
-
-**ProductGrid.uxml**
-```xml
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-    <ui:VisualElement name="screen-root" class="root">
-        <ui:Label class="page-title" text="Shop" />
-        <ui:VisualElement class="product-grid">
-            <ui:VisualElement class="product-grid__item">
-                <ui:VisualElement class="product-card">
-                    <ui:VisualElement class="product-card__img" />
-                    <ui:Label class="product-card__name" text="Sword" />
-                    <ui:Label class="product-card__price" text="100g" />
-                </ui:VisualElement>
-            </ui:VisualElement>
-            <!-- Duplicate product-grid__item 5 more times -->
-        </ui:VisualElement>
-    </ui:VisualElement>
-</ui:UXML>
-```
-
-**ProductGrid.uss**
-```css
-.root { flex-grow: 1; padding: 8px; }
-.page-title { font-size: 24px; -unity-font-style: bold; margin-bottom: 8px; }
-.product-grid { flex-direction: row; flex-wrap: wrap; }
-.product-grid__item { width: 100%; padding: 4px; }
-.product-card { background-color: #2A2A2A; border-radius: 8px; padding: 8px; }
-.product-card__img { width: 100%; height: 80px; background-color: #444; border-radius: 4px; }
-.product-card__name { font-size: 14px; margin-top: 4px; }
-.product-card__price { font-size: 12px; color: #FFD700; }
-
-/* Tablet: 2 columns */
-.screen-md .product-grid__item { width: 50%; }
-/* Desktop: 3 columns */
-.screen-lg .product-grid__item { width: 33.3%; }
-.screen-xl .product-grid__item { width: 25%; }
-```
-
-**Checklist**: ✅ Cards stack on phone | ✅ 2-col on tablet | ✅ 3-col on desktop | ✅ Uses `flex-wrap` | ✅ Breakpoint classes from `ScreenSizeClassifier`
+| Pitfall | Fix |
+|---------|-----|
+| Fixed `px` width on containers | Use `%` or `flex-grow` |
+| Ignoring `Screen.safeArea` | Apply `SafeAreaHandler` on root |
+| Hardcoded `left`/`top` positions | Use flexbox layout instead |
+| Checking orientation in `Update()` | Use `GeometryChangedEvent` |
+| Pixel sizes for all spacing | Use USS custom property tokens |
+| Deep nesting for layout | Flatten hierarchy, use flex properties |
+| `position: absolute` for layout | Reserve for overlays/modals only |
+| Separate UXML per orientation | Single UXML + USS class toggling or TSS swapping |
+| Using padding when border color needed for safe area | Use `borderWidth` + `borderColor` (DC approach) |
+| Not accounting for borderWidth in coordinate conversion | Add `resolvedStyle.borderLeftWidth/borderTopWidth` |
+| Hardcoded camera for UI-to-world alignment | Subscribe to `ThemeEvents.CameraUpdated` |
 
 ## Shared Resources
 

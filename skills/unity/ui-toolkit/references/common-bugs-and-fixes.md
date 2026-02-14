@@ -1,6 +1,6 @@
 # Common Bugs & Fixes — UI Toolkit
 
-Frequently encountered issues when working with UI Toolkit, with tested solutions. Items marked **[DC]** were observed or are relevant to the Dragon Crashers project patterns.
+Frequently encountered issues when working with UI Toolkit, with tested solutions. Items marked **[DC]** were observed in Dragon Crashers, **[QU]** in QuizU.
 
 ---
 
@@ -72,6 +72,7 @@ async Task ShowOptionsBarTask()
 | Subscribing in `Awake()` but only unsubscribing in `OnDestroy()` | Use `OnEnable()`/`OnDisable()` pair instead |
 | **[DC]** View constructor subscribes but `Dispose()` is never called | Controller MUST call `view.Dispose()` in `OnDisable()` |
 | Lambda subscriptions can't be unsubscribed | Use method references: `CharEvents.GoldUpdated += OnGoldUpdated` |
+| **[QU]** Want automatic cleanup for UI Toolkit events? | Use `EventRegistry` — see [code-templates.md → EventRegistry](code-templates.md#eventregistry-disposable-event-cleanup) |
 
 ```csharp
 // [DC] Correct pattern from Dragon Crashers
@@ -95,6 +96,16 @@ public void Dispose()
 {
     CharEvents.GoldUpdated -= OnGoldUpdated; // Unsubscribe
 }
+```
+
+```csharp
+// [QU] Alternative: EventRegistry pattern (auto-cleanup)
+// Tracks all UI Toolkit callbacks; Dispose() unregisters them all at once
+var _events = new EventRegistry();
+_events.RegisterCallback<ClickEvent>(button, OnButtonClicked);
+_events.RegisterCallback<ChangeEvent<float>>(slider, OnSliderChanged);
+// Cleanup — one call unsubscribes everything:
+_events.Dispose();
 ```
 
 ---

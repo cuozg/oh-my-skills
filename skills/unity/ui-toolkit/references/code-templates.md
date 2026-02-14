@@ -1,17 +1,22 @@
 # UI Toolkit Code Templates
 
+> **PURPOSE**: Production-ready, copy-paste templates using Unity 6+ APIs for your own projects.
+> For **DC's actual implementation patterns** (what Dragon Crashers does), see [project-patterns.md](project-patterns.md).
+
 Production-ready UXML, USS, and C# templates for common UI patterns.
 
 ## Table of Contents
 
 1. [Base Screen Template](#base-screen-template)
-2. [Custom Control Template](#custom-control-template)
-3. [ListView with Virtualization](#listview-with-virtualization)
-4. [Data Binding Setup](#data-binding-setup)
-5. [Theme Token System](#theme-token-system)
-6. [SafeArea Handler](#safearea-handler)
-7. [Screen Manager](#screen-manager)
-8. [Element Pool](#element-pool)
+2. [UIScreen Template (QuizU-style)](#uiscreen-template-quizu-style)
+3. [Custom Control Template](#custom-control-template)
+4. [ListView with Virtualization](#listview-with-virtualization)
+5. [Data Binding Setup](#data-binding-setup)
+6. [Theme Token System](#theme-token-system)
+7. [SafeArea Handler](#safearea-handler)
+8. [Screen Manager](#screen-manager)
+9. [EventRegistry (Disposable Event Cleanup)](#eventregistry-disposable-event-cleanup)
+10. [Element Pool](#element-pool)
 
 ---
 
@@ -90,7 +95,98 @@ Production-ready UXML, USS, and C# templates for common UI patterns.
 
 ---
 
+## UIScreen Template (QuizU-style)
+
+> **Pattern**: Single UIDocument with stack-based navigation. All screens are non-MonoBehaviour C# classes.
+> See [quizu-patterns.md](quizu-patterns.md) for architecture details.
+
+### C# — `UIScreen.cs` (Base Class)
+
+```csharp
+using UnityEngine.UIElements;
+
+/// <summary>
+/// Abstract screen base class (plain C#, not MonoBehaviour).
+/// Show/Hide via USS class toggling for GPU-friendly transitions.
+/// </summary>
+public abstract class UIScreen
+{
+    protected VisualElement m_RootElement;
+    protected VisualElement m_Screen;
+
+    const string k_VisibleClass = "screen-visible";
+    const string k_HiddenClass = "screen-hidden";
+
+    public UIScreen(VisualElement rootElement)
+    {
+        m_RootElement = rootElement;
+        Initialize();
+    }
+
+    protected abstract void Initialize();
+
+    public virtual void Show()
+    {
+        m_Screen.RemoveFromClassList(k_HiddenClass);
+        m_Screen.AddToClassList(k_VisibleClass);
+    }
+
+    public virtual void Hide()
+    {
+        m_Screen.RemoveFromClassList(k_VisibleClass);
+        m_Screen.AddToClassList(k_HiddenClass);
+    }
+}
+```
+
+### C# — Concrete Screen Example
+
+```csharp
+public class MyGameScreen : UIScreen
+{
+    EventRegistry m_Events = new();
+
+    public MyGameScreen(VisualElement rootElement) : base(rootElement) { }
+
+    protected override void Initialize()
+    {
+        m_Screen = m_RootElement.Q("MyGameScreen");
+        var startButton = m_Screen.Q<Button>("start-button");
+        m_Events.RegisterCallback<ClickEvent>(startButton, OnStartClicked);
+    }
+
+    void OnStartClicked(ClickEvent evt) { /* handle click */ }
+
+    public void Dispose() => m_Events.Dispose();
+}
+```
+
+### USS — Screen Transitions
+
+```css
+.screen-visible {
+    transition-property: all;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+    position: absolute;
+}
+
+.screen-hidden {
+    transition-property: all;
+    opacity: 0;
+    transition-duration: 0.5s;
+    transition-timing-function: ease;
+    bottom: 100%;
+    position: absolute;
+}
+```
+
+---
+
 ## Custom Control Template
+
+> **Unity 6+ API**: This template uses the `[UxmlElement]`/`[UxmlAttribute]` attribute-based API (recommended for Unity 6+).
+> Dragon Crashers uses the older `UxmlFactory`/`UxmlTraits` pattern — see [project-patterns.md → Pattern #5](project-patterns.md#5-custom-controls-uxmlfactory--uxmltraits--legacy-pattern) for that approach.
 
 ### C# — `CustomCard.cs`
 
@@ -510,6 +606,11 @@ void SetupBindings(VisualElement root, PlayerDataSource data)
 
 ## SafeArea Handler
 
+> **Note**: This template uses a `padding`-based approach — a generic alternative suitable for most projects.
+> Dragon Crashers uses a `borderWidth`-based approach (`SafeAreaBorder`) which avoids affecting child layout calculations.
+> See [project-patterns.md → Pattern #15](project-patterns.md#15-safeareaborder-borderwidth-approach) for DC's approach,
+> or [ui-toolkit-responsive SKILL](../ui-toolkit-responsive/SKILL.md) for a full comparison of both approaches.
+
 ### C# — `SafeAreaHandler.cs`
 
 ```csharp
@@ -517,7 +618,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// Apply device safe area insets to a UI Toolkit root element.
+/// Apply device safe area insets to a UI Toolkit root element (padding approach).
+/// For borderWidth approach (Dragon Crashers pattern), see SafeAreaBorder.
 /// Attach this to the same GameObject as UIDocument.
 /// </summary>
 [RequireComponent(typeof(UIDocument))]
@@ -646,6 +748,73 @@ public class UIScreenManager : MonoBehaviour
 
         screen.style.display = DisplayStyle.Flex;
     }
+}
+```
+
+---
+
+## EventRegistry (Disposable Event Cleanup)
+
+> **Pattern from QuizU**: Tracks all event subscriptions for batch cleanup. Eliminates manual `+=`/`-=` tracking.
+> See [quizu-patterns.md → Pattern #4](quizu-patterns.md#4-eventregistry-idisposable-event-cleanup).
+
+### C# — `EventRegistry.cs`
+
+```csharp
+using System;
+using System.Collections.Generic;
+using UnityEngine.UIElements;
+
+/// <summary>
+/// IDisposable utility for safe event cleanup.
+/// Register events via this class; Dispose() unsubscribes all at once.
+/// </summary>
+public class EventRegistry : IDisposable
+{
+    readonly List<Action> m_Unsubscribers = new();
+
+    /// <summary>Register a static Action delegate handler.</summary>
+    public void Register<T>(Action<T> handler, ref Action<T> eventDelegate)
+    {
+        eventDelegate += handler;
+        var del = eventDelegate; // capture for unsubscribe
+        m_Unsubscribers.Add(() => del -= handler);
+    }
+
+    /// <summary>Register a UI Toolkit event callback.</summary>
+    public void RegisterCallback<TEvent>(VisualElement element,
+        EventCallback<TEvent> callback) where TEvent : EventBase<TEvent>, new()
+    {
+        element.RegisterCallback(callback);
+        m_Unsubscribers.Add(() => element.UnregisterCallback(callback));
+    }
+
+    public void Dispose()
+    {
+        foreach (var unsub in m_Unsubscribers)
+            unsub?.Invoke();
+        m_Unsubscribers.Clear();
+    }
+}
+```
+
+### Usage
+
+```csharp
+public class MyView : IDisposable
+{
+    readonly EventRegistry m_Events = new();
+
+    public MyView(VisualElement root)
+    {
+        var btn = root.Q<Button>("my-button");
+        m_Events.RegisterCallback<ClickEvent>(btn, OnClicked);
+        // No need to manually track unsubscription
+    }
+
+    void OnClicked(ClickEvent evt) { /* handle */ }
+
+    public void Dispose() => m_Events.Dispose(); // Cleans up everything
 }
 ```
 

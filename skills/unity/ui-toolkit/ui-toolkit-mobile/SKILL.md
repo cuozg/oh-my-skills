@@ -5,6 +5,8 @@ description: "Mobile optimization and touch input for Unity UI Toolkit. Covers t
 
 # UI Toolkit Mobile
 
+<!-- OWNERSHIP: Touch handling, gesture detection (swipe/long-press/pinch), virtual keyboard, haptic feedback, mobile performance budgets, thumb zone ergonomics, platform-specific behavior (iOS/Android). -->
+
 > **Based on**: Unity 6 (6000.0), [Dragon Crashers](../references/dragon-crashers-insights.md) official sample
 
 Mobile-first UI design for Unity UI Toolkit — touch input, safe areas, orientation, performance, and platform-specific behavior. Dragon Crashers uses `SafeAreaHandler` on root, bottom tab navigation, and transform-only animations for mobile-grade performance.
@@ -188,208 +190,31 @@ Key considerations: **Notch** — top inset for status bar + notch on iOS/Androi
 
 ### Dragon Crashers: SafeAreaBorder (borderWidth Approach)
 
-> **Source**: `Assets/Scripts/Utilities/SafeAreaBorder.cs`
+Dragon Crashers uses `borderWidth` instead of padding for safe area insets — allows colored borders matching device bezels, `[ExecuteInEditMode]` for editor preview, and a configurable multiplier.
 
-The Dragon Crashers project uses **borderWidth** instead of padding for safe area insets. Borders push content inward while allowing a configurable border color (black to match bezels, or transparent for background show-through).
-
-**Why borderWidth over padding?** Borders can be **colored** via `borderColor`. `[ExecuteInEditMode]` enables **editor preview**. A configurable **multiplier** (0–1) fine-tunes inset intensity. Named element targeting (`m_Element`) applies safe area to a specific container.
-
-```csharp
-[ExecuteInEditMode]
-public class SafeAreaBorder : MonoBehaviour
-{
-    [SerializeField] UIDocument m_Document;
-    [SerializeField] Color m_BorderColor = Color.black;
-    [SerializeField] string m_Element;        // Named element or empty for root
-    [Range(0, 1f)]
-    [SerializeField] float m_Multiplier = 1f; // Scale inset intensity
-    VisualElement m_Root;
-
-    public void Initialize()
-    {
-        m_Root = string.IsNullOrEmpty(m_Element)
-            ? m_Document.rootVisualElement
-            : m_Document.rootVisualElement.Q<VisualElement>(m_Element);
-        m_Root?.RegisterCallback<GeometryChangedEvent>(evt => ApplySafeArea());
-        ApplySafeArea();
-    }
-
-    void ApplySafeArea()
-    {
-        if (m_Root == null) return;
-        Rect sa = Screen.safeArea;
-        // Compute pixel insets — apply as borderWidth (NOT padding)
-        m_Root.style.borderLeftWidth   = sa.x * m_Multiplier;
-        m_Root.style.borderRightWidth  = (Screen.width - sa.xMax) * m_Multiplier;
-        m_Root.style.borderTopWidth    = (Screen.height - sa.yMax) * m_Multiplier;
-        m_Root.style.borderBottomWidth = sa.y * m_Multiplier;
-        // Color the border (black for bezel match, transparent for show-through)
-        m_Root.style.borderLeftColor = m_Root.style.borderRightColor =
-        m_Root.style.borderTopColor = m_Root.style.borderBottomColor = m_BorderColor;
-    }
-
-    void OnValidate() => ApplySafeArea(); // Editor preview
-}
-```
-
-**Padding vs borderWidth comparison:**
-
-| Approach | Method | Color Control | Editor Preview | Use When |
-|----------|--------|---------------|----------------|----------|
-| Padding (generic) | `style.paddingTop` | No — transparent only | Manual | Content should extend to screen edge behind inset |
-| **borderWidth (DC)** | `style.borderTopWidth` | Yes — `borderColor` | `[ExecuteInEditMode]` | Want visible border matching device bezel or theme |
+> **Full implementation**: See [SafeAreaBorder](../ui-toolkit-responsive/SKILL.md#safeareaborder--borderwidth-approach) in responsive skill — includes complete code, padding vs borderWidth comparison table, and `[ExecuteInEditMode]` details.
 
 ## World-to-UI Alignment (PositionToVisualElement)
 
-> **Source**: `Assets/Scripts/Utilities/PositionToVisualElement.cs`
+Aligns 3D GameObjects to VisualElement positions — critical for mobile games overlaying 3D characters on UI panels. Pipeline: `worldBound` → `GetScreenCoordinate` → `ScreenPosToWorldPos`. Responds to `ThemeEvents.CameraUpdated` for orientation camera swaps and `GeometryChangedEvent` for layout changes.
 
-Aligns 3D GameObjects to VisualElement positions — critical for mobile games that overlay 3D characters on UI panels. The conversion pipeline: `worldBound` → `GetScreenCoordinate` → `ScreenPosToWorldPos`.
-
-```csharp
-public class PositionToVisualElement : MonoBehaviour
-{
-    [SerializeField] GameObject m_ObjectToMove;
-    [SerializeField] Camera m_Camera;
-    [SerializeField] float m_Depth = 10f;
-    [SerializeField] UIDocument m_Document;
-    [SerializeField] string m_ElementName;
-    VisualElement m_TargetElement;
-
-    void OnEnable()
-    {
-        m_TargetElement = m_Document.rootVisualElement.Q<VisualElement>(name: m_ElementName);
-        ThemeEvents.CameraUpdated += OnCameraUpdated;  // Orientation camera swap
-        m_TargetElement?.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-    }
-
-    void OnDisable()
-    {
-        ThemeEvents.CameraUpdated -= OnCameraUpdated;
-        m_TargetElement?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
-    }
-
-    public void MoveToElement()
-    {
-        if (m_Camera == null || m_ObjectToMove == null || m_TargetElement == null) return;
-        // Step 1: UI element center in UI Toolkit coords
-        Rect wb = m_TargetElement.worldBound;
-        Vector2 center = new(wb.x + wb.width / 2, wb.y + wb.height / 2);
-        // Step 2: Convert to pixel screen coords
-        Vector2 screenPos = center.GetScreenCoordinate(m_Document.rootVisualElement);
-        // Step 3: Screen → 3D world at depth
-        m_ObjectToMove.transform.position = screenPos.ScreenPosToWorldPos(m_Camera, m_Depth);
-    }
-
-    void OnCameraUpdated(Camera cam) { m_Camera = cam; MoveToElement(); }
-    void OnGeometryChanged(GeometryChangedEvent evt) => MoveToElement();
-}
-```
-
-**Key mobile considerations:** Orientation changes swap the camera via `ThemeEvents.CameraUpdated` → triggers repositioning. `GeometryChangedEvent` fires on UI resize. The `m_Depth` parameter controls distance from camera. Extension methods `GetScreenCoordinate` and `ScreenPosToWorldPos` handle coordinate space conversion.
+> **Full implementation**: See [PositionToVisualElement](../ui-toolkit-responsive/SKILL.md#world-to-ui-alignment-positiontovisualelement) in responsive skill — includes complete code, coordinate conversion pipeline, and `GeometryChangedEvent` wiring.
 
 ## Orientation: MediaQuery + Event System
 
-> **Sources**: `Assets/Scripts/Utilities/MediaQuery.cs`, `Assets/Scripts/UI/Events/MediaQueryEvents.cs`, `Assets/Scripts/UI/Events/ThemeEvents.cs`
+Dragon Crashers uses an event-driven orientation system via `MediaQuery` (`[ExecuteInEditMode]`) rather than polling `Screen.orientation`. It listens to `GeometryChangedEvent`, fires `MediaQueryEvents.AspectRatioUpdated` / `ResolutionUpdated`, which triggers `ThemeManager` theme switching → `ThemeEvents.CameraUpdated` → `PositionToVisualElement` repositioning.
 
-Dragon Crashers uses an event-driven orientation system rather than polling `Screen.orientation`:
+Key events: `MediaQueryEvents.ResolutionUpdated`, `AspectRatioUpdated`, `SafeAreaApplied` | `ThemeEvents.ThemeChanged`, `CameraUpdated`.
 
-```csharp
-public enum MediaAspectRatio { Undefined, Landscape, Portrait }
-
-[ExecuteInEditMode]
-public class MediaQuery : MonoBehaviour
-{
-    [SerializeField] UIDocument m_Document;
-    public const float k_LandscapeMin = 1.2f;  // aspect >= 1.2 = landscape
-    Vector2 m_CurrentResolution;
-    MediaAspectRatio m_CurrentAspectRatio;
-
-    void OnEnable()
-    {
-        m_Document.rootVisualElement?.RegisterCallback<GeometryChangedEvent>(
-            evt => QueryResolution());
-        QueryResolution();
-    }
-
-    public void QueryResolution()
-    {
-        Vector2 res = new(Screen.width, Screen.height);
-        if (res != m_CurrentResolution)
-        { m_CurrentResolution = res; MediaQueryEvents.ResolutionUpdated?.Invoke(res); }
-        var ratio = CalculateAspectRatio(res);
-        if (ratio != m_CurrentAspectRatio)
-        { m_CurrentAspectRatio = ratio; MediaQueryEvents.AspectRatioUpdated?.Invoke(ratio); }
-    }
-
-    public static MediaAspectRatio CalculateAspectRatio(Vector2 res)
-        => res.y < float.Epsilon ? MediaAspectRatio.Undefined
-        : (res.x / res.y >= k_LandscapeMin ? MediaAspectRatio.Landscape : MediaAspectRatio.Portrait);
-}
-```
-
-### Event Delegates
-
-```csharp
-// MediaQueryEvents — screen dimension changes
-public static Action<Vector2> ResolutionUpdated;
-public static Action<MediaAspectRatio> AspectRatioUpdated;
-public static Action SafeAreaApplied;
-
-// ThemeEvents — theme/camera changes triggered by orientation
-public static Action<string> ThemeChanged;
-public static Action<Camera> CameraUpdated;   // Fired when orientation swaps the active camera
-```
-
-**How it connects**: `MediaQuery` detects aspect ratio change → fires `AspectRatioUpdated` → `ThemeManager` switches portrait/landscape theme → fires `ThemeEvents.CameraUpdated` → `PositionToVisualElement` repositions 3D content. See `ui-toolkit-theming` for theme switching details.
+> **Full implementation**: See [MediaQuery](../ui-toolkit-responsive/SKILL.md#mediaquery--event-driven-orientation) in responsive skill — includes complete code, event delegates, and aspect ratio threshold (`k_LandscapeMin = 1.2f`).
 
 ## Mobile Frame Rate Control (FpsCounter)
 
-> **Source**: `Assets/Scripts/Utilities/FpsCounter.cs`
+Dragon Crashers sets `Application.targetFrameRate = 60` explicitly in `Awake()` (don't rely on default `-1` = uncapped, wastes battery). Uses a 50-frame ring buffer for smoothed FPS display, toggleable via `SettingsEvents.FpsCounterToggled`. Visibility controlled via `Visibility.Hidden` (preserves layout).
 
-Dragon Crashers sets `Application.targetFrameRate` explicitly for mobile battery management and provides a toggleable FPS overlay for debugging:
+**Mobile frame rate tips:** Set `targetFrameRate` explicitly. Use ring buffer averaging for stable display. Toggle via `Visibility.Hidden`. Wire to settings events for user-controlled 30/60 FPS switching.
 
-```csharp
-public class FpsCounter : MonoBehaviour
-{
-    public const int k_TargetFrameRate = 60; // 60 for mobile, -1 for uncapped (PC)
-    const int k_BufferSize = 50;             // Ring buffer for smoothed FPS
-    [SerializeField] UIDocument m_Document;
-    float[] m_DeltaTimeBuffer;
-    int m_CurrentIndex;
-    Label m_FpsLabel;
-    bool m_IsEnabled;
-
-    void Awake()
-    {
-        m_DeltaTimeBuffer = new float[k_BufferSize];
-        Application.targetFrameRate = k_TargetFrameRate; // Set explicitly for mobile
-    }
-
-    void OnEnable()
-    {
-        SettingsEvents.FpsCounterToggled += OnToggled;
-        SettingsEvents.TargetFrameRateSet += fps => Application.targetFrameRate = fps;
-        m_FpsLabel = m_Document.rootVisualElement.Q<Label>("fps-counter");
-    }
-
-    void Update()
-    {
-        if (!m_IsEnabled) return;
-        m_DeltaTimeBuffer[m_CurrentIndex] = Time.deltaTime;
-        m_CurrentIndex = (m_CurrentIndex + 1) % k_BufferSize;
-        float total = 0f; foreach (float dt in m_DeltaTimeBuffer) total += dt;
-        m_FpsLabel.text = $"FPS: {Mathf.RoundToInt(k_BufferSize / total)}";
-    }
-
-    void OnToggled(bool state)
-    {
-        m_IsEnabled = state;
-        m_FpsLabel.style.visibility = state ? Visibility.Visible : Visibility.Hidden;
-    }
-}
-```
-
-**Mobile frame rate tips:** Set `targetFrameRate = 60` in `Awake` — don't rely on default (`-1` = uncapped, wastes battery). Use ring buffer averaging (50 frames) for stable FPS display. Toggle visibility via `Visibility.Hidden` (preserves layout). Wire to settings events for user-controlled 30/60 FPS switching.
+> **Full implementation**: See [FpsCounter](../ui-toolkit-performance/SKILL.md#fpscounter--frame-rate-control) in performance skill — includes complete code, ring buffer implementation, and settings event integration.
 
 ## Orientation Handling
 
@@ -586,23 +411,7 @@ public class VirtualKeyboardHandler : MonoBehaviour
 
 ## Battery Considerations
 
-| Strategy | Implementation |
-|----------|---------------|
-| Throttle animations | `Application.targetFrameRate = 30` when on battery |
-| Reduce update frequency | Skip UI refreshes if data unchanged |
-| Dark theme for OLED | Pure black backgrounds (`rgb(0,0,0)`) save power |
-| Pause off-screen UI | `visible = false` for panels not in view |
-
-```css
-.theme--dark-oled .panel-background { background-color: rgb(0, 0, 0); }
-.theme--dark-oled .card { background-color: rgb(18, 18, 18); border-color: rgb(40, 40, 40); }
-```
-
-```csharp
-// See also: FpsCounter.cs sets Application.targetFrameRate via SettingsEvents
-Application.targetFrameRate = onBattery ? 30 : 60;
-if (onBattery) QualitySettings.vSyncCount = 0;
-```
+Throttle to `Application.targetFrameRate = 30` on battery. Skip UI refreshes if data unchanged. Use pure black (`rgb(0,0,0)`) for OLED savings. Set `visible = false` for off-screen panels. See also: FpsCounter.cs wired via `SettingsEvents` for user-controlled 30/60 switching.
 
 ## Platform Detection
 
@@ -635,39 +444,31 @@ public static class MobilePlatform
 
 ## Mobile Checklist
 
-- [ ] All touch targets ≥ 44×44px
-- [ ] Safe area applied — borderWidth (DC approach) or padding (generic)
-- [ ] `[ExecuteInEditMode]` on SafeAreaBorder for editor preview
-- [ ] Orientation changes handled with layout shifts
-- [ ] MediaQuery fires AspectRatioUpdated on orientation change
-- [ ] PositionToVisualElement aligns 3D content to UI panels
-- [ ] CameraUpdated event wired for orientation-aware 3D positioning
+- [ ] All touch targets ≥ 44×44px; no hover-dependent interactions
+- [ ] Safe area applied (borderWidth or padding); `[ExecuteInEditMode]` for editor preview
+- [ ] Orientation changes handled — MediaQuery fires AspectRatioUpdated, layout shifts applied
+- [ ] PositionToVisualElement aligns 3D content; CameraUpdated event wired
 - [ ] Bottom navigation in thumb zone for primary actions
-- [ ] No hover-dependent interactions
 - [ ] Virtual keyboard doesn't obscure focused input fields
-- [ ] USS transitions use transform properties only
+- [ ] USS transitions use transform properties only; `UsageHints.DynamicTransform` on animated elements
 - [ ] `Application.targetFrameRate` set explicitly (60 active, 30 battery-save)
-- [ ] Visible element count < 200 during gameplay
-- [ ] Sprite atlases used for UI icons
-- [ ] Haptic feedback on key interactions
-- [ ] Dark/OLED theme available
+- [ ] Visible element count < 200; sprite atlases for UI icons
+- [ ] Haptic feedback on key interactions; dark/OLED theme available
 - [ ] Platform-specific USS classes applied at startup
-- [ ] `UsageHints.DynamicTransform` on animated elements
-- [ ] FPS counter toggleable for mobile debugging
-- [ ] Tested on actual devices (not just simulator)
+- [ ] FPS counter toggleable; tested on actual devices
 
 ## Common Pitfalls
 
-| Pitfall | Problem | Fix |
-|---------|---------|-----|
-| Touch targets < 44px | Missed taps, frustration | `min-width`/`min-height: 44px` |
-| Hover-dependent UI | No hover on touch screens | `:active` or tap-to-reveal |
-| Excessive animations | Battery drain, frame drops | Essential feedback only; transforms |
-| Ignoring safe area | Content behind notch/home bar | `SafeAreaApplier` on root |
-| Deep USS selectors | Slow style resolution | Max 2-3 levels; direct classes |
-| Layout property animation | Layout thrashing | `translate`, `scale`, `rotate`, `opacity` |
-| Always-on 60fps | Battery drain | Throttle to 30fps when idle |
-| Pixel-based sizing | Breaks across DPI | Use `%`, flex, USS custom properties |
+| Pitfall | Fix |
+|---------|-----|
+| Touch targets < 44px | `min-width`/`min-height: 44px` |
+| Hover-dependent UI | `:active` or tap-to-reveal instead |
+| Excessive animations | Transform-only; essential feedback only |
+| Ignoring safe area | `SafeAreaApplier` on root |
+| Deep USS selectors (>3 levels) | Direct class matches |
+| Layout property animation | `translate`, `scale`, `rotate`, `opacity` only |
+| Always-on 60fps | Throttle to 30fps when idle |
+| Pixel-based sizing | Use `%`, flex, USS custom properties |
 
 ## Exercise: Mobile Settings Screen
 
@@ -675,13 +476,9 @@ Build a touch-friendly settings screen: (1) `Settings.uxml` — vertical layout 
 
 ## Cross-References
 
-| Skill | Relevance |
-|-------|-----------|
-| [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md) | Responsive layouts, breakpoint systems, SafeAreaHandler base |
-| [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) | Portrait/landscape theme switching, ThemeManager integration |
-| [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) | Mobile performance budgets, draw call optimization, USS selector depth |
-
-**Project source files referenced:** `SafeAreaBorder.cs`, `PositionToVisualElement.cs`, `MediaQuery.cs`, `FpsCounter.cs`, `ThemeEvents.cs`, `MediaQueryEvents.cs` (all under `Assets/Scripts/`)
+- [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md) — SafeAreaHandler, breakpoints, responsive layouts
+- [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) — portrait/landscape theme switching, ThemeManager
+- [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) — mobile budgets, draw call optimization
 
 ## Shared Resources
 

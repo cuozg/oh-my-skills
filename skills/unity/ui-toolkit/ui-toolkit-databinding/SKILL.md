@@ -5,6 +5,8 @@ description: "Unity 6 runtime data binding for UI Toolkit. Covers IDataSource, I
 
 # UI Toolkit Data Binding
 
+<!-- OWNERSHIP: Unity 6 DataBinding API (IDataSource, [CreateProperty], DataBinding class, PropertyPath, binding modes, type converters), event-driven binding comparison, DC event bus data flow. -->
+
 > **Based on**: Unity 6 (6000.0), Dragon Crashers official sample
 
 This skill covers **two approaches** to UI data binding in UI Toolkit:
@@ -51,204 +53,53 @@ The project uses a **manual event-driven data flow** pattern: static `Action` de
 Each screen domain has a dedicated static event class in `Assets/Scripts/UI/Events/`. All 10 event classes follow the same pattern:
 
 ```csharp
-// Assets/Scripts/UI/Events/ShopEvents.cs
+// Assets/Scripts/UI/Events/ShopEvents.cs — representative example
 public static class ShopEvents
 {
     public static Action GoldSelected;                              // parameterless
     public static Action<ShopItemSO, Vector2> ShopItemPurchasing;   // typed payload
-    public static Action<List<ShopItemSO>> ShopUpdated;             // collection payload
     public static Action<GameData> FundsUpdated;                    // data model payload
-    public static Action<ShopItemSO, Vector2> TransactionProcessed; // success result
-    public static Action<ShopItemSO> TransactionFailed;             // failure result
 }
 ```
 
-**All 10 event classes** (`Assets/Scripts/UI/Events/`):
+10 event classes exist in `Assets/Scripts/UI/Events/` (CharEvents, ShopEvents, HomeEvents, MailEvents, InventoryEvents, SettingsEvents, GameplayEvents, MainMenuUIEvents, MediaQueryEvents, ThemeEvents). Pattern: `public static Action<T>` delegates (never C# `event`), null-conditional invoke (`?.Invoke()`), one class per screen domain.
 
-| Event Class | Domain | Key Delegates |
-|-------------|--------|---------------|
-| `CharEvents` | Character screen | `CharacterShown(CharacterData)`, `LevelPotionUsed(CharacterData)`, `GearSlotUpdated(EquipmentSO, int)` |
-| `ShopEvents` | Shop/purchasing | `ShopItemPurchasing(ShopItemSO, Vector2)`, `TransactionProcessed`, `FundsUpdated(GameData)` |
-| `HomeEvents` | Home screen | `LevelInfoShown(LevelSO)`, `PlayButtonClicked`, `ChatWindowShown(List<ChatSO>)` |
-| `MailEvents` | Mail system | `RewardClaimed(MailMessageSO, Vector2)` |
-| `InventoryEvents` | Inventory | Gear selection/equipment events |
-| `SettingsEvents` | Settings | `SettingsUpdated(GameData)`, `PlayerFundsReset` |
-| `GameplayEvents` | Gameplay | `SettingsUpdated(GameData)` |
-| `MainMenuUIEvents` | Main menu | `HomeScreenShown` |
-| `MediaQueryEvents` | Responsive layout | Screen size/orientation events |
-| `ThemeEvents` | Theming | Theme change events |
-
-**Pattern rules**:
-- Delegates are `public static Action` or `public static Action<T>` — never C# `event` keyword
-- Invocation always uses null-conditional: `ShopEvents.FundsUpdated?.Invoke(m_GameData);`
-- One static class per screen domain — keeps event discoverability clear
+> Full event class listing: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Architecture Components)
 
 ### 2. Controller Subscription Lifecycle
+
+> **Full controller/view architecture**: See [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for UIView base class, UIManager, and screen lifecycle. Examples below focus on the **data flow aspect** only.
 
 Controllers are `MonoBehaviour`s that subscribe in `OnEnable` and unsubscribe in `OnDisable`:
 
 ```csharp
-// Assets/Scripts/UI/Controllers/ShopScreenController.cs
-public class ShopScreenController : MonoBehaviour
-{
-    List<ShopItemSO> m_ShopItems = new List<ShopItemSO>();
-
-    void OnEnable()
-    {
-        ShopEvents.ShopItemClicked += OnTryBuyItem;
-        ShopEvents.GoldSelected += OnGoldSelected;
-        ShopEvents.GemSelected += OnGemSelected;
-        ShopEvents.PotionSelected += OnPotionSelected;
-    }
-
-    void OnDisable()
-    {
-        ShopEvents.ShopItemClicked -= OnTryBuyItem;
-        ShopEvents.GoldSelected -= OnGoldSelected;
-        ShopEvents.GemSelected -= OnGemSelected;
-        ShopEvents.PotionSelected -= OnPotionSelected;
-    }
-
-    void Start()
-    {
-        LoadShopData();  // Resources.LoadAll<ShopItemSO>(path)
-        ShopEvents.ShopUpdated?.Invoke(m_GoldShopItems);  // push to view
-    }
-}
+// Assets/Scripts/UI/Controllers/ShopScreenController.cs — pattern
+void OnEnable()  { ShopEvents.ShopItemClicked += OnTryBuyItem; /* ... */ }
+void OnDisable() { ShopEvents.ShopItemClicked -= OnTryBuyItem; /* ... */ }
+void Start()     { LoadShopData(); ShopEvents.ShopUpdated?.Invoke(m_GoldShopItems); }
 ```
 
-**Key conventions**:
-- `OnEnable`/`OnDisable` for MonoBehaviour controllers and managers
-- Constructor/`Dispose()` for UIView subclasses (not MonoBehaviours)
-- Every `+=` must have a matching `-=` — no exceptions
+**Key conventions**: `OnEnable`/`OnDisable` for MonoBehaviours; Constructor/`Dispose()` for UIView subclasses. Every `+=` must have matching `-=`.
 
 ### 3. View Data Update — Direct Q() + Property Assignment
 
-Views extend `UIView` (a non-MonoBehaviour base class). They query elements once and update properties directly:
+Views extend `UIView` (a non-MonoBehaviour base class). Pattern: cache Q() queries in `SetVisualElements()`, subscribe events in constructor, unsubscribe in `Dispose()`, update UI via direct property assignment (`label.text = value`, `element.style.backgroundImage = ...`).
 
-```csharp
-// Assets/Scripts/UI/UIViews/HomeView.cs
-public class HomeView : UIView
-{
-    Label m_LevelNumber;
-    Label m_LevelLabel;
-    VisualElement m_LevelThumbnail;
+> Full HomeView/ShopView code: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: Screen Implementations)
 
-    public HomeView(VisualElement topElement) : base(topElement)
-    {
-        HomeEvents.LevelInfoShown += OnShowLevelInfo;  // subscribe in constructor
-    }
-
-    protected override void SetVisualElements()
-    {
-        m_LevelNumber = m_TopElement.Q<Label>("home-play__level-number");
-        m_LevelLabel = m_TopElement.Q<Label>("home-play__level-name");
-        m_LevelThumbnail = m_TopElement.Q("home-play__background");
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-        HomeEvents.LevelInfoShown -= OnShowLevelInfo;  // unsubscribe in Dispose
-    }
-
-    void OnShowLevelInfo(LevelSO levelData)
-    {
-        m_LevelNumber.text = "Level " + levelData.levelNumber;    // direct assignment
-        m_LevelLabel.text = levelData.levelLabel;                  // direct assignment
-        m_LevelThumbnail.style.backgroundImage =
-            new StyleBackground(levelData.thumbnail);              // style assignment
-    }
-}
-```
-
-**Dynamic list rendering** — ShopView clears and rebuilds from templates:
-
-```csharp
-// Assets/Scripts/UI/UIViews/ShopView.cs
-public void OnShopUpdated(List<ShopItemSO> shopItems)
-{
-    parentTab.Clear();
-    foreach (ShopItemSO shopItem in shopItems)
-    {
-        TemplateContainer elem = m_ShopItemAsset.Instantiate();  // UXML template
-        ShopItemComponent controller = new ShopItemComponent(m_GameIconsData, shopItem);
-        controller.SetVisualElements(elem);
-        controller.SetGameData(elem);      // direct property assignment inside
-        controller.RegisterCallbacks();
-        parentElement.Add(elem);
-    }
-}
-```
+**Dynamic list rendering** — ShopView clears and rebuilds from `VisualTreeAsset.Instantiate()` templates (see [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) for full pattern).
 
 ### 4. ScriptableObject as Data Source
 
-ScriptableObjects serve as read-only data sources loaded via `Resources`:
+ScriptableObjects (`ShopItemSO`, `EquipmentSO`, `CharacterBaseSO`, `LevelSO`, `ChatSO`, `MailMessageSO`, `GameIconsSO`) are loaded via `Resources.LoadAll<T>(path)` and pushed to views through static events.
 
-```csharp
-// Assets/Scripts/UI/Controllers/ShopScreenController.cs — loading
-m_ShopItems.AddRange(Resources.LoadAll<ShopItemSO>(m_ResourcePath));
-m_GoldShopItems = m_ShopItems.Where(c => c.contentType == ShopItemType.Gold).ToList();
+### 5. GameData Persistence
 
-// Assets/Scripts/UI/Controllers/HomeScreenController.cs — loading
-m_ChatData.AddRange(Resources.LoadAll<ChatSO>(m_ChatResourcePath));
-```
+`GameData` (`Assets/Scripts/Data/GameData.cs`) is a `[Serializable]` plain class (not ScriptableObject) for mutable player state (gold, gems, potions, settings). Persistence: `JsonUtility.ToJson()` / `FromJsonOverwrite()` via `SaveManager` → `FileManager`. UI notified via `SaveManager.GameDataLoaded?.Invoke(gameData)`.
 
-Data types used as ScriptableObject sources: `ShopItemSO`, `EquipmentSO`, `CharacterBaseSO`, `LevelSO`, `ChatSO`, `MailMessageSO`, `GameIconsSO`.
+### 6. Complete Data Flow — Shop Purchase
 
-### 5. GameData Serialization with JsonUtility
-
-`GameData` is a `[Serializable]` plain class (not a ScriptableObject) for mutable player state:
-
-```csharp
-// Assets/Scripts/Data/GameData.cs
-[System.Serializable]
-public class GameData
-{
-    public uint gold = 500;
-    public uint gems = 50;
-    public uint healthPotions = 6;
-    public uint levelUpPotions = 80;
-    public string username;
-    public float musicVolume;
-    public float sfxVolume;
-
-    public string ToJson() => JsonUtility.ToJson(this);
-
-    public void LoadJson(string json) => JsonUtility.FromJsonOverwrite(json, this);
-}
-```
-
-Persistence flow in `SaveManager` (`Assets/Scripts/Managers/SaveManager.cs`):
-
-```
-SaveGame: GameData.ToJson() → FileManager.WriteToFile("savegame.dat", json)
-LoadGame: FileManager.LoadFromFile("savegame.dat") → GameData.LoadJson(json)
-          → SaveManager.GameDataLoaded?.Invoke(gameData)  // notify UI
-```
-
-### 6. Complete Data Flow Example — Shop Purchase
-
-```
-User clicks "Buy" on shop item
-    ↓
-ShopItemComponent fires ShopEvents.ShopItemClicked(shopItemSO, screenPos)
-    ↓
-ShopScreenController.OnTryBuyItem() receives event
-    → fires ShopEvents.ShopItemPurchasing(shopItemSO, screenPos)
-    ↓
-GameDataManager.OnPurchaseItem() receives event
-    → HasSufficientFunds(shopItem)?
-    ├─ YES: PayTransaction() → ReceivePurchasedGoods()
-    │       → ShopEvents.TransactionProcessed?.Invoke(shopItem, screenPos)
-    │       → ShopEvents.FundsUpdated?.Invoke(m_GameData)     // update currency display
-    │       → ShopEvents.PotionsUpdated?.Invoke(m_GameData)   // update potion counts
-    └─ NO:  ShopEvents.TransactionFailed?.Invoke(shopItem)
-    ↓
-OptionsBarView receives FundsUpdated → updates gold/gem labels
-PopUpText receives TransactionProcessed → shows "+100 Gold" animation
-SaveManager auto-saves on settings update or OnApplicationQuit
-```
+User click → `ShopItemComponent` fires `ShopEvents.ShopItemClicked` → `ShopScreenController.OnTryBuyItem()` → fires `ShopItemPurchasing` → `GameDataManager.OnPurchaseItem()` → checks funds → YES: `PayTransaction()` + fires `TransactionProcessed`, `FundsUpdated`, `PotionsUpdated` → views update labels/animations; NO: fires `TransactionFailed`. SaveManager auto-saves on quit.
 
 ### Cross-References
 
@@ -286,91 +137,29 @@ SaveManager auto-saves on settings update or OnApplicationQuit
 Data sources must implement `IDataSource` and `INotifyBindablePropertyChanged` to participate in the binding system. `ScriptableObject` and `MonoBehaviour` already implement `IDataSource`.
 
 ```csharp
-using System;
-using Unity.Properties;
-using UnityEngine;
-using UnityEngine.UIElements;
-
 [CreateAssetMenu(menuName = "Data/PlayerData")]
 public class PlayerData : ScriptableObject, INotifyBindablePropertyChanged
 {
     public event EventHandler<BindablePropertyChangedEventArgs> propertyChanged;
 
     [CreateProperty]
-    public string PlayerName
-    {
-        get => _playerName;
-        set
-        {
-            if (_playerName == value) return;
-            _playerName = value;
-            Notify(nameof(PlayerName));
-        }
-    }
-
-    [CreateProperty]
     public int Health
     {
         get => _health;
-        set
-        {
-            if (_health == value) return;
-            _health = Mathf.Clamp(value, 0, MaxHealth);
-            Notify(nameof(Health));
-        }
+        set { if (_health == value) return; _health = Mathf.Clamp(value, 0, MaxHealth); Notify(nameof(Health)); }
     }
 
-    [CreateProperty]
-    public int MaxHealth
-    {
-        get => _maxHealth;
-        set
-        {
-            if (_maxHealth == value) return;
-            _maxHealth = Mathf.Max(1, value);
-            Notify(nameof(MaxHealth));
-        }
-    }
-
-    [SerializeField] string _playerName = "Hero";
+    // Same pattern for PlayerName (string), MaxHealth (int) — guard, set, notify
     [SerializeField] int _health = 100;
-    [SerializeField] int _maxHealth = 100;
 
-    void Notify(string property)
-    {
+    void Notify(string property) =>
         propertyChanged?.Invoke(this, new BindablePropertyChangedEventArgs(property));
-    }
 }
 ```
 
 ## [CreateProperty] Attribute
 
-`[CreateProperty]` from `Unity.Properties` exposes a property to the binding system. Without it, the binding system cannot discover the property.
-
-**Setter pattern** — always guard against redundant sets and fire notification:
-
-```csharp
-[CreateProperty]
-public float Volume
-{
-    get => _volume;
-    set
-    {
-        if (Mathf.Approximately(_volume, value)) return; // change guard
-        _volume = Mathf.Clamp01(value);
-        Notify(nameof(Volume));                           // notify binding system
-    }
-}
-```
-
-**Read-only properties** — omit the setter or make it private:
-
-```csharp
-[CreateProperty]
-public string HealthDisplay => $"{Health} / {MaxHealth}"; // computed, read-only
-```
-
-**Fields vs Properties**: `[CreateProperty]` works on properties only. Use `[SerializeField]` on the backing field for Inspector visibility.
+`[CreateProperty]` from `Unity.Properties` exposes a property to the binding system. Without it, the binding system cannot discover the property. Setter pattern: guard → set → `Notify()` (shown in PlayerData above). Read-only: `[CreateProperty] public string HealthDisplay => $"{Health} / {MaxHealth}";`. `[CreateProperty]` works on properties only — use `[SerializeField]` on backing fields for Inspector.
 
 ## PropertyPath
 
@@ -671,6 +460,7 @@ public static class GameUIConverters
 
 - [Code Templates](../references/code-templates.md) — data source, converter, binding controller templates
 - [Dragon Crashers Insights](../references/dragon-crashers-insights.md) — binding patterns from the official sample
+- [QuizU Patterns](../references/quizu-patterns.md) — Presenter pattern for data binding separation
 - [Performance Benchmarks](../references/performance-benchmarks.md) — binding vs direct assignment cost
 - [Official Docs Links](../references/official-docs-links.md) — Unity 6 data binding docs
 
@@ -681,16 +471,7 @@ public static class GameUIConverters
 - [CreateProperty](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/Unity.Properties.CreatePropertyAttribute.html) — attribute reference
 - [Type Converters](https://docs.unity3d.com/6000.0/Documentation/Manual/UIE-runtime-binding-type-conversion.html) — custom converter groups
 
-## Key Project File References
-
-| File | Role |
-|------|------|
-| `Assets/Scripts/UI/Events/*.cs` (10 files) | Static Action delegate event bus |
-| `Assets/Scripts/UI/Controllers/*Controller.cs` | MonoBehaviour controllers — subscribe/unsubscribe in OnEnable/OnDisable |
-| `Assets/Scripts/UI/UIViews/*View.cs` | UIView subclasses — subscribe in constructor, unsubscribe in Dispose |
-| `Assets/Scripts/Data/GameData.cs` | Serializable player state, JsonUtility persistence |
-| `Assets/Scripts/Managers/GameDataManager.cs` | Central state manager, purchase logic, fund management |
-| `Assets/Scripts/Managers/SaveManager.cs` | Load/save via JsonUtility + FileManager |
+> **DC source file listing**: [Dragon Crashers Insights](../references/dragon-crashers-insights.md) (section: DC Source Files Reference)
 
 ---
 **← Previous**: [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) | **Next →**: [ui-toolkit-patterns](../ui-toolkit-patterns/SKILL.md)
