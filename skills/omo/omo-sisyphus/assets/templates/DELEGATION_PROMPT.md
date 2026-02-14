@@ -16,26 +16,23 @@ This skill contains the rules, patterns, and workflow you MUST use.
 
 ---
 
-## Task
-{Clear, atomic description - one action per delegation}
+## 1. TASK
+{Clear, atomic description — one action per delegation}
 
 **YOU MUST USE THE `{skill-name}` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
-## Expected Outcome
+## 2. EXPECTED OUTCOME
 - {Concrete deliverable 1}
 - {Concrete deliverable 2}
 - Success criteria: {what "done" looks like}
 
-## Context
-- Existing patterns: {reference files}
-- Constraints: {tech stack, style}
-- **Required skill**: `{skill-name}` - you loaded this above
-- **Skill location**: `.opencode/skills/{category}/{skill-name}/SKILL.md`
+## 3. REQUIRED TOOLS
+- {Tool 1 — e.g., Read, Edit, lsp_diagnostics}
+- {Tool 2 — e.g., unityMCP_manage_script, unityMCP_manage_components}
+- Do NOT use tools outside this list unless essential for an unforeseen step
 
-## Requirements
-
-### MUST DO:
+## 4. MUST DO
 - Follow `{skill-name}` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
@@ -49,7 +46,7 @@ Follow the skill's instructions exactly.
   - `unity-csharp-conventions.md`: PascalCase classes/methods, _camelCase private fields, SRP components, Awaitable over Coroutines, avoid Update(), cache references
   - `unity-asset-rules.md`: Follow `Assets/_Project/` structure, PascalCase naming, texture/model optimization, Prefab workflow (nested, variants, verify in Prefab Mode)
 
-### MUST NOT DO:
+## 5. MUST NOT DO
 - **NEVER push to git remotes or add AI metadata to commits** (non-negotiable)
 - **NEVER perform destructive actions** (file/asset deletion, scene overwrites) without explicit user confirmation
 - Skip loading the skill first
@@ -58,6 +55,12 @@ Follow the skill's instructions exactly.
 - Refactor while fixing bugs
 - Leave code in broken state
 - Use shell commands for Unity Editor tasks (use `unityMCP` instead)
+
+## 6. CONTEXT
+- Existing patterns: {reference files}
+- Constraints: {tech stack, style}
+- **Required skill**: `{skill-name}` — you loaded this above
+- **Skill location**: `.opencode/skills/{category}/{skill-name}/SKILL.md`
 
 ---
 
@@ -88,12 +91,11 @@ Project rules are at `.opencode/rules/`:
 <!--
 DELEGATION CONSTRAINT (for the orchestrator, not the subagent):
 This prompt MUST be sent via:
-  call_omo_agent(
-      subagent_type="sisyphus",
+  task(
+      category="<selected-category>",        # OR subagent_type="<agent>" — never both
       load_skills=["{category}/{skill-name}"],  # REQUIRED — use category/skill-name format
       description="...",
       prompt="<this prompt>"
   )
-Using any other subagent_type is FORBIDDEN.
-Omitting load_skills will cause "Invalid arguments" errors.
+Omitting load_skills will cause the subagent to lack domain knowledge.
 -->

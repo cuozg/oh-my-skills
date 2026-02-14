@@ -1,15 +1,15 @@
 ---
 name: omo-sisyphus
-description: "Auto-improving prompt orchestrator that analyzes user requests, upgrades vague input into a technical specification before asking questions, shows a refined prompt preview, gets user confirmation, and then delegates to Sisyphus via call_omo_agent(subagent_type='sisyphus'). Acts as a 'Prompt Engineer' layer — ensures every delegation has clear goals, correct skill selection, and explicit success criteria before dispatch. Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', 'prompt engineer', 'enhance prompt', 'improve prompt', 'refine request', complex multi-step requests."
+description: "Auto-improving prompt orchestrator that analyzes user requests, upgrades vague input into a technical specification before asking questions, shows a refined prompt preview, gets user confirmation, and then delegates via task(). Acts as a 'Prompt Engineer' layer — ensures every delegation has clear goals, correct skill selection, and explicit success criteria before dispatch. Generates structured prompts with mandatory skill loading, /handoff context preservation, and Atlas manual review compliance. Use for complex tasks requiring planning, delegation, or multi-step work. Triggers: 'delegate to sisyphus', 'use sisyphus', 'prompt engineer', 'enhance prompt', 'improve prompt', 'refine request', complex multi-step requests."
 ---
 
 # Sisyphus Orchestrator (Prompt Engineer)
 
-Analyze → Auto-Improve → (Clarify only if blocked) → Confirm → Delegate via `call_omo_agent(subagent_type="sisyphus")`.
+Analyze → Auto-Improve → (Clarify only if blocked) → Confirm → Delegate via `task()`.
 
 ## Purpose
 
-Act as a "Prompt Engineer" orchestrator: analyze raw user requests, **auto-improve** them into a technical specification (Goal, Scope, Constraints, Skills, Verification) before asking any questions, present a refined prompt for user approval, and only then delegate to Sisyphus with the optimized prompt. Ask clarifying questions only when a **critical ambiguity** blocks progress. Ensure mandatory skill loading, context preservation, and Atlas review compliance.
+Act as a "Prompt Engineer" orchestrator: analyze raw user requests, **auto-improve** them into a technical specification (Goal, Scope, Constraints, Skills, Verification) before asking any questions, present a refined prompt for user approval, and only then delegate via `task()` with the optimized prompt. Ask clarifying questions only when a **critical ambiguity** blocks progress. Ensure mandatory skill loading, context preservation, and Atlas review compliance.
 
 ## Input
 
@@ -21,7 +21,7 @@ Act as a "Prompt Engineer" orchestrator: analyze raw user requests, **auto-impro
 
 Apply to BOTH the orchestrator AND any delegated subagent:
 
-- `subagent_type` is ALWAYS `"sisyphus"` — no exceptions
+- Use `category` OR `subagent_type` in `task()` — never both (unless continuing a session via `session_id`)
 - **NEVER** push to git remotes or add AI metadata (`Co-authored-by:`, `Tool-generated-by:`, etc.) to commits
 - **NEVER** run destructive git operations (merge, rebase, tag, force-push)
 - **NEVER** perform destructive actions (file/asset deletion, scene overwrites) without explicit user confirmation
@@ -34,20 +34,20 @@ Violation = **critical failure**.
 
 ## Critical: `load_skills` is REQUIRED
 
-**`load_skills` is a REQUIRED parameter** for `call_omo_agent(subagent_type="sisyphus")`. Omitting it causes "Invalid arguments" errors and the subagent will lack domain knowledge.
+**`load_skills` is a REQUIRED parameter** for `task()`. Omitting it causes the subagent to lack domain knowledge.
 
 ```python
 # CORRECT — always pass load_skills
-call_omo_agent(
-    subagent_type="sisyphus",
+task(
+    category="unspecified-high",
     load_skills=["unity/unity-code"],  # REQUIRED — category/skill-name format
     description="Implement health regen",
     prompt="..."
 )
 
-# WRONG — missing load_skills → fails or produces poor results
-call_omo_agent(
-    subagent_type="sisyphus",
+# WRONG — missing load_skills → produces poor results
+task(
+    category="unspecified-high",
     description="Implement health regen",
     prompt="..."
 )
@@ -93,6 +93,64 @@ Find the right skill fast. For the complete 44-skill inventory, multi-skill load
 | Create/update a skill | `other/skill-creator` |
 | Generate a Mermaid diagram | `other/mermaid` |
 | Work with FlatBuffers | `other/flatbuffers-coder` |
+
+---
+
+## Intent Gate (Phase 0)
+
+Before classifying the request, check these triggers:
+
+| Trigger | Action |
+|---|---|
+| External library/source mentioned | Fire `librarian` background task |
+| 2+ modules involved | Fire `explore` background task |
+| Ambiguous or complex request | Consult `metis` before planning |
+| Work plan created | Invoke `momus` for review before execution |
+
+### Request Classification
+
+| Type | Signal | Action |
+|---|---|---|
+| **Trivial** | Single file, known location | Direct tools only (unless trigger applies) |
+| **Explicit** | Specific file/line, clear command | Execute directly |
+| **Exploratory** | "How does X work?", "Find Y" | Fire explore (1-3) + tools in parallel |
+| **Open-ended** | "Improve", "Refactor", "Add feature" | Assess codebase first |
+| **Ambiguous** | Unclear scope, multiple interpretations | Ask ONE clarifying question |
+
+---
+
+## Category System
+
+Use `category` in `task()` to select the optimal model for the domain. Use EITHER `category` OR `subagent_type`, never both (unless continuing via `session_id`).
+
+| Category | Best For |
+|---|---|
+| `visual-engineering` | Frontend, UI/UX, design, styling, animation |
+| `ultrabrain` | Hard, logic-heavy tasks (give goals, not steps) |
+| `deep` | Autonomous problem-solving requiring deep research |
+| `artistry` | Unconventional, creative approaches beyond standard patterns |
+| `quick` | Trivial — single file changes, typo fixes |
+| `unspecified-low` | Misc tasks, low effort |
+| `unspecified-high` | Misc tasks, high effort |
+| `writing` | Documentation, prose, technical writing |
+
+```python
+# Category-based delegation
+task(
+    category="deep",
+    load_skills=["unity/unity-investigate", "unity/unity-debug"],
+    description="Root cause analysis of matchmaking failure",
+    prompt="..."
+)
+
+# Subagent-based delegation (for specific agent types)
+task(
+    subagent_type="oracle",
+    load_skills=[],
+    description="Architecture consultation",
+    prompt="..."
+)
+```
 
 ---
 
@@ -155,32 +213,35 @@ Only after confirmation. Follow the delegation mechanics below.
 
 ### Pre-flight Check
 
-Before every `call_omo_agent()`, state:
+Before every `task()` call, state:
 
 ```
-Delegating via call_omo_agent():
-- subagent_type: "sisyphus"
+Delegating via task():
+- category: [quick|deep|ultrabrain|...] OR subagent_type: [sisyphus|explore|oracle|...]
+- Skills: [load_skills values]
 - Action: [code|plan|test|review|...]
-- Skill: [skill-name]
 - Expected outcome: [success criteria]
 ```
 
 ### Generate Prompt
 
-Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. Every prompt MUST:
+Read template at `assets/templates/DELEGATION_PROMPT.md` and fill placeholders. Every prompt MUST include these 6 sections:
 
-1. Start with "FIRST: Load Required Skill" pointing to `.opencode/skills/{category}/{skill-name}/SKILL.md`
-2. Include atomic task description and concrete expected outcome
-3. MUST DO: follow skill, create todos, run diagnostics, `Read` all modified files, comply with `.opencode/rules/`
-4. MUST NOT DO: push to remotes, add AI metadata, destructive actions without confirmation
-5. Include "Use `/handoff` if context is getting long"
+1. **TASK**: Atomic, specific goal (one action per delegation)
+2. **EXPECTED OUTCOME**: Concrete deliverables with success criteria
+3. **REQUIRED TOOLS**: Explicit tool whitelist (prevents tool sprawl)
+4. **MUST DO**: Exhaustive requirements — follow skill, create todos, run diagnostics, `Read` all modified files, comply with `.opencode/rules/`
+5. **MUST NOT DO**: Forbidden actions — push to remotes, add AI metadata, destructive actions without confirmation
+6. **CONTEXT**: File paths, existing patterns, constraints
+
+Also include: "FIRST: Load Required Skill" pointing to `.opencode/skills/{category}/{skill-name}/SKILL.md`, and "Use `/handoff` if context is getting long".
 
 ### Delegate
 
 ```python
 # Sync — need result before next step
-call_omo_agent(
-    subagent_type="sisyphus",
+task(
+    category="unspecified-high",
     load_skills=["unity/unity-code"],  # REQUIRED — match task to skill
     description="Brief task description",
     run_in_background=False,
@@ -188,8 +249,8 @@ call_omo_agent(
 )
 
 # Background — parallel independent tasks
-call_omo_agent(
-    subagent_type="sisyphus",
+task(
+    category="unspecified-high",
     load_skills=["unity/unity-optimize-performance"],  # REQUIRED
     description="Brief task description",
     run_in_background=True,
@@ -197,14 +258,13 @@ call_omo_agent(
 )
 # Collect later: background_output(task_id="...")
 
-# Resume previous session (boulder continuation)
-call_omo_agent(
-    subagent_type="sisyphus",
-    load_skills=["unity/unity-code"],  # REQUIRED even on resume
+# Resume previous session (session continuity)
+task(
     session_id="ses_abc123",  # Validated session_id
+    load_skills=["unity/unity-code"],  # REQUIRED even on resume
     description="Continue implementation",
     run_in_background=False,
-    prompt="..."
+    prompt="Fix: specific issue from previous attempt"
 )
 ```
 
@@ -212,36 +272,49 @@ call_omo_agent(
 
 ## Subagent Selection Guide
 
-Not all tasks require Sisyphus. Choose the right agent:
+Not all tasks require category-based delegation. Use `subagent_type` for specialized agents:
 
-| Subagent | Use When | Example |
-|---|---|---|
-| **sisyphus** | Complex implementation, multi-step work, tasks needing a skill | "Implement inventory system from plan" |
-| **explore** | Codebase exploration, finding patterns, architecture understanding | "How is matchmaking structured?" |
-| **oracle** | Quick factual answers, API lookups, targeted questions | "What's the signature of PlayerManager.Init?" |
-| **librarian** | Session history, finding previous work, context retrieval | "What did we do in yesterday's session?" |
+| Subagent | Cost | Use When | Example |
+|---|---|---|---|
+| **explore** | FREE | Codebase exploration, finding patterns, architecture understanding | "How is matchmaking structured?" |
+| **librarian** | CHEAP | External docs, OSS examples, library best practices | "How does UniTask handle cancellation?" |
+| **oracle** | EXPENSIVE | Read-only high-IQ consultant — architecture, debugging after 2+ failures | "What's the best pattern for cross-system communication?" |
+| **metis** | EXPENSIVE | Pre-planning — identifies hidden intentions, ambiguities, failure points | Complex/ambiguous request before planning |
+| **momus** | EXPENSIVE | Expert reviewer — evaluates plans for clarity, verifiability, completeness | Review a work plan before execution |
+
+### Explore/Librarian Prompt Structure
+
+These agents are contextual grep tools. Fire liberally, always in background. Structure prompts with:
+
+```
+[CONTEXT]: What task I'm working on, which files/modules are involved
+[GOAL]: The specific outcome I need — what decision this unblocks
+[DOWNSTREAM]: How I will use the results — what I'll build/decide
+[REQUEST]: Concrete search instructions — what to find, format, what to SKIP
+```
 
 ### Spawning Examples
 
-**Explore → Implement:**
+**Explore (background) + Implement:**
 ```python
-call_omo_agent(subagent_type="explore", description="Understand PlayerHealth",
-    run_in_background=False, prompt="Trace player health — scripts, data flow, UI bindings.")
-call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-code"],
+task(subagent_type="explore", load_skills=[], description="Understand PlayerHealth",
+    run_in_background=True, prompt="[CONTEXT]: Implementing health regen...[REQUEST]: Find health scripts, data flow, UI bindings. Skip tests.")
+# Continue working, collect later with background_output(task_id="...")
+task(category="unspecified-high", load_skills=["unity/unity-code"],
     description="Add health regen", run_in_background=False, prompt="FIRST: Load Required Skill\n...")
 ```
 
 **Parallel background tasks:**
 ```python
-call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-optimize-performance"],
+task(category="unspecified-high", load_skills=["unity/unity-optimize-performance"],
     description="Optimize particles", run_in_background=True, prompt="...")
-call_omo_agent(subagent_type="sisyphus", load_skills=["unity/unity-refactor"],
+task(category="unspecified-high", load_skills=["unity/unity-refactor"],
     description="Refactor UI controllers", run_in_background=True, prompt="...")
 ```
 
 **Multi-skill delegation:**
 ```python
-call_omo_agent(subagent_type="sisyphus", load_skills=[
+task(category="visual-engineering", load_skills=[
     "unity/ui-toolkit/ui-toolkit-master", "unity/ui-toolkit/ui-toolkit-databinding",
     "unity/ui-toolkit/ui-toolkit-theming"], description="Build settings screen",
     run_in_background=False, prompt="FIRST: Load Required Skills\n...")
@@ -249,11 +322,32 @@ call_omo_agent(subagent_type="sisyphus", load_skills=[
 
 ---
 
-## Context Preservation
+## Session Continuity & Context Preservation
 
+Every `task()` output includes a `session_id`. **Reuse it** for follow-ups instead of starting fresh — the subagent retains full conversation context, saving 70%+ tokens.
+
+| Scenario | Action |
+|---|---|
+| Task failed/incomplete | `session_id="{id}", prompt="Fix: {specific error}"` |
+| Follow-up on result | `session_id="{id}", prompt="Also: {question}"` |
+| Multi-turn with same agent | Always reuse `session_id` — never start fresh |
+| Verification failed | `session_id="{id}", prompt="Failed verification: {error}. Fix."` |
+
+Rules:
+- Validate `session_id` via `session_list()` / `session_info()` before reuse
 - Include "Use `/handoff` if context is getting long" in every delegation prompt
 - `/handoff` preserves full context for the next session
-- To resume: pass previous `session_id` to `call_omo_agent()` (validate via `session_list()` first)
+
+## Post-Delegation Verification
+
+After ANY delegated work returns, ALWAYS verify before reporting success:
+
+1. **Works as expected?** — Does the result match the EXPECTED OUTCOME?
+2. **Follows codebase patterns?** — Consistent with existing code style and conventions?
+3. **Expected result?** — Deliverables complete, no regressions?
+4. **Followed MUST DO / MUST NOT DO?** — Check every requirement was met
+
+If verification fails → resume via `session_id` with specific failure details. Do NOT start a new task.
 
 ---
 
@@ -273,6 +367,8 @@ call_omo_agent(subagent_type="sisyphus", load_skills=[
 | Passing unvalidated `session_id` | Verify via `session_list()` / `session_info()` first |
 | Loading 5+ skills per delegation | Max 4 skills; split into sequential delegations |
 | Subagent skips `Read` on modified files | Require `Read` on all changed files in MUST DO section |
+| Starting fresh task instead of reusing session_id | Resume via `session_id` — subagent retains full context |
+| Skipping post-delegation verification | ALWAYS verify: works, follows patterns, met MUST DO/MUST NOT DO |
 
 ---
 
@@ -285,8 +381,9 @@ Successful orchestration produces:
 4. **User confirmation** — yes/no/edit recorded
 5. **Delegation log** — subagent_type, action, skill, expected outcome (before each call)
 6. **Subagent result** — completed work from Sisyphus
-7. **File verification** — all modified files confirmed read (Atlas review compliance)
-8. **Clean commits** — if committing: no AI metadata, imperative messages only
+7. **Post-delegation verification** — works as expected, follows patterns, met all MUST DO / MUST NOT DO
+8. **File verification** — all modified files confirmed read (Atlas review compliance)
+9. **Clean commits** — if committing: no AI metadata, imperative messages only
 
 ---
 
