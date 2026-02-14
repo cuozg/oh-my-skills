@@ -497,7 +497,4 @@ void UpdateHealthBarPosition(VisualElement element, Vector3 worldPos, Vector2 wo
 - [Performance](../ui-toolkit-performance/SKILL.md) — animation cost, virtualization
 - [Mobile](../ui-toolkit-mobile/SKILL.md) — touch patterns, safe area
 - [Code Templates](../references/code-templates.md) | [Dragon Crashers](../references/dragon-crashers-insights.md) | [QuizU Patterns](../references/quizu-patterns.md)
-
----
-
 **← Previous**: [Data Binding](../ui-toolkit-databinding/SKILL.md) | **Next →**: [Performance](../ui-toolkit-performance/SKILL.md)
