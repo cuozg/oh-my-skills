@@ -7,15 +7,6 @@ Configuration files for AI agents to work effectively with this Unity project.
 ```bash
 git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ```
-
-## Plugin Setup
-
-This configuration uses the [opencode-agent-skills](https://github.com/joshuadavidthomas/opencode-agent-skills) plugin for skill discovery. Ensure it's listed in `opencode.json`:
-
-```json
-{
-  "plugin": ["opencode-agent-skills"]
-}
 ```
 
 ## Quick Start
