@@ -1,6 +1,7 @@
 ---
 name: ui-toolkit-databinding
 description: "Unity 6 runtime data binding for UI Toolkit. Covers IDataSource, INotifyBindablePropertyChanged, [CreateProperty], PropertyPath, DataBinding class, UXML binding attributes, type converters, and binding modes. Use when: (1) Binding data models to UI elements, (2) Implementing reactive UI updates without manual callbacks, (3) Creating data sources with change notification, (4) Setting up two-way bindings for input fields, (5) Writing custom type converters for bindings. Triggers: 'data binding', 'dataSource', 'CreateProperty', 'INotifyBindablePropertyChanged', 'binding mode', 'type converter', 'PropertyPath'."
+---
 
 # UI Toolkit Data Binding
 

@@ -1,14 +1,14 @@
 ---
 description: WebGL build configuration, browser optimization, and deployment
 agent: sisyphus
-skill: unity/unity-web-deploy
+skill: unity-web-deploy
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-web-deploy/SKILL.md`
+`@.opencode/skills/unity-web-deploy/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Handle WebGL deployment:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-web-deploy` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-web-deploy` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-web-deploy` — you loaded this above
+- **Required skill**: `unity-web-deploy` — you loaded this above
 - Scope: build configuration, C#/JS interop, browser optimization, PWA features, hosting
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-web-deploy` skill EXACTLY as loaded above
+- Follow `unity-web-deploy` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns

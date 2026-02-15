@@ -1,14 +1,14 @@
 ---
 description: Find and fix Unity performance bottlenecks (FPS, memory, load times)
 agent: sisyphus
-skill: unity/unity-optimize-performance
+skill: unity-optimize-performance
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-optimize-performance/SKILL.md`
+`@.opencode/skills/unity-optimize-performance/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Optimize the specified area:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-optimize-performance` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-optimize-performance` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-optimize-performance` — you loaded this above
+- **Required skill**: `unity-optimize-performance` — you loaded this above
 - Optimization areas: CPU frame time, memory/GC, scene loading, rendering/draw calls, mobile budgets
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-optimize-performance` skill EXACTLY as loaded above
+- Follow `unity-optimize-performance` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Profile first, then fix — never optimize blindly

@@ -1,14 +1,14 @@
 ---
 description: Analyze Unity console logs — classify errors, group duplicates, suggest fixes
 agent: sisyphus
-skill: unity/unity-log-analyzer
+skill: unity-log-analyzer
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-log-analyzer/SKILL.md`
+`@.opencode/skills/unity-log-analyzer/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Analyze the Unity console logs:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-log-analyzer` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-log-analyzer` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 If no specific logs are provided, fetch them from the Unity Editor using `coplay-mcp_get_unity_logs`.
@@ -35,7 +35,7 @@ If no specific logs are provided, fetch them from the Unity Editor using `coplay
 
 ## Context
 
-- **Required skill**: `unity/unity-log-analyzer` — you loaded this above
+- **Required skill**: `unity-log-analyzer` — you loaded this above
 - **Analysis script**: `.opencode/tools/unity-log-analyzer.py`
 - **Log source**: `coplay-mcp_get_unity_logs` or user-provided log text
 
@@ -43,7 +43,7 @@ If no specific logs are provided, fetch them from the Unity Editor using `coplay
 
 ### MUST DO:
 
-- Follow `unity/unity-log-analyzer` skill EXACTLY as loaded above
+- Follow `unity-log-analyzer` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Fetch logs via MCP if not provided
 - Classify all errors into categories

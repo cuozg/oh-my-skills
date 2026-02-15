@@ -37,10 +37,10 @@ Scan ALL available skills (built-in + user-installed) and select every skill who
 **Built-in skills**: `playwright`, `frontend-ui-ux`, `git-master`, `dev-browser`
 
 **User-installed skills (HIGH PRIORITY — evaluate every one)**:
-- Unity: `unity/unity-code`, `unity/unity-investigate`, `unity/unity-plan`, `unity/unity-refactor`, `unity/unity-fix-errors`, `unity/unity-debug`, `unity/unity-test`, `unity/unity-review-pr`, `unity/unity-review-pr-local`, `unity/unity-write-tdd`, `unity/unity-write-docs`, `unity/unity-editor-tools`, `unity/unity-serialization`, `unity/unity-event-system`, `unity/unity-object-pooling`, `unity/unity-optimize-performance`, `unity/unity-build-pipeline`, `unity/unity-mobile-deploy`, `unity/unity-web-deploy`, `unity/unity-singleton-auditor`, `unity/unity-game-designer`, `unity/unity-log-analyzer`, `unity/unity-ux-design`, `unity/unity-ui`, `unity/unity-plan-detail`, `unity/unity-plan-executor`, `unity/unity-2d`, `unity/unity-tech-art`, `unity/unity-test-case`
+- Unity: `unity-code`, `unity-investigate`, `unity-plan`, `unity-refactor`, `unity-fix-errors`, `unity-debug`, `unity-test`, `unity-review-pr`, `unity-review-pr-local`, `unity-write-tdd`, `unity-write-docs`, `unity-editor-tools`, `unity-serialization`, `unity-event-system`, `unity-object-pooling`, `unity-optimize-performance`, `unity-build-pipeline`, `unity-mobile-deploy`, `unity-web-deploy`, `unity-singleton-auditor`, `unity-game-designer`, `unity-log-analyzer`, `unity-ux-design`, `unity-ui`, `unity-plan-detail`, `unity-plan-executor`, `unity-2d`, `unity-tech-art`, `unity-test-case`
 - UI Toolkit: `unity/ui-toolkit/ui-toolkit-master`, `unity/ui-toolkit/ui-toolkit-architecture`, `unity/ui-toolkit/ui-toolkit-databinding`, `unity/ui-toolkit/ui-toolkit-debugging`, `unity/ui-toolkit/ui-toolkit-mobile`, `unity/ui-toolkit/ui-toolkit-patterns`, `unity/ui-toolkit/ui-toolkit-performance`, `unity/ui-toolkit/ui-toolkit-responsive`, `unity/ui-toolkit/ui-toolkit-theming`
 - Other: `other/flatbuffers-coder`, `other/skill-creator`, `other/mermaid`, `other/prompt-improver`
-- Git: `git/git-commit`, `git/git-squash`, `git/git-comment`
+- Git: `git-commit`, `git-squash`, `git-comment`
 - Bash: `bash/bash-optimize`, `bash/bash-check`, `bash/bash-install`
 - Orchestration: `omo/omo-master`, `omo/omo-sisyphus`, `omo/omo-hephaestus`
 

@@ -1,14 +1,14 @@
 ---
 description: Deep investigation and debugging of Unity errors with root cause analysis
 agent: sisyphus
-skill: unity/unity-debug
+skill: unity-debug
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-debug/SKILL.md`
+`@.opencode/skills/unity-debug/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Perform a deep debug investigation:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-debug` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-debug` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -33,14 +33,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-debug` — you loaded this above
+- **Required skill**: `unity-debug` — you loaded this above
 - Input may include: stack traces, error messages, unexpected behavior descriptions, reproduction steps
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-debug` skill EXACTLY as loaded above
+- Follow `unity-debug` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns

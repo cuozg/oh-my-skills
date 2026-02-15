@@ -1,14 +1,14 @@
 ---
 description: Create and run Unity tests with Edit/Play Mode support
 agent: sisyphus
-skill: unity/unity-test
+skill: unity-test
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-test/SKILL.md`
+`@.opencode/skills/unity-test/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Create tests for the specified target:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-test` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-test` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -33,14 +33,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-test` — you loaded this above
+- **Required skill**: `unity-test` — you loaded this above
 - Test framework: NUnit attributes, Assert patterns, Unity Test Framework conventions
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-test` skill EXACTLY as loaded above
+- Follow `unity-test` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Analyze target code to understand testable behaviors

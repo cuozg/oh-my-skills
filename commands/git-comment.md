@@ -1,14 +1,14 @@
 ---
 description: Generate structured commit comments from PRs or commit hashes
 agent: sisyphus
-skill: git/git-comment
+skill: git-comment
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/git/git-comment/SKILL.md`
+`@.opencode/skills/git-comment/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Generate structured commit documentation for the following:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `git/git-comment` SKILL** that has been loaded.
+**YOU MUST USE THE `git-comment` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `git/git-comment` — you loaded this above
+- **Required skill**: `git-comment` — you loaded this above
 - Analyze PRs, commits, or branch diffs to produce documentation
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `git/git-comment` skill EXACTLY as loaded above
+- Follow `git-comment` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Use `Read` on every modified file before reporting completion _(Atlas manual review requirement)_

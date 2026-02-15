@@ -1,14 +1,14 @@
 ---
 description: Squash and organize commits into clean, well-documented history
 agent: sisyphus
-skill: git/git-squash
+skill: git-squash
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/git/git-squash/SKILL.md`
+`@.opencode/skills/git-squash/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Squash and organize the commit history:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `git/git-squash` SKILL** that has been loaded.
+**YOU MUST USE THE `git-squash` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `git/git-squash` — you loaded this above
+- **Required skill**: `git-squash` — you loaded this above
 - Analyze commit history, group related changes, squash safely
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `git/git-squash` skill EXACTLY as loaded above
+- Follow `git-squash` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Verify the result with `git log` before completing

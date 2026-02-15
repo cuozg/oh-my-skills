@@ -1,14 +1,14 @@
 ---
 description: Diagnose and fix Unity compiler errors, exceptions, and build failures
 agent: sisyphus
-skill: unity/unity-fix-errors
+skill: unity-fix-errors
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-fix-errors/SKILL.md`
+`@.opencode/skills/unity-fix-errors/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Fix the reported errors:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-fix-errors` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-fix-errors` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 If no specific errors are mentioned, check for compiler errors using `lsp_diagnostics` and Unity console logs.
@@ -34,14 +34,14 @@ If no specific errors are mentioned, check for compiler errors using `lsp_diagno
 
 ## Context
 
-- **Required skill**: `unity/unity-fix-errors` — you loaded this above
+- **Required skill**: `unity-fix-errors` — you loaded this above
 - Check Unity console logs, compiler output, or user-provided stack traces
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-fix-errors` skill EXACTLY as loaded above
+- Follow `unity-fix-errors` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns

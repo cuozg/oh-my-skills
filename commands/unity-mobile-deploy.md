@@ -1,14 +1,14 @@
 ---
 description: iOS/Android build configuration, optimization, and deployment
 agent: sisyphus
-skill: unity/unity-mobile-deploy
+skill: unity-mobile-deploy
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-mobile-deploy/SKILL.md`
+`@.opencode/skills/unity-mobile-deploy/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Handle mobile deployment:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-mobile-deploy` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-mobile-deploy` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-mobile-deploy` — you loaded this above
+- **Required skill**: `unity-mobile-deploy` — you loaded this above
 - Scope: touch controls, mobile optimization, native features (IAP, notifications), build pipeline (Xcode/Gradle)
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-mobile-deploy` skill EXACTLY as loaded above
+- Follow `unity-mobile-deploy` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns

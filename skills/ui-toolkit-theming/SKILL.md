@@ -1,6 +1,7 @@
 ---
 name: ui-toolkit-theming
 description: "Theme Style Sheets (TSS) and design token architecture for Unity UI Toolkit. Covers TSS/USS cascade, semantic color tokens, typography scale, spacing systems, runtime theme switching, and theme-aware components. Use when: (1) Building a design token system for UI, (2) Creating dark/light themes, (3) Switching themes at runtime, (4) Organizing USS variables into a scalable system, (5) Debugging style cascade and specificity issues. Triggers: 'theme', 'TSS', 'design tokens', 'dark mode', 'light mode', 'USS variables', 'theme switch', 'color palette', 'style cascade'."
+---
 
 # UI Toolkit Theming
 
@@ -62,7 +63,7 @@ Consume tokens through USS classes, never hardcode. BEM naming. `[UxmlElement]` 
 
 ## Dragon Crashers: Compound Theming
 
-7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns.md#dragon-crashers-compound-theming-system), [Dragon Crashers Insights](../references/dragon-crashers-insights.md), [Project Patterns](../references/project-patterns.md).
+7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns.md#dragon-crashers-compound-theming-system), [Dragon Crashers Insights](../ui-toolkit-architecture/references/dragon-crashers-insights.md), [Project Patterns](../ui-toolkit-architecture/references/project-patterns.md).
 
 ## Common Pitfalls
 

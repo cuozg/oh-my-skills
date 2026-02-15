@@ -1,14 +1,14 @@
 ---
 description: Refactor Unity C# code - extract, rename, restructure, decouple
 agent: sisyphus
-skill: unity/unity-refactor
+skill: unity-refactor
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-refactor/SKILL.md`
+`@.opencode/skills/unity-refactor/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Perform the requested refactoring:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-refactor` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-refactor` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-refactor` — you loaded this above
+- **Required skill**: `unity-refactor` — you loaded this above
 - Refactoring types: extract, rename, restructure, simplify, decouple, replace anti-patterns, move, clean up, optimize
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-refactor` skill EXACTLY as loaded above
+- Follow `unity-refactor` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Investigate before changing — understand all callers and dependencies

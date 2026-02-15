@@ -2,7 +2,7 @@
 description: Find the corresponding skill
 agent: sisyphus-junior
 model: github-copilot/claude-opus-4.6
-skill: skill other/skill-route
+skill: skill-router
 subtask: true
 ---
 1. Load skill other/skill-route

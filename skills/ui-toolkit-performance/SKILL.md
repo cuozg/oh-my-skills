@@ -57,7 +57,7 @@ listView.bindItem = (element, index) => element.Q<Label>("name").text = items[in
 listView.unbindItem = (element, index) => { /* cleanup subscriptions */ };
 ```
 
-Use `ListView` for 20+ items. See [Performance Benchmarks](../references/performance-benchmarks.md).
+Use `ListView` for 20+ items. See [Performance Benchmarks](references/performance-benchmarks.md).
 
 ## Draw Call Optimization
 
@@ -116,7 +116,7 @@ button.RegisterCallback<ClickEvent>(OnClick); // not: evt => OnClick(evt)
 | `UIR.TextRegen` | < 0.2ms | Batch text updates |
 | `UIR.DrawChain` | < 0.2ms | Atlas textures, fewer fonts |
 
-3. **Frame Debugger** for draw call count. Compare against [Performance Benchmarks](../references/performance-benchmarks.md).
+3. **Frame Debugger** for draw call count. Compare against [Performance Benchmarks](references/performance-benchmarks.md).
 
 ## DC Performance Patterns
 

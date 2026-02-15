@@ -1,14 +1,14 @@
 ---
 description: Generate formal Technical Design Documents for Unity features
 agent: sisyphus
-skill: unity/unity-write-tdd
+skill: unity-write-tdd
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-write-tdd/SKILL.md`
+`@.opencode/skills/unity-write-tdd/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Create a Technical Design Document for the following:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-write-tdd` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-write-tdd` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-write-tdd` — you loaded this above
+- **Required skill**: `unity-write-tdd` — you loaded this above
 - Investigate existing codebase, reference existing patterns and conventions
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-write-tdd` skill EXACTLY as loaded above
+- Follow `unity-write-tdd` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Investigate existing codebase for context before writing

@@ -1,7 +1,7 @@
 ---
 description: Plan Unity features with structured HTML output and diff patches
 agent: sisyphus
-skill: unity/unity-plan
+skill: unity-plan
 subtask: true
 ---
 1. 
@@ -10,7 +10,7 @@ subtask: true
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-plan/SKILL.md`
+`@.opencode/skills/unity-plan/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -22,7 +22,7 @@ Plan the following Unity feature or change:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-plan` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-plan` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -36,14 +36,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-plan` — you loaded this above
+- **Required skill**: `unity-plan` — you loaded this above
 - Investigate existing codebase, analyze requirements, break down work, estimate effort, generate plan
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-plan` skill EXACTLY as loaded above
+- Follow `unity-plan` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Investigate the existing codebase to understand current architecture

@@ -1,14 +1,14 @@
 ---
 description: Audit Singleton<T> usage — detect circular dependencies, unsafe access, and anti-patterns
 agent: sisyphus
-skill: unity/unity-singleton-auditor
+skill: unity-singleton-auditor
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-singleton-auditor/SKILL.md`
+`@.opencode/skills/unity-singleton-auditor/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Audit Singleton usage in the project:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-singleton-auditor` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-singleton-auditor` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 If no specific focus is mentioned, run the full audit (dependencies, null-checks, init-order, anti-patterns).
@@ -35,8 +35,8 @@ If no specific focus is mentioned, run the full audit (dependencies, null-checks
 
 ## Context
 
-- **Required skill**: `unity/unity-singleton-auditor` — you loaded this above
-- **Audit script**: `.opencode/skills/unity/unity-singleton-auditor/scripts/audit_singletons.py`
+- **Required skill**: `unity-singleton-auditor` — you loaded this above
+- **Audit script**: `.opencode/skills/unity-singleton-auditor/scripts/audit_singletons.py`
 - **Project uses**: `Singleton<T>` base class extensively (100+ singletons)
 - **Key pattern**: `Instance` property access, `HasInstance` checks
 
@@ -44,7 +44,7 @@ If no specific focus is mentioned, run the full audit (dependencies, null-checks
 
 ### MUST DO:
 
-- Follow `unity/unity-singleton-auditor` skill EXACTLY as loaded above
+- Follow `unity-singleton-auditor` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Run the audit script first, then analyze results
 - Use LSP tools to verify critical findings

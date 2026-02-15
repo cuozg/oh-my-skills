@@ -1,14 +1,14 @@
 ---
 description: Review code changes locally and generate a markdown review report
 agent: sisyphus
-skill: unity/unity-review-pr-local
+skill: unity-review-pr-local
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-review-pr-local/SKILL.md`
+`@.opencode/skills/unity-review-pr-local/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Review changes locally:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-review-pr-local` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-review-pr-local` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -32,14 +32,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-review-pr-local` — you loaded this above
+- **Required skill**: `unity-review-pr-local` — you loaded this above
 - Analyze uncommitted changes, a specific branch, or commit range
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-review-pr-local` skill EXACTLY as loaded above
+- Follow `unity-review-pr-local` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Review against Unity conventions, performance patterns, and best practices

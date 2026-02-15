@@ -1,14 +1,14 @@
 ---
 description: Implement C# game logic with Unity best practices
 agent: sisyphus
-skill: unity/unity-code
+skill: unity-code
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-code/SKILL.md`
+`@.opencode/skills/unity-code/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Implement the requested feature:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-code` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-code` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 If a plan exists in `Documents/Plans/` or `Documents/Tasks/`, follow it exactly.
@@ -34,7 +34,7 @@ If a plan exists in `Documents/Plans/` or `Documents/Tasks/`, follow it exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-code` — you loaded this above
+- **Required skill**: `unity-code` — you loaded this above
 - Follow project conventions from `.opencode/rules/unity-csharp-conventions.md`
 - Follow asset rules from `.opencode/rules/unity-asset-rules.md`
 
@@ -42,7 +42,7 @@ If a plan exists in `Documents/Plans/` or `Documents/Tasks/`, follow it exactly.
 
 ### MUST DO:
 
-- Follow `unity/unity-code` skill EXACTLY as loaded above
+- Follow `unity-code` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Match existing codebase patterns

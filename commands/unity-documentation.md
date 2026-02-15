@@ -1,14 +1,14 @@
 ---
 description: Generate project documentation (README, architecture, API references)
 agent: sisyphus
-skill: unity/unity-write-docs
+skill: unity-write-docs
 subtask: true
 ---
 
 ## FIRST: Load Required Skill
 
 **BEFORE you do anything**, you MUST read and follow this skill:
-`@.opencode/skills/unity/unity-write-docs/SKILL.md`
+`@.opencode/skills/unity-write-docs/SKILL.md`
 
 This skill contains the rules, patterns, and workflow you MUST use.
 
@@ -20,7 +20,7 @@ Create documentation for the following:
 
 $ARGUMENTS
 
-**YOU MUST USE THE `unity/unity-write-docs` SKILL** that has been loaded.
+**YOU MUST USE THE `unity-write-docs` SKILL** that has been loaded.
 Follow the skill's instructions exactly.
 
 ## Expected Outcome
@@ -33,14 +33,14 @@ Follow the skill's instructions exactly.
 
 ## Context
 
-- **Required skill**: `unity/unity-write-docs` — you loaded this above
+- **Required skill**: `unity-write-docs` — you loaded this above
 - Documentation types: README, Architecture, API Reference, Onboarding Guide, Prefab/Scene Setup
 
 ## Requirements
 
 ### MUST DO:
 
-- Follow `unity/unity-write-docs` skill EXACTLY as loaded above
+- Follow `unity-write-docs` skill EXACTLY as loaded above
 - Create todos BEFORE starting
 - Mark tasks in_progress/completed
 - Investigate the codebase thoroughly before writing

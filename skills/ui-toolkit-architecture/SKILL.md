@@ -1,6 +1,7 @@
 ---
 name: ui-toolkit-architecture
 description: "Component-based architecture for Unity UI Toolkit. Covers UXML/USS/C# separation, custom controls with [UxmlElement], reusable templates, MVC/MVP patterns, and scalable project structure. Use when: (1) Designing UI component hierarchies, (2) Creating reusable custom controls, (3) Implementing MVC/MVP for UI screens, (4) Structuring large-scale UI projects, (5) Building inventory, character, or menu systems. Triggers: 'UI architecture', 'custom control', 'UxmlElement', 'reusable component', 'UI MVC', 'component hierarchy'."
+---
 
 # UI Toolkit Architecture
 

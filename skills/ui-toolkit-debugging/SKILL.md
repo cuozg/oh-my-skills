@@ -126,7 +126,7 @@ root.Query().Where(e => e.layout.width <= 0).ForEach(e => e.AddToClassList("debu
 
 ## DC Debugging Scenarios
 
-See [dragon-crashers-insights.md](../references/dragon-crashers-insights.md): event bus `+=`/`-=` pairing, fire-and-forget `Task` exception swallowing, world-to-panel positioning, compound theme debugging, SafeAreaBorder Editor-vs-device differences.
+See [dragon-crashers-insights.md](../ui-toolkit-architecture/references/dragon-crashers-insights.md): event bus `+=`/`-=` pairing, fire-and-forget `Task` exception swallowing, world-to-panel positioning, compound theme debugging, SafeAreaBorder Editor-vs-device differences.
 
 ---
 

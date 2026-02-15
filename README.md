@@ -8,17 +8,15 @@ Configuration files for AI agents to work effectively with this Unity project.
 git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ```
 
-## Antigravity Setup
+## Plugin Setup
 
-To enable these workflows as **Antigravity slash commands** (e.g., `/unity-plan`) and register the specialized **skills**, link the directories to the project's agent folder:
+This configuration uses the [opencode-agent-skills](https://github.com/joshuadavidthomas/opencode-agent-skills) plugin for skill discovery. Ensure it's listed in `opencode.json`:
 
-```bash
-mkdir -p .agent
-ln -s ../.opencode/commands .agent/workflows
-ln -s ../.opencode/skills .agent/skills
-ln -s ../.opencode/rules .agent/rules
+```json
+{
+  "plugin": ["opencode-agent-skills"]
+}
 ```
-
 
 ## Quick Start
 
@@ -35,17 +33,19 @@ ln -s ../.opencode/rules .agent/rules
 ```
 .opencode/
 ├── README.md            # This file
+├── opencode.json        # Plugin and agent configuration
 ├── commands/            # Slash commands for common workflows
 ├── rules/               # Project-wide rules agents must follow
 │   ├── agent-behavior.md
 │   ├── unity-asset-rules.md
 │   └── unity-csharp-conventions.md
-├── skills/              # Specialized agent capabilities
-│   ├── bash/            # Bash scripting skills
-│   ├── git/             # Git operation skills
-│   ├── omo/             # Agent orchestration skills
-│   ├── other/           # Cross-domain utility skills
-│   └── unity/           # Unity development skills
+├── skills/              # Specialized agent capabilities (flat structure)
+│   ├── <skill-name>/
+│   │   ├── SKILL.md     # Main instructions with YAML frontmatter
+│   │   ├── scripts/     # (Optional) Automated execution logic
+│   │   ├── references/  # (Optional) Domain knowledge and patterns
+│   │   └── assets/      # (Optional) Templates and static resources
+│   └── ...
 ├── package.json
 └── bun.lock
 ```
@@ -91,97 +91,102 @@ Rules define project-wide conventions that all agents must follow:
 
 **Location**: `.opencode/skills/`
 
-Skills are **specialized capabilities** that extend the agent's expertise. Each skill lives in its own folder and contains a `SKILL.md` file with instructions, plus optional helper scripts and references.
-
-### Skill Folder Structure
-
-```
-skills/<category>/<skill-name>/
-├── SKILL.md           # Main instructions with trigger metadata
-├── scripts/           # (Optional) Automated execution logic
-├── references/        # (Optional) Domain knowledge and patterns
-└── assets/            # (Optional) Templates and static resources
-```
+Skills are **specialized capabilities** that extend the agent's expertise. Each skill lives in its own folder with a flat structure (`skills/<skill-name>/SKILL.md`) and is discovered automatically by the `opencode-agent-skills` plugin via YAML frontmatter.
 
 ---
 
-### Unity Development (22 skills)
+### Unity Development (29 skills)
 
 #### Core Implementation
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-orchestrator` | Master Unity technical lead. Routes to specialized skills and coordinates multi-step implementations. |
-| `unity/unity-code` | Expert Unity Developer — clean, commented, performant C# implementation. |
-| `unity/unity-editor-tools` | Custom Editor Windows, Inspectors, and UI Toolkit (UXML/USS) interfaces. |
-| `unity/unity-tech-art` | Bridge art and code — shaders (HLSL/Shader Graph), asset pipelines, procedural generation. |
-| `unity/unity-ui` | Implement UX designs from HTML documents into Unity UI prefabs with 100% fidelity. |
-| `unity/unity-refactor` | Safe code transformation — extract, rename, restructure, decouple, remove anti-patterns. |
+| `unity-code` | Expert Unity Developer — clean, commented, performant C# implementation. |
+| `unity-editor-tools` | Custom Editor Windows, Inspectors, and UI Toolkit (UXML/USS) interfaces. |
+| `unity-tech-art` | Bridge art and code — shaders (HLSL/Shader Graph), asset pipelines, procedural generation. |
+| `unity-ui` | Implement UX designs from HTML documents into Unity UI prefabs with 100% fidelity. |
+| `unity-refactor` | Safe code transformation — extract, rename, restructure, decouple, remove anti-patterns. |
+| `unity-2d` | 2D game development — sprites, tilemaps, 2D physics, animation, sprite atlas, 2D lighting. |
+| `unity-serialization` | Serialization patterns and data persistence — JSON, binary, ScriptableObject, save/load. |
+| `unity-event-system` | Event-driven architecture — C# events, UnityEvent, ScriptableObject channels, event bus. |
+| `unity-object-pooling` | Object pooling patterns — generic pools, particle/UI/projectile pooling, pool warming. |
 
 #### Debugging & Quality
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-fix-errors` | Systematic diagnosis and resolution of compiler errors, exceptions, and build failures. |
-| `unity/unity-debug` | Deep investigation of errors with root cause analysis and debug reports. |
-| `unity/unity-investigate` | Deep-dive analysis of logic flow, data structures, serialization, and system behavior. |
-| `unity/unity-optimize-performance` | Identification and resolution of FPS, memory, and load time bottlenecks. |
-| `unity/unity-test` | Unity Test Framework automation — Edit/Play Mode tests, mocking, coverage. |
-| `unity/unity-test-case` | QA test case generation — comprehensive test documents in HTML format. |
+| `unity-fix-errors` | Systematic diagnosis and resolution of compiler errors, exceptions, and build failures. |
+| `unity-debug` | Deep investigation of errors with root cause analysis and debug reports. |
+| `unity-investigate` | Deep-dive analysis of logic flow, data structures, serialization, and system behavior. |
+| `unity-optimize-performance` | Identification and resolution of FPS, memory, and load time bottlenecks. |
+| `unity-test` | Unity Test Framework automation — Edit/Play Mode tests, mocking, coverage. |
+| `unity-test-case` | QA test case generation — comprehensive test documents in HTML format. |
+| `unity-singleton-auditor` | Audit Singleton usage — initialization order, circular dependencies, anti-patterns. |
+| `unity-log-analyzer` | Parse and analyze Unity console logs — classify, group, prioritize errors. |
 
 #### Code Review
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-review-pr` | Automated GitHub PR reviews with Unity-specific patterns and best practices. |
-| `unity/unity-review-pr-local` | Local PR reviews without GitHub posting — generates review as local markdown. |
+| `unity-review-pr` | Automated GitHub PR reviews with Unity-specific patterns and best practices. |
+| `unity-review-pr-local` | Local PR reviews without GitHub posting — generates review as local markdown. |
 
 #### Planning & Documentation
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-plan` | High-level planning with multi-file HTML output and unified diff patch generation. |
-| `unity/unity-plan-detail` | Generate 100% complete code changes for each task in a plan. |
-| `unity/unity-plan-executor` | Execute implementation plans from HTML files with exact accuracy. |
-| `unity/unity-write-docs` | Technical documentation — README, architecture, API references, onboarding guides. |
-| `unity/unity-write-tdd` | Formal Technical Design Document (TDD) generation. |
+| `unity-plan` | High-level planning with multi-file HTML output and unified diff patch generation. |
+| `unity-plan-detail` | Generate 100% complete code changes for each task in a plan. |
+| `unity-plan-executor` | Execute implementation plans from HTML files with exact accuracy. |
+| `unity-write-docs` | Technical documentation — README, architecture, API references, onboarding guides. |
+| `unity-write-tdd` | Formal Technical Design Document (TDD) generation. |
 
-#### Deployment
+#### Deployment & Design
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-mobile-deploy` | iOS/Android — touch controls, mobile optimization, native features, build pipelines. |
-| `unity/unity-web-deploy` | WebGL — build configuration, C#/JS interop, browser optimization, PWA features. |
+| `unity-mobile-deploy` | iOS/Android — touch controls, mobile optimization, native features, build pipelines. |
+| `unity-web-deploy` | WebGL — build configuration, C#/JS interop, browser optimization, PWA features. |
+| `unity-build-pipeline` | Build automation — build scripts, Addressables, asset bundles, CI/CD, build size. |
+| `unity-ux-design` | UX screen specifications and production-ready scene/prefab hierarchies for mobile games. |
+| `unity-game-designer` | Game design documentation — GDD, core loops, progression, economy, monetization. |
 
-#### Design
+### UI Toolkit (9 skills)
+
 | Skill | Description |
 | :--- | :--- |
-| `unity/unity-ux-design` | UX design skill (in development). |
+| `ui-toolkit-master` | Master guide — architecture, UXML/USS/C# anatomy, project structure, fundamentals. |
+| `ui-toolkit-architecture` | Component-based architecture — custom controls, MVC/MVP, reusable templates. |
+| `ui-toolkit-databinding` | Unity 6 runtime data binding — IDataSource, PropertyPath, type converters, binding modes. |
+| `ui-toolkit-theming` | Theme Style Sheets (TSS) and design token architecture — dark/light themes, runtime switching. |
+| `ui-toolkit-patterns` | Common UI patterns — tabs, inventory grids, modals, stateful buttons, scroll snapping. |
+| `ui-toolkit-responsive` | Responsive design — flexbox layout, safe areas, screen adaptation, breakpoints. |
+| `ui-toolkit-mobile` | Mobile optimization — touch input, gestures, safe areas, orientation, virtual keyboard. |
+| `ui-toolkit-performance` | Performance optimization — profiling, draw calls, virtualization, memory management. |
+| `ui-toolkit-debugging` | Debugging and troubleshooting — UI Toolkit Debugger, Event Debugger, common pitfalls. |
 
----
+### Utilities (6 skills)
 
-### Agent Orchestration (2 skills)
 | Skill | Description |
 | :--- | :--- |
-| `omo/omo-hephaestus` | Agent spawner — analyzes prompts, discovers skills, routes to appropriate skill(s). |
-| `omo/omo-sisyphus` | Task orchestrator — delegates to Sisyphus agent with structured prompts and context preservation. |
-
-### Data & Utilities (3 skills)
-| Skill | Description |
-| :--- | :--- |
-| `other/flatbuffers-coder` | FlatBuffers for Unity — schemas, C# generation, JSON-to-binary conversion. |
-| `other/mermaid` | Mermaid diagrams — flowcharts, architecture, state machines, data structures. |
-| `other/skill-creator` | Meta-skill for creating and improving other project skills. |
+| `flatbuffers-coder` | FlatBuffers for Unity — schemas, C# generation, JSON-to-binary conversion. |
+| `mermaid` | Mermaid diagrams — flowcharts, architecture, state machines, data structures. |
+| `skill-creator` | Meta-skill for creating and improving other project skills. |
+| `skill-router` | Find the best matching skill(s) for a user request — scan, score, and rank. |
+| `prompt-improver` | AI Prompt Engineer — rewrite vague prompts into optimized, actionable prompts. |
+| `beads` | Distributed git-backed issue tracking with the bd CLI. |
 
 ### Bash Scripting (3 skills)
-| Skill | Description |
-| :--- | :--- |
-| `bash/bash-check` | Validate bash scripts for syntax errors, compatibility, and runtime issues. |
-| `bash/bash-optimize` | Optimize bash scripts for clarity, performance, and maintainability. |
-| `bash/bash-install` | Install software with automatic retry and fallback strategies. |
 
-### Git Operations (2 skills)
 | Skill | Description |
 | :--- | :--- |
-| `git/git-comment` | Generate structured commit comments from PRs or commit hashes. |
-| `git/git-squash` | Squash related commits into organized, well-documented commits. |
+| `bash-check` | Validate bash scripts for syntax errors, compatibility, and runtime issues. |
+| `bash-optimize` | Optimize bash scripts for clarity, performance, and maintainability. |
+| `bash-install` | Install software with automatic retry and fallback strategies. |
+
+### Git Operations (3 skills)
+
+| Skill | Description |
+| :--- | :--- |
+| `git-commit` | Generate clean, meaningful commit messages from code changes. |
+| `git-comment` | Generate structured commit comments from PRs or commit hashes. |
+| `git-squash` | Squash related commits into organized, well-documented commits. |
 
 ---
 
-**Total: 32 skills** across 5 categories.
-
+**Total: 50 skills** in a flat directory structure.
