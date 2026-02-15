@@ -5,34 +5,9 @@ description: "(opencode-project - Skill) Bridge art and code. Use when: (1) Auth
 
 # Unity Technical Artist
 
-Bridge artistic vision and technical implementation.
+**Input**: Art/technical challenge description. Optional: target render pipeline (URP/HDRP/Built-in), reference images, performance budget.
 
-## Purpose
-
-Solve problems at the intersection of art and engineering — shaders, asset pipelines, procedural generation, and rendering optimization — so artists get intuitive tools and players get performant visuals.
-
-## Input
-
-- **Required**: Description of the art/technical challenge (shader need, pipeline bottleneck, PCG request)
-- **Optional**: Target render pipeline (URP/HDRP/Built-in), reference images, performance budget
-
-## Output
-
-Shader code (HLSL or Shader Graph), asset postprocessor scripts, or procedural generation tools placed in the appropriate project directory. All outputs follow `ASSET_POSTPROCESSOR_TEMPLATE.md` where applicable and validate via Frame Debugger / Profiler.
-
-## Examples
-
-| User Request | Skill Action |
-|:---|:---|
-| "Optimize draw calls for the environment" | Audit materials, enable GPU instancing, merge static meshes, report before/after batch count |
-| "Auto-enforce texture import rules" | Write an AssetPostprocessor setting max size, compression format, and sRGB per naming convention |
-| "Create a dissolve shader for enemy death" | Author URP HLSL shader with dissolve edge glow, noise texture, `_DissolveAmount` property |
-
-## Output Requirement (MANDATORY)
-
-**Every asset postprocessor MUST follow the template**: [ASSET_POSTPROCESSOR_TEMPLATE.md](.opencode/skills/unity/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md)
-
-Place scripts in `Assets/Scripts/Editor/`. Read the template first, then populate all sections.
+**Output**: Shader code (HLSL or Shader Graph), asset postprocessor scripts, or procedural generation tools. Follows [ASSET_POSTPROCESSOR_TEMPLATE.md](.opencode/skills/unity/unity-tech-art/assets/templates/ASSET_POSTPROCESSOR_TEMPLATE.md) where applicable.
 
 ## Workflow
 
@@ -60,31 +35,3 @@ Place scripts in `Assets/Scripts/Editor/`. Read the template first, then populat
 - **Undo Groups**: Wrap all editor operations
 
 See [PIPELINE_AUTOMATION_GUIDE.md](.opencode/skills/unity/unity-tech-art/references/PIPELINE_AUTOMATION_GUIDE.md) for automation patterns.
-
----
-
-## MCP Tools Integration
-
-Use `unityMCP_*` tools for material/shader/texture operations and visual validation.
-
-| Operation | MCP Tool |
-|-----------|----------|
-| Create material | `unityMCP_create_material(material_name="..", color="..", material_path="..")` |
-| Assign material | `unityMCP_assign_material(gameobject_path="..", material_name="..")` |
-| Assign shader | `unityMCP_assign_shader_to_material(material_path="..", shader_path="..")` |
-| Material to FBX | `unityMCP_assign_material_to_fbx(fbx_path="..", material_path="..")` |
-| Generate texture | `unityMCP_generate_3d_model_texture(...)` |
-| Scene screenshot | `unityMCP_capture_scene_object(gameObjectPath="...")` |
-| High-poly audit | `unityMCP_list_objects_with_high_polygon_count(threshold=1000)` |
-| Check compilation | `unityMCP_check_compile_errors` |
-| Run editor script | `unityMCP_execute_script(filePath="...")` |
-
-### Shader/Material Workflow
-
-```
-1. unityMCP_create_material(...)                → Create new material
-2. unityMCP_assign_shader_to_material(...)      → Apply custom shader
-3. unityMCP_assign_material(...)                → Assign to object
-4. unityMCP_capture_scene_object(...)           → Visual validation
-5. unityMCP_list_objects_with_high_polygon_count → Rendering audit
-```

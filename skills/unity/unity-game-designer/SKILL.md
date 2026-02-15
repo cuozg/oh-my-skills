@@ -5,129 +5,59 @@ description: "(opencode-project - Skill) Game design documentation and brainstor
 
 # Unity Game Designer
 
-Game design documentation and mechanic brainstorming for Unity projects. Transform game concepts into structured, production-ready Game Design Documents with validated mechanics, economy models, and implementation roadmaps.
-
-## Purpose
-
-Design game mechanics, systems, and documentation for Unity projects — transforming concepts into structured, production-ready Game Design Documents with validated mechanics, economy models, and implementation roadmaps.
-
-## Input
-
-- **Required**: Game concept, feature idea, or design problem to solve
-- **Optional**: Target platform, audience, genre, existing project constraints
-
-## Output
-
-| Output Type | File Location |
-|:---|:---|
-| Full GDD | `Documents/GDD/GDD_[GameName].md` |
-| Feature spec | `Documents/GDD/Feature_[FeatureName].md` |
-| Brainstorm notes | Inline response (no file) |
+**Input**: Game concept, feature idea, or design problem + optional platform, audience, genre, constraints
+**Output**: GDD at `Documents/GDD/GDD_[GameName].md`, feature spec at `Documents/GDD/Feature_[FeatureName].md`, or inline brainstorm
 
 ## Workflow
 
-Execute one of three phases based on user intent. Phases may run independently or sequentially.
-
 ### Phase 1: Requirements Intake
-
-Gather foundational information before designing. Ask clarifying questions when information is missing.
-
-**Required inputs** (ask if not provided):
-1. **Concept**: One-sentence game pitch
-2. **Genre**: Primary and secondary genre tags
+Gather before designing (ask if missing):
+1. **Concept**: One-sentence pitch
+2. **Genre**: Primary + secondary tags
 3. **Platform**: Mobile, PC, Console, Cross-platform
-4. **Audience**: Age range, player archetype (casual, mid-core, hardcore)
+4. **Audience**: Age range, player archetype (casual/mid-core/hardcore)
 5. **Monetization**: F2P, premium, hybrid, subscription
 
-**Optional inputs** (use defaults if omitted):
-- Session length target (default: 5-15 min mobile, 30-60 min PC)
-- Retention goals (D1, D7, D30 benchmarks)
-- Art style preference
-- Competitive references (up to 3 games)
-
-**Output**: Structured requirements summary used by Phase 2 and Phase 3.
+Optional: session length, retention goals, art style, competitive refs (up to 3)
 
 ### Phase 2: Mechanic Brainstorming
-
-Ideate and evaluate game systems. Load [mechanics-patterns.md](references/mechanics-patterns.md) for reusable design patterns.
-
-**Process**:
-1. Identify 2-3 candidate **core loops** matching genre and audience
-2. Propose **progression systems** (see patterns reference for options)
-3. Draft **economy model** aligned with monetization strategy
-4. Suggest **social/multiplayer hooks** if applicable
-5. Evaluate each mechanic against constraints (platform, session length, audience)
-
-**Evaluation criteria** per mechanic:
-- Depth vs. complexity ratio
-- Implementation cost estimate (Low/Medium/High)
-- Retention impact (engagement driver vs. nice-to-have)
-- Monetization compatibility
-
-**Output**: Ranked list of recommended mechanics with rationale.
+Load [mechanics-patterns.md](references/mechanics-patterns.md) for reusable patterns.
+1. Identify 2-3 candidate core loops matching genre/audience
+2. Propose progression systems from patterns reference
+3. Draft economy model aligned with monetization
+4. Suggest social/multiplayer hooks if applicable
+5. Evaluate each: depth/complexity ratio, implementation cost, retention impact, monetization fit
 
 ### Phase 3: GDD Generation
+Load [gdd-template.md](references/gdd-template.md) and populate all sections.
+1. Read template, populate using Phase 1+2 outputs
+2. Add Unity implementation notes (scenes, prefabs, systems)
+3. Include platform-specific considerations
+4. Save to `Documents/GDD/GDD_[GameName].md`
 
-Produce a structured Game Design Document. Load [gdd-template.md](references/gdd-template.md) and populate all sections.
-
-**Process**:
-1. Read the GDD template reference for full section structure
-2. Populate each section using Phase 1 requirements and Phase 2 mechanics
-3. Add implementation notes relevant to Unity (scenes, prefabs, systems)
-4. Include platform-specific considerations
-5. Save to `Documents/GDD/GDD_[GameName].md`
-
-**Validation checklist** before delivering:
-- [ ] Executive summary is one paragraph, no jargon
-- [ ] Core loop diagram described (text-based flowchart)
-- [ ] Economy has sink/source balance documented
-- [ ] Progression has clear milestones with unlock schedule
-- [ ] UX flow covers first-time user experience (FTUE)
-- [ ] Technical constraints section addresses target platforms
-- [ ] Implementation roadmap has prioritized phases
+**Validation**: executive summary is jargon-free, core loop diagram included, economy has sink/source balance, progression has milestones, FTUE covered, implementation roadmap prioritized
 
 ## Decision Tree
 
 ```
-User says...
-├── "I have a game idea" / "new game concept"
-│   └── Phase 1 → Phase 2 → Phase 3 (full pipeline)
-├── "brainstorm mechanics" / "core loop ideas"
-│   └── Phase 1 (quick) → Phase 2 only
-├── "write a GDD" / "document this design"
-│   └── Phase 1 → Phase 3 (skip brainstorming)
-├── "evaluate this mechanic" / "compare approaches"
-│   └── Phase 2 only (focused evaluation)
-├── "update the GDD" / "add feature to GDD"
-│   └── Read existing GDD → Phase 3 (incremental update)
-└── "game pitch" / "elevator pitch"
-    └── Phase 1 → Executive Summary only
+"game idea" / "new concept"     → Phase 1 → 2 → 3 (full pipeline)
+"brainstorm mechanics"          → Phase 1 (quick) → Phase 2 only
+"write a GDD"                   → Phase 1 → Phase 3
+"evaluate this mechanic"        → Phase 2 only
+"update the GDD"                → Read existing → Phase 3 (incremental)
+"game pitch"                    → Phase 1 → Executive Summary only
 ```
 
 ## Unity-Specific Guidance
 
-When generating GDD sections, consider these Unity implementation details:
-
-- **Scenes**: Map major game states to Unity scenes (Main Menu, Gameplay, Results)
-- **Prefabs**: Identify reusable entities (enemies, items, UI panels)
-- **ScriptableObjects**: Use for game config data (level definitions, item stats, economy tables)
-- **Addressables**: Flag assets that need dynamic loading (levels, cosmetics)
-- **UI Toolkit vs uGUI**: Recommend UI approach based on complexity
+- **Scenes**: Map game states to scenes (Main Menu, Gameplay, Results)
+- **ScriptableObjects**: Use for config data (level defs, item stats, economy tables)
+- **Addressables**: Flag assets needing dynamic loading
+- **UI approach**: Recommend UI Toolkit vs uGUI based on complexity
 
 ## References
 
-| File | When to Load | Content |
+| File | When | Content |
 |:---|:---|:---|
-| [gdd-template.md](references/gdd-template.md) | Phase 3 — GDD generation | Full GDD section structure with guidance per section |
-| [mechanics-patterns.md](references/mechanics-patterns.md) | Phase 2 — brainstorming | Reusable design patterns: progression, economy, social, monetization |
-
-## Examples
-
-| User Request | Workflow | Output |
-|:---|:---|:---|
-| "Design a mobile idle RPG" | Phase 1 → 2 → 3 | Full GDD at `Documents/GDD/GDD_IdleRPG.md` |
-| "Brainstorm progression for our puzzle game" | Phase 2 | Ranked mechanic recommendations |
-| "Write a GDD for the tower defense we discussed" | Phase 1 → 3 | GDD from existing context |
-| "What monetization fits a casual match-3?" | Phase 2 (focused) | Economy pattern comparison |
-| "Add a guild system to our GDD" | Phase 3 (update) | Updated GDD with guild feature |
-
+| [gdd-template.md](references/gdd-template.md) | Phase 3 | Full GDD section structure |
+| [mechanics-patterns.md](references/mechanics-patterns.md) | Phase 2 | Progression, economy, social, monetization patterns |

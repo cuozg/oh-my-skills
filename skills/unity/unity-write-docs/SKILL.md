@@ -5,43 +5,16 @@ description: "(opencode-project - Skill) Create Unity project documentation. Use
 
 # Unity Documentation
 
-Create clear, maintainable documentation for Unity projects.
+**Input**: Description of documentation task. Optional: file paths, constraints, scope.
 
-## Purpose
+**Output**: Markdown documentation following templates from `assets/templates/`. Locations: `README.md` (root), `Docs/ARCHITECTURE.md`, `Docs/API.md`, `CONTRIBUTING.md` (root).
 
-Create Unity project documentation — providing a structured, repeatable workflow that produces consistent results.
+## Templates (MANDATORY)
 
-## Input
-
-- **Required**: A clear description of the task or problem to address.
-- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
-
-## Examples
-
-| Trigger | What Happens |
-|---------|-------------|
-| "Run unity-write-docs" | Executes the primary workflow end-to-end |
-| "Apply unity-write-docs to <target>" | Scopes execution to a specific file or module |
-| "Check unity-write-docs output" | Reviews and validates previous results |
-
-
-## Output
-
-Markdown documentation files saved to the appropriate project location:
-- `README.md` — Project overview and setup (root directory)
-- `Docs/ARCHITECTURE.md` — System design documentation
-- `Docs/API.md` — Public interface references
-- `CONTRIBUTING.md` — Developer guidelines (root directory)
-
-Each document follows the corresponding template from `assets/templates/`.
-
-## Output Requirement (MANDATORY)
-
-**Every document MUST follow one of the templates**:
-- [README_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/README_TEMPLATE.md) — for project READMEs
-- [API_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/API_TEMPLATE.md) — for API references
-- [ARCHITECTURE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/ARCHITECTURE_TEMPLATE.md) — for architecture docs
-- [GUIDE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/GUIDE_TEMPLATE.md) — for onboarding/usage guides
+- [README_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/README_TEMPLATE.md)
+- [API_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/API_TEMPLATE.md)
+- [ARCHITECTURE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/ARCHITECTURE_TEMPLATE.md)
+- [GUIDE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/GUIDE_TEMPLATE.md)
 
 Read the relevant template first, then populate all sections.
 
@@ -57,7 +30,7 @@ Read the relevant template first, then populate all sections.
 ## Workflow
 
 1. **Analyze**: `grep` for public APIs, ScriptableObjects, serialized fields
-2. **Generate**: Use templates from `.opencode/skills/unity/unity-write-docs/assets/templates/`
+2. **Generate**: Use templates from `assets/templates/`
 3. **Visualize**: Mermaid diagrams for hierarchies/flows
 4. **Validate**: Cross-reference with code signatures
 
@@ -68,7 +41,7 @@ Read the relevant template first, then populate all sections.
 - **TOC**: Tables of contents for major docs
 - **Current**: Reflect latest code changes
 
-## XML Documentation
+## XML Documentation Example
 
 ```csharp
 /// <summary>
@@ -77,28 +50,4 @@ Read the relevant template first, then populate all sections.
 /// <param name="amount">Damage to apply.</param>
 /// <returns>True if died from this damage.</returns>
 public bool TakeDamage(int amount)
-```
-
----
-
-## MCP Tools Integration
-
-Use MCP tools to gather project context for accurate documentation.
-
-| Operation | MCP Tool | Use Case |
-| --------- | -------- | -------- |
-| Project context | `unityMCP_get_unity_editor_state` | Get Unity version, render pipeline, build target |
-| List packages | `unityMCP_list_packages` | Document installed dependencies |
-| Scene structure | `unityMCP_list_game_objects_in_hierarchy()` | Document scene hierarchy |
-| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | Document component setups |
-| Prefab catalog | `unityMCP_list_all_prefabs_with_bounding_boxes()` | Document prefab inventory |
-| Capture visuals | `unityMCP_capture_scene_object(gameObjectPath="...")` | Screenshot for documentation |
-
-### Documentation Context Flow
-
-```
-1. unityMCP_get_unity_editor_state          → project metadata
-2. unityMCP_list_packages                   → dependency list
-3. unityMCP_list_game_objects_in_hierarchy() → scene overview
-4. unityMCP_capture_scene_object()          → visual references
 ```

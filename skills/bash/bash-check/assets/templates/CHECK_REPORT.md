@@ -1,59 +1,41 @@
 # Bash Check Report: {SCRIPT_NAME}
 
-**Script**: `{/path/to/script.sh}`
-**Date**: {YYYY-MM-DD}
-**Shell**: {bash version}
-**Status**: {Pass | Pass with Warnings | Fail}
-
----
+**Script**: `{path}` | **Shell**: {version} | **Status**: {Pass|Warnings|Fail}
 
 ## 1. Syntax Validation
 
 | Check | Result | Details |
 |-------|--------|---------|
-| `bash -n` | {Pass/Fail} | {Error message if any} |
-| ShellCheck | {Pass/Warnings/Errors/N/A} | {Summary} |
-
----
+| `bash -n` | | |
+| ShellCheck | | |
 
 ## 2. Findings
 
-### Errors (Script will fail)
-
+### Errors
 | # | Line | Issue | Fix |
 |---|------|-------|-----|
-| 1 | {line} | {description} | {suggested fix} |
 
-### Warnings (Potential runtime issues)
-
+### Warnings
 | # | Line | Issue | Fix |
 |---|------|-------|-----|
-| 1 | {line} | {description} | {suggested fix} |
 
-### Info (Style / best practice)
-
+### Info
 | # | Line | Issue | Suggestion |
 |---|------|-------|------------|
-| 1 | {line} | {description} | {suggestion} |
 
----
-
-## 3. Manual Review Checklist
-
-- [ ] Shebang line present and correct
-- [ ] Variables properly quoted
+## 3. Review Checklist
+- [ ] Shebang correct
+- [ ] Variables quoted
 - [ ] Exit codes handled
-- [ ] File operations guarded
-- [ ] Portability verified (if required)
-
----
+- [ ] File ops guarded
+- [ ] Portability (if required)
 
 ## 4. Summary
 
 | Severity | Count |
 |----------|-------|
-| Errors | {N} |
-| Warnings | {N} |
-| Info | {N} |
+| Errors | |
+| Warnings | |
+| Info | |
 
-**Verdict**: {Pass / Fail with N errors requiring fixes}
+**Verdict**:

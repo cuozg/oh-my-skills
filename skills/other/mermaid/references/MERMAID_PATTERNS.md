@@ -1,63 +1,38 @@
 # Mermaid Chart Patterns
 
-Common Mermaid syntax patterns for documenting Unity project architectures and logic flows.
-
-## 1. Flowcharts (Process & Logic)
-
-Use for gameplay loops, decision trees, or state transitions.
-
+## 1. Flowcharts
 ```mermaid
 flowchart TD
-    Start([Start Event]) --> Check{Is Local?}
-    Check -- Yes --> LoadLocal[Load From Disk]
-    Check -- No --> FetchRemote[Fetch From Server]
-    LoadLocal --> Done
-    FetchRemote --> Done([End])
+    Start([Start]) --> Check{Condition?}
+    Check -- Yes --> A[Action A]
+    Check -- No --> B[Action B]
+    A & B --> Done([End])
 ```
 
-## 2. Sequence Diagrams (Inter-Component Communication)
-
-Use for explaining how systems interact over time (e.g., UI -> Controller -> Manager -> Server).
-
+## 2. Sequence Diagrams
 ```mermaid
 sequenceDiagram
-    participant P as Player
-    participant UI as UIManager
-    participant C as CombatController
-    participant S as Server
-    
     P->>UI: Click Attack
     UI->>C: RequestAttack(target)
     C->>S: ValidateAction()
-    S-->>C: Confirm(Success)
-    C-->>UI: Update Animations
+    S-->>C: Confirm
+    C-->>UI: Update
 ```
 
-## 3. Class Diagrams (Data Structures)
-
-Use for documenting C# class hierarchies or FlatBuffer table relationships.
-
+## 3. Class Diagrams
 ```mermaid
 classDiagram
     MonoBehaviour <|-- PlayerController
     PlayerController *-- HealthSystem
-    PlayerController : +int speed
     PlayerController : +Move()
-    class HealthSystem{
-        +int currentHealth
-        +TakeDamage(amount)
-    }
+    class HealthSystem{ +TakeDamage(amount) }
 ```
 
 ## 4. State Diagrams
-
-Use for documenting FSM (Finite State Machines) or Animators.
-
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
     Idle --> Moving : Input > 0
-    Moving --> Idle : Input = 0
-    Moving --> Jumping : Press Space
+    Moving --> Jumping : Space
     Jumping --> Idle : Grounded
 ```

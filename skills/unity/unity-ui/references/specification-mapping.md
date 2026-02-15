@@ -1,259 +1,120 @@
 # Specification Mapping: HTML Design → Unity Properties
 
-## Table of Contents
-- [Color Mapping](#color-mapping)
-- [Typography Mapping](#typography-mapping)
-- [Spacing and Layout Mapping](#spacing-and-layout-mapping)
-- [Size and Dimension Mapping](#size-and-dimension-mapping)
-- [Border and Shape Mapping](#border-and-shape-mapping)
-- [Interaction Mapping](#interaction-mapping)
-- [Visibility and Opacity Mapping](#visibility-and-opacity-mapping)
-- [Animation and Transition Mapping](#animation-and-transition-mapping)
-- [CSS Property Quick Reference](#css-property-quick-reference)
-
----
-
 ## Color Mapping
 
-### HTML → Unity Color Conversion
+| HTML Format | Unity Equivalent |
+|---|---|
+| `#RRGGBB` / `#RRGGBBAA` | `new Color(R/255f, G/255f, B/255f, A/255f)` |
+| `rgb(r,g,b)` / `rgba(r,g,b,a)` | `new Color(r/255f, g/255f, b/255f, a)` |
+| Named (`red`) | `Color.red` |
 
-| HTML Format | Example | Unity Equivalent |
-|---|---|---|
-| Hex (#RRGGBB) | `#FF5733` | `new Color(1f, 0.341f, 0.2f, 1f)` or Image.color |
-| Hex (#RRGGBBAA) | `#FF573380` | `new Color(1f, 0.341f, 0.2f, 0.502f)` |
-| RGB | `rgb(255, 87, 51)` | `new Color(255/255f, 87/255f, 51/255f)` |
-| RGBA | `rgba(255, 87, 51, 0.5)` | `new Color(1f, 0.341f, 0.2f, 0.5f)` |
-| Named | `red`, `white` | `Color.red`, `Color.white` |
-
-### Color Application by Context
-
-| Design Context | Unity Component | Property |
-|---|---|---|
-| Background color | Image | `color` |
-| Text color | TextMeshProUGUI | `color` |
-| Border color | Image (outline sprite) | `color` on border Image |
-| Button normal | Button > Colors | `normalColor` |
-| Button hover | Button > Colors | `highlightedColor` |
-| Button pressed | Button > Colors | `pressedColor` |
-| Button disabled | Button > Colors | `disabledColor` |
-| Overlay/tint | Image | `color` with alpha |
-| Shadow | Shadow component | `effectColor` |
-
-### Hex to Unity Conversion Formula
-```
-R = hex_value / 255f
-G = hex_value / 255f
-B = hex_value / 255f
-A = opacity (0-1) or hex_alpha / 255f
-```
-
----
+| Context | Unity Component.Property |
+|---|---|
+| Background | Image.color |
+| Text color | TextMeshProUGUI.color |
+| Border | Image.color (outline sprite) |
+| Button states | Button.colors (normalColor/highlightedColor/pressedColor/disabledColor) |
+| Overlay/tint | Image.color with alpha |
+| Shadow | Shadow.effectColor |
 
 ## Typography Mapping
 
-### Font Properties
-
-| HTML/CSS Property | Unity TMP Property | Notes |
-|---|---|---|
-| `font-family` | Font Asset | Must use TMP font asset created from TTF/OTF |
-| `font-size: 16px` | Font Size: 16 | Direct mapping (design px = TMP points) |
-| `font-weight: bold` | Font Style: Bold | Or use bold font asset variant |
-| `font-style: italic` | Font Style: Italic | Or use italic font asset variant |
-| `font-weight: 700` | Font Style: Bold | 700+ = Bold in TMP |
-| `text-transform: uppercase` | Font Style: UpperCase | TMP supports case transforms |
-| `letter-spacing: 2px` | Character Spacing: 2 | Direct mapping |
-| `line-height: 1.5` | Line Spacing: 50 | TMP line spacing is percentage-based |
-| `text-decoration: underline` | Font Style: Underline | Or rich text `<u>` |
-| `text-decoration: line-through` | Font Style: Strikethrough | Or rich text `<s>` |
-
-### Text Alignment
-
-| CSS `text-align` | TMP Horizontal Alignment |
+| CSS Property | Unity TMP Property |
 |---|---|
-| `left` | Left |
-| `center` | Center |
-| `right` | Right |
-| `justify` | Justified |
+| `font-family` | Font Asset (TMP font from TTF/OTF) |
+| `font-size: 16px` | Font Size: 16 (direct mapping) |
+| `font-weight: bold/700+` | Font Style: Bold |
+| `font-style: italic` | Font Style: Italic |
+| `text-transform: uppercase` | Font Style: UpperCase |
+| `letter-spacing: 2px` | Character Spacing: 2 |
+| `line-height: 1.5` | Line Spacing: `(1.5 - 1.0) * 100 = 50` |
+| `text-decoration: underline` | Font Style: Underline |
 
-| CSS `vertical-align` | TMP Vertical Alignment |
+| CSS `text-align` | TMP Alignment |
 |---|---|
-| `top` | Top |
-| `middle` | Middle |
-| `bottom` | Bottom |
+| `left/center/right/justify` | Left/Center/Right/Justified |
 
-### Text Overflow
-
-| CSS `overflow` / `text-overflow` | TMP Overflow Mode |
+| CSS Overflow | TMP Overflow Mode |
 |---|---|
-| `overflow: hidden; text-overflow: ellipsis` | Ellipsis |
+| `text-overflow: ellipsis` | Ellipsis |
 | `overflow: hidden` | Truncate |
 | `overflow: visible` | Overflow |
-| `word-wrap: break-word` | Enable Word Wrapping |
+| `word-wrap: break-word` | Word Wrapping enabled |
 
-### Line Height Conversion
-```
-CSS line-height: 1.5 → TMP Line Spacing = (1.5 - 1.0) * 100 = 50
-CSS line-height: 24px on 16px font → TMP Line Spacing = ((24/16) - 1) * 100 = 50
-```
+## Spacing & Layout Mapping
 
----
-
-## Spacing and Layout Mapping
-
-### Padding
-
-| CSS | Unity Equivalent |
+| CSS | Unity |
 |---|---|
-| `padding: 10px` | LayoutGroup padding: left=10, right=10, top=10, bottom=10 |
-| `padding: 10px 20px` | LayoutGroup padding: top=10, bottom=10, left=20, right=20 |
-| `padding: 10px 20px 15px 5px` | LayoutGroup padding: top=10, right=20, bottom=15, left=5 |
-
-### Margin
-Unity UI has no direct margin concept. Achieve margins via:
-- **LayoutElement**: Add to child, set padding on parent layout group
-- **Spacer objects**: Empty GameObjects with LayoutElement.preferredWidth/Height
-- **RectTransform offsets**: For non-layout-group arrangements
-
-### Gap/Spacing
-
-| CSS | Unity Equivalent |
-|---|---|
+| `padding: T R B L` | LayoutGroup.padding (top/right/bottom/left) |
 | `gap: 10px` | LayoutGroup.spacing = 10 |
-| `column-gap: 10px` | GridLayoutGroup.spacing.x = 10 |
-| `row-gap: 10px` | GridLayoutGroup.spacing.y = 10 |
+| `column-gap` / `row-gap` | GridLayoutGroup.spacing.x / .y |
 
-### Flexbox → Layout Group Mapping
+**Margin**: No direct equivalent — use LayoutElement padding on parent, spacer GameObjects, or RectTransform offsets.
 
-| CSS Flexbox | Unity Layout Group |
+### Flexbox → Layout Group
+
+| CSS Flexbox | Unity |
 |---|---|
-| `display: flex; flex-direction: row` | HorizontalLayoutGroup |
-| `display: flex; flex-direction: column` | VerticalLayoutGroup |
+| `flex-direction: row` | HorizontalLayoutGroup |
+| `flex-direction: column` | VerticalLayoutGroup |
 | `display: grid` | GridLayoutGroup |
 | `justify-content: center` | childAlignment: MiddleCenter |
 | `justify-content: space-between` | childForceExpandWidth: true |
-| `align-items: center` | childAlignment: MiddleCenter/MiddleLeft |
 | `flex: 1` | LayoutElement.flexibleWidth = 1 |
-| `flex: 0 0 auto` | LayoutElement.flexibleWidth = 0 |
-| `flex-wrap: wrap` | Not directly supported; use GridLayoutGroup |
+| `flex-wrap: wrap` | Use GridLayoutGroup |
 
----
-
-## Size and Dimension Mapping
-
-### Width and Height
+## Size & Dimension Mapping
 
 | CSS | Unity RectTransform |
 |---|---|
-| `width: 200px` | sizeDelta.x = 200 (with non-stretched anchors) |
-| `height: 100px` | sizeDelta.y = 100 (with non-stretched anchors) |
-| `width: 100%` | Stretch anchors: anchorMin.x=0, anchorMax.x=1, offsetMin.x=0, offsetMax.x=0 |
-| `width: 50%` | anchorMin.x=0.25, anchorMax.x=0.75 (centered) or script-driven |
-| `max-width: 400px` | LayoutElement.preferredWidth = 400 with ContentSizeFitter |
+| `width: 200px` | sizeDelta.x = 200 (non-stretched anchors) |
+| `height: 100px` | sizeDelta.y = 100 |
+| `width: 100%` | Stretch anchors: anchorMin.x=0, anchorMax.x=1, offsets=0 |
+| `max-width: 400px` | LayoutElement.preferredWidth = 400 + ContentSizeFitter |
 | `min-width: 100px` | LayoutElement.minWidth = 100 |
+| `aspect-ratio: 16/9` | AspectRatioFitter (FitInParent/EnvelopeParent) |
 
-### Aspect Ratio
-| CSS | Unity |
-|---|---|
-| `aspect-ratio: 16/9` | AspectRatioFitter component, aspectMode = FitInParent/EnvelopeParent |
+## Border & Shape
 
----
-
-## Border and Shape Mapping
-
-### Borders
-Unity UI has no native CSS-like border. Achieve borders via:
-- **9-slice sprite**: Sprite with border regions set in Sprite Editor
-- **Outline component**: `Outline` component on Image (not recommended for production)
-- **Nested Images**: Outer Image (border color), inner Image (background color) with padding
-- **Custom shader**: For complex border effects
-
-### Border Radius (Rounded Corners)
-- Use 9-slice sprites with pre-baked rounded corners
-- Or use `UIRoundedCorners` shader/component if available in project
-- Specify corner radius in sprite creation matching design spec
-
-### Box Shadow
-- Unity has `Shadow` and `Outline` components (limited)
-- For design-accurate shadows: use sprite with baked shadow
-- Or use custom shader for dynamic shadows
-
----
+- **Borders**: 9-slice sprite (recommended), nested Images, or custom shader
+- **Border radius**: 9-slice sprites with pre-baked rounded corners
+- **Box shadow**: Shadow component (limited) or sprite with baked shadow
 
 ## Interaction Mapping
 
-### HTML Element → Unity Component
-
-| HTML Element | Unity Component | Notes |
-|---|---|---|
-| `<button>` | Button | With Image background + Text child |
-| `<input type="text">` | TMP_InputField | Standard text input |
-| `<input type="password">` | TMP_InputField | contentType = Password |
-| `<input type="number">` | TMP_InputField | contentType = IntegerNumber or DecimalNumber |
-| `<input type="checkbox">` | Toggle | isOn = checked state |
-| `<input type="radio">` | Toggle + ToggleGroup | Group ensures single selection |
-| `<select>` | TMP_Dropdown | With options list |
-| `<input type="range">` | Slider | min/max/value mapping |
-| `<textarea>` | TMP_InputField | lineType = MultiLineNewline |
-| `<a href>` | Button | Styled as text link |
-| `<form>` | Panel with children | No direct equivalent; panel container |
-
-### Button States
+| HTML Element | Unity Component |
+|---|---|
+| `<button>` | Button + Image + Text child |
+| `<input type="text">` | TMP_InputField |
+| `<input type="password">` | TMP_InputField (contentType=Password) |
+| `<input type="number">` | TMP_InputField (contentType=IntegerNumber) |
+| `<input type="checkbox">` | Toggle |
+| `<input type="radio">` | Toggle + ToggleGroup |
+| `<select>` | TMP_Dropdown |
+| `<input type="range">` | Slider |
+| `<textarea>` | TMP_InputField (lineType=MultiLineNewline) |
 
 | CSS State | Unity Button Property |
 |---|---|
-| `:normal` | Normal Color / Normal Sprite |
-| `:hover` | Highlighted Color / Highlighted Sprite |
-| `:active` / `:pressed` | Pressed Color / Pressed Sprite |
-| `:disabled` | Disabled Color / Disabled Sprite |
-| `:focus` | Selected Color / Selected Sprite |
+| `:normal/:hover/:active/:disabled/:focus` | normalColor/highlightedColor/pressedColor/disabledColor/selectedColor |
 
----
+## Visibility & Opacity
 
-## Visibility and Opacity Mapping
-
-| CSS Property | Unity Equivalent |
+| CSS | Unity |
 |---|---|
-| `opacity: 0.5` | CanvasGroup.alpha = 0.5 (preferred) or Image/Text color alpha |
+| `opacity: 0.5` | CanvasGroup.alpha = 0.5 |
 | `display: none` | GameObject.SetActive(false) |
-| `visibility: hidden` | CanvasGroup.alpha = 0, CanvasGroup.blocksRaycasts = false |
+| `visibility: hidden` | CanvasGroup.alpha=0, blocksRaycasts=false |
 | `pointer-events: none` | CanvasGroup.blocksRaycasts = false |
-| `overflow: hidden` | RectMask2D or Mask component on parent |
-| `z-index` | Sibling order in hierarchy (later = on top) |
+| `overflow: hidden` | RectMask2D or Mask |
+| `z-index` | Sibling order (later = on top) |
 
----
+## Animation & Transition
 
-## Animation and Transition Mapping
-
-| CSS Transition | Unity Equivalent |
+| CSS | Unity |
 |---|---|
-| `transition: opacity 0.3s` | DOTween / Animator: animate CanvasGroup.alpha over 0.3s |
-| `transition: transform 0.2s` | DOTween / Animator: animate RectTransform over 0.2s |
-| `transition: color 0.15s` | Button transition duration (for Button component) |
-| `transform: scale(1.1)` | RectTransform.localScale = Vector3(1.1, 1.1, 1) |
-| `transform: rotate(45deg)` | RectTransform.localEulerAngles = Vector3(0, 0, -45) |
-| `transform: translateX(100px)` | RectTransform.anchoredPosition += Vector2(100, 0) |
-
----
-
-## CSS Property Quick Reference
-
-| CSS Property | Unity Component/Property | Category |
-|---|---|---|
-| `background-color` | Image.color | Color |
-| `color` | TextMeshProUGUI.color | Color |
-| `font-size` | TextMeshProUGUI.fontSize | Typography |
-| `font-weight` | TextMeshProUGUI.fontStyle | Typography |
-| `text-align` | TextMeshProUGUI.alignment | Typography |
-| `padding` | LayoutGroup.padding | Spacing |
-| `margin` | RectTransform offsets / spacers | Spacing |
-| `gap` | LayoutGroup.spacing | Spacing |
-| `width` | RectTransform.sizeDelta.x | Size |
-| `height` | RectTransform.sizeDelta.y | Size |
-| `display: flex` | HorizontalLayoutGroup / VerticalLayoutGroup | Layout |
-| `display: grid` | GridLayoutGroup | Layout |
-| `position: absolute` | Non-layout RectTransform with anchors | Layout |
-| `border-radius` | 9-slice sprite with rounded corners | Shape |
-| `box-shadow` | Shadow component or baked sprite | Shape |
-| `opacity` | CanvasGroup.alpha | Visibility |
-| `overflow` | RectMask2D / Mask | Visibility |
-| `cursor: pointer` | Button component presence | Interaction |
+| `transition: opacity 0.3s` | DOTween/Animator: CanvasGroup.alpha over 0.3s |
+| `transition: transform 0.2s` | DOTween/Animator: RectTransform over 0.2s |
+| `transform: scale(1.1)` | localScale = Vector3(1.1, 1.1, 1) |
+| `transform: rotate(45deg)` | localEulerAngles = Vector3(0, 0, -45) |
+| `transform: translateX(100px)` | anchoredPosition += Vector2(100, 0) |

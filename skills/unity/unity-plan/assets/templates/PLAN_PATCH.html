@@ -1,388 +1,88 @@
-<!--
-    ╔══════════════════════════════════════════════════════════════════════╗
-    ║  TEMPLATE FILE — DO NOT ACCESS DIRECTLY                            ║
-    ║                                                                     ║
-    ║  This is an INTERNAL template used to generate output files.        ║
-    ║  Opening this file in a browser will show placeholder text and      ║
-    ║  navigation links will cause ERR_FILE_NOT_FOUND errors.             ║
-    ║                                                                     ║
-    ║  Generated output location: documents/plans/{plan-name}/patch.html  ║
-    ║  Only access files in documents/plans/ — never this template.       ║
-    ╠══════════════════════════════════════════════════════════════════════╣
-    ║                    PLAN_PATCH TEMPLATE                              ║
-    ║              Code Changes Patch Viewer                              ║
-    ║                                                                     ║
-    ║  HOW TO USE (for generation workflow only):                         ║
-    ║  1. Read this template to understand structure and placeholders     ║
-    ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
-    ║  3. Generate patch content from PLAN_PATCH_TEMPLATE.patch format    ║
-    ║  4. Remove all INSTRUCTION comments from final output               ║
-    ║  5. Write result to documents/plans/{plan-name}/patch.html          ║
-    ║  6. DO NOT add any <script> tags or JavaScript to generated output  ║
-    ║  7. Navigation uses pure HTML <a href> — no JS event listeners      ║
-    ║                                                                     ║
-    ║  PLACEHOLDERS:                                                      ║
-    ║    [FEATURE_NAME]     — Feature name in <title> tag                 ║
-    ║    [FEATURE_TITLE]    — Feature title in header                     ║
-    ║    [PLAN_DATE]        — Generation date (YYYY-MM-DD)                ║
-    ║    [FILE_COUNT]       — Number of files changed                     ║
-    ║    [ADDITIONS]        — Total lines added                           ║
-    ║    [DELETIONS]        — Total lines deleted                         ║
-    ╚══════════════════════════════════════════════════════════════════════╝
--->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>Plan Patch: [FEATURE_NAME]</title>
     <style>
-        :root {
-            --color-canvas-default: #0d1117;
-            --color-canvas-subtle: #161b22;
-            --color-canvas-inset: #010409;
-            --color-border-default: #30363d;
-            --color-border-muted: #21262d;
-            --color-fg-default: #e6edf3;
-            --color-fg-muted: #8b949e;
-            --color-fg-subtle: #6e7681;
-            --color-accent-fg: #58a6ff;
-            --color-success-fg: #3fb950;
-            --color-danger-fg: #f85149;
-            --color-diffstat-addition-bg: #238636;
-            --color-diffstat-deletion-bg: #da3633;
-            --color-diff-addition-bg: rgba(46, 160, 67, 0.15);
-            --color-diff-deletion-bg: rgba(248, 81, 73, 0.15);
-            --color-diff-addition-highlight: rgba(46, 160, 67, 0.4);
-            --color-diff-deletion-highlight: rgba(248, 81, 73, 0.4);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--color-canvas-default);
-            color: var(--color-fg-default);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .container { max-width: 100%; padding: 16px 24px; }
-
-        .pr-header {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-        }
-        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
-
-        /* ── Sticky Navigation Bar ── */
-        .plan-nav-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: #1a1a2e;
-            border-bottom: 1px solid var(--color-border-default);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-        .nav-container {
-            max-width: 100%;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-        .nav-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #e6edf3;
-            white-space: nowrap;
-            margin: 0;
-            padding: 12px 0;
-        }
-        .nav-tabs {
-            list-style: none;
-            display: flex;
-            gap: 4px;
-            margin: 0;
-            padding: 0;
-            flex-wrap: wrap;
-        }
-        .nav-tab {
-            display: inline-block;
-            padding: 10px 16px;
-            color: #8b949e;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: color 0.15s, border-color 0.15s, background 0.15s;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-        .nav-tab:hover {
-            color: #e6edf3;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .nav-tab-active {
-            color: #58a6ff;
-            border-bottom-color: #58a6ff;
-            font-weight: 600;
-        }
-        .nav-tab-active:hover {
-            color: #79b8ff;
-            background: rgba(88, 166, 255, 0.08);
-        }
-        .nav-tab-patch {
-            color: var(--color-success-fg);
-        }
-        .nav-tab-patch:hover {
-            color: #56d364;
-            background: rgba(63, 185, 80, 0.1);
-        }
-        .nav-tab-patch.nav-tab-active {
-            color: var(--color-success-fg);
-            border-bottom-color: var(--color-success-fg);
-        }
-
-        @media screen and (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0 12px;
-            }
-            .nav-title { padding: 10px 0 4px 0; font-size: 14px; }
-            .nav-tabs { padding-bottom: 8px; }
-            .nav-tab { padding: 6px 10px; font-size: 12px; }
-        }
-
-        /* ── Patch Stats ── */
-        .patch-stats {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            padding: 12px 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-            min-width: 120px;
-        }
-        .stat-label {
-            font-size: 11px;
-            color: var(--color-fg-subtle);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .stat-value {
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-        .stat-value.additions { color: var(--color-success-fg); }
-        .stat-value.deletions { color: var(--color-danger-fg); }
-
-        /* ── File List ── */
-        .section-header {
-            padding: 10px 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px 6px 0 0;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .file-list {
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            margin-bottom: 24px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .file-item {
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--color-border-muted);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .file-item:last-child { border-bottom: none; }
-        .file-item:hover { background: var(--color-border-muted); }
-        .file-icon {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-        .file-icon.added { color: var(--color-success-fg); }
-        .file-icon.modified { color: var(--color-accent-fg); }
-        .file-icon.deleted { color: var(--color-danger-fg); }
-        .file-path {
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 12px;
-            color: var(--color-fg-default);
-            flex: 1;
-        }
-        .file-stats {
-            display: flex;
-            gap: 8px;
-            font-size: 12px;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-        }
-        .file-add { color: var(--color-success-fg); }
-        .file-del { color: var(--color-danger-fg); }
-
-        /* ── Diff Viewer ── */
-        .diff-file {
-            margin-bottom: 24px;
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .diff-file-header {
-            padding: 10px 16px;
-            background: var(--color-canvas-subtle);
-            border-bottom: 1px solid var(--color-border-default);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .diff-file-path {
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--color-fg-default);
-        }
-        .diff-file-badge {
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        .diff-file-badge.added {
-            background: rgba(63, 185, 80, 0.2);
-            color: var(--color-success-fg);
-        }
-        .diff-file-badge.modified {
-            background: rgba(88, 166, 255, 0.2);
-            color: var(--color-accent-fg);
-        }
-        .diff-file-badge.deleted {
-            background: rgba(248, 81, 73, 0.2);
-            color: var(--color-danger-fg);
-        }
-
-        .diff-content {
-            overflow-x: auto;
-        }
-        .diff-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 12px;
-            line-height: 20px;
-        }
-        .diff-table td {
-            vertical-align: top;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .diff-line-num {
-            width: 50px;
-            min-width: 50px;
-            padding: 0 10px;
-            text-align: right;
-            color: var(--color-fg-subtle);
-            background: var(--color-canvas-inset);
-            border-right: 1px solid var(--color-border-muted);
-            user-select: none;
-        }
-        .diff-line-num.old { border-right: none; }
-        .diff-line-sign {
-            width: 20px;
-            min-width: 20px;
-            padding: 0 4px;
-            text-align: center;
-            user-select: none;
-        }
-        .diff-line-code {
-            padding: 0 12px;
-            width: 100%;
-        }
-
-        .diff-line-add {
-            background: var(--color-diff-addition-bg);
-        }
-        .diff-line-add .diff-line-sign {
-            color: var(--color-success-fg);
-        }
-        .diff-line-del {
-            background: var(--color-diff-deletion-bg);
-        }
-        .diff-line-del .diff-line-sign {
-            color: var(--color-danger-fg);
-        }
-        .diff-line-context {
-            background: var(--color-canvas-default);
-        }
-        .diff-hunk-header {
-            background: rgba(88, 166, 255, 0.1);
-            color: var(--color-accent-fg);
-            font-style: italic;
-        }
-        .diff-hunk-header td {
-            padding: 4px 12px;
-        }
-
-        /* ── Raw Patch Link ── */
-        .raw-patch-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-            color: var(--color-fg-default);
-            text-decoration: none;
-            font-size: 13px;
-            margin-bottom: 16px;
-        }
-        .raw-patch-link:hover {
-            background: var(--color-border-muted);
-            color: var(--color-accent-fg);
-        }
-
-        @media screen and (max-width: 768px) {
-            .container { padding: 8px 12px; }
-            .pr-header { padding: 12px; }
-            .pr-title { font-size: 16px; }
-            .patch-stats { gap: 8px; }
-            .stat-card { padding: 8px 12px; min-width: 100px; }
-            .stat-value { font-size: 16px; }
-            .diff-line-num { width: 40px; min-width: 40px; padding: 0 6px; }
-            .diff-line-code { padding: 0 8px; }
-        }
-    </style>
+:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-canvas-inset:#010409;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633;--color-diff-addition-bg:rgba(46,160,67,0.15);--color-diff-deletion-bg:rgba(248,81,73,0.15);--color-diff-addition-highlight:rgba(46,160,67,0.4);--color-diff-deletion-highlight:rgba(248,81,73,0.4)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;background:var(--color-canvas-default);color:var(--color-fg-default);font-size:14px;line-height:1.5}
+.container{max-width:100%;padding:16px 24px}
+.pr-header{padding:16px;margin-bottom:16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px}
+.pr-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.pr-subtitle{color:var(--color-fg-muted);font-size:14px}
+.plan-nav-bar{position:sticky;top:0;z-index:1000;background:#1a1a2e;border-bottom:1px solid var(--color-border-default);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.nav-container{max-width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-title{font-size:15px;font-weight:700;color:#e6edf3;white-space:nowrap;margin:0;padding:12px 0}
+.nav-tabs{list-style:none;display:flex;gap:4px;margin:0;padding:0;flex-wrap:wrap}
+.nav-tab{display:inline-block;padding:10px 16px;color:#8b949e;text-decoration:none;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s,background 0.15s;cursor:pointer;pointer-events:auto}
+.nav-tab:hover{color:#e6edf3;background:rgba(255,255,255,0.05)}
+.nav-tab-active{color:#58a6ff;border-bottom-color:#58a6ff;font-weight:600}
+.nav-tab-active:hover{color:#79b8ff;background:rgba(88,166,255,0.08)}
+.nav-tab-patch{color:var(--color-success-fg)}
+.nav-tab-patch:hover{color:#56d364;background:rgba(63,185,80,0.1)}
+.nav-tab-patch.nav-tab-active{color:var(--color-success-fg);border-bottom-color:var(--color-success-fg)}
+@media screen and (max-width:768px){.nav-container{flex-direction:column;align-items:flex-start;padding:0 12px}
+.nav-title{padding:10px 0 4px 0;font-size:14px}
+.nav-tabs{padding-bottom:8px}
+.nav-tab{padding:6px 10px;font-size:12px}
+}
+.patch-stats{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.stat-card{padding:12px 16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px;min-width:120px}
+.stat-label{font-size:11px;color:var(--color-fg-subtle);text-transform:uppercase;letter-spacing:0.5px}
+.stat-value{font-size:18px;font-weight:600;margin-top:2px}
+.stat-value.additions{color:var(--color-success-fg)}
+.stat-value.deletions{color:var(--color-danger-fg)}
+.section-header{padding:10px 16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px 6px 0 0;font-weight:600;font-size:14px}
+.file-list{background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px;max-height:300px;overflow-y:auto}
+.file-item{padding:8px 16px;border-bottom:1px solid var(--color-border-muted);display:flex;align-items:center;gap:12px}
+.file-item:last-child{border-bottom:none}
+.file-item:hover{background:var(--color-border-muted)}
+.file-icon{width:16px;height:16px;flex-shrink:0}
+.file-icon.added{color:var(--color-success-fg)}
+.file-icon.modified{color:var(--color-accent-fg)}
+.file-icon.deleted{color:var(--color-danger-fg)}
+.file-path{font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;color:var(--color-fg-default);flex:1}
+.file-stats{display:flex;gap:8px;font-size:12px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace}
+.file-add{color:var(--color-success-fg)}
+.file-del{color:var(--color-danger-fg)}
+.diff-file{margin-bottom:24px;border:1px solid var(--color-border-default);border-radius:6px;overflow:hidden}
+.diff-file-header{padding:10px 16px;background:var(--color-canvas-subtle);border-bottom:1px solid var(--color-border-default);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.diff-file-path{font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:13px;font-weight:600;color:var(--color-fg-default)}
+.diff-file-badge{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500;text-transform:uppercase}
+.diff-file-badge.added{background:rgba(63,185,80,0.2);color:var(--color-success-fg)}
+.diff-file-badge.modified{background:rgba(88,166,255,0.2);color:var(--color-accent-fg)}
+.diff-file-badge.deleted{background:rgba(248,81,73,0.2);color:var(--color-danger-fg)}
+.diff-content{overflow-x:auto}
+.diff-table{width:100%;border-collapse:collapse;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;line-height:20px}
+.diff-table td{vertical-align:top;white-space:pre-wrap;word-break:break-all}
+.diff-line-num{width:50px;min-width:50px;padding:0 10px;text-align:right;color:var(--color-fg-subtle);background:var(--color-canvas-inset);border-right:1px solid var(--color-border-muted);user-select:none}
+.diff-line-num.old{border-right:none}
+.diff-line-sign{width:20px;min-width:20px;padding:0 4px;text-align:center;user-select:none}
+.diff-line-code{padding:0 12px;width:100%}
+.diff-line-add{background:var(--color-diff-addition-bg)}
+.diff-line-add .diff-line-sign{color:var(--color-success-fg)}
+.diff-line-del{background:var(--color-diff-deletion-bg)}
+.diff-line-del .diff-line-sign{color:var(--color-danger-fg)}
+.diff-line-context{background:var(--color-canvas-default)}
+.diff-hunk-header{background:rgba(88,166,255,0.1);color:var(--color-accent-fg);font-style:italic}
+.diff-hunk-header td{padding:4px 12px}
+.raw-patch-link{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px;color:var(--color-fg-default);text-decoration:none;font-size:13px;margin-bottom:16px}
+.raw-patch-link:hover{background:var(--color-border-muted);color:var(--color-accent-fg)}
+@media screen and (max-width:768px){.container{padding:8px 12px}
+.pr-header{padding:12px}
+.pr-title{font-size:16px}
+.patch-stats{gap:8px}
+.stat-card{padding:8px 12px;min-width:100px}
+.stat-value{font-size:16px}
+.diff-line-num{width:40px;min-width:40px;padding:0 6px}
+.diff-line-code{padding:0 8px}
+}
+</style>
 </head>
 <body>
-    <!-- INSTRUCTION: STICKY NAVIGATION BAR — First element in <body>.
-         All paths are relative to the output folder (documents/plans/{plan-name}/).
-         Mark the current page's tab with class="nav-tab-active".
-         For this file (patch.html), the View Patch tab is active.
-         CRITICAL: Do NOT add any JavaScript, <script> tags, addEventListener,
-         console.log, or event handlers. Navigation is PURE HTML <a href> links.
-    -->
     <nav class="plan-nav-bar">
         <div class="nav-container">
             <h1 class="nav-title">Implementation Plan</h1>
@@ -396,15 +96,13 @@
             </ul>
         </div>
     </nav>
-
     <div class="container">
-        <!-- INSTRUCTION: HEADER — Replace [FEATURE_TITLE] and [PLAN_DATE] -->
+        <!-- Replace [FEATURE_TITLE] and [PLAN_DATE] -->
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
             <div class="pr-subtitle">Code Changes Patch — [PLAN_DATE]</div>
         </div>
-
-        <!-- INSTRUCTION: Link to raw patch file for download/copy -->
+        <!-- Raw patch download link -->
         <a href="./changes.patch" class="raw-patch-link" download>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                 <path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/>
@@ -412,8 +110,7 @@
             </svg>
             Download Raw Patch (changes.patch)
         </a>
-
-        <!-- INSTRUCTION: PATCH STATS — Replace values -->
+        <!-- Replace stat values -->
         <div class="patch-stats">
             <div class="stat-card">
                 <div class="stat-label">Files Changed</div>
@@ -428,16 +125,9 @@
                 <div class="stat-value deletions">-[DELETIONS]</div>
             </div>
         </div>
-
-        <!-- INSTRUCTION: FILE LIST — Shows all files in the patch
-             For each file, create a file-item div with:
-             - Icon class: added (new file), modified, or deleted
-             - File path
-             - Stats: +N additions, -N deletions
-        -->
         <div class="section-header">Changed Files</div>
         <div class="file-list">
-            <!-- INSTRUCTION: Replicate this block for each file -->
+            <!-- Replicate for each file -->
             <div class="file-item">
                 <svg class="file-icon [FILE_STATUS]" viewBox="0 0 16 16" fill="currentColor">
                     <!-- Use appropriate icon based on status -->
@@ -450,22 +140,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- INSTRUCTION: DIFF VIEWER — Show each file's diff
-             For each file in the patch:
-             1. Create a diff-file container
-             2. Add file header with path and status badge
-             3. Render each hunk with line numbers and code
-
-             Line types:
-             - diff-line-add: Added lines (prefix +)
-             - diff-line-del: Deleted lines (prefix -)
-             - diff-line-context: Context lines (no prefix)
-             - diff-hunk-header: Hunk headers (@@ ... @@)
-        -->
         <div class="section-header">Diff View</div>
-
-        <!-- INSTRUCTION: Replicate this block for each file -->
+        <!-- Replicate for each file -->
         <div class="diff-file">
             <div class="diff-file-header">
                 <span class="diff-file-path">[FILE_PATH]</span>
@@ -473,25 +149,25 @@
             </div>
             <div class="diff-content">
                 <table class="diff-table">
-                    <!-- INSTRUCTION: Hunk header row -->
+                    <!-- Hunk header -->
                     <tr class="diff-hunk-header">
                         <td colspan="4">[HUNK_HEADER]</td>
                     </tr>
-                    <!-- INSTRUCTION: Context line -->
+                    <!-- Context line -->
                     <tr class="diff-line-context">
                         <td class="diff-line-num old">[OLD_LINE_NUM]</td>
                         <td class="diff-line-num">[NEW_LINE_NUM]</td>
                         <td class="diff-line-sign"></td>
                         <td class="diff-line-code">[CONTEXT_LINE]</td>
                     </tr>
-                    <!-- INSTRUCTION: Deleted line -->
+                    <!-- Deleted line -->
                     <tr class="diff-line-del">
                         <td class="diff-line-num old">[OLD_LINE_NUM]</td>
                         <td class="diff-line-num"></td>
                         <td class="diff-line-sign">-</td>
                         <td class="diff-line-code">[DELETED_LINE]</td>
                     </tr>
-                    <!-- INSTRUCTION: Added line -->
+                    <!-- Added line -->
                     <tr class="diff-line-add">
                         <td class="diff-line-num old"></td>
                         <td class="diff-line-num">[NEW_LINE_NUM]</td>

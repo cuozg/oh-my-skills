@@ -5,96 +5,25 @@ description: "(opencode-project - Skill) Diagnose and fix Unity errors. Use when
 
 # Unity Debugger
 
-Systematically identify and resolve Unity technical issues.
+**Input**: Error message, stack trace, or broken behavior description + optional console logs, affected scripts, repro steps
+**Output**: Debug report at `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md` per [DEBUG_REPORT_TEMPLATE.md](.opencode/skills/unity/unity-fix-errors/assets/templates/DEBUG_REPORT_TEMPLATE.md)
 
-## Purpose
+## Workflow
 
-Diagnose and fix Unity errors — compiler errors, runtime exceptions, broken Play Mode behavior, and failed builds — using a structured triage-to-fix workflow.
-
-## Input
-
-- **Required**: Error message, stack trace, or description of broken behavior
-- **Optional**: Console logs, affected scripts, repro steps, build target
-
-## Output
-
-A debug report saved to `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md` (per `DEBUG_REPORT_TEMPLATE.md`) documenting: error classification, root cause, fix applied, and verification result.
-
-## Examples
-
-| User Request | Skill Action |
-|:---|:---|
-| "NullReferenceException in PlayerController.cs line 42" | Trace the null ref, identify missing assignment, apply fix, verify with compile check |
-| "Build fails on Android with 'shader not supported'" | Check shader compatibility, replace with URP fallback, rebuild |
-| "Game freezes when opening inventory" | Check for infinite loops / deadlocks in inventory code, add guard, verify in Play Mode |
-
-## Output Requirement (MANDATORY)
-
-**Every debug report MUST follow the template**: [DEBUG_REPORT_TEMPLATE.md](.opencode/skills/unity/unity-fix-errors/assets/templates/DEBUG_REPORT_TEMPLATE.md)
-
-Save output to: `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
-
-Read the template first, then populate all sections.
-
-## Debugging Workflow
-
-1. **Gather Intel**
-   - `unityMCP_get_unity_logs(show_errors=true)` → Get error message, stack trace, frequency
-   - Identify: script, line number, error type (NullRef, IndexOutOfRange, etc.)
-   - `unityMCP_capture_scene_object()` for visual/UI issues
-
-2. **Investigate**
-   - `view_file` → Code around error line
-   - `grep_search` → Find all references to failing variable/object
-   - Check component properties via `unityMCP_get_game_object_info(gameObjectPath="...")`
-
-3. **Fix**
-   - Draft fix (null guard, race condition, logic correction)
-   - Apply via code edit tools
-
-4. **Verify**
-   - `unityMCP_check_compile_errors` → Confirm no compile errors
-   - `unityMCP_get_unity_logs(show_errors=true)` → If errors persist, repeat Step 1
-
-5. **Runtime Validate**
-   - `unityMCP_play_game` → Verify fix in action
-   - Ensure no regressions
-   - `unityMCP_stop_game` → Stop after validation
-
-6. **Document** (Optional)
-   - Save report to `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md`
-   - Run `/unity-test` for system stability
-
+1. **Gather** — `unityMCP_get_unity_logs(show_errors=true)` → error message, stack trace, frequency; `unityMCP_capture_scene_object()` for visual issues
+2. **Investigate** — read code around error line, grep references to failing variable, `unityMCP_get_game_object_info()` for component state
+3. **Fix** — draft fix (null guard, race condition, logic correction), apply via edit tools
+4. **Verify** — `unityMCP_check_compile_errors`, then `unityMCP_get_unity_logs(show_errors=true)` — repeat if errors persist
+5. **Runtime Validate** — `unityMCP_play_game` → verify fix → `unityMCP_stop_game`
+6. **Document** (optional) — save report, run `/unity-test` for stability
 
 ## Safety Constraints
 
-**This skill modifies Unity C# scripts and may trigger builds. Follow these safety rules:**
-
-1. **Always Backup Before Destructive Fixes**
-   - For scene/prefab modifications: User must confirm before applying
-   - For script changes affecting multiple systems: Show diff, wait for approval
-   - For build-related fixes: Explain impact on build pipeline
-
-2. **Verification is Mandatory**
-   - ALWAYS run `unityMCP_check_compile_errors` after code changes
-   - NEVER skip runtime validation (`unityMCP_play_game`) for gameplay errors
-   - Document what was tested in debug report
-
-3. **Rollback Strategy**
-   - If fix introduces new errors: Revert changes immediately
-   - If runtime validation fails: Document failure in report, propose alternative
-   - Keep original error message for reference
-
-4. **Scope Limiting**
-   - Fix ONLY the reported error - do not refactor surrounding code
-   - For "quick fix" requests: Apply minimal change, suggest proper fix separately
-   - For cascading errors: Fix root cause first, then validate dependents
-
-5. **User Confirmation Required For**
-   - Deleting or renaming public methods/fields (breaks serialization)
-   - Changing Unity component execution order
-   - Modifying build settings or project settings
-   - Applying fixes to third-party packages
+- Always backup before destructive fixes; user confirmation for scene/prefab mods and multi-system changes
+- ALWAYS run `unityMCP_check_compile_errors` after changes; NEVER skip runtime validation for gameplay errors
+- If fix introduces new errors: revert immediately; if validation fails: document and propose alternative
+- Fix ONLY the reported error — don't refactor surrounding code
+- User confirmation required for: deleting/renaming public methods, changing execution order, modifying build/project settings, third-party package changes
 
 ## Common Fixes
 
@@ -102,7 +31,7 @@ Read the template first, then populate all sections.
 |-------|-------------|
 | NullReferenceException | Add null guard, verify serialized reference |
 | IndexOutOfRangeException | Validate array bounds before access |
-| MissingReferenceException | Check if object was destroyed, use `this == null` after await |
+| MissingReferenceException | Check if destroyed, use `this == null` after await |
 | Race Condition | Verify async/await order, add synchronization |
 
 ## Best Practices
@@ -111,32 +40,3 @@ Read the template first, then populate all sections.
 - **Clean Slate**: `unityMCP_check_compile_errors` to rule out transient state
 - **Isolate**: Reproduce in empty test scene if systemic
 - **Evidence-Based**: Only declare fixed if console clear after repro steps
-
----
-
-## MCP Tools Integration
-
-Prefer `unityMCP_*` tools over manual file/shell operations for Unity Editor interaction.
-
-| Operation | MCP Tool | Replaces |
-|-----------|----------|----------|
-| Read console errors | `unityMCP_get_unity_logs(show_errors=true)` | `read_console` |
-| Check compilation | `unityMCP_check_compile_errors` | `refresh_unity(compile="request")` |
-| Play game | `unityMCP_play_game` | `manage_editor(action="play")` |
-| Stop game | `unityMCP_stop_game` | `manage_editor(action="stop")` |
-| Inspect object | `unityMCP_get_game_object_info(gameObjectPath="...")` | `mcpforunity://scene/gameobject` |
-| Scene screenshot | `unityMCP_capture_scene_object()` | `manage_scene` screenshot |
-| List hierarchy | `unityMCP_list_game_objects_in_hierarchy(nameFilter="...")` | Manual scene browsing |
-| Editor state | `unityMCP_get_unity_editor_state` | Manual editor checks |
-
-### Debug-Fix-Verify Flow
-
-```
-1. unityMCP_get_unity_logs(show_errors=true)       → Capture errors and stack traces
-2. unityMCP_get_game_object_info(gameObjectPath=..) → Inspect failing object's components
-3. [Apply code fix via editor tools]
-4. unityMCP_check_compile_errors                    → Confirm compilation success
-5. unityMCP_play_game                               → Runtime validation
-6. unityMCP_get_unity_logs(show_errors=true)        → Verify no new errors
-7. unityMCP_stop_game                               → Clean stop
-```

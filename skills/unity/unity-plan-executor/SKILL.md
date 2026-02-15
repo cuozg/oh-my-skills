@@ -12,136 +12,51 @@ name: unity-plan-executor
 
 # Unity Plan Executor
 
-Execute implementation plans with **100% accuracy**. Apply code changes exactly as shown in the HTML plan file.
-
-## Purpose
-
-Execute implementation plans from HTML files with 100% accuracy — providing a structured, repeatable workflow that produces consistent results.
-
-## Examples
-
-| Trigger | What Happens |
-|---------|-------------|
-| "Run unity-plan-executor" | Executes the primary workflow end-to-end |
-| "Apply unity-plan-executor to <target>" | Scopes execution to a specific file or module |
-| "Check unity-plan-executor output" | Reviews and validates previous results |
-
-
-## Input Requirement
-
-**Plan HTML file**: `Documents/Plans/[FeatureName]_PLAN.html`
-
-The HTML file contains GitHub-style split diff views showing exact code changes to apply.
-
-## Execution Protocol
+**Input**: Plan HTML at `Documents/Plans/[FeatureName]_PLAN.html` with GitHub-style split diff views
+**Output**: All code changes applied, clean compilation, git commit
 
 ## Workflow
 
-<!-- Alias: See Execution Protocol below -->
-
-### Phase 1: Parse HTML Plan File
-
-1. **Read the plan file** and extract:
-   - Task table entries from `<table class="task-table">`
-   - All file diffs from `<div class="file-diff">` sections
-   - File paths from `.file-path` elements
-   - Line numbers and code changes from diff rows
-
-2. **For each file diff section**:
-   - Extract file path from `.file-path`
-   - Identify action: MODIFIED, NEW, or DELETED from `.badge-*` class
-   - Parse all diff lines:
-     - `diff-line-deletion` → Lines to REMOVE
-     - `diff-line-addition` → Lines to ADD
-     - `diff-line-context` → Context lines (verify, don't modify)
+### Phase 1: Parse HTML Plan
+1. Extract task table from `<table class="task-table">`
+2. Extract file diffs from `<div class="file-diff">` sections
+3. For each diff: file path from `.file-path`, action from `.badge-*` (MODIFIED/NEW/DELETED)
+4. Parse diff lines: `diff-line-deletion`→REMOVE, `diff-line-addition`→ADD, `diff-line-context`→verify only
 
 ### Phase 2: Apply Changes Exactly
-
-For each file in the plan:
-
-```
-1. Open the target file
-2. Locate the context lines (use line numbers as guide)
-3. Apply changes EXACTLY:
-   - DELETE lines marked with `-` (class: diff-line-deletion)
-   - ADD lines marked with `+` (class: diff-line-addition)
-   - Word highlights (<x>, <y>) show specific changes within lines
-4. Save the file
-```
+1. Open target file, locate context lines
+2. DELETE `-` lines, ADD `+` lines, word highlights (`<x>`, `<y>`) show specific changes
+3. Save file
 
 **CRITICAL RULES**:
-- ❌ Do NOT paraphrase or reinterpret code
-- ❌ Do NOT add code not shown in the plan
-- ❌ Do NOT skip any changes
-- ❌ Do NOT modify the order of operations
+- ❌ Do NOT paraphrase, add unlisted code, skip changes, or modify order
 - ✅ Apply 100% exactly as displayed
 
 ### Phase 3: Create New Files
+- Create at exact path, add all `+` lines in order, UTF-8 encoding
 
-For files marked as NEW:
-1. Create the file at the exact path shown
-2. Add all lines marked with `+` in order
-3. Ensure UTF-8 encoding
-
-### Phase 4: Verify Implementation
-
-| Check | Action | On Failure |
-|-------|--------|------------|
-| **Compile** | `unityMCP_check_compile_errors` | Fix immediately |
-| **Console** | `unityMCP_get_unity_logs(show_errors=true)` | Address errors |
+### Phase 4: Verify
+- `unityMCP_check_compile_errors` → fix immediately on failure
+- `unityMCP_get_unity_logs(show_errors=true)` → address errors
 
 ### Phase 5: Git Commit
-
-After successful implementation:
-
 ```bash
-git add -A
-git commit -m "[TYPE]: Meaningful title
+git add -A && git commit -m "[TYPE]: Title (50 chars max, imperative)
 
-Detailed description of changes:
-- What was changed
-- Why it was changed
+- What/why changed
 - Files affected"
 ```
-
-**Commit Message Format**:
-- `feat:` New feature implementation
-- `fix:` Bug fixes
-- `refactor:` Code refactoring
-- `ui:` UI/UX changes
-- `perf:` Performance improvements
-
-**Title**: 50 characters max, imperative mood
-**Body**: Explain what and why, not how
+Types: `feat:` `fix:` `refactor:` `ui:` `perf:`
 
 ## Error Recovery
 
-1. **Context mismatch**: Lines not at expected location
-   - Search for context in file
-   - Apply at correct location
+1. **Context mismatch** — search for context elsewhere in file
+2. **Compile error** — re-check diff application
+3. **Missing dependencies** — create files in dependency order
 
-2. **Compile error**:
-   - Re-check diff application
-   - Verify all changes applied exactly
-
-3. **Missing dependencies**:
-   - Check if files need to be created first
-   - Apply in dependency order
-
-## Output
-
-Successful execution produces:
-1. **All code changes applied** — files modified, created, or deleted exactly per the plan
-2. **Clean compilation** — `unityMCP_check_compile_errors` returns zero errors
-3. **Git commit** — single commit with descriptive message covering all changes
-
-No separate report file is generated. The git commit message serves as the execution record.
-
-## Execution Checklist
-
-Before completing:
+## Checklist
 
 - [ ] All file diffs applied exactly
 - [ ] All new files created
 - [ ] Unity compiles without errors
-- [ ] Git commit created with meaningful message
+- [ ] Git commit created

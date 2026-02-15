@@ -1,297 +1,65 @@
-<!--
-    ╔══════════════════════════════════════════════════════════════════════╗
-    ║  TEMPLATE FILE — DO NOT ACCESS DIRECTLY                            ║
-    ║                                                                     ║
-    ║  This is an INTERNAL template used to generate output files.        ║
-    ║  Opening this file in a browser will show placeholder text and      ║
-    ║  navigation links will cause ERR_FILE_NOT_FOUND errors.             ║
-    ║                                                                     ║
-    ║  Generated output location: documents/plans/{plan-name}/dependencies.html║
-    ║  Only access files in documents/plans/ — never this template.       ║
-    ╠══════════════════════════════════════════════════════════════════════╣
-    ║                    PLAN_DEPENDENCIES TEMPLATE                       ║
-    ║              Dependency Map, Risks & Blockers                       ║
-    ║                                                                     ║
-    ║  HOW TO USE (for generation workflow only):                         ║
-    ║  1. Read this template to understand structure and placeholders     ║
-    ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
-    ║  3. Remove all INSTRUCTION comments from final output               ║
-    ║  4. Write result to documents/plans/{plan-name}/dependencies.html   ║
-    ║  5. DO NOT add any <script> tags or JavaScript to generated output  ║
-    ║  6. Navigation uses pure HTML <a href> — no JS event listeners      ║
-    ║                                                                     ║
-    ║  PLACEHOLDERS:                                                      ║
-    ║    [FEATURE_NAME]   — Feature name in <title>                       ║
-    ║    [FEATURE_TITLE]  — Feature title in header                       ║
-    ╚══════════════════════════════════════════════════════════════════════╝
--->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>Plan Dependencies: [FEATURE_NAME]</title>
     <style>
-        :root {
-            --color-canvas-default: #0d1117;
-            --color-canvas-subtle: #161b22;
-            --color-border-default: #30363d;
-            --color-border-muted: #21262d;
-            --color-fg-default: #e6edf3;
-            --color-fg-muted: #8b949e;
-            --color-fg-subtle: #6e7681;
-            --color-accent-fg: #58a6ff;
-            --color-success-fg: #3fb950;
-            --color-danger-fg: #f85149;
-            --color-warning-fg: #d29922;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--color-canvas-default);
-            color: var(--color-fg-default);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .container { max-width: 100%; padding: 16px 24px; }
-
-        .pr-header {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-        }
-        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
-
-        /* ── Sticky Navigation Bar ── */
-        .plan-nav-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: #1a1a2e;
-            border-bottom: 1px solid var(--color-border-default);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-        .nav-container {
-            max-width: 100%;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-        .nav-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #e6edf3;
-            white-space: nowrap;
-            margin: 0;
-            padding: 12px 0;
-        }
-        .nav-tabs {
-            list-style: none;
-            display: flex;
-            gap: 4px;
-            margin: 0;
-            padding: 0;
-            flex-wrap: wrap;
-        }
-        .nav-tab {
-            display: inline-block;
-            padding: 10px 16px;
-            color: #8b949e;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: color 0.15s, border-color 0.15s, background 0.15s;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-        .nav-tab:hover {
-            color: #e6edf3;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .nav-tab-active {
-            color: #58a6ff;
-            border-bottom-color: #58a6ff;
-            font-weight: 600;
-        }
-        .nav-tab-active:hover {
-            color: #79b8ff;
-            background: rgba(88, 166, 255, 0.08);
-        }
-        .nav-tab-patch {
-            color: var(--color-success-fg);
-        }
-        .nav-tab-patch:hover {
-            color: #56d364;
-            background: rgba(63, 185, 80, 0.1);
-        }
-
-        @media screen and (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0 12px;
-            }
-            .nav-title { padding: 10px 0 4px 0; font-size: 14px; }
-            .nav-tabs { padding-bottom: 8px; }
-            .nav-tab { padding: 6px 10px; font-size: 12px; }
-        }
-
-        .section-header {
-            padding: 10px 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px 6px 0 0;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .dep-section {
-            padding: 20px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            margin-bottom: 24px;
-        }
-
-        .dep-graph {
-            background: var(--color-canvas-default);
-            border: 1px solid var(--color-border-muted);
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        .dep-graph pre {
-            margin: 0;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            color: var(--color-fg-muted);
-            white-space: pre;
-            overflow-x: auto;
-        }
-
-        .dep-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            margin-bottom: 24px;
-        }
-        .dep-table th {
-            padding: 8px 16px;
-            text-align: left;
-            font-weight: 500;
-            color: var(--color-fg-muted);
-            background: var(--color-border-muted);
-            border-bottom: 1px solid var(--color-border-default);
-            font-size: 12px;
-        }
-        .dep-table td {
-            padding: 8px 16px;
-            border-bottom: 1px solid var(--color-border-default);
-        }
-        .dep-table tr:hover { background: var(--color-border-muted); }
-
-        .risk-card {
-            background: var(--color-canvas-default);
-            border: 1px solid var(--color-border-muted);
-            border-radius: 6px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-        }
-        .risk-card:last-child { margin-bottom: 0; }
-        .risk-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .risk-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-fg-default);
-        }
-        .risk-level {
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .risk-high { background: rgba(248, 81, 73, 0.2); color: var(--color-danger-fg); }
-        .risk-medium { background: rgba(210, 153, 34, 0.2); color: var(--color-warning-fg); }
-        .risk-low { background: rgba(63, 185, 80, 0.2); color: var(--color-success-fg); }
-        .risk-body {
-            color: var(--color-fg-muted);
-            font-size: 13px;
-            line-height: 1.5;
-        }
-        .risk-mitigation {
-            margin-top: 8px;
-            padding: 8px 12px;
-            background: var(--color-canvas-subtle);
-            border-radius: 4px;
-            font-size: 12px;
-            color: var(--color-fg-muted);
-        }
-        .risk-mitigation strong { color: var(--color-fg-default); }
-
-        .blocker-list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
-        .blocker-item {
-            padding: 12px 16px;
-            background: var(--color-canvas-default);
-            border: 1px solid var(--color-border-muted);
-            border-radius: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-        .blocker-icon {
-            font-size: 16px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-        .blocker-content {
-            flex: 1;
-        }
-        .blocker-title {
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--color-fg-default);
-            margin-bottom: 4px;
-        }
-        .blocker-desc {
-            font-size: 12px;
-            color: var(--color-fg-muted);
-            line-height: 1.5;
-        }
-
-        @media screen and (max-width: 768px) {
-            .container { padding: 8px 12px; }
-            .pr-header { padding: 12px; }
-            .pr-title { font-size: 16px; }
-            .dep-section { padding: 12px 14px; }
-            .dep-table { display: block; overflow-x: auto; }
-        }
-    </style>
+:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-warning-fg:#d29922}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;background:var(--color-canvas-default);color:var(--color-fg-default);font-size:14px;line-height:1.5}
+.container{max-width:100%;padding:16px 24px}
+.pr-header{padding:16px;margin-bottom:16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px}
+.pr-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.pr-subtitle{color:var(--color-fg-muted);font-size:14px}
+.plan-nav-bar{position:sticky;top:0;z-index:1000;background:#1a1a2e;border-bottom:1px solid var(--color-border-default);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.nav-container{max-width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-title{font-size:15px;font-weight:700;color:#e6edf3;white-space:nowrap;margin:0;padding:12px 0}
+.nav-tabs{list-style:none;display:flex;gap:4px;margin:0;padding:0;flex-wrap:wrap}
+.nav-tab{display:inline-block;padding:10px 16px;color:#8b949e;text-decoration:none;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s,background 0.15s;cursor:pointer;pointer-events:auto}
+.nav-tab:hover{color:#e6edf3;background:rgba(255,255,255,0.05)}
+.nav-tab-active{color:#58a6ff;border-bottom-color:#58a6ff;font-weight:600}
+.nav-tab-active:hover{color:#79b8ff;background:rgba(88,166,255,0.08)}
+.nav-tab-patch{color:var(--color-success-fg)}
+.nav-tab-patch:hover{color:#56d364;background:rgba(63,185,80,0.1)}
+@media screen and (max-width:768px){.nav-container{flex-direction:column;align-items:flex-start;padding:0 12px}
+.nav-title{padding:10px 0 4px 0;font-size:14px}
+.nav-tabs{padding-bottom:8px}
+.nav-tab{padding:6px 10px;font-size:12px}
+}
+.section-header{padding:10px 16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px 6px 0 0;font-weight:600;font-size:14px}
+.dep-section{padding:20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.dep-graph{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:16px;margin-bottom:16px}
+.dep-graph pre{margin:0;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;line-height:1.5;color:var(--color-fg-muted);white-space:pre;overflow-x:auto}
+.dep-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;margin-bottom:24px}
+.dep-table th{padding:8px 16px;text-align:left;font-weight:500;color:var(--color-fg-muted);background:var(--color-border-muted);border-bottom:1px solid var(--color-border-default);font-size:12px}
+.dep-table td{padding:8px 16px;border-bottom:1px solid var(--color-border-default)}
+.dep-table tr:hover{background:var(--color-border-muted)}
+.risk-card{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:14px 16px;margin-bottom:12px}
+.risk-card:last-child{margin-bottom:0}
+.risk-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.risk-title{font-size:14px;font-weight:600;color:var(--color-fg-default)}
+.risk-level{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase}
+.risk-high{background:rgba(248,81,73,0.2);color:var(--color-danger-fg)}
+.risk-medium{background:rgba(210,153,34,0.2);color:var(--color-warning-fg)}
+.risk-low{background:rgba(63,185,80,0.2);color:var(--color-success-fg)}
+.risk-body{color:var(--color-fg-muted);font-size:13px;line-height:1.5}
+.risk-mitigation{margin-top:8px;padding:8px 12px;background:var(--color-canvas-subtle);border-radius:4px;font-size:12px;color:var(--color-fg-muted)}
+.risk-mitigation strong{color:var(--color-fg-default)}
+.blocker-list{margin:0;padding:0;list-style:none}
+.blocker-item{padding:12px 16px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.blocker-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.blocker-content{flex:1}
+.blocker-title{font-weight:600;font-size:13px;color:var(--color-fg-default);margin-bottom:4px}
+.blocker-desc{font-size:12px;color:var(--color-fg-muted);line-height:1.5}
+@media screen and (max-width:768px){.container{padding:8px 12px}
+.pr-header{padding:12px}
+.pr-title{font-size:16px}
+.dep-section{padding:12px 14px}
+.dep-table{display:block;overflow-x:auto}
+}
+</style>
 </head>
 <body>
     <nav class="plan-nav-bar">
@@ -307,36 +75,21 @@
             </ul>
         </div>
     </nav>
-
     <div class="container">
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
             <div class="pr-subtitle">Dependencies, Risks & Blockers</div>
         </div>
-
-        <!-- INSTRUCTION: DEPENDENCY GRAPH
-             ASCII diagram showing task dependencies.
-             Use arrows (→) to show flow direction.
-             Group parallel tasks on the same line.
-             Format: [Task#] TaskName → [Task#] TaskName
-        -->
         <div class="section-header">Dependency Graph</div>
         <div class="dep-section">
             <div class="dep-graph">
                 <pre>[DEPENDENCY_GRAPH_ASCII]
-
 Example format:
 [1.1] Create Model ──→ [1.2] Add Repository ──→ [2.1] Build UI
                    └──→ [1.3] Add Tests (parallel)
 [2.1] Build UI ──→ [2.2] Wire Events ──→ [3.1] Integration Test</pre>
             </div>
         </div>
-
-        <!-- INSTRUCTION: DEPENDENCY TABLE
-             Columns: Task | Depends On | Blocks | Type
-             Type: "hard" (must complete first) or "soft" (can start in parallel)
-             Replicate <tr> for each dependency relationship.
-        -->
         <div class="section-header">Dependency Matrix</div>
         <table class="dep-table">
             <thead>
@@ -348,7 +101,7 @@ Example format:
                 </tr>
             </thead>
             <tbody>
-                <!-- INSTRUCTION: Replicate this <tr> for each task's dependencies -->
+                <!-- Replicate for each task -->
                 <tr>
                     <td>[TASK_NUMBER]</td>
                     <td>[DEPENDS_ON_TASKS]</td>
@@ -357,15 +110,9 @@ Example format:
                 </tr>
             </tbody>
         </table>
-
-        <!-- INSTRUCTION: RISKS
-             One risk-card per identified risk.
-             Risk levels: risk-high, risk-medium, risk-low
-             Each risk must have: title, description, mitigation strategy.
-        -->
         <div class="section-header">Risks</div>
         <div class="dep-section">
-            <!-- INSTRUCTION: Replicate this risk-card for each risk -->
+            <!-- Replicate for each risk -->
             <div class="risk-card">
                 <div class="risk-header">
                     <div class="risk-title">[RISK_TITLE]</div>
@@ -377,15 +124,10 @@ Example format:
                 </div>
             </div>
         </div>
-
-        <!-- INSTRUCTION: BLOCKERS
-             Known blockers that must be resolved before or during implementation.
-             Use ⚠️ for warnings, 🔴 for critical blockers, 🔵 for informational.
-        -->
         <div class="section-header">Blockers</div>
         <div class="dep-section">
             <ul class="blocker-list">
-                <!-- INSTRUCTION: Replicate this blocker-item for each blocker -->
+                <!-- Replicate for each blocker -->
                 <li class="blocker-item">
                     <span class="blocker-icon">[BLOCKER_ICON]</span>
                     <div class="blocker-content">

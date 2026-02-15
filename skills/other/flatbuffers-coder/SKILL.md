@@ -5,44 +5,17 @@ description: "FlatBuffers for Unity. Use when: (1) Creating/updating .fbs schema
 
 # FlatBuffers Specialist
 
-Manage schemas, code generation, and binary data conversion.
-
-## Purpose
-
-Create and maintain FlatBuffers schemas (`.fbs`), generate C# classes, and convert JSON data to binary format for efficient runtime deserialization in Unity.
-
 ## Input
-
-- **Required**: Schema requirements — table name, fields with types, and key field
-- **Optional**: JSON data file for binary conversion, existing `.fbs` file for updates
+Schema requirements (table name, fields, types, key). Optional: JSON data, existing `.fbs` for updates.
 
 ## Output
-
-- `.fbs` schema file saved to `FlatBuffers/New_Fbs/`
-- Generated C# classes in `FlatBuffers/Gen_Cs/` (deployed to `Assets/Scripts/Game/Managers/FlatBuffers/`)
-- Binary data in `FlatBuffers/Output_Bin/` (deployed to `Assets/StreamingAssets/Blueprints/`)
-
-## Examples
-
-| Task | Input | Output |
-|:---|:---|:---|
-| New schema | "Create a schema for match rewards with ID, type, amount" | `MatchRewardsFlatBuffer.fbs` with root table + data table |
-| Update schema | "Add a `rarity` field to ItemFlatBuffer" | Updated `.fbs` + regenerated C# |
-| Full pipeline | "Generate binary from rewards.json" | Schema → C# → binary in StreamingAssets |
-
-## Output Requirement (MANDATORY)
-
-**Every schema MUST follow the template**: [FBS_TEMPLATE.md](.opencode/skills/other/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md)
-
-Save schemas to: `FlatBuffers/New_Fbs/[Name].fbs`
-
-Read the template first, then populate all sections.
+`.fbs` schema + generated C# + binary data. Follow [FBS_TEMPLATE.md](.opencode/skills/other/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md).
 
 ## File Locations
 
 | Type | Location |
 |------|----------|
-| Schemas (.fbs) | `FlatBuffers/New_Fbs/` |
+| Schemas | `FlatBuffers/New_Fbs/` |
 | Generated C# | `FlatBuffers/Gen_Cs/` → `Assets/Scripts/Game/Managers/FlatBuffers/` |
 | Input JSON | `FlatBuffers/Input_Json/` |
 | Output Binary | `FlatBuffers/Output_Bin/` → `Assets/StreamingAssets/Blueprints/` |
@@ -62,15 +35,15 @@ root_type [Name]FlatBuffer;
 
 ## Workflow
 
-1. **Schema**: Create/update `.fbs` in `FlatBuffers/New_Fbs/`
-2. **Generate C#**: `bash FlatBuffers/generate_cs.sh`
-3. **Convert Data**: Update `generate_data.sh`, run `bash FlatBuffers/generate_data.sh`
-4. **Deploy**: Move files to Unity locations (or use `python3 FlatBuffers/generateAll.py`)
+1. Create/update `.fbs` in `FlatBuffers/New_Fbs/`
+2. Generate C#: `bash FlatBuffers/generate_cs.sh`
+3. Convert data: update + run `bash FlatBuffers/generate_data.sh`
+4. Deploy: `python3 FlatBuffers/generateAll.py` or move manually
 
 ## Best Practices
 
-- **Unique Keys**: Always `ID:string (key);` for lookup tables
-- **Defaults**: Provide sensible defaults to save binary space
-- **Document**: Comment fields in `.fbs` for purpose/valid ranges
-- **Safety**: Ensure Unity Editor paused before running generation
-- **Validate**: Verify generated C# compiles in Unity
+- Always `ID:string (key)` for lookup tables
+- Provide sensible defaults to save binary space
+- Comment fields for purpose/valid ranges
+- Pause Unity Editor before generation
+- Verify generated C# compiles

@@ -5,119 +5,60 @@ description: "Validate and check bash shell scripts for correctness and compatib
 
 # Bash Check
 
-Validate bash shell scripts for syntax errors, shell compatibility, and potential runtime issues.
-
-## Purpose
-
-Catch script defects before execution — syntax errors, shell incompatibilities, unsafe variable handling, and missing error guards — so broken scripts never reach production.
-
 ## Input
 
-- **Required**: Absolute or relative path to a `.sh` (or shell script) file.
-- **Optional**: Target shell version or POSIX-compliance flag if portability is a concern.
+Path to `.sh` file. Optional: target shell version or POSIX-compliance flag.
 
 ## Output
 
-A structured check report (following the CHECK_REPORT.md template) delivered directly to the user, categorizing all findings by severity (Error / Warning / Info) with actionable fix suggestions.
+Structured report per [CHECK_REPORT.md](.opencode/skills/bash/bash-check/assets/templates/CHECK_REPORT.md). Read template first, populate all sections, output directly to user.
 
 ## Examples
 
-| Trigger | Input | What Happens |
-|---------|-------|--------------|
-| "Check this script for errors" | `scripts/deploy.sh` | Runs `bash -n`, shellcheck, manual review; returns report |
-| "Is this script POSIX compatible?" | `utils/backup.sh` | Focuses on bashisms and portability checks |
-| "Validate all scripts in ci/" | `ci/*.sh` | Iterates and reports per-file |
-
-## Output Requirement (MANDATORY)
-
-**Every check report MUST follow the template**: [CHECK_REPORT.md](.opencode/skills/bash/bash-check/assets/templates/CHECK_REPORT.md)
-
-Output the report directly to the user. No file save required.
-
-Read the template first, then populate all sections.
+| Trigger | Input |
+|---------|-------|
+| "Check this script for errors" | `scripts/deploy.sh` |
+| "Is this script POSIX compatible?" | `utils/backup.sh` |
 
 ## Workflow
 
 ### 1. Identify Target Script
+Confirm absolute path to the `.sh` file.
 
-Confirm the absolute path to the `.sh` file to validate.
-
-### 2. Check Shell Version Compatibility
-
+### 2. Check Shell Version
 ```bash
-# Check current bash version
 bash --version
-
-# Check current shell
 echo $SHELL
 ```
 
 ### 3. Syntax Validation
-
-Run bash syntax check (dry-run mode):
-
 ```bash
 bash -n /path/to/script.sh
 ```
 
-This checks for syntax errors without executing the script.
-
-### 4. ShellCheck Analysis (if available)
-
-If `shellcheck` is installed, run comprehensive analysis:
-
+### 4. ShellCheck Analysis
 ```bash
-# Check if shellcheck is available
 which shellcheck
-
-# Run shellcheck with all checks
 shellcheck -x /path/to/script.sh
-
-# Run with specific severity (error, warning, info, style)
 shellcheck -S error /path/to/script.sh
 ```
-
-Install shellcheck if needed: `brew install shellcheck` (macOS) or `apt install shellcheck` (Linux).
+Install if needed: `brew install shellcheck` / `apt install shellcheck`
 
 ### 5. Manual Review Checklist
-
-Verify the following aspects:
-
-**Shebang Line**
-- Script starts with proper shebang: `#!/bin/bash` or `#!/usr/bin/env bash`
-- Shebang matches intended shell version
-
-**Variable Handling**
-- Variables are properly quoted: `"$variable"` instead of `$variable`
-- Arrays use proper syntax: `"${array[@]}"`
-- Default values used where appropriate: `${VAR:-default}`
-
-**Exit Codes**
-- Script uses `set -e` for fail-fast behavior (if appropriate)
-- Critical commands check return codes
-- Meaningful exit codes returned
-
-**File Operations**
-- File existence checked before operations: `[[ -f "$file" ]]`
-- Permissions verified before write operations
-- Temporary files handled safely with `mktemp`
-
-**Portability**
-- Avoid bashisms if POSIX compatibility needed
-- Check for non-standard commands with `command -v`
+- **Shebang**: `#!/bin/bash` or `#!/usr/bin/env bash`
+- **Variables**: quoted `"$variable"`, arrays `"${array[@]}"`, defaults `${VAR:-default}`
+- **Exit codes**: `set -e`, check return codes, meaningful exits
+- **File ops**: `[[ -f "$file" ]]`, permission checks, `mktemp` for temp files
+- **Portability**: avoid bashisms if POSIX needed, use `command -v`
 
 ### 6. Report Findings
-
-Categorize issues by severity:
-- **Error**: Script will fail to parse or execute
-- **Warning**: Potential runtime issues or bugs
-- **Info**: Style issues or best practice violations
+Categorize: **Error** (parse/execute fail) | **Warning** (runtime risk) | **Info** (style)
 
 ## Common Issues
 
 | Issue | Fix |
 |-------|-----|
 | `[: too many arguments` | Use `[[ ]]` instead of `[ ]` |
-| `$'\r': command not found` | Convert line endings: `dos2unix script.sh` |
-| `permission denied` | Add execute bit: `chmod +x script.sh` |
-| Unbound variable | Use `set -u` or provide defaults |
+| `$'\r': command not found` | `dos2unix script.sh` |
+| `permission denied` | `chmod +x script.sh` |
+| Unbound variable | `set -u` or provide defaults |

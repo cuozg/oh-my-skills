@@ -1,69 +1,35 @@
 # Squash Plan: {BRANCH_NAME}
 
-**Date**: {YYYY-MM-DD}
-**Total Commits**: {N}
-**Target Commits**: {N groups}
+**Date**: {YYYY-MM-DD} | **Total**: {N} commits → {N} groups
 
----
-
-## 1. Commit Groups
+## Commit Groups
 
 ### Group 1: {Group Name}
-
-**Target Message**: `{type}({scope}): {short summary}`
-**Commits**:
-- `{hash}`: {original message}
+`{type}({scope}): {short summary}`
 - `{hash}`: {original message}
 
-### Group 2: {Group Name}
+### Discarded
+- `{hash}`: {reason}
 
-**Target Message**: `{type}({scope}): {short summary}`
-**Commits**:
-- `{hash}`: {original message}
-
-### Discarded (reverts / superseded)
-
-- `{hash}`: {original message} — Reason: {e.g., reverted by hash2}
-
----
-
-## 2. Squash Strategy
+## Strategy
 
 | Group | Method | Commits | Target Message |
 |-------|--------|---------|----------------|
 | {Group 1} | {squash/fixup} | {N} | `{type}({scope}): {summary}` |
-| {Group 2} | {squash/fixup} | {N} | `{type}({scope}): {summary}` |
 
----
-
-## 3. Final Commit Messages
-
-### Commit 1
+## Final Messages
 
 ```
 {type}({scope}): {short summary}
 
-## High Level Summary
-
 {2-3 sentence overview}
-
-## Specific Details
-
-### Changes Made
-- {File}: {Change description}
 
 Squashed from:
 - {hash}: {original message}
-- {hash}: {original message}
 ```
 
----
+## Safety
 
-## 4. Safety Checklist
-
-- [ ] Backup branch created
-- [ ] User approved grouping
-- [ ] No pending uncommitted changes
-- [ ] Target branch verified
-- [ ] Tests pass after squash
-- [ ] Git log confirms structure
+- [ ] Backup branch created + user approved
+- [ ] No pending changes, target branch verified
+- [ ] Tests pass + git log confirmed

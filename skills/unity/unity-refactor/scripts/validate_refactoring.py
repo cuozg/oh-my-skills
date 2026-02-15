@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""
-Validate refactoring changes in a Unity project.
-
-Checks:
-1. No compiler errors (scans for common C# issues)
-2. No broken references (missing files referenced in code)
-3. No dead code left behind (empty classes, unused usings)
-4. No anti-patterns introduced (Find/GetComponent in Update, etc.)
-5. No TODO/HACK markers without context
-
-Usage:
-    python3 validate_refactoring.py <path-to-changed-files-or-directory>
-    python3 validate_refactoring.py --git-diff          # Validate only git-changed files
-    python3 validate_refactoring.py path/to/File.cs     # Validate specific file(s)
-"""
-
 import sys
 import os
 import re
@@ -29,18 +13,14 @@ class RefactoringValidator:
         self.info = []
 
     def validate_file(self, filepath: str) -> None:
-        """Run all validation checks on a single C# file."""
         if not filepath.endswith(".cs"):
             return
-
         path = Path(filepath)
         if not path.exists():
             self.errors.append(f"File not found: {filepath}")
             return
-
         content = path.read_text(encoding="utf-8", errors="replace")
         lines = content.splitlines()
-
         self._check_update_antipatterns(filepath, lines)
         self._check_dead_code(filepath, lines)
         self._check_todo_markers(filepath, lines)
@@ -49,7 +29,6 @@ class RefactoringValidator:
         self._check_gc_pressure(filepath, lines)
 
     def _check_update_antipatterns(self, filepath: str, lines: list) -> None:
-        """Check for expensive operations inside Update/FixedUpdate/LateUpdate."""
         update_pattern = re.compile(
             r"^\s*(void|async\s+void|private\s+void|protected\s+void|public\s+void)\s+"
             r"(Update|FixedUpdate|LateUpdate)\s*\("
@@ -57,77 +36,47 @@ class RefactoringValidator:
         antipatterns = [
             (r"GameObject\.Find\s*\(", "GameObject.Find in Update loop"),
             (r"FindObjectOfType\s*[<(]", "FindObjectOfType in Update loop"),
-            (
-                r"GetComponent\s*[<(]",
-                "GetComponent in Update loop (cache in Start/Awake)",
-            ),
+            (r"GetComponent\s*[<(]", "GetComponent in Update loop (cache in Start/Awake)"),
             (r"GetComponentInChildren\s*[<(]", "GetComponentInChildren in Update loop"),
             (r"new\s+List\s*[<(]", "List allocation in Update loop (pre-allocate)"),
             (r"\.ToString\s*\(\)", "ToString in Update loop (GC pressure)"),
-            (
-                r"string\s*\+\s*=|string\.Format|string\.Concat|\$\"",
-                "String concatenation in Update loop",
-            ),
+            (r"string\s*\+\s*=|string\.Format|string\.Concat|\$\"", "String concatenation in Update loop"),
         ]
-
         in_update = False
         brace_depth = 0
-
         for i, line in enumerate(lines, 1):
             if update_pattern.search(line):
                 in_update = True
                 brace_depth = 0
-
             if in_update:
                 brace_depth += line.count("{") - line.count("}")
                 if brace_depth <= 0 and "{" not in line and i > 1:
                     in_update = False
                     continue
-
                 for pattern, message in antipatterns:
                     if re.search(pattern, line):
                         self.errors.append(f"{filepath}:{i}: {message}")
 
     def _check_dead_code(self, filepath: str, lines: list) -> None:
-        """Check for indicators of dead code."""
         content = "\n".join(lines)
-
-        # Empty Update methods
-        empty_update = re.compile(
-            r"void\s+(Update|FixedUpdate|LateUpdate)\s*\(\s*\)\s*\{\s*\}", re.MULTILINE
-        )
+        empty_update = re.compile(r"void\s+(Update|FixedUpdate|LateUpdate)\s*\(\s*\)\s*\{\s*\}", re.MULTILINE)
         for m in empty_update.finditer(content):
             line_num = content[: m.start()].count("\n") + 1
-            self.warnings.append(
-                f"{filepath}:{line_num}: Empty {m.group(1)}() method — remove to save CPU"
-            )
-
-        # Unreferenced using statements (basic check)
+            self.warnings.append(f"{filepath}:{line_num}: Empty {m.group(1)}() method — remove to save CPU")
         usings = []
         for i, line in enumerate(lines, 1):
             um = re.match(r"^\s*using\s+(\S+)\s*;", line)
             if um and not um.group(1).startswith("("):
                 ns = um.group(1).split(".")[-1]
                 usings.append((i, ns, um.group(1)))
-
         for line_num, short_name, full_ns in usings:
-            # Skip common always-needed usings
-            if full_ns in (
-                "System",
-                "UnityEngine",
-                "System.Collections",
-                "System.Collections.Generic",
-            ):
+            if full_ns in ("System", "UnityEngine", "System.Collections", "System.Collections.Generic"):
                 continue
-            # Basic check: see if the short name appears elsewhere in the file
             body = "\n".join(lines[line_num:])
             if short_name not in body:
-                self.info.append(
-                    f"{filepath}:{line_num}: Possibly unused using: {full_ns}"
-                )
+                self.info.append(f"{filepath}:{line_num}: Possibly unused using: {full_ns}")
 
     def _check_todo_markers(self, filepath: str, lines: list) -> None:
-        """Flag TODO/HACK/FIXME without tracking context."""
         pattern = re.compile(r"//\s*(TODO|HACK|FIXME|XXX)\b", re.IGNORECASE)
         for i, line in enumerate(lines, 1):
             m = pattern.search(line)
@@ -135,41 +84,28 @@ class RefactoringValidator:
                 marker = m.group(1).upper()
                 rest = line[m.end() :].strip()
                 if len(rest) < 10:
-                    self.warnings.append(
-                        f"{filepath}:{i}: {marker} without sufficient context"
-                    )
+                    self.warnings.append(f"{filepath}:{i}: {marker} without sufficient context")
 
     def _check_type_safety(self, filepath: str, lines: list) -> None:
-        """Check for type safety violations."""
         for i, line in enumerate(lines, 1):
             if re.search(r"\bas\s+any\b", line):
                 self.errors.append(f"{filepath}:{i}: 'as any' type cast")
             if re.search(r"#pragma\s+warning\s+disable", line):
-                self.warnings.append(
-                    f"{filepath}:{i}: Warning suppression — verify it's intentional"
-                )
+                self.warnings.append(f"{filepath}:{i}: Warning suppression — verify it's intentional")
 
     def _check_empty_handlers(self, filepath: str, lines: list) -> None:
-        """Check for empty catch blocks or event handlers."""
         content = "\n".join(lines)
         empty_catch = re.compile(r"catch\s*\([^)]*\)\s*\{\s*\}", re.MULTILINE)
         for m in empty_catch.finditer(content):
             line_num = content[: m.start()].count("\n") + 1
-            self.errors.append(
-                f"{filepath}:{line_num}: Empty catch block — handle or log the exception"
-            )
+            self.errors.append(f"{filepath}:{line_num}: Empty catch block — handle or log the exception")
 
     def _check_gc_pressure(self, filepath: str, lines: list) -> None:
-        """Check for GC-pressure patterns outside Update (lower severity)."""
         for i, line in enumerate(lines, 1):
             if re.search(r"\.ToArray\(\)|\.ToList\(\)", line):
-                self.info.append(
-                    f"{filepath}:{i}: ToArray()/ToList() creates allocation — "
-                    "consider if avoidable"
-                )
+                self.info.append(f"{filepath}:{i}: ToArray()/ToList() creates allocation — consider if avoidable")
 
     def validate_paths(self, paths: list) -> None:
-        """Validate a list of file paths or directories."""
         for p in paths:
             path = Path(p)
             if path.is_file():
@@ -181,78 +117,49 @@ class RefactoringValidator:
                 self.errors.append(f"Path not found: {p}")
 
     def validate_git_diff(self) -> None:
-        """Validate only files changed in git (staged + unstaged)."""
         try:
-            result = subprocess.run(
-                ["git", "diff", "--name-only", "HEAD"],
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            staged = subprocess.run(
-                ["git", "diff", "--name-only", "--cached"],
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            files = set(
-                result.stdout.strip().splitlines() + staged.stdout.strip().splitlines()
-            )
+            result = subprocess.run(["git", "diff", "--name-only", "HEAD"], capture_output=True, text=True, check=True)
+            staged = subprocess.run(["git", "diff", "--name-only", "--cached"], capture_output=True, text=True, check=True)
+            files = set(result.stdout.strip().splitlines() + staged.stdout.strip().splitlines())
             cs_files = [f for f in files if f.endswith(".cs") and Path(f).exists()]
-
             if not cs_files:
                 self.info.append("No C# files changed in git diff.")
                 return
-
             for f in cs_files:
                 self.validate_file(f)
-
         except subprocess.CalledProcessError:
             self.errors.append("Failed to run git diff — not a git repository?")
 
     def report(self) -> int:
-        """Print validation report and return exit code."""
         total = len(self.errors) + len(self.warnings) + len(self.info)
-
         if total == 0:
             print("✅ Refactoring validation passed — no issues found.")
             return 0
-
         if self.errors:
             print(f"\n❌ ERRORS ({len(self.errors)}):")
             for e in self.errors:
                 print(f"  {e}")
-
         if self.warnings:
             print(f"\n⚠️  WARNINGS ({len(self.warnings)}):")
             for w in self.warnings:
                 print(f"  {w}")
-
         if self.info:
             print(f"\nℹ️  INFO ({len(self.info)}):")
             for i in self.info:
                 print(f"  {i}")
-
-        print(
-            f"\nSummary: {len(self.errors)} errors, "
-            f"{len(self.warnings)} warnings, {len(self.info)} info"
-        )
-
+        print(f"\nSummary: {len(self.errors)} errors, {len(self.warnings)} warnings, {len(self.info)} info")
         return 1 if self.errors else 0
 
 
 def main():
     if len(sys.argv) < 2:
-        print(__doc__)
+        print("Usage: validate_refactoring.py <path> | --git-diff")
         sys.exit(1)
-
     validator = RefactoringValidator()
-
     if sys.argv[1] == "--git-diff":
         validator.validate_git_diff()
     else:
         validator.validate_paths(sys.argv[1:])
-
     sys.exit(validator.report())
 
 

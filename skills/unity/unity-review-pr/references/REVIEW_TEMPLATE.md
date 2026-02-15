@@ -6,7 +6,7 @@ Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 
 ```json
 {
-  "body": "[SUMMARY — see format below]",
+  "body": "[SUMMARY]",
   "event": "REQUEST_CHANGES|COMMENT|APPROVE",
   "comments": [
     { "path": "Assets/Scripts/Example.cs", "line": 42, "side": "RIGHT", "body": "[INLINE]" }
@@ -24,15 +24,10 @@ Line numbers = right side of diff. `side` always `"RIGHT"`.
 [One-sentence assessment].
 
 ### Acceptance Criteria
-#### UI Verification
-- [ ] [Screen/component] displays correctly
-#### Functional Verification
-- [ ] [Feature] works; edge cases handled
-#### Performance Verification
+- [ ] UI displays correctly
+- [ ] Feature works; edge cases handled
 - [ ] No frame drops, GC spikes
-#### Data Verification
 - [ ] No breaking serialization changes
-#### Asset Verification
 - [ ] No missing scripts, correct shaders, proper imports
 
 ### Breaking Changes ([N])
@@ -48,7 +43,7 @@ Line numbers = right side of diff. `side` always `"RIGHT"`.
 ```markdown
 **[Issue]**: [What's wrong]
 **Evidence**: [Proof — caller count, file:line, YAML key]
-**Why**: [Impact — crash, leak, N callers break]
+**Why**: [Impact]
 \`\`\`suggestion
 [Fixed code]
 \`\`\`
@@ -63,4 +58,4 @@ Line numbers = right side of diff. `side` always `"RIGHT"`.
 \`\`\`
 ```
 
-Asset issues use same format — must include Issue + Why + Suggestion (no exceptions).
+Asset issues use same format — must include Issue + Why + Suggestion.

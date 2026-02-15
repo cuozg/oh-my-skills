@@ -5,175 +5,31 @@ description: "Squash multiple related commits into organized, well-documented co
 
 # Git Squash
 
-Intelligently group, squash, and document related commits to create a clean, meaningful commit history.
+## Input/Output
 
-## Purpose
-
-Transform messy, work-in-progress commit histories into clean, logical commit groups — so PRs and branches tell a coherent story when merged.
-
-## Input
-
-- **Required**: A commit range (start..end), a count of recent commits (`-n`), or a PR number.
-- **Optional**: Grouping strategy (`by-feature`, `by-type`, or `auto`), target branch for rebase.
-
-## Output
-
-A squash plan (following the SQUASH_PLAN.md template) presented for user approval before execution, showing commit groupings, target messages, and the rebase/reset strategy to be used.
-
-## Output Requirement (MANDATORY)
-
-**Every squash plan MUST follow the template**: [SQUASH_PLAN.md](.opencode/skills/git/git-squash/assets/templates/SQUASH_PLAN.md)
-
-Present the squash plan to the user for approval before executing.
-
-Read the template first, then populate all sections.
+**Input**: Commit range (`start..end`), count (`-n`), or PR number. Optional: grouping strategy (`by-feature`|`by-type`|`auto`).
+**Output**: Squash plan per [SQUASH_PLAN.md](.opencode/skills/git/git-squash/assets/templates/SQUASH_PLAN.md) — present for user approval before executing.
 
 ## Workflow
 
-### Step 1: Identify the Commits
+1. **Identify commits**: `git log --oneline <start>^..<end>` or `gh pr view <pr> --json commits`
+2. **Group** by feature/component, type, or dependency
+3. **Plan strategy** per group: squash (combine), fixup (discard msgs), or reorder
+4. **Present plan** to user for approval (use SQUASH_PLAN.md template)
+5. **Execute** via soft reset method:
+   ```bash
+   git reset --soft <base_commit>^
+   git commit -m "feat: First group message"
+   git commit -m "fix: Second group message"
+   ```
+6. **Generate messages** using git-comment format with `Squashed from:` listing original hashes
+7. **Push**: `git push --force-with-lease origin <branch>` (or create `-clean` branch for shared branches)
 
-Gather the commits to analyze:
+**Types**: `feat` | `fix` | `refactor` | `chore` | `docs` | `test` | `style` | `perf`
 
-**From commit range:**
-```bash
-# View commits in range
-git log --oneline <start_hash>^..<end_hash>
+## Example
 
-# Or from a specific number of commits
-git log --oneline -n <count>
-```
-
-**From Pull Request:**
-```bash
-# List PR commits
-gh pr view <pr_number> --json commits --jq '.commits[].messageHeadline'
-```
-
-### Step 2: Analyze and Group Commits
-
-Review commits and group by logical relationship:
-
-1. **By feature/component**: Commits touching the same feature
-2. **By type**: Features, bugfixes, refactoring, tests, docs
-3. **By dependency**: Commits that must be together (e.g., migration + code)
-
-Example grouping:
-```
-Group 1: Authentication Feature
-  - Add login form UI
-  - Add login API endpoint
-  - Add tests for login
-
-Group 2: Bug Fixes
-  - Fix null reference in settings
-  - Fix button alignment on mobile
-
-Group 3: Cleanup
-  - Remove unused imports
-  - Update code comments
-```
-
-### Step 3: Plan the Squash Strategy
-
-For each group, decide:
-- **Squash all**: Combine into single commit (most common)
-- **Fixup**: Squash and discard individual messages
-- **Reorder**: Rearrange commits before squashing
-
-Present the plan to the user for approval:
-```markdown
-## Squash Plan
-
-| Group | Commits | Target Message |
-|-------|---------|----------------|
-| Authentication | 3 commits | feat: Add user authentication flow |
-| Bug Fixes | 2 commits | fix: Resolve UI and null reference issues |
-| Cleanup | 2 commits | chore: Code cleanup and documentation |
-```
-
-### Step 4: Execute the Squash
-
-**Interactive Rebase Method:**
-```bash
-# Start interactive rebase
-git rebase -i <base_commit>^
-
-# In the editor, mark commits as:
-# pick (keep) - first commit of each group
-# squash (combine) - subsequent commits in same group
-# fixup (combine, discard message) - for cleanup commits
-```
-
-**Soft Reset Method (for simpler cases):**
-```bash
-# Soft reset to before the commits
-git reset --soft <base_commit>^
-
-# Create new grouped commits
-git commit -m "feat: First group message"
-# Stage next group files
-git commit -m "fix: Second group message"
-```
-
-### Step 5: Generate Commit Messages
-
-For each squashed commit, generate a comprehensive message using the git-comment format:
-
-```markdown
-<type>(<scope>): <short summary>
-
-## High Level Summary
-
-[2-3 sentence overview of what this commit accomplishes]
-
-## Specific Details
-
-### Changes Made
-- [File]: [Change description]
-
-### Logic Changes
-- [Behavioral change description]
-
-### Technical Notes
-- [Implementation details if relevant]
-
-Squashed commits:
-- <original hash 1>: <original message>
-- <original hash 2>: <original message>
-```
-
-### Step 6: Push the Changes
-
-**If branch history can be rewritten:**
-```bash
-git push --force-with-lease origin <branch_name>
-```
-
-**If protecting history (shared branch):**
-```bash
-# Create a new branch with clean history
-git checkout -b <branch_name>-clean
-git push origin <branch_name>-clean
-```
-
-## Commit Type Reference
-
-| Type | Usage |
-|------|-------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `refactor` | Code restructuring without behavior change |
-| `chore` | Maintenance tasks, dependencies |
-| `docs` | Documentation only |
-| `test` | Adding or updating tests |
-| `style` | Formatting, no code change |
-| `perf` | Performance improvement |
-
-## Examples
-
-### Example 1: Squash Feature Commits
-
-**Input commits:**
+**Input:**
 ```
 abc1234 Add player controller script
 def5678 Fix player movement bug
@@ -182,36 +38,9 @@ jkl3456 Fix animation timing
 mno7890 Add player tests
 ```
 
-**Grouped result:**
-```
-Group 1 (Player Feature):
-- abc1234, def5678, ghi9012, jkl3456
-
-Group 2 (Tests):
-- mno7890
-```
-
-**Output commits:**
+**Output:** Group 1 (abc–jkl → feat), Group 2 (mno → test)
 ```
 feat(player): Implement player controller with movement and animations
-
-## High Level Summary
-
-Adds complete player controller system including movement mechanics,
-jump animations, and proper animation timing. Enables basic character
-movement for gameplay prototype.
-
-## Specific Details
-
-### Changes Made
-- **PlayerController.cs**: Core movement and input handling
-- **PlayerAnimator.cs**: Animation state machine integration
-- **AnimationTiming.cs**: Frame-perfect animation transitions
-
-### Logic Changes
-- Player responds to WASD/Arrow keys for movement
-- Jump triggers on Space with proper coyote time
-- Animation blends smoothly between states
 
 Squashed from:
 - abc1234: Add player controller script
@@ -220,55 +49,11 @@ Squashed from:
 - jkl3456: Fix animation timing
 ```
 
-### Example 2: Cleanup PR History
+## Safety
 
-**Input**: PR with 15 commits including WIP, fixes, and reverts
+- Verify backup branch exists and user approved grouping
+- Check for pending changes (stash if needed)
+- After squash: run tests, review `git log`, verify all changes present
 
-**Grouped result:**
-```
-Group 1: Core Feature (8 commits → 1)
-Group 2: Tests (3 commits → 1)
-Group 3: Documentation (2 commits → 1)
-Discarded: 2 revert commits (cancel each other)
-```
-
-**Final history:**
-```
-feat(core): Main feature implementation
-test(core): Add comprehensive test coverage
-docs(core): Update API documentation
-```
-
-## Safety Checks
-
-Before executing squash:
-- [ ] Verify backup branch exists
-- [ ] Confirm user approval of grouping
-- [ ] Check for pending changes (stash if needed)
-- [ ] Verify target branch is correct
-
-After squash:
-- [ ] Run tests to verify nothing broke
-- [ ] Review git log to confirm structure
-- [ ] Verify all intended changes are present
-
-## Troubleshooting
-
-**Merge conflicts during rebase:**
-```bash
-# Resolve conflicts in files
-git add <resolved_files>
-git rebase --continue
-
-# Or abort if needed
-git rebase --abort
-```
-
-**Need to undo squash:**
-```bash
-# Find original HEAD in reflog
-git reflog
-
-# Reset to before squash
-git reset --hard <original_head>
-```
+**Undo**: `git reflog` → `git reset --hard <original_head>`
+**Conflicts**: `git add <resolved>` → `git rebase --continue` (or `--abort`)

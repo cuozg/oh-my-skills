@@ -1,107 +1,59 @@
 # [Feature Name] - Technical Design Document
 
-## Technical Architecture Design
-
 ## Review Status
 
 | Reviewer | Approved | Last Reviewed | Re-review Ready |
-| :---: | :---- | :---: | ----- |
-|  |  | Date |  |
-|  |  | Date |  |
+|:---:|:---|:---:|---|
+| | | Date | |
 
 ## Important Links
 
 | Design 1-pager: | [Link] |
-| :---- | :---- |
-| Design brief: | [Link] |
-| Design spec: | [Link] |
+|:---|:---|
+| Design brief/spec: | [Link] |
 | Miro: | [Link] |
-| Task Breakdown: | [Link to implementation plan in Documents/Plans] |
-| Other: |  |
+| Task Breakdown: | [Link to Documents/Plans] |
 
-## Feature Summary and High level details
+## Feature Summary
 
-[Brief summary of the feature]
+[Brief summary]
 
-### Existing Tech Being Used Largely As-is
-
-[Describe existing tech integration]
-
-### Existing Tech Being Changed
-
-[Describe existing tech being revamped or removed]
-
-### New Tech 
-
-[Briefly outline the new tech to be built]
-
-### Playgami/Central/External Integrations
-
-[List integrations and documentation]
-
-### Feature Compatibility with Time-Offset feature
-
-[Compatible / Risks & Concerns]
+- **Existing Tech As-is**: [Description]
+- **Existing Tech Changed**: [Description]
+- **New Tech**: [Description]
+- **External Integrations**: [List + documentation]
+- **Time-Offset Compatibility**: [Compatible / Risks]
 
 ## Key Architectural Decisions
 
-### Foundational Assumptions
+**Assumptions**: [Constraints and assumptions]
 
-[Describe assumptions and constraints]
+**Performance Risks**: Data storage, stress testing, backward compatibility, API overload, memory/FPS/CPU
 
-### Performance Constraints/Risks
+## Feature Components
 
-- Data storage considerations:
-- Stress testing:
-- Backward Compatibility:
-- API overload concerns:
-- Memory usage/FPS/CPU:
+### [Component Name]
 
-# Feature Components
+**Client**: Data population, refresh logic, static vs dynamic UI, asset loading, prefab details, client-server interactions, error/offline handling, kill-switch behavior
 
-## [Component Name 1]
-
-### Client
-- Data population for UI models:
-- Refresh logic:
-- Static vs Dynamic UI:
-- Asset loading/unloading:
-- Notable prefab details:
-- Client-server interactions:
-- Error & Offline handling:
-- Kill-switch behavior:
-
-### Server
-- Feature configuration:
-- Player progress data:
-- Data storage & editability:
-- API payload details:
-
-## [Component Name 2]
-...
+**Server**: Configuration, player progress data, storage/editability, API payload details
 
 ### WebGL Considerations
-[Risks to WebGL performance and deployment]
+[Risks to WebGL performance]
 
-### Tech Launch and Monitoring Plans
-[Launch readiness and monitoring dashboards]
+### Launch & Monitoring
+[Readiness and dashboards]
 
-### Analytics Implementation
+### Analytics
 [Data hooks and verification]
-
-### Additional Technical Specification
 
 ### API Reference
 
-**New APIs:**
-- [Endpoint]: [Description]
+**New APIs**: [Endpoint]: [Description]
+**Modified APIs**: [Endpoint]: [Modification]
 
-**Modified APIs:**
-- [Endpoint]: [Modification]
-
-**Request/Response Examples:**
 ```json
-// Example
+// Request/Response example
 ```
 
 ### Data Architecture

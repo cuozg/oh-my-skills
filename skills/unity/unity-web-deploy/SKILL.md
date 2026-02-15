@@ -5,44 +5,16 @@ description: "(opencode-project - Skill) WebGL deployment and browser platform o
 
 # Unity Web Developer
 
-WebGL platform specialist.
+**Input**: WebGL task description. Optional: file paths, browser targets, constraints.
 
-## Purpose
-
-WebGL deployment — providing a structured, repeatable workflow that produces consistent results.
-
-## Input
-
-- **Required**: A clear description of the task or problem to address.
-- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
-
-## Examples
-
-| Trigger | What Happens |
-|---------|-------------|
-| "Run unity-web-deploy" | Executes the primary workflow end-to-end |
-| "Apply unity-web-deploy to <target>" | Scopes execution to a specific file or module |
-| "Check unity-web-deploy output" | Reviews and validates previous results |
-
-
-## Output
-
-A WebGL build report saved to `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md` following [WEBGL_BUILD_REPORT.md](assets/templates/WEBGL_BUILD_REPORT.md), plus any WebGL-specific code changes (JS plugins, interop managers, compression configs).
-
-## Output Requirement (MANDATORY)
-
-**Every build report MUST follow the template**: [WEBGL_BUILD_REPORT.md](.opencode/skills/unity/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md)
-
-Save output to: `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md`
-
-Read the template first, then populate all sections.
+**Output**: Build report per [WEBGL_BUILD_REPORT.md](.opencode/skills/unity/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md) template. Saved to `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md`.
 
 ## Workflow
 
 1. **Discover**: Required Web APIs (LocalStorage, Fullscreen, WebXR), browser targets
-2. **Implement**: C# managers for interop (see [.opencode/skills/unity/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
-3. **Optimize**: Build size, memory limits, compression (see [.opencode/skills/unity/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md))
-4. **Deploy**: Build report via [.opencode/skills/unity/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md](.opencode/skills/unity/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md), validate COOP/COEP headers, HTTPS
+2. **Implement**: C# interop managers (see [WEBGL_INTEROP_PATTERNS.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
+3. **Optimize**: Build size, memory limits, compression (see [WEBGL_OPTIMIZATION_GUIDE.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md))
+4. **Deploy**: Build report via template, validate COOP/COEP headers, HTTPS
 
 ## Build Settings
 
@@ -60,33 +32,7 @@ Read the template first, then populate all sections.
 - **User Interaction**: Audio/video only after first click (browser policy)
 - **Decompression Fallback**: Handle browsers without native Brotli/Gzip
 
----
+## Handoff
 
-## MCP Tools Integration
-
-Use `unityMCP_*` tools for build configuration, profiling, and validation.
-
-| Operation | MCP Tool |
-|-----------|----------|
-| Editor/build state | `unityMCP_get_unity_editor_state` |
-| Check compilation | `unityMCP_check_compile_errors` |
-| Run build script | `unityMCP_execute_script(filePath="...")` |
-| Console output | `unityMCP_get_unity_logs()` |
-| CPU profiling | `unityMCP_get_worst_cpu_frames` |
-| GC profiling | `unityMCP_get_worst_gc_frames` |
-| Installed packages | `unityMCP_list_packages` |
-
-### WebGL Build Verification Flow
-
-```
-1. unityMCP_get_unity_editor_state            → Confirm WebGL build target
-2. unityMCP_check_compile_errors              → Verify clean compilation
-3. unityMCP_execute_script(filePath="...")     → Run WebGL build script
-4. unityMCP_get_unity_logs(show_errors=true)  → Check for build errors
-```
-
-## Handoff & Boundaries
-
-- **OWNS**: WebGL-specific deployment — build configuration, C#/JavaScript interop, browser-specific issues (memory, audio, input), and PWA features.
-- **Delegates to**: `unity-build-pipeline` for general build automation and CI/CD. `unity-optimize-performance` for platform-agnostic performance optimization.
-- **Does NOT**: Handle iOS/Android builds (use `unity-mobile-deploy`). Does not handle general build scripting (use `unity-build-pipeline`).
+- **Delegates to**: `unity-build-pipeline` (general build automation/CI/CD), `unity-optimize-performance` (platform-agnostic perf)
+- **Does NOT**: iOS/Android builds (use `unity-mobile-deploy`), general build scripting (use `unity-build-pipeline`)

@@ -1,326 +1,68 @@
-<!--
-    ╔══════════════════════════════════════════════════════════════════════╗
-    ║  TEMPLATE FILE — DO NOT ACCESS DIRECTLY                            ║
-    ║                                                                     ║
-    ║  This is an INTERNAL template used to generate output files.        ║
-    ║  Opening this file in a browser will show placeholder text and      ║
-    ║  navigation links will cause ERR_FILE_NOT_FOUND errors.             ║
-    ║                                                                     ║
-    ║  Generated output location: documents/plans/{plan-name}/timeline.html║
-    ║  Only access files in documents/plans/ — never this template.       ║
-    ╠══════════════════════════════════════════════════════════════════════╣
-    ║                    PLAN_TIMELINE TEMPLATE                           ║
-    ║              Implementation Timeline & Milestones                   ║
-    ║                                                                     ║
-    ║  HOW TO USE (for generation workflow only):                         ║
-    ║  1. Read this template to understand structure and placeholders     ║
-    ║  2. Replace [PLACEHOLDER] values with actual plan data              ║
-    ║  3. Remove all INSTRUCTION comments from final output               ║
-    ║  4. Write result to documents/plans/{plan-name}/timeline.html       ║
-    ║  5. DO NOT add any <script> tags or JavaScript to generated output  ║
-    ║  6. Navigation uses pure HTML <a href> — no JS event listeners      ║
-    ║                                                                     ║
-    ║  PLACEHOLDERS:                                                      ║
-    ║    [FEATURE_NAME]   — Feature name in <title>                       ║
-    ║    [FEATURE_TITLE]  — Feature title in header                       ║
-    ║    [TOTAL_DURATION] — e.g. "3-5 days"                               ║
-    ╚══════════════════════════════════════════════════════════════════════╝
--->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>Plan Timeline: [FEATURE_NAME]</title>
     <style>
-        :root {
-            --color-canvas-default: #0d1117;
-            --color-canvas-subtle: #161b22;
-            --color-border-default: #30363d;
-            --color-border-muted: #21262d;
-            --color-fg-default: #e6edf3;
-            --color-fg-muted: #8b949e;
-            --color-fg-subtle: #6e7681;
-            --color-accent-fg: #58a6ff;
-            --color-success-fg: #3fb950;
-            --color-danger-fg: #f85149;
-            --color-warning-fg: #d29922;
-            --color-diffstat-addition-bg: #238636;
-            --color-diffstat-deletion-bg: #da3633;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-            background: var(--color-canvas-default);
-            color: var(--color-fg-default);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .container { max-width: 100%; padding: 16px 24px; }
-
-        .pr-header {
-            padding: 16px;
-            margin-bottom: 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px;
-        }
-        .pr-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-        .pr-subtitle { color: var(--color-fg-muted); font-size: 14px; }
-
-        /* ── Sticky Navigation Bar ── */
-        .plan-nav-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: #1a1a2e;
-            border-bottom: 1px solid var(--color-border-default);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-        .nav-container {
-            max-width: 100%;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-        }
-        .nav-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #e6edf3;
-            white-space: nowrap;
-            margin: 0;
-            padding: 12px 0;
-        }
-        .nav-tabs {
-            list-style: none;
-            display: flex;
-            gap: 4px;
-            margin: 0;
-            padding: 0;
-            flex-wrap: wrap;
-        }
-        .nav-tab {
-            display: inline-block;
-            padding: 10px 16px;
-            color: #8b949e;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: color 0.15s, border-color 0.15s, background 0.15s;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-        .nav-tab:hover {
-            color: #e6edf3;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .nav-tab-active {
-            color: #58a6ff;
-            border-bottom-color: #58a6ff;
-            font-weight: 600;
-        }
-        .nav-tab-active:hover {
-            color: #79b8ff;
-            background: rgba(88, 166, 255, 0.08);
-        }
-        .nav-tab-patch {
-            color: var(--color-success-fg);
-        }
-        .nav-tab-patch:hover {
-            color: #56d364;
-            background: rgba(63, 185, 80, 0.1);
-        }
-
-        @media screen and (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0 12px;
-            }
-            .nav-title { padding: 10px 0 4px 0; font-size: 14px; }
-            .nav-tabs { padding-bottom: 8px; }
-            .nav-tab { padding: 6px 10px; font-size: 12px; }
-        }
-
-        .section-header {
-            padding: 10px 16px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-radius: 6px 6px 0 0;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .timeline-section {
-            padding: 20px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            margin-bottom: 24px;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 8px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--color-border-default);
-        }
-        .timeline-item {
-            position: relative;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            background: var(--color-canvas-default);
-            border: 1px solid var(--color-border-muted);
-            border-radius: 6px;
-        }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -26px;
-            top: 18px;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--color-accent-fg);
-            border: 2px solid var(--color-canvas-subtle);
-        }
-        .timeline-item.milestone::before {
-            background: var(--color-success-fg);
-            width: 12px;
-            height: 12px;
-            left: -27px;
-        }
-        .tl-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-        .tl-phase {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-fg-default);
-        }
-        .tl-duration {
-            font-size: 12px;
-            color: var(--color-fg-muted);
-            padding: 2px 8px;
-            background: var(--color-border-muted);
-            border-radius: 3px;
-        }
-        .tl-tasks {
-            margin: 8px 0 0 0;
-            padding-left: 20px;
-        }
-        .tl-tasks li {
-            padding: 3px 0;
-            color: var(--color-fg-muted);
-            font-size: 13px;
-        }
-        .tl-tasks li code {
-            background: var(--color-border-muted);
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 11px;
-            color: var(--color-accent-fg);
-        }
-
-        .badge { padding: 2px 7px; border-radius: 3px; font-size: 12px; font-weight: 500; }
-        .badge-s { background: var(--color-diffstat-addition-bg); color: #fff; }
-        .badge-m { background: #1f6feb; color: #fff; }
-        .badge-l { background: #8957e5; color: #fff; }
-        .badge-xl { background: var(--color-diffstat-deletion-bg); color: #fff; }
-
-        .milestone-section {
-            padding: 16px 20px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            margin-bottom: 24px;
-        }
-        .milestone-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 16px;
-        }
-        .milestone-card {
-            background: var(--color-canvas-default);
-            border: 1px solid var(--color-border-muted);
-            border-radius: 6px;
-            padding: 14px 16px;
-            border-left: 3px solid var(--color-success-fg);
-        }
-        .milestone-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--color-fg-default);
-            margin-bottom: 6px;
-        }
-        .milestone-criteria {
-            font-size: 12px;
-            color: var(--color-fg-muted);
-            line-height: 1.5;
-        }
-        .milestone-target {
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--color-fg-subtle);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .order-section {
-            padding: 16px 20px;
-            background: var(--color-canvas-subtle);
-            border: 1px solid var(--color-border-default);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            margin-bottom: 24px;
-        }
-        .order-list {
-            margin: 0;
-            padding-left: 24px;
-            list-style-type: decimal;
-        }
-        .order-list li {
-            padding: 6px 0;
-            color: var(--color-fg-default);
-            line-height: 1.6;
-        }
-        .order-list li code {
-            background: var(--color-border-muted);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-            font-size: 12px;
-            color: var(--color-accent-fg);
-        }
-
-        @media screen and (max-width: 768px) {
-            .container { padding: 8px 12px; }
-            .pr-header { padding: 12px; }
-            .pr-title { font-size: 16px; }
-            .timeline { padding-left: 24px; }
-            .milestone-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-warning-fg:#d29922;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;background:var(--color-canvas-default);color:var(--color-fg-default);font-size:14px;line-height:1.5}
+.container{max-width:100%;padding:16px 24px}
+.pr-header{padding:16px;margin-bottom:16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px}
+.pr-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.pr-subtitle{color:var(--color-fg-muted);font-size:14px}
+.plan-nav-bar{position:sticky;top:0;z-index:1000;background:#1a1a2e;border-bottom:1px solid var(--color-border-default);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.nav-container{max-width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav-title{font-size:15px;font-weight:700;color:#e6edf3;white-space:nowrap;margin:0;padding:12px 0}
+.nav-tabs{list-style:none;display:flex;gap:4px;margin:0;padding:0;flex-wrap:wrap}
+.nav-tab{display:inline-block;padding:10px 16px;color:#8b949e;text-decoration:none;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s,background 0.15s;cursor:pointer;pointer-events:auto}
+.nav-tab:hover{color:#e6edf3;background:rgba(255,255,255,0.05)}
+.nav-tab-active{color:#58a6ff;border-bottom-color:#58a6ff;font-weight:600}
+.nav-tab-active:hover{color:#79b8ff;background:rgba(88,166,255,0.08)}
+.nav-tab-patch{color:var(--color-success-fg)}
+.nav-tab-patch:hover{color:#56d364;background:rgba(63,185,80,0.1)}
+@media screen and (max-width:768px){.nav-container{flex-direction:column;align-items:flex-start;padding:0 12px}
+.nav-title{padding:10px 0 4px 0;font-size:14px}
+.nav-tabs{padding-bottom:8px}
+.nav-tab{padding:6px 10px;font-size:12px}
+}
+.section-header{padding:10px 16px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-radius:6px 6px 0 0;font-weight:600;font-size:14px}
+.timeline-section{padding:20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--color-border-default)}
+.timeline-item{position:relative;padding:12px 16px;margin-bottom:16px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--color-accent-fg);border:2px solid var(--color-canvas-subtle)}
+.timeline-item.milestone::before{background:var(--color-success-fg);width:12px;height:12px;left:-27px}
+.tl-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.tl-phase{font-size:14px;font-weight:600;color:var(--color-fg-default)}
+.tl-duration{font-size:12px;color:var(--color-fg-muted);padding:2px 8px;background:var(--color-border-muted);border-radius:3px}
+.tl-tasks{margin:8px 0 0 0;padding-left:20px}
+.tl-tasks li{padding:3px 0;color:var(--color-fg-muted);font-size:13px}
+.tl-tasks li code{background:var(--color-border-muted);padding:1px 5px;border-radius:3px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:11px;color:var(--color-accent-fg)}
+.badge{padding:2px 7px;border-radius:3px;font-size:12px;font-weight:500}
+.badge-s{background:var(--color-diffstat-addition-bg);color:#fff}
+.badge-m{background:#1f6feb;color:#fff}
+.badge-l{background:#8957e5;color:#fff}
+.badge-xl{background:var(--color-diffstat-deletion-bg);color:#fff}
+.milestone-section{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.milestone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.milestone-card{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:14px 16px;border-left:3px solid var(--color-success-fg)}
+.milestone-name{font-size:14px;font-weight:600;color:var(--color-fg-default);margin-bottom:6px}
+.milestone-criteria{font-size:12px;color:var(--color-fg-muted);line-height:1.5}
+.milestone-target{margin-top:8px;font-size:11px;color:var(--color-fg-subtle);text-transform:uppercase;letter-spacing:0.5px}
+.order-section{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.order-list{margin:0;padding-left:24px;list-style-type:decimal}
+.order-list li{padding:6px 0;color:var(--color-fg-default);line-height:1.6}
+.order-list li code{background:var(--color-border-muted);padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;color:var(--color-accent-fg)}
+@media screen and (max-width:768px){.container{padding:8px 12px}
+.pr-header{padding:12px}
+.pr-title{font-size:16px}
+.timeline{padding-left:24px}
+.milestone-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
     <nav class="plan-nav-bar">
@@ -336,35 +78,26 @@
             </ul>
         </div>
     </nav>
-
     <div class="container">
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
             <div class="pr-subtitle">Implementation Timeline — [TOTAL_DURATION]</div>
         </div>
-
-        <!-- INSTRUCTION: IMPLEMENTATION TIMELINE
-             One timeline-item per phase/day/sprint.
-             Add class "milestone" to timeline-items that represent checkpoints.
-             Each phase lists the tasks to be completed.
-             Order phases chronologically.
-        -->
         <div class="section-header">Implementation Phases</div>
         <div class="timeline-section">
             <div class="timeline">
-                <!-- INSTRUCTION: Replicate this block for each phase -->
+                <!-- Replicate for each phase -->
                 <div class="timeline-item">
                     <div class="tl-header">
                         <span class="tl-phase">[PHASE_NAME]</span>
                         <span class="tl-duration">[PHASE_DURATION]</span>
                     </div>
                     <ul class="tl-tasks">
-                        <!-- INSTRUCTION: List tasks in this phase -->
+                        <!-- List tasks -->
                         <li>[TASK_NUMBER] - [TASK_NAME] <span class="badge [BADGE_CLASS]">[COST]</span></li>
                     </ul>
                 </div>
-
-                <!-- INSTRUCTION: Milestone example — add class="milestone" -->
+                <!-- Milestone — add class="milestone" -->
                 <div class="timeline-item milestone">
                     <div class="tl-header">
                         <span class="tl-phase">[MILESTONE_NAME]</span>
@@ -376,15 +109,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- INSTRUCTION: MILESTONES
-             Key checkpoints with success criteria.
-             One card per milestone.
-        -->
         <div class="section-header">Milestones</div>
         <div class="milestone-section">
             <div class="milestone-grid">
-                <!-- INSTRUCTION: Replicate this card for each milestone -->
+                <!-- Replicate for each milestone -->
                 <div class="milestone-card">
                     <div class="milestone-name">[MILESTONE_NAME]</div>
                     <div class="milestone-criteria">[SUCCESS_CRITERIA]</div>
@@ -392,15 +120,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- INSTRUCTION: RECOMMENDED IMPLEMENTATION ORDER
-             Numbered list of the optimal task execution order.
-             Consider dependencies, risk, and early-value delivery.
-        -->
         <div class="section-header">Recommended Implementation Order</div>
         <div class="order-section">
             <ol class="order-list">
-                <!-- INSTRUCTION: List tasks in recommended order -->
+                <!-- List tasks in order -->
                 <li>[TASK_NUMBER] <code>[TASK_NAME]</code> — [REASON_FOR_ORDER]</li>
             </ol>
         </div>

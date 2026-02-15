@@ -11,37 +11,9 @@ name: unity-write-tdd
 
 # Unity TDD Writer
 
-Generate Technical Design Documents from implementation plans.
+**Input**: Feature or system to document. Optional: file paths, constraints, existing plan.
 
-## Purpose
-
-Generate Technical Design Documents — providing a structured, repeatable workflow that produces consistent results.
-
-## Input
-
-- **Required**: A clear description of the task or problem to address.
-- **Optional**: Relevant file paths, constraints, or context that narrows the scope.
-
-## Examples
-
-| Trigger | What Happens |
-|---------|-------------|
-| "Run unity-write-tdd" | Executes the primary workflow end-to-end |
-| "Apply unity-write-tdd to <target>" | Scopes execution to a specific file or module |
-| "Check unity-write-tdd output" | Reviews and validates previous results |
-
-
-## Output Requirement (MANDATORY)
-
-**Every TDD MUST follow the template**: [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md)
-
-Save output to: `Documents/TDDs/TDD_[FeatureName].md`
-
-Read the template first, then populate all sections.
-
-## Output
-
-Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md).
+**Output**: TDD per [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md) template. Saved to `Documents/TDDs/TDD_[FeatureName].md`.
 
 ## Workflow
 
@@ -66,24 +38,3 @@ Save to `Documents/TDDs/TDD_[FeatureName].md` using [UNITY_TDD_TEMPLATE.md](.ope
 - **Performance First**: Address mobile/low-end risks
 - **UI Lifecycle**: When data populates and refreshes
 - **Error Handling**: API failures, offline behavior
-
----
-
-## MCP Tools Integration
-
-Use MCP tools to gather technical context for accurate TDD specifications.
-
-| Operation | MCP Tool | Use Case |
-| --------- | -------- | -------- |
-| Project context | `unityMCP_get_unity_editor_state` | Unity version, pipeline, build target for constraints |
-| Scene structure | `unityMCP_list_game_objects_in_hierarchy()` | Understand existing architecture |
-| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` | Document component configurations |
-| List packages | `unityMCP_list_packages` | Document dependency requirements |
-
-### TDD Context Gathering
-
-```
-1. unityMCP_get_unity_editor_state          → platform constraints
-2. unityMCP_list_game_objects_in_hierarchy() → existing systems
-3. unityMCP_list_packages                   → dependency map
-```

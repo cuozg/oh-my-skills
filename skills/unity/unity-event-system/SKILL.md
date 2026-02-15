@@ -5,126 +5,68 @@ description: "(opencode-project - Skill) Unity event-driven architecture and dec
 
 # unity-event-system — Event-Driven Architecture & Decoupling
 
-Design and implement event-driven communication patterns for Unity projects — enabling loosely coupled, testable, and maintainable game systems through proper event architecture.
-
-## Purpose
-
-Build robust event systems that decouple game systems from each other. Select the right event mechanism for each use case (C# events, UnityEvent, ScriptableObject channels, or event bus), implement type-safe event channels with proper subscription lifecycle, and eliminate the tight coupling that makes codebases brittle and untestable.
-
-## Input
-
-- **Required**: Communication requirement (which systems need to talk, what data flows between them, subscription lifetime)
-- **Optional**: Existing architecture, performance constraints, inspector-configurability needs, testing requirements
-
-## Output
-
-Production-ready event infrastructure: event channels, listeners, bus implementations, and integration examples. All code compiles, follows `unity-code` quality standards, and includes proper subscribe/unsubscribe lifecycle management.
-
-## Examples
-
-| User Request | Skill Action |
-|:---|:---|
-| "Decouple my health system from the UI" | Create ScriptableObject event channel for health changes, GameEventListener on UI to respond without direct reference |
-| "Build an event bus for game-wide messages" | Implement generic `EventBus<T>` with type-safe subscribe/unsubscribe, automatic cleanup, and priority support |
-| "Player death should trigger multiple systems" | Design GameEvent ScriptableObject raised on death, with listeners on UI, audio, camera shake, and respawn manager |
-| "Choose between C# event and UnityEvent for my system" | Analyze use case — C# events for code-only listeners, UnityEvent for inspector-wired designer callbacks |
+**Input**: Communication requirement (which systems talk, data flow, subscription lifetime) + optional architecture, perf constraints, inspector needs
+**Output**: Production-ready event channels, listeners, bus implementations with proper subscribe/unsubscribe lifecycle
 
 ## Workflow
 
-1. **Identify communication needs** — Map which systems produce events and which consume them
-2. **Choose event mechanism** — C# events for performance, UnityEvent for inspector, ScriptableObject channels for asset-level decoupling
-3. **Design event data** — Define what payload each event carries (primitives, structs, or readonly data objects)
-4. **Implement event infrastructure** — Create channels, listeners, and bus as needed
-5. **Wire subscriptions with lifecycle** — Subscribe in `OnEnable`, unsubscribe in `OnDisable` — no exceptions
-6. **Validate decoupling** — Verify that neither producer nor consumer holds direct references to the other
-7. **Test in isolation** — Confirm events fire correctly and systems respond independently
-
----
+1. **Identify communication needs** — map producers and consumers
+2. **Choose mechanism** — C# events for performance, UnityEvent for inspector, SO channels for asset-level decoupling
+3. **Design event data** — small payloads (primitives, structs, readonly objects)
+4. **Implement infrastructure** — channels, listeners, bus as needed
+5. **Wire subscriptions** — subscribe in `OnEnable`, unsubscribe in `OnDisable` — no exceptions
+6. **Validate decoupling** — no direct references between producer and consumer
+7. **Test in isolation** — events fire correctly, systems respond independently
 
 ## Event Mechanism Comparison
 
-### When to Use Each Pattern
-
 | Mechanism | Best For | Pros | Cons |
 |:----------|:---------|:-----|:-----|
-| **C# `event Action<T>`** | Code-to-code, same-assembly, performance-critical | Zero allocation, fastest dispatch, type-safe | Not visible in Inspector, requires direct reference to publisher |
-| **UnityEvent** | Designer-wired callbacks, inspector configuration | Inspector-visible, drag-and-drop, serialized | Reflection-based invocation, GC allocation on invoke, slower |
-| **SO Event Channel** | Cross-scene, asset-level decoupling | No scene references needed, reusable asset, testable | Slightly more setup, indirect dispatch |
-| **Generic Event Bus** | Global game-wide messaging, many-to-many | True decoupling, no references needed, centralized | Can become implicit dependency, harder to trace data flow |
+| **C# `event Action<T>`** | Code-to-code, performance-critical | Zero allocation, fastest, type-safe | Not in Inspector, needs direct ref |
+| **UnityEvent** | Designer-wired, inspector config | Inspector-visible, drag-and-drop | Reflection-based, GC on invoke |
+| **SO Event Channel** | Cross-scene, asset-level | No scene refs, reusable, testable | More setup, indirect dispatch |
+| **Generic Event Bus** | Global many-to-many messaging | True decoupling, centralized | Implicit dependency, hard to trace |
 
 ### Decision Flow
-
 ```
-Who configures the listener?
-  Programmer only (code-to-code)
-    -> C# event Action<T>
-  Designer in Inspector
-    -> UnityEvent (or SO channel with GameEventListener)
-  Cross-scene / asset-level decoupling needed?
-    -> ScriptableObject Event Channel
-  Global broadcast to unknown listeners?
-    -> Generic Event Bus
+Programmer only (code-to-code) → C# event Action<T>
+Designer in Inspector → UnityEvent (or SO channel with GameEventListener)
+Cross-scene decoupling → ScriptableObject Event Channel
+Global broadcast to unknown listeners → Generic Event Bus
 ```
-
----
 
 ## Key Patterns
 
-> **Full code examples for all event patterns**: See [Event Pattern Examples](references/event-pattern-examples.md) — covers C# events/delegates (PlayerHealth + HealthBarUI), ScriptableObject event channels (GameEvent + GameEventListener), typed generic event channels (TypedGameEvent<T> + concrete Int/Float/String implementations), and generic EventBus<T> with struct events, publisher, and subscriber examples.
-
----
+> **Full code examples**: See [Event Pattern Examples](references/event-pattern-examples.md) — C# events, SO channels, typed generic channels, EventBus<T> with struct events.
 
 ## Best Practices
 
-### Do
+**Do**:
+- Always unsubscribe in `OnDisable` — every `+=` needs matching `-=`
+- Use `?.Invoke()` to prevent NullRef when no listeners
+- Keep event payloads small (structs to avoid heap allocs)
+- Use SO channels for cross-scene; name events clearly (`OnHealthChanged`, `OnPlayerDied`)
+- Prefer `Action<T>` over custom delegates; use `struct` for EventBus event types
 
-- **Always unsubscribe in `OnDisable`** — Every `+=` in `OnEnable` must have a matching `-=` in `OnDisable`
-- **Use `?.Invoke()`** — Null-conditional prevents NullReferenceException when no listeners are subscribed
-- **Iterate backwards when raising** — Allows listeners to safely unregister during callback invocation
-- **Keep event payloads small** — Use structs for event data to avoid heap allocations
-- **Use ScriptableObject channels for cross-scene** — They survive scene loads and require no scene references
-- **Name events clearly** — `OnHealthChanged`, `OnPlayerDied`, `OnLevelCompleted` — past tense or changed-state naming
-- **Prefer `Action<T>` over custom delegates** — Standard library types, no need for custom delegate declarations
-- **Use `struct` for EventBus event types** — Prevents boxing, enables generic type dispatch without allocation
+**Don't**:
+- Subscribe without unsubscribing (memory leaks, MissingReferenceException)
+- Use string-based event names (no type safety, silent breaks)
+- Put heavy logic in handlers (defer via coroutines/job queues)
+- Use `UnityEvent` for hot paths (reflection overhead)
+- Let event bus become a god object
 
-### Do Not
+## Performance
 
-- **Never subscribe without unsubscribing** — Memory leaks, callbacks on destroyed objects, MissingReferenceException
-- **Never use string-based event names** — Lose type safety, refactoring breaks silently, no compile-time checks
-- **Never put heavy logic in event handlers** — Handlers should be fast; defer expensive work via coroutines or job queues
-- **Never raise events in constructors** — Unity lifecycle is not guaranteed during construction
-- **Never modify the subscriber list during iteration (without safeguards)** — Use backwards iteration or snapshot the list
-- **Never use `UnityEvent` for performance-critical hot paths** — Reflection-based invoke has measurable overhead vs `Action<T>`
-- **Never let the event bus become a god object** — If everything talks through a single bus with string keys, you've recreated tight coupling
-
----
-
-## Performance Considerations
-
-| Mechanism | Invoke Cost | Allocation | Inspector Support |
-|:----------|:-----------|:-----------|:------------------|
+| Mechanism | Invoke Cost | Allocation | Inspector |
+|:----------|:-----------|:-----------|:----------|
 | `Action<T>` | ~0.001ms | Zero | No |
-| `UnityEvent` | ~0.01ms | Small (reflection) | Yes |
+| `UnityEvent` | ~0.01ms | Small | Yes |
 | SO Channel | ~0.002ms | Zero | Yes (via listener) |
-| EventBus<T> | ~0.002ms | Zero (struct events) | No |
+| EventBus<T> | ~0.002ms | Zero (struct) | No |
 
-**Rule of thumb**: For events firing every frame (input, physics), use C# `Action<T>`. For events firing occasionally (UI clicks, game state changes), any mechanism works. Use UnityEvent only when inspector wiring is required.
+**Rule**: Per-frame events (input, physics) → `Action<T>`. Occasional events → any mechanism. UnityEvent only when inspector wiring needed.
 
----
+## Boundaries
 
-## Handoff & Boundaries
-
-### Delegates To
-
-| Skill | When |
-|:------|:-----|
-| `unity-code` | General C# implementation beyond event-specific patterns |
-| `ui-toolkit-patterns` | UI-specific event handling (button clicks, input field changes, pointer events) |
-| `unity-refactor` | Refactoring existing tightly-coupled code to use event-driven patterns |
-
-### Does Not Handle
-
-- **UI Toolkit event system** — Pointer events, focus events, and UI Toolkit `EventBase<T>` belong to `ui-toolkit-*` skills
-- **Unity Input System events** — Input action callbacks and input event routing belong to input system setup
-- **Networking/multiplayer RPC** — Remote procedure calls and networked events belong to networking-specific code
-- **Animation events** — AnimationEvent and StateMachineBehaviour callbacks are animation-domain concerns
+- **Delegates to**: `unity-code` (general C#), `ui-toolkit-patterns` (UI events), `unity-refactor` (decoupling existing code)
+- **Does not handle**: UI Toolkit EventBase<T>, Unity Input System callbacks, networking RPC, animation events

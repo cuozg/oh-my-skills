@@ -5,189 +5,56 @@ description: "Generate 100% complete code changes for each task in a plan. Use w
 
 # Unity Plan Detail
 
-Walk through every task in a plan file and generate **100% complete code changes**.
+**Input**: Plan HTML from `Documents/Plans/[FeatureName]_PLAN.html`
+**Output**: HTML at `Documents/Tasks/[FeatureName]_DETAIL.html` using template at `.opencode/skills/unity/unity-plan-detail/assets/templates/DETAIL_OUTPUT.html`
 
-## Purpose
-
-Generate 100% complete code changes for each task in a plan — providing a structured, repeatable workflow that produces consistent results.
-
-## Examples
-
-| Trigger | What Happens |
-|---------|-------------|
-| "Run unity-plan-detail" | Executes the primary workflow end-to-end |
-| "Apply unity-plan-detail to <target>" | Scopes execution to a specific file or module |
-| "Check unity-plan-detail output" | Reviews and validates previous results |
-
-
-**CRITICAL**: This skill produces **per-task code only**. It does NOT:
-- Repeat the high-level plan (architecture, epics, acceptance criteria)
-- Generate summaries or explanations beyond task scope
-- Skip any code — every line must be shown
-
----
-
-## Input
-
-A plan HTML file from `unity-plan`, typically at `Documents/Plans/[FeatureName]_PLAN.html`.
-
----
-
-## Output
-
-HTML file at `Documents/Tasks/[FeatureName]_DETAIL.html` following template exactly:
-
-**Template**: `.opencode/skills/unity/unity-plan-detail/assets/templates/DETAIL_OUTPUT.html`
-
-Read template first. Copy exact HTML/CSS. Replace only placeholders.
-
----
+**CRITICAL**: Produces per-task code ONLY. No plan summaries, no explanations beyond task scope, no omitted code.
 
 ## Workflow
 
-### 1. Parse Plan File
+1. **Parse plan** — read input HTML, extract task table (number, epic, title, description, type, cost) and technical approach
+2. **For each task**:
+   - **Title**: `[TASK_NUMBER] — [TASK_TITLE]`
+   - **Description**: purpose, approach, dependencies, files affected, edge cases
+   - **Code changes** (100% complete):
+     - Read actual source via `unity-investigate` skill
+     - Existing files: show complete before/after with accurate line numbers
+     - New files: full content as additions
+     - Correct hunk headers `@@ -old,count +new,count @@`
+3. **Assemble** — read DETAIL_OUTPUT.html template, fill header, build TOC, one `task-section` per task, remove `<!-- INSTRUCTION: -->` comments
+4. **Save** to `Documents/Tasks/[FeatureName]_DETAIL.html` with summary (total tasks, files per task, implementation order)
 
-Read input HTML and extract:
-- Feature metadata (title, duration)
-- **Task table**: all rows with task number, epic, title, description, type, cost
-- Technical approach (for context only)
+## Code Change Rules
 
-### 2. For Each Task
-
-Walk through EVERY task in the task table and produce:
-
-#### 2.1 Title
-Format: `[TASK_NUMBER] — [TASK_TITLE]`
-
-#### 2.2 Description
-Write comprehensive description:
-- **Purpose**: what this task accomplishes
-- **Approach**: how implementation works
-- **Dependencies**: which tasks must complete first
-- **Files affected**: list with change summary
-- **Edge cases**: special handling needed
-
-#### 2.3 Code Changes (CRITICAL — 100% COMPLETE)
-
-**MANDATORY**: For each file in the task, show **ALL code changes**.
-
-**How to generate code:**
-
-1. **Read actual source files** using `unity-investigate` skill:
-   ```
-   Read and follow: .opencode/skills/unity/unity-investigate/SKILL.md
-   ```
-
-2. **For existing files**:
-   - Read current file content
-   - Identify exact lines to change
-   - Show complete before/after with context
-   - Include accurate line numbers
-
-3. **For new files**:
-   - Show full file content as additions
-   - Left side all empty, right side all green
-
-**Rules:**
-- Show 100% of code changes — no omissions
-- Complete method implementations, not snippets
-- Full class definitions when creating new classes
-- Complete `[Obsolete]` wrappers with forwarding logic
+**MANDATORY**:
+- 100% of code changes — no omissions
+- Complete method/class implementations, not snippets
 - Accurate line numbers from actual source
-- Correct hunk headers `@@ -old,count +new,count @@`
 
-**NEVER:**
+**NEVER**:
 - Use `...` or `// remaining code`
 - Skip files because they are "similar"
 - Summarize instead of showing code
-- Omit any method or property
-- Reuse diffs without verifying source
-
-### 3. Assemble Output
-
-Using DETAIL_OUTPUT.html template:
-1. Fill header with feature metadata
-2. Build table of contents from tasks
-3. Create one `task-section` per task
-4. Each task has: title, description, file diffs
-5. Remove all `<!-- INSTRUCTION: -->` comments
-
-### 4. Save
-
-Save to `Documents/Tasks/[FeatureName]_DETAIL.html`.
-
-Provide summary:
-- Total tasks detailed
-- Files per task
-- Recommended implementation order
-
----
 
 ## Diff Structure Reference
 
-All diff formats defined in template. Key patterns:
-
 ```html
-<!-- Context line (unchanged) -->
-<tr class="diff-line-context">
-  <td class="diff-line-num">42</td>
-  <td class="diff-line-sign"></td>
-  <td class="diff-line-code">    unchanged line</td>
-</tr>
-
-<!-- Deletion (left side, red) -->
-<tr class="diff-line-deletion">
-  <td class="diff-line-num">43</td>
-  <td class="diff-line-sign">-</td>
-  <td class="diff-line-code">    <y>removed</y> code</td>
-</tr>
-
-<!-- Addition (right side, green) -->
-<tr class="diff-line-addition">
-  <td class="diff-line-num">43</td>
-  <td class="diff-line-sign">+</td>
-  <td class="diff-line-code">    <x>added</x> code</td>
-</tr>
-
-<!-- Empty placeholder -->
-<tr class="diff-line-empty">
-  <td class="diff-line-num"></td>
-  <td class="diff-line-sign"></td>
-  <td class="diff-line-code"></td>
-</tr>
+<!-- Context (unchanged) -->
+<tr class="diff-line-context"><td class="diff-line-num">42</td><td class="diff-line-sign"></td><td class="diff-line-code">    unchanged</td></tr>
+<!-- Deletion (red) -->
+<tr class="diff-line-deletion"><td class="diff-line-num">43</td><td class="diff-line-sign">-</td><td class="diff-line-code">    <y>removed</y></td></tr>
+<!-- Addition (green) -->
+<tr class="diff-line-addition"><td class="diff-line-num">43</td><td class="diff-line-sign">+</td><td class="diff-line-code">    <x>added</x></td></tr>
 ```
 
-Word highlights:
-- `<x>text</x>` — new/changed text (green)
-- `<y>text</y>` — removed/changed text (red)
-
-HTML escape: `& → &amp;` `< → &lt;` `> → &gt;`
-
----
+Word highlights: `<x>text</x>` (green/new), `<y>text</y>` (red/removed). HTML escape: `& → &amp;` `< → &lt;` `> → &gt;`
 
 ## Output Checklist
 
 - [ ] Read DETAIL_OUTPUT.html template first
-- [ ] Copied exact CSS
-- [ ] Header placeholders filled
-- [ ] Table of contents lists all tasks
-- [ ] Each task has section block
+- [ ] Header placeholders filled, TOC lists all tasks
 - [ ] Each task has title + description + code
-- [ ] ALL files for each task shown
 - [ ] 100% code shown — no `...` or summaries
 - [ ] Line numbers verified against source
 - [ ] HTML characters escaped
 - [ ] Saved to Documents/Tasks/
-
----
-
-## MCP Tools Integration
-
-Use `unityMCP_*` tools during codebase investigation (Step 2.3) and for verification.
-
-| Operation | MCP Tool |
-|-----------|----------|
-| Editor state | `unityMCP_get_unity_editor_state` |
-| Scene hierarchy | `unityMCP_list_game_objects_in_hierarchy()` |
-| Object details | `unityMCP_get_game_object_info(gameObjectPath="...")` |
-| Check compilation | `unityMCP_check_compile_errors` |

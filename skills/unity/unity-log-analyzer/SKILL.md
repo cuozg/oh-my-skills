@@ -5,52 +5,19 @@ description: "Parse and analyze Unity Editor console logs to classify errors, gr
 
 # Unity Log Analyzer
 
-Parse, classify, and prioritize Unity Editor console logs — group duplicates, suggest probable causes, and generate actionable error triage reports.
+**Input**: Unity console log text (pasted or from `coplay-mcp_get_unity_logs`). Optional: filter (`errors-only`/`warnings-only`/`all`), format (`summary`/`detailed`/`json`).
 
-## Purpose
-
-Unity projects generate hundreds of console messages during play mode. This skill systematically parses those logs, classifies by severity and category, deduplicates repeated messages, and produces a prioritized report with suggested fix strategies.
-
-## Input
-
-- **Required**: Unity console log text (pasted or from `coplay-mcp_get_unity_logs`)
-- **Optional**: Filter — `errors-only`, `warnings-only`, or `all` (default: `all`)
-- **Optional**: Output format — `summary`, `detailed`, or `json` (default: `summary`)
-
-## Output
-
-An analysis report with:
-1. **Summary** — total counts by severity (Error, Warning, Info)
-2. **Grouped Errors** — deduplicated with occurrence count
-3. **Category Classification** — NullRef, MissingComponent, AssetBundle, Serialization, Network, etc.
-4. **Fix Suggestions** — pattern-matched recommendations per error type
-5. **Priority Ranking** — Critical → High → Medium → Low
-
-## Examples
-
-| User Request | Skill Action |
-|:---|:---|
-| "Analyze the Unity console logs" | Fetch logs via MCP, parse, classify, group, suggest fixes |
-| "What errors keep happening?" | Focus on recurring errors with high duplicate count |
-| "Triage the build errors" | Filter to errors only, prioritize by severity |
-| "Summarize today's console output" | Generate high-level summary with counts and categories |
+**Output**: Analysis report — severity counts, grouped/deduplicated errors, category classification, fix suggestions, priority ranking.
 
 ## Workflow
 
-### Phase 1: Log Collection
+1. **Collect**: Fetch logs via `coplay-mcp_get_unity_logs(show_errors=true, show_warnings=true, limit=500)` or `python3 .opencode/tools/unity-log-analyzer.py --input <log>`
+2. **Classify**: Categorize each entry (NullRef, MissingComponent, MissingAsset, Serialization, Network, AssetBundle, UI, Performance, Shader, Script)
+3. **Deduplicate**: Normalize messages (strip timestamps/addresses), group by content, count occurrences, sort by frequency
+4. **Suggest Fixes**: Pattern-match known errors to fixes (see table below)
+5. **Report**: Generate markdown — summary counts, critical errors first, prioritized recommendations
 
-1. If logs not provided, fetch via:
-   ```
-   coplay-mcp_get_unity_logs(show_errors=true, show_warnings=true, limit=500)
-   ```
-2. Alternatively, run the Python analyzer on a log file:
-   ```bash
-   python3 .opencode/tools/unity-log-analyzer.py --input <log_text_or_file>
-   ```
-
-### Phase 2: Classification
-
-Each log entry is classified into categories:
+## Category Patterns
 
 | Category | Pattern Indicators |
 |:---|:---|
@@ -59,70 +26,20 @@ Each log entry is classified into categories:
 | MissingAsset | `Failed to load`, `Asset not found`, `Missing sprite` |
 | Serialization | `SerializationException`, `Could not deserialize` |
 | Network | `WebException`, `SocketException`, `HTTP error` |
-| AssetBundle | `AssetBundle`, `bundle.*failed`, `download.*error` |
-| UI | `Canvas`, `RectTransform`, `Layout`, `EventSystem` |
-| Performance | `Frame budget`, `GC.Alloc`, `spike detected` |
 | Shader | `Shader error`, `compilation failed`, `fallback` |
 | Script | `CompilerError`, `TypeLoadException`, `assembly` |
 
-### Phase 3: Deduplication & Grouping
-
-1. Normalize log messages (strip line numbers, timestamps, memory addresses)
-2. Group by normalized message
-3. Count occurrences
-4. Keep first and last timestamp for each group
-5. Sort by occurrence count (most frequent first)
-
-### Phase 4: Fix Suggestion
-
-Pattern-match known error types to suggest fixes:
+## Fix Suggestions
 
 | Error Pattern | Suggested Fix |
 |:---|:---|
-| `NullReferenceException` at runtime | Add null-check, verify object lifecycle, check `HasInstance` |
-| `MissingComponentException` | Verify component exists on prefab, check `RequireComponent` attribute |
-| `Failed to load AssetBundle` | Check bundle URL, verify CDN availability, clear cache |
-| `SerializationException` | Check data format version, validate JSON/FlatBuffer schema |
-| `SocketException` | Check network connectivity, verify server URL, check timeout settings |
+| `NullReferenceException` | Add null-check, verify object lifecycle, check `HasInstance` |
+| `MissingComponentException` | Verify component on prefab, add `RequireComponent` |
+| `Failed to load AssetBundle` | Check bundle URL, verify CDN, clear cache |
+| `SerializationException` | Check data format version, validate schema |
+| `SocketException` | Check connectivity, verify server URL, check timeout |
 
-### Phase 5: Report Generation
+## Handoff
 
-Generate a markdown report:
-
-```markdown
-# Unity Console Log Analysis
-## Date: YYYY-MM-DD
-
-### Summary
-- Errors: N | Warnings: N | Info: N
-- Unique error patterns: N
-- Most frequent: [error message] (Nx)
-
-### Critical Errors (fix immediately)
-1. [Error] — N occurrences — [suggested fix]
-
-### Warnings (review when possible)
-1. [Warning] — N occurrences — [suggested fix]
-
-### Recommendations
-1. [Prioritized action items]
-```
-
-## Integration with Other Skills
-
-- **unity-fix-errors**: After analysis, delegate fixing to this skill
-- **unity-debug**: For deep-dive on specific error root causes
-- **unity-investigate**: To trace error sources through the codebase
-
-## MCP Tools
-
-- `coplay-mcp_get_unity_logs` — fetch logs directly from Unity Editor
-- `coplay-mcp_check_compile_errors` — verify compile state
-- `grep` — search codebase for error source patterns
-- `lsp_diagnostics` — cross-reference with LSP errors
-
-## Handoff & Boundaries
-
-- **OWNS**: Bulk parsing, classification, and grouping of Unity Editor console logs. Prioritizes errors, identifies patterns, maps to source files.
-- **Delegates to**: `unity-debug` for individual error deep investigation. `unity-fix-errors` for applying fixes to identified issues.
-- **Does NOT**: Fix errors directly. Does not perform deep single-error root cause analysis.
+- **Delegates to**: `unity-fix-errors` (apply fixes), `unity-debug` (deep single-error investigation)
+- **Does NOT**: Fix errors directly or perform deep root cause analysis

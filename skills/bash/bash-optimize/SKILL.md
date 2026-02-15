@@ -5,218 +5,74 @@ description: "Optimize and refactor bash shell scripts for clarity, performance,
 
 # Bash Optimize
 
-Analyze and optimize bash scripts for better performance, clarity, and maintainability.
-
-## Purpose
-
-Eliminate performance bottlenecks (unnecessary subshells, external commands, inefficient loops) and improve readability in bash scripts by applying modern bash idioms and best practices.
-
 ## Input
 
-- **Required**: Path to a `.sh` (or shell script) file to optimize.
-- **Optional**: Optimization focus — `performance`, `clarity`, `safety`, or `all` (default).
+Path to `.sh` file. Optional: focus — `performance`, `clarity`, `safety`, or `all` (default).
 
 ## Output
 
-A structured optimization report (following the OPTIMIZATION_REPORT.md template) delivered directly to the user, listing each change with before/after code snippets, categorized by Performance / Clarity / Safety / Style.
+Structured report per [OPTIMIZATION_REPORT.md](.opencode/skills/bash/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md). Read template first, populate all sections, output directly to user.
 
 ## Examples
 
-| Trigger | Input | What Happens |
-|---------|-------|--------------|
-| "Optimize this build script" | `scripts/build.sh` | Full analysis; replaces external commands with built-ins, simplifies conditionals |
-| "Speed up this script" | `ci/test-runner.sh`, focus=performance | Targets subshell reduction, loop optimization, fork overhead |
-| "Clean up this legacy script" | `tools/migrate.sh`, focus=clarity | Renames variables, extracts functions, adds strict mode |
-
-## Output Requirement (MANDATORY)
-
-**Every optimization report MUST follow the template**: [OPTIMIZATION_REPORT.md](.opencode/skills/bash/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md)
-
-Output the report directly to the user. No file save required.
-
-Read the template first, then populate all sections.
+| Trigger | Input |
+|---------|-------|
+| "Optimize this build script" | `scripts/build.sh` |
+| "Speed up this script" | `ci/test-runner.sh`, focus=performance |
 
 ## Workflow
 
 ### 1. Analyze Current Script
-
-Read the entire script to understand:
-- Overall purpose and flow
-- Key functions and their dependencies
-- Areas with complex logic or repeated patterns
+Understand purpose, functions, dependencies, complex/repeated patterns.
 
 ### 2. Performance Optimizations
 
-**Reduce Subshell Usage**
-
 ```bash
-# ❌ Slow: subshell for variable assignment
-var=$(echo "$input" | tr '[:lower:]' '[:upper:]')
+# Subshells → built-ins
+var=$(echo "$input" | tr '[:lower:]' '[:upper:]')  # ❌
+var="${input^^}"                                      # ✅
 
-# ✅ Fast: bash built-in
-var="${input^^}"
-```
+# External cmds → parameter expansion
+basename "$filepath"  # ❌ → ${filepath##*/}   ✅
+dirname "$filepath"   # ❌ → ${filepath%/*}    ✅
 
-**Use Built-in String Operations**
+# Loop optimization
+cat file.txt | while read line; do echo "$line"; done  # ❌
+while IFS= read -r line; do echo "$line"; done < file.txt  # ✅
 
-```bash
-# ❌ External command
-basename "$filepath"
-
-# ✅ Parameter expansion
-${filepath##*/}
-
-# ❌ External command  
-dirname "$filepath"
-
-# ✅ Parameter expansion
-${filepath%/*}
-```
-
-**Optimize Loops**
-
-```bash
-# ❌ Reading file line by line with cat
-cat file.txt | while read line; do
-  echo "$line"
-done
-
-# ✅ Direct redirection
-while IFS= read -r line; do
-  echo "$line"
-done < file.txt
-```
-
-**Reduce Fork Overhead**
-
-```bash
-# ❌ Multiple forks
-files=$(ls -1 | wc -l)
-
-# ✅ Globbing + array
-files=(*)
-count=${#files[@]}
+# Fork reduction
+files=$(ls -1 | wc -l)  # ❌
+files=(*); count=${#files[@]}  # ✅
 ```
 
 ### 3. Clarity Improvements
-
-**Function Organization**
-- Extract repeated code into functions
-- Use descriptive function names: `validate_input()`, `cleanup_temp_files()`
-- Add function documentation comments
-
-**Variable Naming**
-- Use `snake_case` for variables
-- Use `UPPERCASE` for constants/environment variables
-- Use meaningful names: `file_count` instead of `fc`
-
-**Conditional Simplification**
-
-```bash
-# ❌ Nested if statements
-if [[ condition1 ]]; then
-  if [[ condition2 ]]; then
-    action
-  fi
-fi
-
-# ✅ Combined condition
-if [[ condition1 && condition2 ]]; then
-  action
-fi
-```
-
-**Case Statement for Multiple Conditions**
-
-```bash
-# ❌ Long if-elif chain
-if [[ "$type" == "a" ]]; then
-  action_a
-elif [[ "$type" == "b" ]]; then
-  action_b
-elif [[ "$type" == "c" ]]; then
-  action_c
-fi
-
-# ✅ Case statement
-case "$type" in
-  a) action_a ;;
-  b) action_b ;;
-  c) action_c ;;
-esac
-```
+- Extract repeated code into descriptive functions
+- `snake_case` vars, `UPPERCASE` constants
+- Combine nested `if` → `if [[ cond1 && cond2 ]]`
+- Replace long if-elif chains with `case` statements
 
 ### 4. Modern Bash Practices
-
-**Use `[[ ]]` over `[ ]`**
-- More predictable with unquoted variables
-- Supports `&&`, `||`, regex `=~`
-
-**Use `$(command)` over backticks**
-```bash
-# ❌ Backticks
-result=`command`
-
-# ✅ Dollar-parentheses
-result=$(command)
-```
-
-**Use Arrays for Lists**
-```bash
-# ❌ Space-separated string
-files="file1.txt file2.txt file3.txt"
-
-# ✅ Array
-files=("file1.txt" "file2.txt" "file3.txt")
-for f in "${files[@]}"; do
-  process "$f"
-done
-```
+- `[[ ]]` over `[ ]` (supports `&&`, `||`, `=~`)
+- `$(command)` over backticks
+- Arrays over space-separated strings
 
 ### 5. Error Handling
-
-**Add Strict Mode Header**
 ```bash
-#!/bin/bash
 set -euo pipefail
 IFS=$'\n\t'
-```
 
-**Trap for Cleanup**
-```bash
-cleanup() {
-  rm -rf "$temp_dir"
-}
+cleanup() { rm -rf "$temp_dir"; }
 trap cleanup EXIT
 ```
 
 ### 6. Documentation
-
-Add header comment block:
-```bash
-#!/bin/bash
-#
-# script_name.sh - Brief description
-#
-# Usage: script_name.sh [options] <args>
-#
-# Options:
-#   -h    Show help
-#   -v    Verbose mode
-#
-```
+Add header: script name, description, usage, options.
 
 ## Optimization Checklist
 
 | Category | Check |
 |----------|-------|
-| **Performance** | Replace external commands with built-ins |
-| **Performance** | Avoid unnecessary subshells |
-| **Performance** | Use efficient loop constructs |
-| **Clarity** | Extract functions for repeated code |
-| **Clarity** | Use descriptive names |
-| **Clarity** | Simplify nested conditionals |
-| **Safety** | Add strict mode where appropriate |
-| **Safety** | Handle errors gracefully |
-| **Style** | Consistent indentation (2 or 4 spaces) |
-| **Style** | Add comments for complex logic |
+| Performance | Replace external commands with built-ins, avoid subshells, efficient loops |
+| Clarity | Extract functions, descriptive names, simplify conditionals |
+| Safety | Strict mode, error handling |
+| Style | Consistent indentation, comments for complex logic |
