@@ -1,174 +1,66 @@
 # Review Output Format
 
-This template defines **output structure only**. All review logic, criteria, and decision rules are in [SKILL.md](../SKILL.md).
+Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 
----
-
-## JSON Structure
-
-Submit **ONE GitHub review** as `/tmp/review.json`:
+## JSON — `/tmp/review.json`
 
 ```json
 {
-  "body": "[SUMMARY]",
+  "body": "[SUMMARY — see format below]",
   "event": "REQUEST_CHANGES|COMMENT|APPROVE",
   "comments": [
-    {
-      "path": "Assets/Scripts/Example.cs",
-      "line": 42,
-      "side": "RIGHT",
-      "body": "[INLINE COMMENT]"
-    }
+    { "path": "Assets/Scripts/Example.cs", "line": 42, "side": "RIGHT", "body": "[INLINE]" }
   ]
 }
 ```
 
----
+Line numbers = right side of diff. `side` always `"RIGHT"`.
 
-## Summary Body Format
+## Summary Body
 
 ```markdown
-## Code Review - PR #[NUMBER]
-
-**Scope**: [TICKET_ID] - [Brief description]
-
-[One-sentence assessment]. See inline comments for details.
+## Code Review - PR #[N]
+**Scope**: [TICKET] - [Description]
+[One-sentence assessment].
 
 ### Acceptance Criteria
-
 #### UI Verification
-- [ ] [Specific screen/component] displays correctly
-- [ ] [UI element] responds to interaction
-- [ ] [Animation/transition] plays smoothly
-
+- [ ] [Screen/component] displays correctly
 #### Functional Verification
-- [ ] [Feature] works with valid inputs
-- [ ] Edge cases handled (null, empty, boundary)
-- [ ] [Integration] communicates with [service]
-- [ ] Error handling covers [conditions]
-
+- [ ] [Feature] works; edge cases handled
 #### Performance Verification
-- [ ] No frame drops during [operations]
-- [ ] Memory stable during [scenarios]
-- [ ] No GC spikes from [allocations]
-
+- [ ] No frame drops, GC spikes
 #### Data Verification
-- [ ] Existing saves/prefabs migrate without data loss
-- [ ] [Data structure] round-trips correctly
 - [ ] No breaking serialization changes
+#### Asset Verification
+- [ ] No missing scripts, correct shaders, proper imports
 
-#### Asset & Configuration Verification
-- [ ] No missing script references in changed prefabs
-- [ ] RaycastTarget disabled on decorative/non-interactive UI elements
-- [ ] Materials use correct shaders (no default pink/magenta)
-- [ ] Texture import settings match platform requirements (compression, max size, NPOT)
-- [ ] Canvas render mode and sorting order correct
-- [ ] No duplicate components on changed GameObjects
-- [ ] Prefab variant overrides are intentional (not accidental resets)
-
-### Breaking Changes ([COUNT])
-- [One-line per critical issue]
-
-### Potential Issues ([COUNT])
-- [One-line per major issue]
-
-### Code Quality ([COUNT])
-- [One-line per minor issue]
-
+### Breaking Changes ([N])
+### Potential Issues ([N])
+### Code Quality ([N])
 ### Impact Analysis
-- Files investigated: X
-- Breaking call sites: Y
+- Files investigated: X · Breaking call sites: Y
 ```
-
----
 
 ## Inline Comment Format
 
-Every inline comment follows the **Issue → Evidence → Why → Fix** structure. Keep each section to 1-2 lines max.
-
-### 🔴 Critical
-
+**🔴 Critical / 🟡 Major:**
 ```markdown
-**[Issue Name]**: [What's wrong in one line]
-
-**Evidence**: [The code pattern or call site proving this is real]
-**Why**: [Concrete impact — crash, leak, data loss, N callers break]
-
+**[Issue]**: [What's wrong]
+**Evidence**: [Proof — caller count, file:line, YAML key]
+**Why**: [Impact — crash, leak, N callers break]
 \`\`\`suggestion
 [Fixed code]
 \`\`\`
 ```
 
-### 🟡 Major
-
+**🔵 Minor:**
 ```markdown
-**[Issue Name]**: [What's wrong in one line]
-
-**Evidence**: [Code pattern or condition that triggers this]
-**Why**: [When/how this causes problems]
-
+**[Issue]**: [What to improve]
+**Why**: [Reason]
 \`\`\`suggestion
 [Fixed code]
 \`\`\`
 ```
 
-### 🔵 Minor
-
-```markdown
-**[Issue Name]**: [What to improve]
-
-**Why**: [Brief reason]
-
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
-### Prefab/Asset Issue (YAML-based)
-
-```markdown
-**RaycastTarget on Decorative Image**: `m_RaycastTarget: 1` on non-interactive Image blocks touch input on elements behind it.
-
-**Evidence**: `BG_Image` at line 847 has `m_RaycastTarget: 1` but no `Button`, `Toggle`, or `EventTrigger` component.
-**Why**: Invisible raycast hit area intercepts taps meant for buttons underneath — causes "unresponsive UI" bugs.
-
-\`\`\`suggestion
-  m_RaycastTarget: 0
-\`\`\`
-```
-
-### Missing Script Reference (Prefab)
-
-```markdown
-**Missing Script Reference**: Prefab contains a MonoBehaviour with `m_Script: {fileID: 0}`.
-
-**Evidence**: Line 23 in `Assets/Prefabs/UI/DialogPanel.prefab` — component has null script GUID.
-**Why**: Causes `MissingReferenceException` at runtime and yellow warning in Console. Likely a deleted/moved script.
-
-Recommended: Remove the broken component or re-assign the correct script.
-```
-
----
-
-## Complete Example
-
-```json
-{
-  "body": "## Code Review - PR #25103\n\n**Scope**: WHIP-55760 - Fix showdown hub display\n\nWell-structured change. Two issues to address before merge.\n\n### Acceptance Criteria\n\n#### UI Verification\n- [ ] Showdown hub shows active tournaments correctly\n- [ ] List filters inactive tournaments\n- [ ] UI updates on tournament status change\n\n#### Functional Verification\n- [ ] `GetActiveTournamentList()` returns only active tournaments\n- [ ] Handles null/empty tournament list gracefully\n- [ ] Works when called from `ShowdownHubController`\n\n#### Performance Verification\n- [ ] No frame drops filtering tournament list\n- [ ] Memory stable with multiple tournaments\n\n#### Data Verification\n- [ ] Tournament data structure unchanged\n- [ ] No serialization breaking changes\n\n#### Asset & Configuration Verification\n- [ ] No missing script references in changed prefabs\n- [ ] RaycastTarget disabled on decorative UI elements\n- [ ] Materials and shaders assigned correctly\n\n### Potential Issues (1)\n- Method visibility `private → public` creates cross-controller coupling\n\n### Code Quality (1)\n- Missing null check on `persistentShowdownController`\n\n### Impact Analysis\n- Files investigated: 2\n- Breaking call sites: 0",
-  "event": "COMMENT",
-  "comments": [
-    {
-      "path": "Assets/Scripts/M42/Career/CareerPvpController.cs",
-      "line": 159,
-      "side": "RIGHT",
-      "body": "**Visibility Escalation**: `GetActiveTournamentList` changed `private → public`.\n\n**Evidence**: Now called from `ShowdownHubController.cs:77`, creating cross-controller dependency.\n**Why**: `ShowdownHubController` depends on `CareerPvpController` being instantiated — breaks if it isn't.\n\n```cs\n// Extract to ShowdownHubUtils.cs to avoid coupling:\npublic static List<VersusTourneyItemData> GetActiveTournamentList(List<VersusTourneyItemData> items)\n{\n    // ... logic\n}\n```"
-    },
-    {
-      "path": "Assets/Scripts/ShowdownIteration/ShowdownHubController.cs",
-      "line": 77,
-      "side": "RIGHT",
-      "body": "**Potential NullReference**: `persistentShowdownController` used without null check.\n\n**Why**: Controller may not be instantiated on first frame or after scene transition.\n\n```suggestion\nif (persistentShowdownController != null && listTournaments != null) {\n    var activeTournaments = persistentShowdownController.GetActiveTournamentList(listTournaments);\n    // ...\n}\n```"
-    }
-  ]
-}
-```
+Asset issues use same format — must include Issue + Why + Suggestion (no exceptions).
