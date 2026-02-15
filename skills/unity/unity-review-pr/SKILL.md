@@ -34,15 +34,33 @@ Always load [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Then by file ty
 | `.cs` | [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) |
 | `.prefab`, `.unity` | [PREFAB_REVIEW.md](references/PREFAB_REVIEW.md) |
 | `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.asset` | [ASSET_REVIEW.md](references/ASSET_REVIEW.md) |
-| New system / architecture change | [BLUEPRINT_REVIEW.md](references/BLUEPRINT_REVIEW.md) |
 
 Multiple types → load ALL matching.
 
 ## Workflow
 
 1. **Fetch** diff (see Input table)
-2. **Investigate** — `@explore`/`@librarian`: read full files, find callers, trace events, check prefab refs. **Never flag without evidence.** 🔴 needs caller count. 🟡 needs trigger conditions.
-3. **Review** — Apply loaded reference checklists
+2. **Context Gathering** (parallel, `run_in_background=true`) — spawn all agents **before** reading diff details. ALWAYS capture and return each agent's `session_id`.
+
+   **`@explore` agents (2-4, always spawn):**
+
+   | Agent | Task |
+   |:------|:-----|
+   | Codebase patterns | Read full changed files + surrounding context. Identify patterns, conventions, and architecture in the modified area. |
+   | Implementations | Find all callers, subscribers, derived types, and prefab/SO refs for changed APIs. Count call sites for every modified public member. |
+   | User requirement | Read PR title/body/linked issues. Extract intent, acceptance criteria, and expected behavior. |
+   | Impact analysis | *(optional, for large PRs 10+ files)* Trace cross-system dependencies, event channels, and serialization chains affected by changes. |
+
+   **`@librarian` agents (1-2, spawn when external library involved):**
+
+   | Agent | Task |
+   |:------|:-----|
+   | Library docs | Fetch API docs, changelog, and migration guides for any new/updated package or library in the diff. |
+   | Best practices | *(optional)* Research known issues, performance implications, and recommended patterns for the library version in use. |
+
+   **Evidence rules:** 🔴 needs caller count + affected files. 🟡 needs trigger conditions. **Never flag without evidence.**
+
+3. **Review** — Collect agent results (use `session_id` to retrieve). Apply loaded reference checklists against gathered evidence.
 4. **Build** `/tmp/review.json` per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md): summary + acceptance criteria + one comment per issue (`path`, `line`, `side:"RIGHT"`, `body`)
 5. **Submit** — `.opencode/skills/unity/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
 
@@ -50,5 +68,5 @@ Multiple types → load ALL matching.
 
 ## Rules
 
-- ✅ One issue = one comment. Investigate before flagging. Include acceptance criteria. Submit even if merged.
-- ❌ Never combine issues. Never skip submission. Never flag without evidence.
+- ✅ One issue = one comment. Investigate before flagging. Include acceptance criteria. Submit even if merged. Always return `session_id` from every agent call.
+- ❌ Never combine issues. Never skip submission. Never flag without evidence. Never discard `session_id`.
