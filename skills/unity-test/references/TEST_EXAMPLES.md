@@ -262,16 +262,10 @@ Same but `"includePlatforms": []` (empty = all platforms for device testing).
 
 ## ❌ Common `.asmdef` Pitfall
 
-Adding `"Assembly-CSharp.dll"` to `precompiledReferences` causes silent failure:
-- Tests compile successfully
-- Test Runner shows "No tests to show"
-
-**Fix**: Remove it (keep only `"nunit.framework.dll"`) or use `Editor/` folder instead.
+Adding `"Assembly-CSharp.dll"` to `precompiledReferences` → tests compile but Test Runner shows "No tests". **Fix**: Remove it or use `Editor/` folder.
 
 ## Pre-Creation Checklist
 
-1. Use `Editor/` folder (recommended, no `.asmdef`) or create valid `.asmdef`
-2. `.asmdef` must have: `overrideReferences: true`, `precompiledReferences: ["nunit.framework.dll"]` only, `defineConstraints: ["UNITY_INCLUDE_TESTS"]`
-3. Test class: `[TestFixture]`, methods: `[Test]`/`[UnityTest]`, naming: `Subject_Scenario_Expected`
-4. Verify in `Window > General > Test Runner`
-
+1. `Editor/` folder (no `.asmdef` needed) or valid `.asmdef` with `overrideReferences: true`, `precompiledReferences: ["nunit.framework.dll"]`, `defineConstraints: ["UNITY_INCLUDE_TESTS"]`
+2. `[TestFixture]` class, `[Test]`/`[UnityTest]` methods, `Subject_Scenario_Expected` naming
+3. Verify in `Window > General > Test Runner`

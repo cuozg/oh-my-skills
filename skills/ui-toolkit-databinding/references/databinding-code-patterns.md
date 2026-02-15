@@ -45,7 +45,7 @@ Views extend `UIView`. Pattern: cache Q() in `SetVisualElements()`, subscribe ev
 
 ### Complete Data Flow — Shop Purchase
 
-User click → `ShopItemComponent` fires `ShopEvents.ShopItemClicked` → `ShopScreenController.OnTryBuyItem()` → fires `ShopItemPurchasing` → `GameDataManager.OnPurchaseItem()` → checks funds → YES: fires `TransactionProcessed`, `FundsUpdated`, `PotionsUpdated` → views update; NO: fires `TransactionFailed`.
+Click → `ShopItemClicked` → `ShopScreenController.OnTryBuyItem()` → `ShopItemPurchasing` → `GameDataManager.OnPurchaseItem()` → funds check → YES: `TransactionProcessed`/`FundsUpdated`/`PotionsUpdated` → views update; NO: `TransactionFailed`.
 
 ## Unity 6 Declarative Binding
 
