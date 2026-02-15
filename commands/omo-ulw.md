@@ -4,6 +4,8 @@ agent: sisyphus
 model: github-copilot/claude-opus-4.6
 subtask: true
 ---
-@sisyphus $ARGUMENTS ulw
+Ultrawork
+---
+$ARGUMENTS
 ---
 ALWAYS return subtask session_id
