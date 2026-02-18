@@ -35,7 +35,7 @@ def _try_external_validator(skill_path):
             timeout=30,
         )
         data = json.loads(result.stdout)
-        valid = data.get("valid", False)
+        valid = data.get("valid", data.get("passed", False))
         errors = data.get("errors", [])
         if valid:
             return True, True, "Skill is valid! (via skill-validator)"

@@ -1,6 +1,6 @@
 ---
 description: Review pull requests on GitHub
-agent: sisyphus-junior
+agent: unity-code-reviewer
 model: github-copilot/claude-opus-4.6
 skill: unity-review-pr
 subtask: true

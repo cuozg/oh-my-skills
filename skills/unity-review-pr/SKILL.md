@@ -20,20 +20,28 @@ One issue = one inline comment. Submit via GitHub API.
 
 | Severity | Meaning | Approval |
 |:---------|:--------|:---------|
-| 🔴 Critical | Crash, data loss, leak, perf regression | `REQUEST_CHANGES` |
-| 🟡 Major | Conditional failure, encapsulation break | `COMMENT` |
-| 🔵 Minor | Style, conventions | `COMMENT` |
+| 🔴 Critical | Crash, data loss, security, breaking API | `REQUEST_CHANGES` (block) |
+| 🟡 High | Logic bugs, missing tests, arch violations | `REQUEST_CHANGES` |
+| 🔵 Medium | Code quality, conventions, minor perf | `COMMENT` (allow merge) |
+| 🟢 Low | Style preferences, typos, micro-optimization | `APPROVE` (with suggestions) |
 | Clean | No issues | `APPROVE` |
+
+Full decision tree and classification: [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md).
 
 ## Load References by Changed Files
 
-Always load [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Then by file type:
+Always load:
+- [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) — output JSON format, suggestion syntax, troubleshooting
+- [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md) — severity decision tree
+- [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md) — security, correctness, testing, quality, perf, docs
+
+Then by file type:
 
 | Files | Reference |
 |:------|:----------|
 | `.cs` | [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) |
 | `.prefab`, `.unity` | [PREFAB_REVIEW.md](references/PREFAB_REVIEW.md) |
-| `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.asset` | [ASSET_REVIEW.md](references/ASSET_REVIEW.md) |
+| `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` | [ASSET_REVIEW.md](references/ASSET_REVIEW.md) |
 
 Multiple types → load ALL matching.
 
@@ -61,12 +69,24 @@ Multiple types → load ALL matching.
    **Evidence rules:** 🔴 needs caller count + affected files. 🟡 needs trigger conditions. **Never flag without evidence.**
 
 3. **Review** — Collect agent results (use `session_id`). Apply reference checklists against evidence.
-4. **Build** `/tmp/review.json` per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md): summary + acceptance criteria + one comment per issue
-5. **Submit** — `.opencode/skills/unity/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
+4. **Build** `/tmp/review.json` per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md): summary + acceptance criteria + one comment per issue. Do NOT include `commit_id` — the post script injects it.
+5. **Submit** — `./skills/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
 
-**Fallback** (merged/closed): `gh pr comment <N> --body "## Post-Merge Review\n\n<body>"`
+**Fallback** (merged/closed): handled automatically by `post_review.sh` — posts as comment.
+
+## Suggestion Syntax Quick Reference
+
+| Type | JSON fields | Notes |
+|:-----|:------------|:------|
+| Single-line | `"line": 42` | Suggestion replaces that one line |
+| Multi-line | `"start_line": 10, "line": 15` | Suggestion replaces lines 10–15 |
+| Large rewrite | Single `"line"` | Use `<details>` block instead of suggestion |
+
+`line` = file line number (not diff position). `side` always `"RIGHT"`. Full syntax in [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md).
 
 ## Rules
 
 - ✅ One issue = one comment. Investigate before flagging. Include acceptance criteria. Submit even if merged. Always return `session_id`.
+- ✅ Same issue in N files → full explanation on first, short ref + suggestion on rest (batch pattern).
 - ❌ Never combine issues. Never skip submission. Never flag without evidence. Never discard `session_id`.
+- ❌ Never suggest code that changes behavior beyond the flagged issue. Never hardcode `commit_id`.
