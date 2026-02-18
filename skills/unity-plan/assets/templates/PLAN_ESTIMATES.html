@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Estimates: [FEATURE_NAME]</title>
     <style>
-:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633}
+:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-canvas-inset:#010409;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-warning-fg:#d29922;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;background:var(--color-canvas-default);color:var(--color-fg-default);font-size:14px;line-height:1.5}
 .container{max-width:100%;padding:16px 24px}
@@ -43,6 +43,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
 .badge-m{background:#1f6feb;color:#fff}
 .badge-l{background:#8957e5;color:#fff}
 .badge-xl{background:var(--color-diffstat-deletion-bg);color:#fff}
+.timeline-section{padding:20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--color-border-default)}
+.timeline-item{position:relative;padding:12px 16px;margin-bottom:16px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px}
+.timeline-item::before{content:'';position:absolute;left:-26px;top:18px;width:10px;height:10px;border-radius:50%;background:var(--color-accent-fg);border:2px solid var(--color-canvas-subtle)}
+.timeline-item.milestone::before{background:var(--color-success-fg);width:12px;height:12px;left:-27px}
+.tl-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.tl-phase{font-size:14px;font-weight:600;color:var(--color-fg-default)}
+.tl-duration{font-size:12px;color:var(--color-fg-muted);padding:2px 8px;background:var(--color-border-muted);border-radius:3px}
+.tl-tasks{margin:8px 0 0 0;padding-left:20px}
+.tl-tasks li{padding:3px 0;color:var(--color-fg-muted);font-size:13px}
+.tl-tasks li code{background:var(--color-border-muted);padding:1px 5px;border-radius:3px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:11px;color:var(--color-accent-fg)}
+.milestone-section{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.milestone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.milestone-card{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:14px 16px;border-left:3px solid var(--color-success-fg)}
+.milestone-name{font-size:14px;font-weight:600;color:var(--color-fg-default);margin-bottom:6px}
+.milestone-criteria{font-size:12px;color:var(--color-fg-muted);line-height:1.5}
+.milestone-target{margin-top:8px;font-size:11px;color:var(--color-fg-subtle);text-transform:uppercase;letter-spacing:0.5px}
+.order-section{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.order-list{margin:0;padding-left:24px;list-style-type:decimal}
+.order-list li{padding:6px 0;color:var(--color-fg-default);line-height:1.6}
+.order-list li code{background:var(--color-border-muted);padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;color:var(--color-accent-fg)}
 .resource-section{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
 .resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .resource-card{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:14px 16px}
@@ -58,6 +80,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
 .summary-row{flex-direction:column;gap:8px}
 .summary-card{flex:1 1 100%}
 .estimate-table{display:block;overflow-x:auto}
+.timeline{padding-left:24px}
+.milestone-grid{grid-template-columns:1fr}
 .resource-grid{grid-template-columns:1fr}
 }
 </style>
@@ -68,10 +92,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
             <h1 class="nav-title">Implementation Plan</h1>
             <ul class="nav-tabs">
                 <li><a href="./PLAN_OVERVIEW.html" class="nav-tab">Overview</a></li>
-                <li><a href="./PLAN_TASKS.html" class="nav-tab">Tasks</a></li>
-                <li><a href="./PLAN_ESTIMATES.html" class="nav-tab nav-tab-active">Estimates</a></li>
-                <li><a href="./PLAN_DEPENDENCIES.html" class="nav-tab">Dependencies</a></li>
-                <li><a href="./PLAN_TIMELINE.html" class="nav-tab">Timeline</a></li>
+                <li><a href="./PLAN_TASKS.html" class="nav-tab">Tasks &amp; Dependencies</a></li>
+                <li><a href="./PLAN_ESTIMATES.html" class="nav-tab nav-tab-active">Estimates &amp; Timeline</a></li>
                 <li><a href="./PLAN_PATCH.html" class="nav-tab nav-tab-patch">View Patch</a></li>
             </ul>
         </div>
@@ -79,7 +101,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
     <div class="container">
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
-            <div class="pr-subtitle">Effort Estimation & Resource Allocation</div>
+            <div class="pr-subtitle">Effort Estimation, Timeline &amp; Resource Allocation</div>
         </div>
         <!-- Aggregate totals -->
         <div class="summary-row">
@@ -94,6 +116,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
             <div class="summary-card">
                 <div class="summary-label">Complexity</div>
                 <div class="summary-value">[COMPLEXITY_LEVEL]</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Duration</div>
+                <div class="summary-value">[TOTAL_DURATION]</div>
             </div>
         </div>
         <div class="section-header">Per-Epic Estimation</div>
@@ -132,6 +158,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
                 </tr>
             </tfoot>
         </table>
+        <div class="section-header">Implementation Phases</div>
+        <div class="timeline-section">
+            <div class="timeline">
+                <!-- Replicate for each phase -->
+                <div class="timeline-item">
+                    <div class="tl-header">
+                        <span class="tl-phase">[PHASE_NAME]</span>
+                        <span class="tl-duration">[PHASE_DURATION]</span>
+                    </div>
+                    <ul class="tl-tasks">
+                        <!-- List tasks -->
+                        <li>[TASK_ID] - [TASK_SUBJECT] <span class="badge [BADGE_CLASS]">[COST]</span></li>
+                    </ul>
+                </div>
+                <!-- Milestone — add class="milestone" -->
+                <div class="timeline-item milestone">
+                    <div class="tl-header">
+                        <span class="tl-phase">[MILESTONE_NAME]</span>
+                        <span class="tl-duration">Checkpoint</span>
+                    </div>
+                    <ul class="tl-tasks">
+                        <li>[MILESTONE_CRITERIA]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section-header">Milestones</div>
+        <div class="milestone-section">
+            <div class="milestone-grid">
+                <!-- Replicate for each milestone -->
+                <div class="milestone-card">
+                    <div class="milestone-name">[MILESTONE_NAME]</div>
+                    <div class="milestone-criteria">[SUCCESS_CRITERIA]</div>
+                    <div class="milestone-target">Target: [TARGET_TIMEFRAME]</div>
+                </div>
+            </div>
+        </div>
+        <div class="section-header">Recommended Implementation Order</div>
+        <div class="order-section">
+            <ol class="order-list">
+                <!-- List tasks in order -->
+                <li><code>[TASK_ID]</code> [TASK_SUBJECT] — [REASON_FOR_ORDER]</li>
+            </ol>
+        </div>
         <div class="section-header">Resource Allocation</div>
         <div class="resource-section">
             <div class="resource-grid">
@@ -139,7 +209,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
                 <div class="resource-card">
                     <div class="resource-role">[ROLE_NAME]</div>
                     <div class="resource-detail"><strong>Hours:</strong> [ROLE_HOURS_MIN]-[ROLE_HOURS_MAX]h</div>
-                    <div class="resource-detail"><strong>Tasks:</strong> [ASSIGNED_TASK_NUMBERS]</div>
+                    <div class="resource-detail"><strong>Tasks:</strong> [ASSIGNED_TASK_IDS]</div>
                     <div class="resource-detail"><strong>Skills:</strong> [REQUIRED_SKILLS]</div>
                 </div>
             </div>

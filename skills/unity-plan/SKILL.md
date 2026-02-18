@@ -1,12 +1,12 @@
 ---
 name: unity-plan
-description: "High-level planning for Unity features with multi-file output and patch generation. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into epics and tasks, (4) Estimating effort and identifying risks, (5) Generating implementation patches with 100% code changes. Outputs a folder of HTML files (overview, tasks, estimates, dependencies, timeline) plus a unified diff patch file."
+description: "High-level planning for Unity features with multi-file output and patch generation. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into epics and tasks, (4) Estimating effort and identifying risks, (5) Generating implementation patches with 100% code changes. Outputs a folder of HTML files (overview, tasks & dependencies, estimates & timeline) plus a unified diff patch file."
 ---
 
 # Unity Planning Skill
 
 **Input**: Clear task/problem description, optional file paths, constraints, context
-**Output**: 6 HTML files + 1 patch file at `documents/plans/{plan-name}/`
+**Output**: 4 HTML files + 1 patch file at `documents/plans/{plan-name}/`
 
 **IMPORTANT**: Planning only — do NOT implement. DO generate complete code patches.
 
@@ -20,8 +20,6 @@ description: "High-level planning for Unity features with multi-file output and 
 | `assets/templates/PLAN_OVERVIEW.html` | `documents/plans/{plan-name}/overview.html` |
 | `assets/templates/PLAN_TASKS.html` | `documents/plans/{plan-name}/tasks.html` |
 | `assets/templates/PLAN_ESTIMATES.html` | `documents/plans/{plan-name}/estimates.html` |
-| `assets/templates/PLAN_DEPENDENCIES.html` | `documents/plans/{plan-name}/dependencies.html` |
-| `assets/templates/PLAN_TIMELINE.html` | `documents/plans/{plan-name}/timeline.html` |
 | `assets/templates/PLAN_PATCH.html` | `documents/plans/{plan-name}/patch.html` |
 | `assets/templates/PLAN_PATCH_TEMPLATE.patch` | `documents/plans/{plan-name}/changes.patch` |
 
@@ -45,24 +43,23 @@ description: "High-level planning for Unity features with multi-file output and 
 3. **Investigate codebase** — use `unity-investigate` skill for affected systems, files, entry points
 4. **Create output folder**: `mkdir -p documents/plans/{plan-name}`
 5. **Generate overview.html** — summary cards, architecture (old vs new), technical approach
-6. **Generate tasks.html** — epic/task table, full walkthrough per task with files and criteria
+6. **Generate tasks.html** — epic/task table, full walkthrough per task with files and criteria, dependency graph, dependency matrix, risks, blockers, acceptance criteria
    - Types: `Logic`, `UI`, `Data`, `API`, `Asset`, `Test`, `Config`
    - Costs: `badge-s` S (<2h), `badge-m` M (2-4h), `badge-l` L (4-8h), `badge-xl` XL (1-2d)
-   - Numbering: `[Epic#].[Task#]`
-7. **Generate estimates.html** — totals, per-epic table, resource allocation, assumptions
-8. **Generate dependencies.html** — ASCII graph, dependency matrix, risk cards, blockers
-9. **Generate timeline.html** — phases, milestones, recommended order
-10. **Generate changes.patch** — unified diff with 100% code changes for all tasks
+   - Task IDs: `T-{uuid}` format (oh-my-opencode Task System)
+   - Per-task fields: id, subject, description, status, blockedBy, blocks, owner, wave
+7. **Generate estimates.html** — totals, per-epic table, implementation phases (timeline), milestones, recommended order, resource allocation, assumptions
+8. **Generate changes.patch** — unified diff with 100% code changes for all tasks
     - Unified diff format: `--- a/path` / `+++ b/path` / `@@ hunks @@`
     - New files: `--- /dev/null`; deleted: `+++ /dev/null`; 3 lines context
     - Every task MUST have corresponding code
-11. **Generate patch.html** — stats, file list, GitHub-style diff viewer, download link
-12. **Verbal summary** — location, effort, risks, critical path, patch stats
+9. **Generate patch.html** — stats, file list, GitHub-style diff viewer, download link
+10. **Verbal summary** — location, effort, risks, critical path, patch stats
 
 ## Output Checklist
 
-- [ ] All 7 templates read; output folder created
-- [ ] All 6 HTML files + patch written to `documents/plans/{plan-name}/`
+- [ ] All 5 templates read; output folder created
+- [ ] All 4 HTML files + patch written to `documents/plans/{plan-name}/`
 - [ ] Every task has walkthrough, file list, criteria
 - [ ] changes.patch in unified diff format, all tasks covered
 - [ ] Navigation tabs in all HTML with `PLAN_` prefix paths

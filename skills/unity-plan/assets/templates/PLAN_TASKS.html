@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan Tasks: [FEATURE_NAME]</title>
     <style>
-:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-canvas-inset:#010409;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633}
+:root{--color-canvas-default:#0d1117;--color-canvas-subtle:#161b22;--color-canvas-inset:#010409;--color-border-default:#30363d;--color-border-muted:#21262d;--color-fg-default:#e6edf3;--color-fg-muted:#8b949e;--color-fg-subtle:#6e7681;--color-accent-fg:#58a6ff;--color-success-fg:#3fb950;--color-danger-fg:#f85149;--color-warning-fg:#d29922;--color-diffstat-addition-bg:#238636;--color-diffstat-deletion-bg:#da3633}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif;background:var(--color-canvas-default);color:var(--color-fg-default);font-size:14px;line-height:1.5}
 .container{max-width:100%;padding:16px 24px}
@@ -38,6 +38,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
 .badge-m{background:#1f6feb;color:#fff}
 .badge-l{background:#8957e5;color:#fff}
 .badge-xl{background:var(--color-diffstat-deletion-bg);color:#fff}
+.status-pending{color:var(--color-fg-muted)}
+.status-in-progress{color:var(--color-warning-fg)}
+.status-completed{color:var(--color-success-fg)}
+.wave-badge{display:inline-block;padding:1px 6px;background:rgba(88,166,255,0.15);color:var(--color-accent-fg);border-radius:3px;font-size:11px;font-weight:600}
 .walkthrough-section{margin-bottom:24px}
 .walkthrough-task{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px}
 .walkthrough-task:last-child{margin-bottom:24px}
@@ -48,10 +52,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
 .wt-body{color:var(--color-fg-muted);line-height:1.6}
 .wt-body p{margin-bottom:8px}
 .wt-body code{background:var(--color-border-muted);padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;color:var(--color-accent-fg)}
+.wt-deps{margin-top:12px;padding:10px 14px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px}
+.wt-deps-title{font-size:11px;font-weight:600;color:var(--color-fg-subtle);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.wt-deps-row{display:flex;gap:16px;font-size:12px;color:var(--color-fg-muted);padding:2px 0}
+.wt-deps-label{font-weight:600;color:var(--color-fg-default);min-width:80px}
 .wt-files{margin-top:12px;padding:10px 14px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px}
 .wt-files-title{font-size:11px;font-weight:600;color:var(--color-fg-subtle);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
 .wt-files ul{margin:0;padding-left:20px}
 .wt-files li{padding:2px 0;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;color:var(--color-fg-muted)}
+.dep-section{padding:20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px}
+.dep-graph{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:16px;margin-bottom:16px}
+.dep-graph pre{margin:0;font-family:ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;font-size:12px;line-height:1.5;color:var(--color-fg-muted);white-space:pre;overflow-x:auto}
+.dep-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;margin-bottom:24px}
+.dep-table th{padding:8px 16px;text-align:left;font-weight:500;color:var(--color-fg-muted);background:var(--color-border-muted);border-bottom:1px solid var(--color-border-default);font-size:12px}
+.dep-table td{padding:8px 16px;border-bottom:1px solid var(--color-border-default)}
+.dep-table tr:hover{background:var(--color-border-muted)}
+.risk-card{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:14px 16px;margin-bottom:12px}
+.risk-card:last-child{margin-bottom:0}
+.risk-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.risk-title{font-size:14px;font-weight:600;color:var(--color-fg-default)}
+.risk-level{padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase}
+.risk-high{background:rgba(248,81,73,0.2);color:var(--color-danger-fg)}
+.risk-medium{background:rgba(210,153,34,0.2);color:var(--color-warning-fg)}
+.risk-low{background:rgba(63,185,80,0.2);color:var(--color-success-fg)}
+.risk-body{color:var(--color-fg-muted);font-size:13px;line-height:1.5}
+.risk-mitigation{margin-top:8px;padding:8px 12px;background:var(--color-canvas-subtle);border-radius:4px;font-size:12px;color:var(--color-fg-muted)}
+.risk-mitigation strong{color:var(--color-fg-default)}
+.blocker-list{margin:0;padding:0;list-style:none}
+.blocker-item{padding:12px 16px;background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.blocker-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.blocker-content{flex:1}
+.blocker-title{font-weight:600;font-size:13px;color:var(--color-fg-default);margin-bottom:4px}
+.blocker-desc{font-size:12px;color:var(--color-fg-muted);line-height:1.5}
 .acceptance-criteria{padding:16px 20px;background:var(--color-canvas-subtle);border:1px solid var(--color-border-default);border-top:none;border-radius:0 0 6px 6px;margin-bottom:24px;display:grid;grid-template-columns:1fr;gap:16px}
 .criteria-group{background:var(--color-canvas-default);border:1px solid var(--color-border-muted);border-radius:6px;padding:12px 16px}
 .criteria-title{margin:0 0 10px 0;font-size:13px;font-weight:600;color:var(--color-fg-muted);text-transform:uppercase;letter-spacing:0.5px}
@@ -64,6 +96,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
 .pr-title{font-size:16px}
 .task-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .task-table th,.task-table td{padding:6px 10px;font-size:12px;white-space:nowrap}
+.dep-section{padding:12px 14px}
+.dep-table{display:block;overflow-x:auto}
 .walkthrough-task{padding:12px 14px}
 .acceptance-criteria{padding:12px 14px}
 }
@@ -75,10 +109,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
             <h1 class="nav-title">Implementation Plan</h1>
             <ul class="nav-tabs">
                 <li><a href="./PLAN_OVERVIEW.html" class="nav-tab">Overview</a></li>
-                <li><a href="./PLAN_TASKS.html" class="nav-tab nav-tab-active">Tasks</a></li>
-                <li><a href="./PLAN_ESTIMATES.html" class="nav-tab">Estimates</a></li>
-                <li><a href="./PLAN_DEPENDENCIES.html" class="nav-tab">Dependencies</a></li>
-                <li><a href="./PLAN_TIMELINE.html" class="nav-tab">Timeline</a></li>
+                <li><a href="./PLAN_TASKS.html" class="nav-tab nav-tab-active">Tasks &amp; Dependencies</a></li>
+                <li><a href="./PLAN_ESTIMATES.html" class="nav-tab">Estimates &amp; Timeline</a></li>
                 <li><a href="./PLAN_PATCH.html" class="nav-tab nav-tab-patch">View Patch</a></li>
             </ul>
         </div>
@@ -86,29 +118,69 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
     <div class="container">
         <div class="pr-header">
             <div class="pr-title">[FEATURE_TITLE]</div>
-            <div class="pr-subtitle">Task Breakdown & Walkthrough</div>
+            <div class="pr-subtitle">Tasks, Dependencies, Risks &amp; Blockers</div>
         </div>
         <div class="section-header">Task Breakdown</div>
         <table class="task-table">
             <thead>
                 <tr>
-                    <th style="width:50px">#</th>
+                    <th style="width:90px">ID</th>
                     <th style="width:100px">Epic</th>
-                    <th style="width:140px">Task</th>
+                    <th style="width:160px">Subject</th>
                     <th>Description</th>
                     <th style="width:70px">Type</th>
                     <th style="width:50px">Cost</th>
+                    <th style="width:80px">Status</th>
+                    <th style="width:50px">Wave</th>
+                    <th style="width:100px">Blocked By</th>
+                    <th style="width:80px">Blocks</th>
                 </tr>
             </thead>
             <tbody>
                 <!-- Replicate for each task -->
                 <tr>
-                    <td>[TASK_NUMBER]</td>
+                    <td><code>[TASK_ID]</code></td>
                     <td>[EPIC_NAME]</td>
-                    <td>[TASK_NAME]</td>
+                    <td>[TASK_SUBJECT]</td>
                     <td>[TASK_DESCRIPTION]</td>
                     <td>[TASK_TYPE]</td>
                     <td><span class="badge [BADGE_CLASS]">[COST_LABEL]</span></td>
+                    <td><span class="[STATUS_CLASS]">[STATUS]</span></td>
+                    <td><span class="wave-badge">[WAVE_NUMBER]</span></td>
+                    <td>[BLOCKED_BY_IDS]</td>
+                    <td>[BLOCKS_IDS]</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="section-header">Dependency Graph</div>
+        <div class="dep-section">
+            <div class="dep-graph">
+                <pre>[DEPENDENCY_GRAPH_ASCII]
+Example format:
+Wave 1 (parallel): [T-001] Create Model, [T-002] Add Tests
+Wave 2 (after W1): [T-003] Build UI ──→ [T-004] Wire Events
+Wave 3 (after W2): [T-005] Integration Test</pre>
+            </div>
+        </div>
+        <div class="section-header">Dependency Matrix</div>
+        <table class="dep-table">
+            <thead>
+                <tr>
+                    <th style="width:90px">Task ID</th>
+                    <th style="width:160px">Subject</th>
+                    <th>Blocked By</th>
+                    <th>Blocks</th>
+                    <th style="width:50px">Wave</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Replicate for each task -->
+                <tr>
+                    <td><code>[TASK_ID]</code></td>
+                    <td>[TASK_SUBJECT]</td>
+                    <td>[BLOCKED_BY_IDS]</td>
+                    <td>[BLOCKS_IDS]</td>
+                    <td><span class="wave-badge">[WAVE_NUMBER]</span></td>
                 </tr>
             </tbody>
         </table>
@@ -117,15 +189,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
             <!-- Replicate for each task -->
             <div class="walkthrough-task">
                 <div class="wt-header">
-                    <div class="wt-title">[TASK_NUMBER]. [TASK_NAME]</div>
+                    <div class="wt-title">[TASK_ID] [TASK_SUBJECT]</div>
                     <div class="wt-meta">
                         <span class="wt-type">[TASK_TYPE]</span>
                         <span class="badge [BADGE_CLASS]">[COST_LABEL]</span>
+                        <span class="wave-badge">Wave [WAVE_NUMBER]</span>
                     </div>
                 </div>
                 <div class="wt-body">
                     <p>[DETAILED_TASK_DESCRIPTION]</p>
                     <p>[IMPLEMENTATION_STEPS]</p>
+                </div>
+                <div class="wt-deps">
+                    <div class="wt-deps-title">Dependencies</div>
+                    <div class="wt-deps-row"><span class="wt-deps-label">Blocked By:</span> [BLOCKED_BY_IDS]</div>
+                    <div class="wt-deps-row"><span class="wt-deps-label">Blocks:</span> [BLOCKS_IDS]</div>
                 </div>
                 <div class="wt-files">
                     <div class="wt-files-title">Files to Modify</div>
@@ -136,6 +214,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helveti
                     </ul>
                 </div>
             </div>
+        </div>
+        <div class="section-header">Risks</div>
+        <div class="dep-section">
+            <!-- Replicate for each risk -->
+            <div class="risk-card">
+                <div class="risk-header">
+                    <div class="risk-title">[RISK_TITLE]</div>
+                    <span class="risk-level [RISK_LEVEL_CLASS]">[RISK_LEVEL]</span>
+                </div>
+                <div class="risk-body">[RISK_DESCRIPTION]</div>
+                <div class="risk-mitigation">
+                    <strong>Mitigation:</strong> [MITIGATION_STRATEGY]
+                </div>
+            </div>
+        </div>
+        <div class="section-header">Blockers</div>
+        <div class="dep-section">
+            <ul class="blocker-list">
+                <!-- Replicate for each blocker -->
+                <li class="blocker-item">
+                    <span class="blocker-icon">[BLOCKER_ICON]</span>
+                    <div class="blocker-content">
+                        <div class="blocker-title">[BLOCKER_TITLE]</div>
+                        <div class="blocker-desc">[BLOCKER_DESCRIPTION]</div>
+                    </div>
+                </li>
+            </ul>
         </div>
         <div class="section-header">Acceptance Criteria</div>
         <div class="acceptance-criteria">
