@@ -1,68 +1,36 @@
 ---
 name: unity-investigate
-description: "Deep investigation of Unity projects as an expert Unity developer. Covers: logic flow, data structures, serialization, resource management, animation systems, VFX/particles, audio, physics/collision, UI/UX, networking/multiplayer, performance profiling, and all other Unity-related technical aspects. Use when: (1) Understanding how a feature or system works, (2) Tracing execution from trigger to outcome, (3) Analyzing data flow and serialization, (4) Investigating resource/asset management, (5) Examining animation state machines, (6) Debugging VFX or particle setups, (7) Analyzing audio routing, (8) Understanding physics/collision configurations, (9) Reviewing UI/UX implementation patterns, (10) Tracing network request flows, (11) Profiling performance bottlenecks, (12) Extracting business rules and side effects. Triggers: 'how does X work', 'trace the flow', 'explain this code', 'what calls this', 'investigate', 'analyze this system', 'how is X loaded', 'what triggers X', 'where is X serialized'."
+description: "Quick investigation of Unity projects. Answers questions about how systems work with a short focused summary and 1-3 detailed explanations. No report document — direct conversational answers. Use when: (1) Quick question about how a feature works, (2) Understanding a class or method's purpose, (3) Tracing a call chain or data flow, (4) Finding where something is defined or used, (5) Understanding system dependencies, (6) Answering 'what does X do' or 'how does X work'. Triggers: 'how does X work', 'what does X do', 'explain this code', 'what calls this', 'investigate', 'where is X defined', 'how is X used', 'what triggers X', 'trace the flow', 'analyze this system'."
 ---
 
-# Unity Investigator
+# Unity Quick Investigator
 
-**Input**: Question or system to investigate + optional starting file/class
-**Output**: Report at `Documents/Investigations/INVESTIGATION_[SubjectName]_[YYYYMMDD].md` per `assets/templates/INVESTIGATION_REPORT.md`
+Answer the question. Nothing else.
 
-## Workflow
+## How It Works
 
-1. **Scope** — identify investigation type (logic/data/resources/animation/VFX/audio/physics/UI/networking/performance), primary subject, entry points, boundaries
-2. **Discover** — run `scripts/trace_logic.sh [Target]`, use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`), grep/glob for assets, `ast_grep_search` for patterns
-3. **Analyze** — apply analysis rules for relevant type(s) below
-4. **Report** — read INVESTIGATION_REPORT.md template, fill type field, populate sections, delete unused §8.x sections, include Mermaid diagrams, save
-5. **Summary** — present key findings, highlight risks/debt/improvements
+1. **Parse** — extract the target (class, method, field, system, flow)
+2. **Find** — pick the fastest tool, get the answer
+3. **Reply** — use the template from `references/output-template.md`
 
-## Analysis Rules by Type
+## Tool Selection (pick ONE, go fast)
 
-### Logic Flow
-- Trace from entry points: `Awake`, `Start`, `OnEnable`, `Update`, event handlers, coroutines
-- Map complete call chain trigger→outcome, conditional branches, state transitions
-- Identify async operations (coroutines, `Awaitable`, `UniTask`), execution order dependencies
+| Need | Tool |
+|:---|:---|
+| Definition / source | `lsp_goto_definition` |
+| Who calls it | `lsp_find_references` |
+| Find by name | `lsp_symbols` (workspace) |
+| Blast radius | `impact-analyzer` |
+| Pattern match | `grep` / `ast_grep_search` |
+| Broad sweep | `scripts/trace_logic.sh [Target]` |
 
-### Data Structures & Serialization
-- Map serialization format (JSON, FlatBuffers, Binary, ScriptableObject)
-- Trace data source→transformations→destination
-- Check `[Serializable]`, `[SerializeField]`, PlayerPrefs, schema versioning
+Chain tools only when the first result is incomplete. Stop the moment you can answer.
 
-### Resource Management
-- Map loading strategies (Resources.Load, AssetBundle, Addressables), lifecycle, memory impact
-- Document ScriptableObject configs, prefab instantiation, pooling
+## Rules
 
-### Animation Systems
-- Document Animator Controllers (states, transitions, parameters), Animation Events, Blend Trees
-- Map state machine flow with Mermaid `stateDiagram-v2`
-
-### VFX & Particle Systems
-- Document hierarchies, emission, custom shaders, VFX Graph
-- Assess performance: particle counts, overdraw, LOD culling
-
-### Audio Systems
-- Map AudioSource placement, AudioMixer routing, sound triggers, pooling/streaming
-
-### Physics & Collision
-- Document Collider types/layers, Rigidbody configs, OnCollision/OnTrigger handlers
-- Identify raycast usage, FixedUpdate vs Update for physics
-
-### UI/UX Implementation
-- Document Canvas setup, layout system, screen navigation, input handling
-- Check localization, accessibility, responsive scaling
-
-### Networking & Multiplayer
-- Identify protocol, message format, request→response lifecycle, state sync
-- Check auth, encryption, data validation
-
-### Performance Profiling
-- Identify hot paths, memory allocation patterns, Update costs
-- Check draw call batching, object pooling coverage
-
-## Best Practices
-
-- **Breadth-First**: Scan structure before deep-diving methods
-- **Explain "Why"**: Recover engineering intent, not just describe code
-- **Highlight Risks**: Flag debt, threading issues, memory leaks, race conditions
-- **Use Diagrams**: Mermaid sequence/state/graph diagrams
-- **Quantify Impact**: Estimate memory, CPU, draw call costs
+- Answer the question directly. No narration, no preamble.
+- Use `references/output-template.md` format. Always.
+- 1-3 details max. Skip obvious stuff.
+- Code snippets only when they clarify — never dump full methods.
+- Cite with `File.cs:L##` inline. No separate refs section.
+- If unsure, say so. Don't speculate.

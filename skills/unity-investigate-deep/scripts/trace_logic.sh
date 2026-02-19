@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Unity Quick Investigation Discovery Script
+# Unity Investigation Discovery Script
 # Traces usages, references, and asset bindings for a target class/method/system
 # Usage: ./trace_logic.sh [SearchPattern] [--assets] [--deep]
 

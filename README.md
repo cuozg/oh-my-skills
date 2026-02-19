@@ -26,6 +26,10 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ├── README.md            # This file
 ├── opencode.json        # Plugin and agent configuration
 ├── commands/            # Slash commands for common workflows
+│   ├── git/             # Git operations (comment, squash)
+│   ├── unity/           # Unity workflows (plan, debug, deploy, etc.)
+│   ├── omo/             # Orchestrator/meta commands (sisyphus, task, etc.)
+│   └── skill/           # Skill management (create)
 ├── rules/               # Project-wide rules agents must follow
 │   ├── agent-behavior.md
 │   ├── unity-asset-rules.md
@@ -45,24 +49,54 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 
 **Location**: `.opencode/commands/`
 
-Slash commands provide quick-access workflows. Available commands:
+Slash commands provide quick-access workflows, organized by category:
+
+### Unity (`commands/unity/`)
 
 | Command | Description |
 | :--- | :--- |
-| `/unity-plan` | Plan Unity features with structured output |
-| `/unity-implement-logic` | Implement C# game logic |
-| `/unity-fix-errors` | Diagnose and fix errors |
-| `/unity-investigate` | Deep-dive code analysis |
-| `/unity-review-pr` | Review pull requests on GitHub |
-| `/unity-review-pr-local` | Review changes locally |
-| `/unity-test` | Create and run tests |
-| `/unity-optimize-performance` | Find and fix performance issues |
-| `/unity-documentation` | Generate project documentation |
-| `/unity-mobile-deploy` | iOS/Android build and deploy |
-| `/unity-web-deploy` | WebGL build and deploy |
-| `/unity-write-tdd` | Generate Technical Design Documents |
-| `/git-comment` | Generate structured commit comments |
-| `/git-squash` | Squash and organize commits |
+| `/unity/plan` | Plan Unity features with structured output |
+| `/unity/implement-logic` | Implement C# game logic |
+| `/unity/fix-errors` | Diagnose and fix errors |
+| `/unity/investigate` | Deep-dive code analysis |
+| `/unity/review-pr` | Review pull requests on GitHub |
+| `/unity/review-pr-local` | Review changes locally |
+| `/unity/test` | Create and run tests |
+| `/unity/optimize-performance` | Find and fix performance issues |
+| `/unity/documentation` | Generate project documentation |
+| `/unity/mobile-deploy` | iOS/Android build and deploy |
+| `/unity/web-deploy` | WebGL build and deploy |
+| `/unity/write-tdd` | Generate Technical Design Documents |
+| `/unity/debug` | Deep investigation and debugging |
+| `/unity/log-analyze` | Parse and analyze console logs |
+| `/unity/refactor` | Safe code transformation |
+| `/unity/singleton-audit` | Audit Singleton usage |
+
+### Git (`commands/git/`)
+
+| Command | Description |
+| :--- | :--- |
+| `/git/comment` | Generate structured commit comments |
+| `/git/squash` | Squash and organize commits |
+
+### Orchestrator (`commands/omo/`)
+
+| Command | Description |
+| :--- | :--- |
+| `/omo/omo` | Delegation to @sisyphus |
+| `/omo/sisyphus` | Full orchestrator with skill/category selection |
+| `/omo/delegate-task` | Delegate task to best-fit agent |
+| `/omo/task` | Delegation to @sisyphus-junior |
+| `/omo/plan` | Planning workflow |
+| `/omo/ulw` | Ultrawork loop |
+| `/omo/prompt` | Improve user's prompt |
+| `/omo/find-skill` | Find the corresponding skill |
+
+### Skill (`commands/skill/`)
+
+| Command | Description |
+| :--- | :--- |
+| `/skill/create` | Create or update a skill |
 
 ## Rules
 

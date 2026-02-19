@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations."
+description: "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends the agent's capabilities with specialized knowledge, workflows, or tool integrations."
 ---
 
 # Skill Creator
@@ -9,10 +9,8 @@ description: "Guide for creating effective skills. This skill should be used whe
 Skill concept with concrete usage examples. Optional: existing skill folder, reference materials, scripts, assets.
 
 ## Output
-Validated `.skill` package via `package_skill.py`. Contains `SKILL.md` + bundled `scripts/`, `references/`, `assets/`.
-
-## Output Requirement (MANDATORY)
-Run: `.opencode/skills/other/skill-creator/scripts/package_skill.py <path/to/skill-folder>`
+Validated skill folder containing `SKILL.md` + optional `scripts/`, `references/`, `assets/`.
+Optionally package into `.skill` zip via `package_skill.py` (only when user requests packaging).
 
 ## Skill Anatomy
 
@@ -30,7 +28,7 @@ skill-name/
 
 ## Core Principles
 
-1. **Concise** — Context window is shared. Only add what Claude doesn't know. Examples > explanations.
+1. **Concise** — Context window is shared. Only add what the agent doesn't know. Examples > explanations.
 2. **Freedom matches fragility** — Fragile tasks → specific scripts. Flexible tasks → text guidance.
 3. **Progressive disclosure** — Metadata always loaded (~100 words). SKILL.md on trigger (<5k words). References on demand.
 
@@ -50,23 +48,38 @@ Keep SKILL.md under 500 lines. Reference files one level deep. For files >100 li
 - **Domain organization**: One reference file per domain/variant, load only what's needed
 - **Conditional details**: Link to advanced content, load on demand
 
-## Creation Process
+## Available MCP Tools
+
+Use these native tools instead of calling scripts manually:
+
+| Tool | Purpose |
+|:---|:---|
+| `skill-scaffold` | Create pre-populated skill directory (type-aware: unity/bash/git/other). **Preferred for new skills.** |
+| `skill-scaffold-generator` | Generate domain-aware templates with skill type detection |
+| `skill-validator` | Deep structural validation (frontmatter, body quality, references, naming). Supports `--fix` |
+| `skill-deps` | Analyze dependencies and cross-skill references |
+| `skill-finder` | Find best matching skill for a task description |
+
+## Creating a New Skill
 
 1. **Understand** — Gather concrete usage examples; ask targeted questions
 2. **Plan** — Per example, identify reusable scripts, references, assets
-3. **Initialize** — Prefer `skill-scaffold` tool, fallback `init_skill.py`:
+3. **Initialize** — Use `skill-scaffold` MCP tool (preferred) or fallback `init_skill.py`:
    ```bash
-   python .opencode/tools/skill-scaffold.py <name> --type <unity|bash|git|other> --path <dir>
-   # Fallback: .opencode/skills/other/skill-creator/scripts/init_skill.py <name> --path <dir>
+   # Fallback only:
+   python <skill-creator-dir>/scripts/init_skill.py <name> --path <dir>
    ```
 4. **Edit** — Implement resources, write SKILL.md (imperative form)
-   - Design patterns: [workflows.md](.opencode/skills/other/skill-creator/references/workflows.md), [output-patterns.md](.opencode/skills/other/skill-creator/references/output-patterns.md)
+   - Design patterns: load `references/workflows.md` and `references/output-patterns.md` via `read_skill_file`
    - Start with resources → update SKILL.md → test scripts → delete unused example files
-5. **Package**:
-   ```bash
-   python .opencode/tools/skill-validator.py <folder> [--fix] [--json]
-   python .opencode/tools/skill-deps.py <folder> --skills-root .opencode/skills [--json]
-   .opencode/skills/other/skill-creator/scripts/package_skill.py <folder> [output-dir]
-   ```
-   Validates frontmatter, structure, description quality. Creates `.skill` zip on success.
-6. **Iterate** — Use on real tasks → notice gaps → update → re-package
+5. **Validate** — Use `skill-validator` MCP tool to check structure
+6. **Package** (only if requested) — Run `package_skill.py <folder> [output-dir]`
+7. **Iterate** — Use on real tasks → notice gaps → update
+
+## Updating an Existing Skill
+
+1. **Load** — `use_skill` to read current SKILL.md into context
+2. **Read resources** — `read_skill_file` for scripts, references, assets that need changes
+3. **Edit** — Modify files directly at the skill's directory path
+4. **Validate** — Use `skill-validator` MCP tool
+5. **Package** (only if requested) — Run `package_skill.py`

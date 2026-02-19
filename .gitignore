@@ -11,3 +11,4 @@ opencode.jsonc
 .gitignore
 dcp.jsonc
 tasks
+package-lock.json

@@ -1,74 +1,132 @@
 ---
 name: unity-plan
-description: "High-level planning for Unity features with multi-file output and patch generation. Use when: (1) Analyzing requirements and specs, (2) Investigating existing codebase/systems, (3) Breaking work into epics and tasks, (4) Estimating effort and identifying risks, (5) Generating implementation patches with 100% code changes. Outputs a folder of HTML files (overview, tasks & dependencies, estimates & timeline) plus a unified diff patch file."
+description: "Task planner for Unity projects using oh-my-opencode Task System. Receives a user request, analyzes it, breaks it into atomic tasks with dependencies, and creates all tasks via task_create. Planning only — no implementation. Use when: (1) Breaking a feature request into actionable tasks, (2) Creating a work plan before implementation, (3) Organizing multi-step work with dependency chains, (4) Preparing task lists for execution. Triggers: 'plan this', 'break this down', 'create tasks for', 'plan feature', 'task breakdown', 'what tasks do I need', 'plan implementation', 'create a plan'."
 ---
+# Unity Plan
 
-# Unity Planning Skill
+**Input**: User request — feature, bugfix, refactor, or any work description
+**Output**: Structured task list created via `task_create` tool + summary output following the mandatory template
 
-**Input**: Clear task/problem description, optional file paths, constraints, context
-**Output**: 4 HTML files + 1 patch file at `documents/plans/{plan-name}/`
+**IMPORTANT**: Planning only — do NOT implement. Create tasks, report them, stop.
 
-**IMPORTANT**: Planning only — do NOT implement. DO generate complete code patches.
+## Role
 
-## Architecture: Templates vs Generated Files
+You are @Sisyphus (Ultraworker). When a user asks you to do something, you:
 
-**Templates** (`assets/templates/`) = internal boilerplate with `[PLACEHOLDER]` values. **NEVER** access directly.
-**Generated files** (`documents/plans/{plan-name}/`) = user-facing output. Users open these in browser.
+1. Analyze the request
+2. Break it into atomic tasks
+3. Create all tasks via the Task System
+4. Output the plan following the mandatory template
 
-| Template (internal) | Generated Output (user-facing) |
-|---|---|
-| `assets/templates/PLAN_OVERVIEW.html` | `documents/plans/{plan-name}/overview.html` |
-| `assets/templates/PLAN_TASKS.html` | `documents/plans/{plan-name}/tasks.html` |
-| `assets/templates/PLAN_ESTIMATES.html` | `documents/plans/{plan-name}/estimates.html` |
-| `assets/templates/PLAN_PATCH.html` | `documents/plans/{plan-name}/patch.html` |
-| `assets/templates/PLAN_PATCH_TEMPLATE.patch` | `documents/plans/{plan-name}/changes.patch` |
-
-`{plan-name}` = kebab-case feature name.
-
-## Generation Rules
-
-1. Read template from `assets/templates/` for structure
-2. Replace all `[PLACEHOLDER]` values with plan content
-3. Keep sticky `<nav class="plan-nav-bar">` as first `<body>` element; hrefs use `PLAN_` prefix (e.g. `./PLAN_OVERVIEW.html`)
-4. Mark correct tab with `class="nav-tab nav-tab-active"` per file
-5. Remove all `<!-- INSTRUCTION: ... -->` comments
-6. Write to `documents/plans/{plan-name}/`
-7. **No `<script>` tags, JavaScript, event handlers** — pure HTML `<a href>` navigation only
-8. Preserve CSP meta tag from template exactly as-is
+You do NOT execute the tasks. You plan them.
 
 ## Workflow
 
-1. **Read all templates** in `assets/templates/`
-2. **Analyze requirements** — goals, constraints, acceptance criteria; ask if unclear
-3. **Investigate codebase** — use `unity-investigate` skill for affected systems, files, entry points
-4. **Create output folder**: `mkdir -p documents/plans/{plan-name}`
-5. **Generate overview.html** — summary cards, architecture (old vs new), technical approach
-6. **Generate tasks.html** — epic/task table, full walkthrough per task with files and criteria, dependency graph, dependency matrix, risks, blockers, acceptance criteria
-   - Types: `Logic`, `UI`, `Data`, `API`, `Asset`, `Test`, `Config`
-   - Costs: `badge-s` S (<2h), `badge-m` M (2-4h), `badge-l` L (4-8h), `badge-xl` XL (1-2d)
-   - Task IDs: `T-{uuid}` format (oh-my-opencode Task System)
-   - Per-task fields: id, subject, description, status, blockedBy, blocks, owner, wave
-7. **Generate estimates.html** — totals, per-epic table, implementation phases (timeline), milestones, recommended order, resource allocation, assumptions
-8. **Generate changes.patch** — unified diff with 100% code changes for all tasks
-    - Unified diff format: `--- a/path` / `+++ b/path` / `@@ hunks @@`
-    - New files: `--- /dev/null`; deleted: `+++ /dev/null`; 3 lines context
-    - Every task MUST have corresponding code
-9. **Generate patch.html** — stats, file list, GitHub-style diff viewer, download link
-10. **Verbal summary** — location, effort, risks, critical path, patch stats
+1. **Parse request** — Extract: goal, scope, constraints, affected systems
+2. **Investigate** — If the request references existing code/systems, quickly investigate to understand scope. Use `grep`, `read`, `glob`, `lsp_symbols` as needed. Keep investigation minimal — just enough to plan accurately.
+3. **Decompose** — Break into atomic tasks. Each task = one clear deliverable.
+4. **Map dependencies** — Identify which tasks block others. Maximize parallelism: only add `blockedBy` when a task truly depends on another's output.
+5. **Create tasks** — Call `task_create` for each task with:
+   - `subject`: Short imperative title (e.g., "Add PlayerHealth component")
+   - `description`: What to do, why, affected files/systems, acceptance criteria
+   - `blockedBy`: Array of task IDs this depends on (empty if independent)
+6. **Output** — Print the plan following the **Mandatory Output Template** below
 
-## Output Checklist
+## Task Decomposition Rules
 
-- [ ] All 5 templates read; output folder created
-- [ ] All 4 HTML files + patch written to `documents/plans/{plan-name}/`
-- [ ] Every task has walkthrough, file list, criteria
-- [ ] changes.patch in unified diff format, all tasks covered
-- [ ] Navigation tabs in all HTML with `PLAN_` prefix paths
-- [ ] Correct `nav-tab-active` per file; navbar first in `<body>`
-- [ ] **No JavaScript** in any generated file
-- [ ] All `<!-- INSTRUCTION -->` comments removed
+- **Atomic**: Each task = one logical unit of work. If you can split it, split it.
+- **Independent where possible**: Minimize dependency chains. Tasks that touch different files/systems can run in parallel.
+- **Ordered by dependency**: Create prerequisite tasks first so you have their IDs for `blockedBy`.
+- **Descriptive**: Each task description must include enough context for any developer to execute it without asking questions.
+- **Sized appropriately**: Aim for tasks that take 30min-4h. Larger = split further. Smaller = merge with related work.
 
-## Handoff & Boundaries
+## Task Types
 
-- **OWNS**: Requirement analysis, epic/task breakdown, estimation, risk, dependency mapping, timeline
-- **Delegates to**: `unity-plan-detail` (per-task code), `unity-game-designer` (design concepts)
-- **Does NOT**: Generate per-task implementation code, execute plans (that's `unity-plan-executor`)
+Tag each task subject with a type prefix when helpful:
+
+| Prefix         | Meaning                               |
+| :------------- | :------------------------------------ |
+| `[Logic]`    | Game logic, systems, algorithms       |
+| `[UI]`       | User interface, screens, layouts      |
+| `[Data]`     | Data models, schemas, serialization   |
+| `[API]`      | External integrations, networking     |
+| `[Asset]`    | Prefabs, materials, sprites, audio    |
+| `[Test]`     | Unit tests, integration tests         |
+| `[Config]`   | Settings, build config, project setup |
+| `[Refactor]` | Code restructuring, cleanup           |
+| `[Fix]`      | Bug fixes                             |
+| `[Docs]`     | Documentation                         |
+
+## Mandatory Output Template
+
+ALWAYS use this exact template structure after creating all tasks. No negotiation.
+
+```
+## Plan: {Plan Title}
+
+**Goal**: {One-line goal}
+**Scope**: {Affected systems/areas}
+**Total Tasks**: {N}
+**Parallel Waves**: {W}
+
+### Task Breakdown
+
+| # | ID | Type | Task | Depends On | Wave |
+|---|-----|------|------|------------|------|
+| 1 | T-{id} | [Type] | {subject} | — | 1 |
+| 2 | T-{id} | [Type] | {subject} | T-{id} | 1 |
+| 3 | T-{id} | [Type] | {subject} | T-{id}, T-{id} | 2 |
+| ... | ... | ... | ... | ... | ... |
+
+### Dependency Graph
+
+Wave 1 (parallel): T-{id}, T-{id}
+Wave 2 (after Wave 1): T-{id} → depends on T-{id}
+Wave 3 (after Wave 2): T-{id} → depends on T-{id}, T-{id}
+
+### Notes
+- {Any risks, assumptions, or decisions made during planning}
+- {Suggested execution order if not obvious from waves}
+```
+
+### Template Rules
+
+1. **Wave** = group of tasks that can execute in parallel. Wave 1 has no dependencies. Wave 2 depends on Wave 1 tasks. Etc.
+2. **Depends On** = list of task IDs from `blockedBy`. Use `—` for no dependencies.
+3. **ID** = exact `T-{uuid}` returned by `task_create`.
+4. **Notes** = capture anything the executor needs to know: risks, ambiguities, architectural decisions.
+5. Every task in the table MUST have been created via `task_create` — no phantom tasks.
+6. Every `task_create` call MUST appear in the table — no hidden tasks.
+
+## Examples
+
+**Input**: "Add a health system to the player"
+
+**What you do**:
+
+1. Investigate: find PlayerController, existing components
+2. Decompose into tasks:
+   - Create PlayerHealth MonoBehaviour
+   - Add damage/heal methods with events
+   - Integrate with existing PlayerController
+   - Add health UI display
+   - Write unit tests for PlayerHealth
+3. Create each via `task_create` with proper `blockedBy`
+4. Output the plan using the template
+
+**Input**: "Fix the inventory duplication bug"
+
+**What you do**:
+
+1. Investigate: find inventory system, reproduce path
+2. Decompose:
+   - Investigate root cause of duplication
+   - Fix the duplication logic
+   - Add guard/validation
+   - Write regression test
+3. Create tasks, output plan
+
+## Boundaries
+
+- **OWNS**: Request analysis, task decomposition, dependency mapping, task creation via Task System
+- **Does NOT**: Execute tasks, write code, modify files, create patches

@@ -1,0 +1,92 @@
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║  TEMPLATE FILE — DO NOT USE DIRECTLY                               ║
+# ║                                                                     ║
+# ║  This is an INTERNAL template showing the per-task patch format.   ║
+# ║  Generated output: documents/plans/{plan-name}/patches/T-{id}.patch║
+# ║  One .patch file per task — never one monolithic patch.            ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+#
+# PLAN_PATCH_TEMPLATE — Per-Task Format
+#
+# Each task gets its own .patch file in the patches/ subfolder.
+# Filename: T-{task-id}.patch
+# Compatible with: patch -p1 < T-{task-id}.patch
+#
+# STRUCTURE:
+# - One .patch file PER TASK (not one for entire plan)
+# - Each file contains ALL diffs for that single task
+# - Each modified/added/deleted file gets its own diff block within the task patch
+# - Use unified diff format (--- a/ +++ b/)
+#
+# OUTPUT LOCATION:
+#   documents/plans/{plan-name}/patches/T-{task-id}.patch
+#
+# PLACEHOLDERS:
+#   [TASK_ID]          — Task identifier (T-{uuid})
+#   [TASK_SUBJECT]     — Short task description
+#   [FILE_PATH]        — Relative path from project root
+#   [HUNK_HEADER]      — @@ -start,count +start,count @@
+#
+# RULES:
+# 1. Include 3 lines of context around each change
+# 2. New files: use /dev/null as the "a" path
+# 3. Deleted files: use /dev/null as the "b" path
+# 4. Group hunks logically — one per method/block change
+# 5. Include ALL files affected by THIS task
+# 6. Order: new files first, then modified, then deleted
+# 7. Each patch must be independently reviewable
+#
+# === PER-TASK PATCH FORMAT ===
+#
+# File: patches/T-{task-id}.patch
+# Task: [TASK_SUBJECT]
+
+--- a/[FILE_PATH]
++++ b/[FILE_PATH]
+[HUNK_HEADER]
+ [CONTEXT_LINE_1]
+ [CONTEXT_LINE_2]
+ [CONTEXT_LINE_3]
+-[OLD_LINE_1]
+-[OLD_LINE_2]
++[NEW_LINE_1]
++[NEW_LINE_2]
++[NEW_LINE_3]
+ [CONTEXT_LINE_4]
+ [CONTEXT_LINE_5]
+ [CONTEXT_LINE_6]
+
+# === NEW FILE EXAMPLE ===
+
+--- /dev/null
++++ b/[NEW_FILE_PATH]
+@@ -0,0 +1,[TOTAL_LINES] @@
++[COMPLETE_FILE_CONTENT_LINE_BY_LINE]
+
+# === DELETED FILE EXAMPLE ===
+
+--- a/[DELETED_FILE_PATH]
++++ /dev/null
+@@ -1,[TOTAL_LINES] +0,0 @@
+-[COMPLETE_FILE_CONTENT_LINE_BY_LINE]
+
+# === GENERATION RULES ===
+#
+# For EACH task in the plan:
+#   1. Create patches/T-{task-id}.patch
+#   2. Identify every file that task changes
+#   3. Write the complete diff for each file
+#   4. Include full method/class context (not just changed lines)
+#   5. Ensure patch applies cleanly: patch -p1 --dry-run < patches/T-{id}.patch
+#
+# Cost-to-detail mapping:
+#   S tasks: Full implementation (< 50 lines typically)
+#   M tasks: Full implementation (50-150 lines typically)
+#   L tasks: Full implementation (150-400 lines typically)
+#   XL tasks: Full implementation (400+ lines typically)
+#
+# EVERY task MUST have its own .patch file.
+# No task may be left without a corresponding patches/T-{id}.patch file.
+#
+# Also generate tasks.json alongside patches/:
+#   [{"id": "T-{id}", "subject": "...", "type": "Logic", "cost": "M", "wave": 1}]
