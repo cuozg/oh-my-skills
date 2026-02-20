@@ -1,8 +1,7 @@
 ---
-name: unity-test
+name: unity-test-unit
 description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play Mode tests, (2) Generating comprehensive test suites for features, (3) Mocking dependencies, (4) Maximizing test coverage for Unity C# code. Triggers: 'write tests', 'test this class', 'add unit tests', 'test coverage', 'play mode test', 'edit mode test'."
 ---
-
 # Unity Test Generation
 
 **Input**: Class, method, or feature to test. Optional: test assembly, mode preference (Edit/Play), coverage target.
@@ -17,16 +16,16 @@ description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play 
 
 ## Test Case Categories
 
-| Category | What to Test |
-|----------|-------------|
-| Happy path | Normal input → expected output |
-| Boundary values | Min, max, zero, empty, null, at-limit |
-| Error conditions | Invalid input → exception or graceful fallback |
+| Category            | What to Test                                                         |
+| ------------------- | -------------------------------------------------------------------- |
+| Happy path          | Normal input → expected output                                      |
+| Boundary values     | Min, max, zero, empty, null, at-limit                                |
+| Error conditions    | Invalid input → exception or graceful fallback                      |
 | State preconditions | Behavior in different states (initialized, disposed, mid-transition) |
-| Events | Subscribe, fire conditions, handler args, unsubscribe |
-| State transitions | Valid/invalid transitions, re-entry |
-| Integration points | Interface calls, event bus messages, callbacks |
-| Concurrency | Multiple calls, rapid succession, re-entrant |
+| Events              | Subscribe, fire conditions, handler args, unsubscribe                |
+| State transitions   | Valid/invalid transitions, re-entry                                  |
+| Integration points  | Interface calls, event bus messages, callbacks                       |
+| Concurrency         | Multiple calls, rapid succession, re-entrant                         |
 
 ## Directory Structure
 
@@ -53,6 +52,6 @@ Assets/Scripts/Test/
 
 ## References
 
-- [Test Patterns & Organization](references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
+- [Test Patterns &amp; Organization](references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
 - [Assembly Definition Setup](references/test-assembly-setup.md) — `.asmdef` templates, compilation errors, test discovery
 - [TEST_EXAMPLES.md](references/TEST_EXAMPLES.md) — comprehensive examples: Edit/Play Mode, mocking, parameterized, event testing

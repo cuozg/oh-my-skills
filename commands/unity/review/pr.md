@@ -1,11 +1,9 @@
 ---
-description: Review pull requests on GitHub (ulw)
-agent: sisyphus-junior
+description: Use skill unity-review-pr to review the pull request $ARGUMENTS (ulw)
+agent: sisyphus
 model: github-copilot/claude-opus-4.6
-skill: unity-review-pr
 subtask: true
 ---
 Ultrawork
 ---
-1. Load skill : unity-review-pr
-2. Review PR: $ARGUMENTS
+Use skill unity-review-pr to review the pull request $ARGUMENTS
