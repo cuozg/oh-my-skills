@@ -1,115 +1,76 @@
 # Verification Gates
 
-No completion claims without fresh verification evidence. Evidence before claims, always.
+Evidence before claims. Investigate before commenting.
 
-## The Iron Law
+## Evidence Requirements by Severity
+
+| Severity | Required Before Commenting | NOT Sufficient |
+|:---------|:--------------------------|:---------------|
+| 🔴 Critical | Caller count + affected files + reproduction scenario | "Looks wrong", "might crash" |
+| 🟡 Major | Trigger conditions + what state leads to the bug | "Could be a problem" |
+| 🔵 Minor | Brief explanation of why current code is suboptimal | "I prefer it differently" |
+
+## Investigation Protocol
 
 ```
-NO STATUS CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+BEFORE adding any // REVIEW: comment:
+
+1. IDENTIFY: What evidence proves this is a real issue?
+2. SEARCH: grep/LSP for callers, subscribers, state mutations
+3. TRACE: Follow the data flow — can this state actually occur?
+4. VERIFY: Does evidence confirm the issue is real, not theoretical?
+   - If NO: Don't comment. Move on.
+   - If YES: Write comment with evidence inline.
 ```
 
-If you haven't run the verification command in this review, you cannot claim it passes.
+## Investigation Commands
 
-## Gate Protocol
-
-```
-BEFORE claiming any status:
-
-1. IDENTIFY: What command proves this claim?
-2. RUN: Execute the FULL command (fresh, complete)
-3. READ: Full output, check exit code, count failures
-4. VERIFY: Does output confirm the claim?
-   - If NO: State actual status with evidence
-   - If YES: State claim WITH evidence
-5. ONLY THEN: Make the claim
-
-Skip any step = lying, not verifying
-```
-
-## Verification Requirements
-
-| Claim | Required Evidence | NOT Sufficient |
-|:------|:------------------|:---------------|
-| "Tests pass" | Test output: 0 failures | Previous run, "should pass" |
-| "Build succeeds" | Build command: exit 0 | Linter passing, "looks good" |
-| "No compile errors" | Compiler output: 0 errors | "Code looks correct" |
-| "Bug fixed" | Test original symptom: passes | "Code changed, assumed fixed" |
-| "No regressions" | Full test suite: all green | Spot check of changed files |
-| "Requirements met" | Line-by-line checklist verified | "Tests passing" |
-
-## Pre-Commit Verification Checklist
-
-Run these in order before declaring "ready to commit":
-
-### 1. Compile Check
 ```bash
-# Unity project — check for compile errors
-# If Unity is open, check console. Otherwise:
-dotnet build <project>.csproj 2>&1 | tail -20
-```
-Evidence: exit code 0, zero errors.
+# Count callers of a method
+grep -rn "MethodName\s*(" Assets/Scripts/ --include="*.cs" | wc -l
 
-### 2. Test Suite (if exists)
-```bash
-# Run Unity tests via command line
-unity -runTests -testPlatform EditMode -projectPath . -testResults /tmp/test-results.xml
-# Or via dotnet
-dotnet test
-```
-Evidence: test output shows 0 failures.
+# Find all state mutations
+grep -rn "_fieldName\s*=" Assets/Scripts/ --include="*.cs"
 
-### 3. Diff Sanity Check
-```bash
-git diff --stat          # verify only intended files changed
-git diff --cached --stat # verify staging area matches intent
-```
-Evidence: no unexpected files, no debug artifacts (`.log`, `.tmp`, `*.bak`).
+# Find event subscribers
+grep -rn "EventName\s*[+-]=" Assets/Scripts/ --include="*.cs"
 
-### 4. Asset Integrity (if prefabs/assets changed)
-```bash
-# Check for broken references
-grep -rn "m_Script: {fileID: 0}" $(git diff --name-only | grep -E '\.(prefab|unity)$')
-# Check for missing shaders
-grep -rn "m_Shader: {fileID: 0}" $(git diff --name-only | grep -E '\.(mat|asset)$')
-```
-Evidence: zero matches on broken patterns.
-
-## Red Flags — STOP
-
-- Using "should", "probably", "seems to"
-- Expressing satisfaction before verification ("Done!", "Fixed!", "Ready!")
-- About to commit without running checks
-- Trusting agent reports without independent verification
-- Relying on partial verification
-- **ANY wording implying success without having run verification**
-
-## Rationalization Prevention
-
-| Excuse | Reality |
-|:-------|:--------|
-| "Should work now" | RUN the verification |
-| "I'm confident" | Confidence ≠ evidence |
-| "Just this once" | No exceptions |
-| "Linter passed" | Linter ≠ compiler |
-| "Code looks correct" | Visual inspection ≠ execution |
-
-## Evidence Reporting Format
-
-When reporting verification results in the review:
-
-```markdown
-### Verification
-- **Compile**: ✅ exit 0 (0 errors, 0 warnings)
-- **Tests**: ✅ 42/42 passed (EditMode)
-- **Diff check**: ✅ 3 files changed, all intended
-- **Asset integrity**: ✅ no broken refs found
+# Check if null guard exists anywhere in call chain
+grep -rn "MethodName" Assets/Scripts/ --include="*.cs" | grep -E "null|==\s*null|\?\."
 ```
 
-Or if issues found:
+## Cross-File Verification
 
-```markdown
-### Verification
-- **Compile**: ❌ 2 errors in PlayerController.cs (see Critical findings)
-- **Tests**: ⚠️ 40/42 passed, 2 failures (see Major findings)
-- **Diff check**: ⚠️ unexpected file: debug.log (remove before commit)
-```
+| What to Verify | How | Why |
+|:---------------|:----|:----|
+| All callers handle new exception | grep for method name + check try/catch | API contract changed |
+| Serialized field rename handled | grep for FormerlySerializedAs | Prefab data loss |
+| Event subscribers updated | grep for event += and -= | Missing notification |
+| Interface implementation complete | LSP find implementations | Abstract contract |
+| Enum switch exhaustive | grep for switch + enum type | Missing case |
+
+## False Positive Detection
+
+- Pattern exists but wrapped in `#if UNITY_EDITOR` -> not a runtime issue, downgrade
+- Pattern exists but class has `[ExecuteInEditMode]` -> may be intentional
+- GetComponent in method called from Awake/Start only -> not a hot path issue
+- Allocation in method behind feature flag / `#if DEBUG` -> not shipped
+- Null reference pattern but field has `[RequireComponent]` on the class -> guaranteed present
+
+## Red Flags — Don't Comment
+
+- Pattern is theoretical only — no real caller triggers it
+- Issue exists but is already guarded elsewhere in the call chain
+- "Best practice" violation with zero practical impact in this codebase
+- Style preference disguised as logic issue
+
+## When to Upgrade Severity
+
+| Situation | Upgrade to |
+|:----------|:-----------|
+| Bug affects serialized data (saves, configs, network) | 🔴 — data corruption |
+| Bug only triggers in editor, not runtime | Downgrade to 🔵 |
+| Bug affects 10+ callers | 🔴 — wide blast radius |
+| Bug requires specific rare state to trigger | Keep at 🟡, note rarity |
+
+If a pattern would be 🔴 but the project has an established convention/wrapper that handles it (e.g., a SafeGetComponent wrapper, event bus with auto-cleanup), downgrade to 🔵 and note the convention.

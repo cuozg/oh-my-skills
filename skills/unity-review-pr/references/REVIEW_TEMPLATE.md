@@ -47,6 +47,7 @@ The comment spans lines 10–15. The suggestion block must match exactly the con
 
 ### Breaking Changes ([N])
 ### Potential Issues ([N])
+### Unity-Specific Concerns ([N])
 ### Code Quality ([N])
 ### Impact Analysis
 - Files investigated: X · Breaking call sites: Y
@@ -147,3 +148,5 @@ This avoids repetitive walls of text while ensuring every instance gets a fix su
 | Comment on wrong line | `line` counted from wrong file version | `line` = line number on RIGHT side (new file). Verify against diff output |
 | "Stale" commit error | `commit_id` doesn't match HEAD of PR | Don't hardcode — `post_review.sh` auto-injects latest commit SHA |
 | Multiple reviews posted | Script ran twice | Check for existing pending review: `gh api /repos/{owner}/{repo}/pulls/{N}/reviews` |
+| Comments on deleted files | Comment targeted LEFT/deleted side | Only comment files/lines present on diff RIGHT side |
+| Rate limit hit | Too many API calls in short window | Add delay between calls or batch into fewer review submissions |

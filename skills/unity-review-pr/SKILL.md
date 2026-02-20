@@ -68,9 +68,10 @@ Multiple types → load ALL matching.
 
    **Evidence rules:** 🔴 needs caller count + affected files. 🟡 needs trigger conditions. **Never flag without evidence.**
 
-3. **Review** — Collect agent results (use `session_id`). Apply reference checklists against evidence.
-4. **Build** `/tmp/review.json` per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md): summary + acceptance criteria + one comment per issue. Do NOT include `commit_id` — the post script injects it.
-5. **Submit** — `./skills/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
+3. **Review** — Collect agent results (use `session_id`). Apply reference checklists against evidence. Cross-reference findings between agents; if one agent found a caller chain and another found state mutation on the same field/path, merge into one stronger, higher-severity finding with combined evidence.
+4. **Missing-Things Pass** — Explicitly check for missing safeguards: null guards, event unsubscribe, `Dispose`/release calls, required tests, and documentation on public API changes.
+5. **Build** `/tmp/review.json` per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md): summary + acceptance criteria + one comment per issue. Do NOT include `commit_id` — the post script injects it.
+6. **Submit** — `./skills/unity-review-pr/scripts/post_review.sh <pr_number> /tmp/review.json`
 
 **Fallback** (merged/closed): handled automatically by `post_review.sh` — posts as comment.
 
@@ -88,5 +89,8 @@ Multiple types → load ALL matching.
 
 - ✅ One issue = one comment. Investigate before flagging. Include acceptance criteria. Submit even if merged. Always return `session_id`.
 - ✅ Same issue in N files → full explanation on first, short ref + suggestion on rest (batch pattern).
+- ✅ For each 🔴 issue, verify it is not already handled by base class/wrapper/framework conventions used by the project.
+- ✅ If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points (do not treat as `async void` by default).
+- ✅ For serialization-related findings, check whether the project has migration/versioning support before classifying as breaking.
 - ❌ Never combine issues. Never skip submission. Never flag without evidence. Never discard `session_id`.
 - ❌ Never suggest code that changes behavior beyond the flagged issue. Never hardcode `commit_id`.

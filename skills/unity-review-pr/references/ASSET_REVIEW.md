@@ -11,10 +11,13 @@ Load when PR modifies `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`
 | Custom shader not in Always Included & no scene ref | Pink in builds only | Add to Always Included or ensure ref chain |
 | Shader with unbounded `multi_compile` variants | Exponential build size + compile time | Use `shader_feature` for per-material keywords |
 | Shader changed from opaque to transparent queue | Sorting + performance change — may break layering | Verify render queue and camera sorting |
+| Shader uses `#pragma multi_compile_fog` for mobile indoor-only content | Unnecessary variant explosion | Remove fog multi_compile or gate by platform/feature |
 
 ## 🟡 Major — Materials
 
 `renderer.material` instead of `sharedMaterial` → leak. Unused `multi_compile` → build size. Desktop shader on mobile → fail. `_MainTex` vs `_BaseMap` (URP) mismatch. Material with missing texture slot (null `_MainTex`). Shader LOD set higher than target platform supports.
+
+Material has `_EmissionColor` black while emission keyword/pass enabled → wasted pass and variant. Disable emission keyword or set meaningful emissive output.
 
 ## 🔴 Critical — Textures (.meta)
 
@@ -23,6 +26,7 @@ Load when PR modifies `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`
 | `isReadable: 1` | Doubles memory | Disable unless GetPixels needed |
 | `textureCompression: 0` / RGBA32 mobile | 4x+ memory | ASTC (iOS), ETC2 (Android) |
 | NPOT dimensions | Can't compress | Resize to POT |
+| Mobile texture without Crunch compression where suitable | Build/package size unnecessarily large | Enable Crunch with platform-tuned quality |
 
 ## 🟡 Major — Textures
 
@@ -40,9 +44,19 @@ Load when PR modifies `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`
 
 Empty `m_Controller` → assign or remove. `CullingMode: 0` → CullCompletely. `WriteDefaultValues: 1` → disable. Unintended `ApplyRootMotion` → disable. Pause-immune UI → UnscaledTime. Animator on GO that never animates → remove for CPU save. Transition duration 0 on blended animations → add transition time.
 
+Animation clips with scale curves but no intended scale animation → extra curve eval + larger clip data. Remove scale curves unless required.
+
 ## 🟡 Major — Audio
 
 Unintended `PlayOnAwake` → disable. `SpatialBlend: 1` on UI → set 2D. Large clip uncompressed → Streaming+Vorbis. `loadInBackground: 0` on large clips → enable. `forceToMono: 0` on 3D SFX → enable (stereo in 3D is wasted). Clip > 1MB as `DecompressOnLoad` → use `CompressedInMemory` or `Streaming`.
+
+Audio clip sample rate higher than use-case (e.g., many SFX at 44.1kHz) → unnecessary memory/decode cost. Downsample SFX to appropriate target (often ~22kHz).
+
+## 🔴 Critical — Models (.fbx/.meta)
+
+| Pattern | Issue | Fix |
+|:--------|:------|:----|
+| Tangent import enabled but no normal map usage | Wasted vertex memory in every instance; avoidable runtime cost at scale | Disable tangent import generation for affected models |
 
 ## 🟡 Major — Models (.fbx/.meta)
 
@@ -54,6 +68,8 @@ Unintended `PlayOnAwake` → disable. `SpatialBlend: 1` on UI → set 2D. Large 
 | `importAnimation: 1` on non-animated model | Phantom clips, build bloat | Disable Import Animation |
 | `animationType: 2` (Generic) when Humanoid expected | Retarget won't work | Match rig type to skeleton |
 | `materialImportMode: 1` (Import) from DCC | Creates unmanaged materials | Set to None, assign manually |
+| Lightmap UV overlap on imported mesh | Light bleeding/artifacts after bake | Fix secondary UV unwrap settings or source mesh |
+| BlendShapes imported but never used | Larger mesh memory and skinning overhead | Disable blend shape import |
 
 ## 🟡 Major — ScriptableObject Assets
 
@@ -66,6 +82,8 @@ Camera depth conflicts, light shadow resolution `-1`, ParticleSystem `prewarm: 1
 ## 🔵 Minor
 
 Tiling/offset mismatch, render queue override, maxTextureSize > source, wrong filterMode pixel art, missing sprite atlas tag, redundant animator layers, default audio import settings, model with unused BlendShapes.
+
+SpriteAtlas with mixed-resolution sprites causing wasted atlas space/padding should be normalized or split by resolution class.
 
 ## Grep
 

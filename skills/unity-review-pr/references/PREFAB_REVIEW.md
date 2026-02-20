@@ -18,6 +18,11 @@ Load when PR modifies `.prefab`, `.unity`, or prefab-related `.asset` files.
 | Rigidbody on UI hierarchy | Physics on UI = unexpected | Remove |
 | `[SerializeField]` renamed without `[FormerlySerializedAs]` | Prefab data silently lost | Add attribute |
 | Field type changed on serialized field | Deserialization zeroes data | Migration code |
+| Nested Canvas without `overrideSorting` where independent sort is required | Inherited sorting causes draw-order conflict/Z-fighting | Enable `overrideSorting` and assign explicit sorting order |
+| `m_LocalEulerAnglesHint` diverges from `m_LocalRotation` after merge | Transform inspector mismatch and unstable edits | Re-save transform from editor to realign quaternion/hint |
+| `m_AnchorMin == m_AnchorMax` + non-zero `m_SizeDelta` under LayoutGroup | Manual rect conflicts with layout-driven sizing | Let LayoutGroup drive size or remove layout control |
+| Root Canvas missing `CanvasScaler` | Resolution-dependent UI size breaks across devices | Add/configure `CanvasScaler` strategy |
+| Nested prefab instance points to missing/deleted source | Broken nested prefab reference and missing content | Re-link nested prefab or replace instance |
 
 ## 🟡 Major
 
@@ -35,6 +40,12 @@ Load when PR modifies `.prefab`, `.unity`, or prefab-related `.asset` files.
 | `m_PlayOnAwake: 1` unintentional | `m_PlayOnAwake: 0` |
 | `m_Controller: {fileID: 0}` | Assign or remove Animator |
 | `prewarm: 1` on heavy ParticleSystem | Disable prewarm |
+| Small touch target without `m_RaycastPadding` | Hard-to-tap UI on mobile | Add padding to meet minimum tap area (~44px) |
+| TextMeshPro `m_enableAutoSizing: 1` inside LayoutGroup | Layout thrash + text rebuild overhead | Disable autosize or isolate text from layout-driven size loops |
+| UI Animator `updateMode: 0` (Normal) for pause-independent UI | UI stops animating when timeScale=0 | Use UnscaledTime for pause menus/HUD transitions |
+| Collider moved at runtime without matching Rigidbody | Static collider move forces expensive physics rebuild | Add Rigidbody or avoid runtime movement |
+| Multiple AudioSource components on one GO without intent | Audio layering ambiguity and mixer/debug complexity | Split by purpose or document clearly |
+| ParticleSystem default `maxParticles: 1000` on mobile-target effect | Excessive particle budget risk | Set platform-appropriate particle cap |
 
 ## 🔵 Minor
 

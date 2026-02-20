@@ -1,98 +1,157 @@
 ---
 name: unity-review-code
-description: "Review Unity code changes before commit or PR creation. Self-review uncommitted/staged changes with Unity-specific checklists (performance, lifecycle, serialization, assets), verification gates, and evidence-based findings. Outputs local markdown report. Use when: completing a task, before committing, before creating a PR, after fixing bugs, after refactoring. Triggers: 'review code', 'review changes', 'review before commit', 'self-review', 'check my changes', 'review my work', 'pre-commit review', 'code review'."
+description: "Deep logic review for Unity C# code. Reviews code changes with surgical focus on logic correctness, edge cases, state management, data flow, and concurrency — then adds review comments directly into the code as inline comments. No report document. Input: commit hash, commit range, branch diff, or a feature/logic description to review. Shares core review patterns with unity-review-pr. Use when: reviewing logic before commit, validating a feature implementation, auditing business logic, tracing data flow for correctness, reviewing a specific commit. Triggers: 'review code', 'review logic', 'check this logic', 'review commit', 'review my changes', 'logic review', 'code review', 'review this feature'."
 ---
 
-# Unity Code Reviewer (Pre-Commit)
+# Unity Logic Reviewer
 
-Review code changes before commit or PR. Output local markdown report with evidence-based findings.
+Deep logic review. Comments go directly into the code — no report document.
 
 ## Input → Diff Command
 
 | Input | Command |
 |:------|:--------|
 | None (default) | `git diff` + `git diff --cached` |
-| Staged only | `git diff --cached` |
-| Branch | `git diff <branch>...HEAD` |
+| Commit SHA | `git show <hash>` |
 | Commit range | `git diff <base>..<head>` |
-| Specific files | `git diff -- <paths>` |
+| Branch | `git diff <branch>...HEAD` |
+| Feature/logic request | User describes what to review → find relevant files via grep/LSP |
 
-## Severity Levels
+## Severity
 
 | Severity | Meaning | Action |
 |:---------|:--------|:-------|
-| 🔴 Critical | Crash, data loss, security, memory leak in hot path | **Must fix** before commit |
-| 🟡 Major | Logic bugs, missing error handling, arch violations | **Should fix** before commit |
-| 🔵 Minor | Code quality, conventions, naming | Fix or acknowledge |
-| 💚 Suggestion | Readability, modern patterns, micro-optimization | Optional |
+| 🔴 Critical | Crash, data loss, security, logic that produces wrong results | Must fix |
+| 🟡 Major | Logic bugs, missing edge cases, state corruption risk | Should fix |
+| 🔵 Minor | Simplification, clearer intent, defensive coding | Fix or acknowledge |
 
-## Load References by Changed Files
+## Load References
 
 Always load:
-- [REVIEW_CHECKLISTS.md](references/REVIEW_CHECKLISTS.md) — Unity-specific + general checklists
-- [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements, verification protocol
-- [OUTPUT_FORMAT.md](references/OUTPUT_FORMAT.md) — report template
+- [LOGIC_REVIEW.md](../unity-review-pr/references/LOGIC_REVIEW.md) — shared C# patterns (performance, lifecycle, async, state)
+- [DEEP_LOGIC_REVIEW.md](references/DEEP_LOGIC_REVIEW.md) — advanced logic analysis (control flow, data flow, concurrency, edge cases)
+- [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — how to write and place inline review comments
+- [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements
 
 ## Workflow
 
-1. **Fetch** diff (see Input table). Count changed lines to determine review depth.
+1. **Fetch** — Get the diff (see Input table). For feature/logic requests, identify files first via grep/LSP.
 
-   | Changed Lines | Depth |
-   |:--------------|:------|
-   | < 50 | Security + Correctness + Performance only |
-   | 50–300 | All checklists |
-   | > 300 | Flag scope. Prioritize Security + Correctness. Note risk in summary. |
+2. **Read full context** — For each changed file, read the **entire file** (not just the diff). Logic bugs hide in what surrounds the change.
 
-2. **Context Gathering** (parallel, `run_in_background=true`) — spawn agents **before** reading full diff.
+3. **Deep investigate** (parallel, `run_in_background=true`) — spawn agents to gather evidence.
 
-   **`@explore` agents (1-3):**
+   **`@explore` agents (2-3):**
 
    | Agent | Task |
    |:------|:-----|
-   | Codebase patterns | Read changed files + surrounding context. Identify conventions, architecture, existing patterns. |
-   | Impact analysis | Find callers, subscribers, derived types, prefab/SO refs for modified public members. Count call sites. |
-   | Related tests | Find existing test files for changed code. Check if test updates are needed. |
+   | Call-site analysis | For each modified public method/property: find ALL callers, count call sites, identify which pass null/edge values. |
+   | State flow | Trace state transitions: what sets each field, what reads it, can it be in an invalid state between set and read? |
+   | Data contract | Check serialization, API boundaries, event payloads — does the data shape match all consumers? |
 
-   **`@librarian` agents (0-1, when external library involved):**
+4. **Logic review** — Apply review references against evidence. Focus areas:
 
-   | Agent | Task |
-   |:------|:-----|
-   | Library docs | Fetch API docs, known issues for new/updated packages. |
+   **Control flow:**
+   - Every `if` branch: what happens in the else? Is the else path even possible?
+   - Every loop: can it infinite-loop? Off-by-one? Empty collection?
+   - Every early return: does it skip cleanup that should happen?
+   - Every switch: missing cases? Fall-through intentional?
 
-3. **Review** — Collect agent results. Apply [REVIEW_CHECKLISTS.md](references/REVIEW_CHECKLISTS.md) against evidence.
+   **State management:**
+   - Field mutations: who else reads this field? Will they see a consistent state?
+   - Init order: can this be called before initialization completes?
+   - Lifetime: can this reference outlive the object it points to?
 
-   **By file type:**
+   **Data flow:**
+   - Input validation: what values can arrive? Are all handled?
+   - Null propagation: if A is null, does the chain handle it or crash 3 calls deep?
+   - Type safety: any unsafe casts, enum-to-int conversions, implicit narrowing?
 
-   | Changed Files | Checklist Section |
-   |:------|:----------|
-   | `.cs` | C# Logic & Performance patterns |
-   | `.prefab`, `.unity` | Prefab & Scene patterns |
-   | `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` | Asset patterns |
+   **Edge cases:**
+   - Zero, null, empty, max, negative, duplicate, concurrent
+   - First call vs subsequent calls
+   - Normal path vs error recovery path
 
-   **Evidence rules:** 🔴 needs caller count + affected files. 🟡 needs trigger conditions. **Never flag without evidence.**
+   **Unity Lifecycle Verification:**
+   - For EVERY `MonoBehaviour` in the diff, verify full lifecycle coverage
+   - What is initialized in `Awake` vs `Start`? Any cross-component access in `Awake`?
+   - Are `OnEnable`/`OnDisable` balanced? (subscribe/unsubscribe, register/deregister)
+   - Are coroutines stopped in `OnDisable`?
+   - Are DOTween animations killed in `OnDisable`/`OnDestroy`?
+   - Is there cleanup in `OnDestroy` for native resources?
+   - If `DontDestroyOnLoad`: is there a duplicate guard?
+   - If `[ExecuteAlways]`: are Editor and Play mode paths properly split?
 
-4. **Verify** — Apply [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md). Run build/tests if available. Evidence before claims.
+   **Serialization Safety Check:**
+   - For any changed `[SerializeField]`, `[Serializable]`, or public field, verify migration safety
+   - Was the field renamed? -> add `[FormerlySerializedAs]`
+   - Was the type changed? -> require migration path or explicit data reset strategy
+   - Was a field added to a ScriptableObject? -> validate safe defaults
+   - Was a field removed? -> verify prefabs/SOs do not still depend on serialized data
+   - Is the field interface/abstract? -> Unity default serializer needs `[SerializeReference]` or concrete type
 
-5. **Generate** — Create report per [OUTPUT_FORMAT.md](references/OUTPUT_FORMAT.md) at `Documents/Reviews/<identifier>_review.md`.
-   Use `./skills/unity-review-code/scripts/create_review.sh <identifier>` to initialize output file.
+   **Memory Safety Audit:**
+   - Any `new` inside `Update`/`LateUpdate`/`FixedUpdate`? (per-frame allocation)
+   - Any event `+=` without corresponding `-=`?
+   - Any `Addressables.LoadAssetAsync` without `Release` ownership?
+   - Any `UnityWebRequest` without `using`/`Dispose`?
+   - Any texture/mesh created at runtime without `Destroy`?
+   - Any static collections that grow without clear/reset?
+   - Any delegate/lambda capturing `this` in long-lived context?
 
-6. **Report** — Summarize findings to user with verdict and action items.
+5. **Add inline comments** — Per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md):
+   - Use `edit` to insert pro-format review comments directly into source files
+   - **Full box format** for 🔴 Critical and 🟡 Major issues:
+     ```
+     // ╔══════════════════════════════════════════════════════════════
+     // ║ REVIEW [SEVERITY]: Problem Title
+     // ╟──────────────────────────────────────────────────────────────
+     // ║ WHY:  [root cause]
+     // ║ WHERE: [evidence — callers, files, data flow]
+     // ║ FIX:  [concrete code fix]
+     // ╚══════════════════════════════════════════════════════════════
+     ```
+   - **Quick format** for 🔵 Minor or self-evident issues:
+     ```
+     // ⚠ REVIEW [🔵 MINOR]: Problem → fix suggestion.
+     ```
+   - Every comment MUST have: problem name, WHY, and FIX
+   - Batch pattern: full box on first, `// ⚠ REVIEW` back-ref on rest
 
-## Verdict
+6. **Summarize** — After all comments are placed, give a short verdict to the user:
+   - Count of findings by severity
+   - List of files modified with comments
+   - Top 3 most important issues
 
-| Condition | Verdict | Action |
-|:----------|:--------|:-------|
-| Any 🔴 Critical | ❌ **NOT READY** | Fix before commit |
-| 🟡 Major only | ⚠️ **NEEDS WORK** | Fix or justify before commit |
-| Only 🔵/💚 | ✅ **READY** | Safe to commit (with optional improvements) |
-| No issues | ✅ **CLEAN** | Commit |
+## Comment Placement Rules
+
+- **Add** review comments into actual source files using `edit`
+- **Never** create a separate report document
+- **Never** modify the actual logic — only add review comments
+- One issue = one comment. Don't combine.
+- Same issue in N places → full box on first, `// ⚠ REVIEW` back-ref on rest
+- 🔴 and 🟡 → full box format (╔/╟/╚ borders)
+- 🔵 → quick single-line format (⚠ prefix)
+
+## Evidence Rules
+
+- 🔴 needs: caller count + affected files + reproduction scenario
+- 🟡 needs: trigger conditions + what state leads to the bug
+- 🔵 needs: brief explanation of why current code is suboptimal
+- **Never flag without evidence. Investigate before commenting.**
 
 ## Rules
 
-- ✅ One issue = one finding. Investigate before flagging. Always provide evidence.
-- ✅ Same issue in N files → full explanation on first, short ref on rest (batch pattern).
-- ✅ Run verification commands before claiming build/tests pass.
-- ✅ Check changed files against ALL applicable checklists.
-- ❌ Never flag without evidence. Never claim "tests pass" without running them.
-- ❌ Never combine multiple issues into one finding. Never skip verification gates.
-- ❌ Never suggest changes that alter behavior beyond the flagged issue.
+- ✅ Read the full file, not just the diff. Logic bugs need context.
+- ✅ Trace data flow end-to-end. Follow the value from source to sink.
+- ✅ Check what happens when assumptions are violated (null, empty, concurrent, out-of-order).
+- ✅ Verify event subscribe/unsubscribe pairs. Check lifecycle ordering.
+- ✅ For each branch/path: "Can this state actually occur? What happens if it does?"
+- ✅ When reviewing MonoBehaviour lifecycle, check the FULL lifecycle (`Awake -> OnEnable -> Start -> Update -> OnDisable -> OnDestroy`), not just the changed method.
+- ✅ Check if project uses a DI framework (Zenject/VContainer) — injection patterns differ from manual singleton access.
+- ✅ For async code, verify the project's async convention: UniTask vs Awaitable vs raw Task.
+- ✅ For each allocation in changed code, ask: "How often is this called per frame?"
+- ❌ Never flag style-only issues (naming, formatting) as 🔴 or 🟡.
+- ❌ Never suggest behavioral changes beyond the flagged issue.
+- ❌ Never skip the investigation step. No comment without evidence.
+- ❌ Never downgrade severity because the fix is complex. Severity reflects impact, not fix difficulty.
