@@ -1,8 +1,7 @@
 ---
-name: unity-plan-deep
+name: unity-document-plan-detail
 description: "Deep-dive planning for Unity features with per-task patch generation. Use when: (1) Analyzing requirements and specs, (2) Deep investigating codebase/systems, (3) Breaking work into epics and tasks with full implementation detail, (4) Generating per-task .patch files with 100% code changes. Outputs 3 HTML files (Overview, Task, Patch) + N per-task .patch files."
 ---
-
 # Unity Deep Planning Skill
 
 **Input**: Clear task/problem description, optional file paths, constraints, context
@@ -15,11 +14,11 @@ description: "Deep-dive planning for Unity features with per-task patch generati
 **Templates** (`assets/templates/`) = internal boilerplate. **NEVER** access directly.
 **Generated files** (`documents/plans/{plan-name}/`) = user-facing output. Users open these in browser.
 
-| Template (internal) | Generated Output (user-facing) |
-|---|---|
-| `assets/templates/PLAN_OVERVIEW.html` | `documents/plans/{plan-name}/overview.html` |
-| `assets/templates/PLAN_TASKS.html` | `documents/plans/{plan-name}/tasks.html` |
-| `assets/templates/PLAN_PATCH.html` | `documents/plans/{plan-name}/patch.html` |
+| Template (internal)                            | Generated Output (user-facing)                             |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| `assets/templates/PLAN_OVERVIEW.html`        | `documents/plans/{plan-name}/overview.html`              |
+| `assets/templates/PLAN_TASKS.html`           | `documents/plans/{plan-name}/tasks.html`                 |
+| `assets/templates/PLAN_PATCH.html`           | `documents/plans/{plan-name}/patch.html`                 |
 | `assets/templates/PLAN_PATCH_TEMPLATE.patch` | `documents/plans/{plan-name}/patches/T-{id}.patch` (×N) |
 
 `{plan-name}` = kebab-case feature name.
@@ -42,11 +41,11 @@ documents/plans/{plan-name}/
 
 All HTML files share a sticky `<nav class="plan-nav-bar">` with 3 tabs:
 
-| Tab | File | Active class |
-|---|---|---|
-| Overview | `./PLAN_OVERVIEW.html` | `nav-tab nav-tab-active` |
-| Task | `./PLAN_TASKS.html` | `nav-tab nav-tab-active` |
-| Patch | `./PLAN_PATCH.html` | `nav-tab nav-tab-patch nav-tab-active` |
+| Tab      | File                     | Active class                             |
+| -------- | ------------------------ | ---------------------------------------- |
+| Overview | `./PLAN_OVERVIEW.html` | `nav-tab nav-tab-active`               |
+| Task     | `./PLAN_TASKS.html`    | `nav-tab nav-tab-active`               |
+| Patch    | `./PLAN_PATCH.html`    | `nav-tab nav-tab-patch nav-tab-active` |
 
 ## Generation Rules
 
@@ -96,6 +95,7 @@ All HTML files share a sticky `<nav class="plan-nav-bar">` with 3 tabs:
    ```
    python scripts/generate_patch_html.py documents/plans/{plan-name}/patches/ documents/plans/{plan-name}/patch.html --title "Feature Name" --tasks-json documents/plans/{plan-name}/tasks.json
    ```
+
    - Do NOT write patch.html manually — always use the script
    - The script reads per-task `.patch` files + `tasks.json` metadata
    - Generates: summary stats, per-task sections with metadata/download/diff viewer
@@ -104,6 +104,7 @@ All HTML files share a sticky `<nav class="plan-nav-bar">` with 3 tabs:
 ## Task Patch Requirements
 
 Each per-task `.patch` file MUST:
+
 - Be a valid unified diff (`patch -p1 --dry-run < T-{id}.patch`)
 - Include ALL files affected by that task
 - Include 3 lines of context around each change

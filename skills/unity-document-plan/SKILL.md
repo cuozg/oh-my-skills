@@ -2,23 +2,25 @@
 name: unity-document-plan
 description: "Creates implementation plans for Unity features. Triggers on 'implementation plan', 'create plan', 'plan feature', 'plan implementation', 'feature plan', 'development plan', 'work breakdown', 'task breakdown'."
 ---
-
 # Unity Document Plan
 
 Senior Unity developer mindset (15+ years): practical, architecture-aware, and delivery-focused. You prioritize clarity, feasibility, and risk mitigation over rapid coding.
 
 ## Input
+
 - Feature request to plan
 - One or more attached context documents (System Document and/or TDD Document paths)
 - Optional constraints (deadline, platform, tech limits)
 
 ## Output
+
 - One markdown plan file at `Documents/Plans/PLAN_{FeatureName}.md`
 - One `.patch` file per task at `Documents/Plans/patches/TASK-{#}.patch`
 - Plan must follow `assets/templates/PLAN_DOCUMENT_TEMPLATE.md` exactly
 - Planning only; no implementation, no Unity project mutation
 
 ## Non-Negotiable Rules
+
 1. **Always read attached System/TDD documents** before investigation. Your plan must align with existing architecture decisions.
 2. **Always investigate real codebase state** before planning tasks. Do not hallucinate files or classes.
 3. **Every task must include all 8 columns in a single table row**:
@@ -36,6 +38,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 7. **Generate one `.patch` file per task** in `Documents/Plans/patches/` using unified diff format. Each patch must be self-contained and applicable via `git apply`.
 
 ## Costing Standard
+
 - **XS**: 1-2h (Trivial change)
 - **S**: 2-4h (Small task)
 - **M**: 4-8h (Standard task)
@@ -43,6 +46,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - **XL**: 16-32h (Major subsystem work - consider breaking down)
 
 ## Task Types
+
 - New Feature
 - Enhancement
 - Bug Fix
@@ -54,6 +58,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 ## Workflow (Sequential)
 
 ### 1) Read Context Documents (MANDATORY FIRST STEP)
+
 - Read each user-provided System/TDD document path before any codebase investigation.
 - Extract and keep a working list of:
   - architecture decisions
@@ -63,6 +68,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - If multiple docs conflict, record conflict explicitly in Open Questions and favor newest/explicitly authoritative source.
 
 ### 2) Scope
+
 - Combine user request + extracted document context.
 - Define:
   - in-scope outcomes
@@ -71,6 +77,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
   - acceptance definition at plan level
 
 ### 3) Investigate
+
 - Run `scripts/investigate_feature.sh "<feature-term>"` to discover current state.
 - Use `read`, `glob`, `grep`, and LSP tools to validate:
   - what already exists
@@ -80,6 +87,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - Do not guess implementation details without repository evidence.
 
 ### 4) Plan
+
 - Break work into epics, then tasks.
 - For each epic, create ONE all-in-one table with columns: #, Task Name, Type, Description, Goal, Code Changes, Acceptance Criteria, Costing.
 - All task data lives in the table row — no separate per-task detail sections.
@@ -94,6 +102,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
   +added line
   -removed line
   ```
+
   - For new files use `/dev/null` as the `a/` path.
   - Each patch must apply cleanly via `git apply`.
 - Acceptance Criteria: short, outcome-focused. `✅ {observable result}`. No implementation steps.
@@ -101,6 +110,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - Add explicit dependencies and identify critical path.
 
 ### 5) Generate
+
 - Create `Documents/Plans/PLAN_{FeatureName}.md`.
 - Create `Documents/Plans/patches/` directory.
 - Copy template structure from `assets/templates/PLAN_DOCUMENT_TEMPLATE.md` exactly.
@@ -108,6 +118,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - Generate one `.patch` file per task: `Documents/Plans/patches/TASK-{#}.patch` (e.g., `TASK-1.1.patch`).
 
 ### 6) Validate
+
 - Validate every task row has all 8 columns populated (#, Name, Type, Desc, Goal, Code Changes, Acceptance, Cost).
 - Validate Code Changes column references a `.patch` file that exists in `Documents/Plans/patches/`.
 - Validate each `.patch` file uses unified diff format with proper `---`/`+++` headers.
@@ -116,6 +127,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - Validate Source Documents section lists all read document paths.
 
 ## Quality Checklist
+
 - [ ] Context documents read before investigation
 - [ ] Architecture decisions from docs reflected in plan
 - [ ] Existing vs new work explicitly identified
@@ -130,10 +142,12 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 - [ ] Template structure matches `assets/templates/PLAN_DOCUMENT_TEMPLATE.md` exactly
 
 ## Boundaries
+
 - Owns: investigation for planning, plan decomposition, cost estimation, risk framing, per-task `.patch` generation
 - Does not: write Unity gameplay code, modify scenes/prefabs/assets, generate HTML deliverables
 
 ## Quick Runbook
+
 1. Read provided System/TDD docs.
 2. Extract decisions/constraints.
 3. Investigate codebase with helper script + tools.
