@@ -137,6 +137,10 @@ def check_body(body, skill_dir):
             ref = ref.rstrip(".,;:)")
             if not ref or ref.endswith("/"):
                 continue
+            # Strip markdown anchor fragments (#section) and trailing ](...) artifacts
+            ref = re.split(r"[#\]]", ref)[0]
+            if not ref:
+                continue
             ref_path = (skill_dir / ref).resolve()
             if not ref_path.exists():
                 issues.append(("error", f"Referenced file missing: {ref}"))

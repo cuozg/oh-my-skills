@@ -28,7 +28,7 @@ Deep logic review. Comments go directly into the code — no report document.
 ## Load References
 
 Always load:
-- [LOGIC_REVIEW.md](../unity-review-pr/references/LOGIC_REVIEW.md) — shared C# patterns (performance, lifecycle, async, state)
+- [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) — shared C# patterns (performance, lifecycle, async, state)
 - [DEEP_LOGIC_REVIEW.md](references/DEEP_LOGIC_REVIEW.md) — advanced logic analysis (control flow, data flow, concurrency, edge cases)
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — how to write and place inline review comments
 - [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements

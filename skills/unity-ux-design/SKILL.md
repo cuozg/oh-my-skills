@@ -36,7 +36,7 @@ All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameO
 
 ### Legacy
 - **[Example Specifications](./references/example-specifications.md)** — 4 HTML spec examples
-- **[Unity UI Best Practices](../unity-ui/references/unity-ui-best-practices.md)** — General guidelines
+- **[Unity UI Best Practices](references/unity-ui-best-practices.md)** — General guidelines
 
 ## Templates
 

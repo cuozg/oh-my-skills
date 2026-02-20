@@ -63,7 +63,7 @@ Consume tokens through USS classes, never hardcode. BEM naming. `[UxmlElement]` 
 
 ## Dragon Crashers: Compound Theming
 
-7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns.md#dc-compound-theming), [Dragon Crashers Insights](../ui-toolkit-architecture/references/dragon-crashers-insights.md), [Project Patterns](../ui-toolkit-architecture/references/project-patterns.md).
+7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns.md#dc-compound-theming), [Dragon Crashers Insights](references/dragon-crashers-insights.md), [Project Patterns](references/project-patterns.md).
 
 ## Common Pitfalls
 
