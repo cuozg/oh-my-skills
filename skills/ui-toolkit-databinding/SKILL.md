@@ -35,7 +35,7 @@ Simple (`"Health"`), nested (`"Stats.Strength"`), indexed (`"Inventory[0].Name"`
 
 Set `root.dataSource` on container (children inherit), then `element.SetBinding("property", new DataBinding { ... })`. UXML: `data-source-type`, `binding-path`, `<Bindings>` elements. Set object ref in C#.
 
-> **Full examples**: [databinding-code-patterns.md](references/databinding-code-patterns.md#setting-up-bindings-in-c) · [UXML bindings](references/databinding-code-patterns.md#setting-up-bindings-in-uxml)
+> **Full examples**: [databinding-code-patterns.md](references/databinding-code-patterns.md#bindings-in-c) · [UXML bindings](references/databinding-code-patterns.md#bindings-in-uxml)
 
 ### Type Converters
 

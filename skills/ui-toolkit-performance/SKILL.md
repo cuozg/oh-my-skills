@@ -1,6 +1,7 @@
 ---
 name: ui-toolkit-performance
 description: "Performance optimization for Unity UI Toolkit. Covers profiling, draw call optimization, transform vs layout animations, element pooling, ListView virtualization, memory management, and GC-free patterns. Use when: (1) UI frame rate is low, (2) Profiling UI draw calls or layout cost, (3) Optimizing list/grid rendering, (4) Reducing GC allocations in UI code, (5) Choosing animation strategies. Triggers: 'UI performance', 'draw calls', 'layout thrashing', 'UI profiling', 'element pool', 'UI memory', 'virtualization', 'UsageHints'."
+---
 
 # UI Toolkit Performance
 
