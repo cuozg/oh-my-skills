@@ -4,5 +4,4 @@ agent: sisyphus
 model: github-copilot/claude-opus-4.6
 subtask: true
 ---
-1. Load skill: unity-debug-fix
-2. Analyze and suggest fixes for $ARGUMENTS
+Use skill unity-debug-fix to fix $ARGUMENTS

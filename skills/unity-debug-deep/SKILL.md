@@ -1,6 +1,6 @@
 ---
 name: unity-debug-deep
-description: "Deep investigation of Unity issues with exhaustive multi-angle analysis. Explores every avenue — lifecycle, threading, state, data flow, edge cases — then produces a structured analysis document. Never modifies code. Use when: (1) Complex bug that defies simple explanation, (2) Need to understand a deeply intertwined system, (3) Race conditions or timing-dependent issues, (4) Multi-system interactions causing unexpected behavior, (5) Need thorough written analysis for team review, (6) Issue has been investigated before without resolution. Triggers: 'deep debug', 'deep explain', 'analyze this thoroughly', 'investigate deeply', 'why does this really happen', 'exhaustive analysis', 'debug deep dive', 'root cause analysis', 'complex bug investigation', 'multi-system debug'."
+description: "Deep investigation of Unity issues with exhaustive multi-angle analysis. Investigates the issue from multiple angles — lifecycle, threading, state, data flow, edge cases — then produces a structured analysis document with overview, impact assessment, root cause analysis, multiple proposed solutions, workarounds, verification steps, and prevention guidance. Never modifies code. Use when: (1) Complex bug that defies simple explanation, (2) Need to understand a deeply intertwined system, (3) Race conditions or timing-dependent issues, (4) Multi-system interactions causing unexpected behavior, (5) Need thorough written analysis for team review, (6) Issue has been investigated before without resolution. Triggers: 'deep debug', 'deep explain', 'analyze this thoroughly', 'investigate deeply', 'why does this really happen', 'exhaustive analysis', 'debug deep dive', 'root cause analysis', 'complex bug investigation', 'multi-system debug'."
 ---
 
 # Unity Debug Deep
@@ -15,23 +15,33 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 - **ALWAYS output document**: Save analysis to `Documents/Debug/` directory.
 - **ALWAYS use template**: Follow `references/analysis-template.md` exactly.
 - **Multi-angle**: Investigate from at least 3 different angles before concluding.
+- **Multiple solutions**: ALWAYS propose at least 2 solutions, maximum 4. Let the user choose.
 
 ## Workflow
 
-1. **Scope** — Define the question precisely. What is the subject? What is the expected vs actual behavior? What are the boundaries of investigation?
+1. **Scope** — Define the issue precisely. What is the subject? What is expected vs actual behavior? What are the investigation boundaries?
+
 2. **Survey** — Broad sweep: identify all files, classes, and systems involved. Use `glob`, `grep`, `lsp_symbols` to map the landscape.
+
 3. **Trace Forward** — Start from the trigger/entry point. Follow execution flow step by step. Document every branch, state change, and side effect.
+
 4. **Trace Backward** — Start from the failure/symptom. Work backwards: who set this value? Who called this method? What state was required?
-5. **Cross-Cut** — Investigate orthogonal angles:
+
+5. **Cross-Cut** — Investigate orthogonal angles (minimum 3):
    - **Lifecycle**: Is ordering (Awake/OnEnable/Start) a factor?
    - **Threading**: Any async/coroutine/callback boundaries?
    - **State**: Who else mutates the relevant state?
    - **Timing**: Frame-dependent? Scene-load-dependent? First-run-only?
    - **Edge Cases**: Empty collections? Null inputs? Destroyed objects?
    - **External**: Scriptable Objects? Inspector values? Prefab overrides?
-6. **Hypothesize** — Form 2-4 hypotheses about the root cause. For each, find confirming or disproving evidence in the code.
-7. **Conclude** — Select the most supported hypothesis. Document the evidence chain. Note remaining uncertainties.
-8. **Write Report** — Fill the analysis template. Save to `Documents/Debug/`.
+
+6. **Determine Root Cause** — Synthesize findings into a clear explanation of WHY the issue happens. Build an evidence chain from origin to symptom. Identify reproduction steps.
+
+7. **Assess Impact** — What does this issue break downstream? What systems are affected? Rate severity.
+
+8. **Formulate Solutions** — Generate 2-4 solution approaches with different trade-offs (quick fix vs proper fix vs architectural). Also identify any temporary workaround. Do NOT write implementation code — describe the approach and location.
+
+9. **Write Report** — Fill the analysis template. Save to `Documents/Debug/`.
 
 ## Tool Selection
 
@@ -45,21 +55,9 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 | Blast radius | `impact-analyzer` |
 | File discovery | `glob` |
 | Cross-reference | `lsp_find_references` chained |
+| Check diagnostics | `lsp_diagnostics` |
 
 Use ALL relevant tools. This is a deep investigation — thoroughness over speed.
-
-## Hypothesis Testing
-
-For each hypothesis:
-
-| Step | Action |
-|:---|:---|
-| **State** | One sentence: "The bug occurs because {X}" |
-| **Predict** | "If true, we should see {Y} in the code" |
-| **Search** | Use tools to find evidence for/against |
-| **Verdict** | `CONFIRMED` / `DISPROVED` / `INCONCLUSIVE` + evidence |
-
-Minimum 2 hypotheses. Maximum 4. Always test the "obvious" one AND at least one non-obvious alternative.
 
 ## Report Template
 
@@ -71,105 +69,127 @@ ALWAYS use this exact structure (also in `references/analysis-template.md`):
 # Deep Analysis: {Subject}
 
 **Date**: {YYYY-MM-DD}
-**Question**: {The exact question or issue being investigated}
-**Verdict**: {1 sentence conclusion}
+**Issue**: {The exact question or issue being investigated}
+**Verdict**: {1 sentence conclusion — the root cause in plain language}
 
 ---
 
-## 1. Scope
+## 1. Overview
 
-**Subject**: {class/method/system being investigated}
-**Expected Behavior**: {what should happen}
-**Actual Behavior**: {what actually happens}
-**Boundaries**: {what is in/out of scope}
+{1-3 sentences summarizing the issue. What is wrong, where, and what the user observes. Be specific — name classes, methods, variables. Cite with `FileName.cs:L##`.}
 
-## 2. System Map
+## 2. Impact
 
-**Files Involved**:
-- `{File1.cs}` — {role in the issue}
-- `{File2.cs}` — {role in the issue}
+{What does this issue cause or break? Be specific about downstream effects.}
 
-**Key Dependencies**:
-- {ClassName} depends on {OtherClass} via {mechanism}
+- **{Affected system/feature}** — {how it is affected}
+- **{Affected system/feature}** — {how it is affected}
 
-## 3. Forward Trace
+**Severity**: `CRITICAL` / `HIGH` / `MEDIUM` / `LOW` — {1 sentence justification}
 
-Starting from {entry point}:
+## 3. Root Cause Analysis
 
-1. `{Class}.{Method}` (`File.cs:L##`) — {what happens}
-2. `{Class}.{Method}` (`File.cs:L##`) — {what happens}
-3. ... {continue full chain}
+### Why It Happens
 
-**Observations**: {what stands out in the forward trace}
+{3-8 sentences explaining the root cause. Not just "X is null" but "X is null because Y never assigns it when Z condition occurs, which itself stems from W". Trace it to the origin. Cite `File.cs:L##` for every claim.}
 
-## 4. Backward Trace
+### Execution Flow
 
-Starting from {failure point}:
+1. `{ClassName}.{Method}` (`File.cs:L##`) — {what happens at this step}
+2. `{ClassName}.{Method}` (`File.cs:L##`) — {what happens next}
+3. ...{continue until the point of failure}
 
-1. `{Class}.{Method}` (`File.cs:L##`) — {the failure/symptom}
-2. `{Class}.{Method}` (`File.cs:L##`) — {who called/set the failing value}
-3. ... {continue backwards}
+### Cross-Cut Analysis
 
-**Observations**: {what stands out in the backward trace}
+#### Lifecycle
+{Is Unity lifecycle ordering a factor? Evidence from code.}
 
-## 5. Cross-Cut Analysis
+#### Threading / Async
+{Any async boundaries, coroutines, callbacks? Evidence from code.}
 
-### Lifecycle
-{Is Unity lifecycle ordering a factor? Evidence.}
+#### State Mutations
+{Who else writes to the relevant fields? Evidence from code.}
 
-### Threading / Async
-{Any async boundaries, coroutines, callbacks? Evidence.}
+#### Timing
+{Frame-dependent? Load-order-dependent? Evidence from code.}
 
-### State Mutations
-{Who else writes to the relevant fields? Evidence.}
+#### Edge Cases
+{Empty collections, null inputs, destroyed objects? Evidence from code.}
 
-### Timing
-{Frame-dependent? Load-order-dependent? Evidence.}
+{Only include angles that are relevant to the issue. Skip sections that add no value.}
 
-### Edge Cases
-{Empty collections, null inputs, destroyed objects? Evidence.}
+### Steps to Reproduce
 
-## 6. Hypotheses
+1. {Concrete step — e.g. "Open scene X"}
+2. {Concrete step — e.g. "Enter Play Mode"}
+3. {Concrete step — e.g. "Trigger action Y while Z is in state W"}
+4. {Observe: describe the symptom}
 
-### Hypothesis A: {title}
-- **Claim**: {one sentence}
-- **Prediction**: {what we'd expect to see if true}
-- **Evidence**: {what we found}
-- **Verdict**: `CONFIRMED` / `DISPROVED` / `INCONCLUSIVE`
+{If reproduction steps cannot be determined with certainty, note assumptions and say what additional information would help.}
 
-### Hypothesis B: {title}
-- **Claim**: {one sentence}
-- **Prediction**: {what we'd expect to see if true}
-- **Evidence**: {what we found}
-- **Verdict**: `CONFIRMED` / `DISPROVED` / `INCONCLUSIVE`
+## 4. Proposed Solutions
 
-{...more hypotheses if needed...}
+### Solution 1: {Title} [RECOMMENDED]
 
-## 7. Conclusion
+- **Approach**: {2-4 sentences describing what to do and why this works}
+- **Where**: `{FileName.cs:L##}` — {which method/area to change}
+- **Trade-off**: {pros and cons}
+- **Risk**: `LOW` / `MEDIUM` / `HIGH` — {justification}
+- **Effort**: `SMALL` / `MEDIUM` / `LARGE`
 
-**Root Cause**: {1-2 sentences explaining the definitive root cause}
+### Solution 2: {Title}
 
-**Evidence Chain**:
-1. {fact} → 2. {fact} → 3. {fact} → {conclusion}
+- **Approach**: {2-4 sentences}
+- **Where**: `{FileName.cs:L##}`
+- **Trade-off**: {pros and cons}
+- **Risk**: `LOW` / `MEDIUM` / `HIGH` — {justification}
+- **Effort**: `SMALL` / `MEDIUM` / `LARGE`
 
-**Confidence**: `HIGH` / `MEDIUM` / `LOW` — {justification}
+### Solution 3: {Title} (if applicable)
 
-**Remaining Uncertainties**:
-- {anything that couldn't be fully verified}
+...same pattern...
 
-## 8. Recommended Next Steps
+## 5. Workaround
 
-- {actionable recommendation 1}
-- {actionable recommendation 2}
-- {actionable recommendation 3}
+{Is there a temporary workaround the user can apply right now to avoid the issue without fixing the root cause? If yes, describe it clearly — steps to apply, limitations, and when it will stop working. If no workaround exists, say "No practical workaround — the root cause must be fixed."}
+
+## 6. Verification Steps
+
+{How to verify the issue is fixed after applying a solution:}
+
+1. {Step — e.g. "Apply Solution N"}
+2. {Step — e.g. "Enter Play Mode and trigger the scenario from Steps to Reproduce"}
+3. {Step — e.g. "Verify that {expected behavior} occurs instead of {symptom}"}
+4. {Step — e.g. "Check console for absence of error/warning messages"}
+5. {Step — e.g. "Run related tests: {test class/method names if known}"}
+
+## 7. Prevention
+
+{How to prevent this class of issue in the future:}
+
+- {Actionable practice, pattern, or safeguard — not generic advice}
+- {Additional prevention measure if applicable}
+- {Additional prevention measure if applicable}
 ```
+
+## Solution Ranking Criteria
+
+| Type | Description |
+|:---|:---|
+| **Quick Fix** | Minimal change, stops the symptom, might not address root cause fully |
+| **Proper Fix** | Addresses root cause correctly, moderate effort |
+| **Architectural Fix** | Redesigns the system to prevent this class of issue entirely |
+
+Always include at least one Quick Fix and one Proper Fix. Architectural Fix only when warranted.
+Mark exactly one solution as `[RECOMMENDED]`.
 
 ## Rules
 
 - Investigate thoroughly. This is NOT the quick skill — take time to be certain.
 - Minimum 3 cross-cut angles explored.
-- Minimum 2 hypotheses tested.
 - Every claim must cite `File.cs:L##`.
-- Never speculate without labeling it as such. Use "I believe" or "likely" for uncertain claims.
+- Solutions describe WHAT to do and WHERE — they do NOT include implementation code. If the user needs exact code changes, suggest using `unity-debug-fix` or `unity-fix-errors` instead.
+- Never speculate without labeling it as such. Use "likely" or "unverified" for uncertain claims.
 - If the investigation reveals the issue is simple, still fill the template — the user asked for deep analysis.
+- If you can't determine the root cause with certainty, say so and explain what additional information would help.
 - Output the document. Do NOT just explain in conversation.
