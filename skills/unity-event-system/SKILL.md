@@ -68,5 +68,5 @@ Global broadcast to unknown listeners → Generic Event Bus
 
 ## Boundaries
 
-- **Delegates to**: `unity-code` (general C#), `ui-toolkit-patterns` (UI events), `unity-refactor` (decoupling existing code)
+- **Delegates to**: `unity-code-deep` (general C#), `ui-toolkit-patterns` (UI events), `unity-refactor` (decoupling existing code)
 - **Does not handle**: UI Toolkit EventBase<T>, Unity Input System callbacks, networking RPC, animation events

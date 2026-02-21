@@ -125,7 +125,7 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 #### Core Implementation
 | Skill | Description |
 | :--- | :--- |
-| `unity-code` | Expert Unity Developer — clean, commented, performant C# implementation. |
+| `unity-code-deep` | Expert Unity Developer — clean, commented, performant C# implementation. |
 | `unity-editor-tools` | Custom Editor Windows, Inspectors, and UI Toolkit (UXML/USS) interfaces. |
 | `unity-tech-art` | Bridge art and code — shaders (HLSL/Shader Graph), asset pipelines, procedural generation. |
 | `unity-ui` | Implement UX designs from HTML documents into Unity UI prefabs with 100% fidelity. |

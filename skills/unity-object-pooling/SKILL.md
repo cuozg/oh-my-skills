@@ -6,7 +6,7 @@ description: "(opencode-project - Skill) Object pooling patterns for Unity. Cove
 # unity-object-pooling — Object Pooling Patterns
 
 **Input**: Objects to pool (prefab type, spawn frequency, lifetime pattern), pool size constraints, warming needs
-**Output**: Pool manager, IPoolable interface, warming logic, integration code following `unity-code` standards
+**Output**: Pool manager, IPoolable interface, warming logic, integration code following `unity-code-deep` standards
 
 ## Workflow
 
@@ -151,5 +151,5 @@ finally { ListPool<Collider>.Release(results); }
 
 ## Handoff & Boundaries
 
-- **Delegates to**: `unity-optimize-performance` (profiling, memory analysis), `unity-code` (general C# beyond pooling)
+- **Delegates to**: `unity-optimize-performance` (profiling, memory analysis), `unity-code-deep` (general C# beyond pooling)
 - **Does NOT handle**: Memory layout/cache-line optimization, ECS/DOTS pooling, Asset Bundle memory management

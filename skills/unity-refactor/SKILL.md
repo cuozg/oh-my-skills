@@ -85,7 +85,7 @@ Read templates, save populated versions to `Documents/Refactorings/`:
 |:---|:---|
 | `unity-investigate` | Phase 2 — deep code analysis |
 | `unity-test` | Phase 2 (characterization) + Phase 4 (new tests) |
-| `unity-code` | Phase 3 — implementation patterns |
+| `unity-code-deep` | Phase 3 — implementation patterns |
 | `unity-fix-errors` | Compilation errors during refactoring |
 
 ## References

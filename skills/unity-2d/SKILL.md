@@ -46,5 +46,5 @@ description: "(opencode-project - Skill) Unity 2D game development — sprites, 
 
 ## Handoff
 
-- **Delegates to**: `unity-code` (gameplay logic), `unity-tech-art` (custom 2D shaders), `unity-optimize-performance` (Sprite Atlas deep optimization)
+- **Delegates to**: `unity-code-deep` (gameplay logic), `unity-tech-art` (custom 2D shaders), `unity-optimize-performance` (Sprite Atlas deep optimization)
 - **Does NOT**: 3D rendering/physics, mixed 2D/3D, third-party animation (Spine/DragonBones), UI Toolkit, networking

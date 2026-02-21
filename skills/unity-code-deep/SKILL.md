@@ -1,9 +1,9 @@
 ---
-name: unity-code
+name: unity-code-deep
 description: "Expert Unity Developer implementation. Write clean, commented, performant C# code following best practices and avoiding all anti-patterns caught by unity-review-pr. Use when: (1) Creating new MonoBehaviours or ScriptableObjects, (2) Implementing gameplay features (controllers, combat, UI, data), (3) Refactoring for performance or architecture, (4) Using Unity 6 features (Awaitable, New Input System), (5) Any C# implementation work in Unity projects."
 ---
 
-# unity-code — Expert Unity Developer Implementation
+# unity-code-deep — Expert Unity Developer Implementation
 
 **Input**: Feature description or implementation task, optional target assembly, related scripts, constraints
 **Output**: C# scripts in `Assets/Scripts/`, following `SCRIPT_TEMPLATE.md`, passing compile checks with zero errors
@@ -12,11 +12,11 @@ description: "Expert Unity Developer implementation. Write clean, commented, per
 
 1. **Clarify**: dependencies, target assembly (`.asmdef`), affected systems
 2. **Plan**: outline classes, interfaces, data flow before coding
-3. **Implement**: follow [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code/references/UNITY_CSHARP_PATTERNS.md) and `.opencode/rules/`
+3. **Implement**: follow [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code-deep/references/UNITY_CSHARP_PATTERNS.md) and `.opencode/rules/`
 4. **Self-Review**: run Pre-Completion Checklist — fix every violation
 5. **Compile**: `unityMCP_check_compile_errors` — fix errors with `unity-fix-errors`
 
-**Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.opencode/skills/unity/unity-code/references/SCRIPT_TEMPLATE.md)
+**Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.opencode/skills/unity/unity-code-deep/references/SCRIPT_TEMPLATE.md)
 
 ## Code Quality Standards
 
@@ -109,7 +109,7 @@ private void Awake()
 }
 ```
 
-See [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code/references/UNITY_CSHARP_PATTERNS.md) for more.
+See [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code-deep/references/UNITY_CSHARP_PATTERNS.md) for more.
 
 ## Pre-Completion Checklist
 

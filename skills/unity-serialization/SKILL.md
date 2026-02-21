@@ -174,5 +174,5 @@ public static class GameSettings
 
 ## Handoff & Boundaries
 
-- **Delegates to**: `unity-code` (general C#), `unity-optimize-performance` (large dataset perf), `flatbuffers-coder` (binary serialization)
+- **Delegates to**: `unity-code-deep` (general C#), `unity-optimize-performance` (large dataset perf), `flatbuffers-coder` (binary serialization)
 - **Does NOT handle**: Networking/multiplayer sync, database systems, Asset Bundle serialization, Editor serialization (SerializedObject)

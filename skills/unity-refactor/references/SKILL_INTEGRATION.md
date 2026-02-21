@@ -11,7 +11,7 @@ description: How unity-refactor integrates with unity-investigate and unity-test
 ```
 Phase 1: Analyze ──── User requirements + scope
 Phase 2: Investigate ── unity-investigate → deep code analysis
-Phase 3: Refactor ───── unity-code patterns → execute changes
+Phase 3: Refactor ───── unity-code-deep patterns → execute changes
 Phase 4: Verify ─────── unity-test → run/create tests
 ```
 
