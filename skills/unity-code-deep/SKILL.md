@@ -1,138 +1,290 @@
 ---
 name: unity-code-deep
-description: "Expert Unity Developer implementation. Write clean, commented, performant C# code following best practices and avoiding all anti-patterns caught by unity-review-pr. Use when: (1) Creating new MonoBehaviours or ScriptableObjects, (2) Implementing gameplay features (controllers, combat, UI, data), (3) Refactoring for performance or architecture, (4) Using Unity 6 features (Awaitable, New Input System), (5) Any C# implementation work in Unity projects."
+description: "Expert Unity Developer implementation. Write clean, commented, performant C# code following best practices. Use when: creating MonoBehaviours, ScriptableObjects, implementing gameplay features, refactoring for performance or architecture, using Unity 6 features."
 ---
 
-# unity-code-deep — Expert Unity Developer Implementation
+# unity-code-deep — Expert Unity C# Implementation
 
-**Input**: Feature description or implementation task, optional target assembly, related scripts, constraints
-**Output**: C# scripts in `Assets/Scripts/`, following `SCRIPT_TEMPLATE.md`, passing compile checks with zero errors
+You are a senior Unity developer with 15 years of experience. You write clean, commented, performant C# code that follows project conventions and `unity-code-standards`. You investigate deeply before coding, ask questions when unclear, and verify everything compiles.
 
-## Workflow
+**Input**: Feature description, implementation task, or TDD/system doc reference
+**Output**: C# scripts following project conventions, passing compile checks with zero errors
 
-1. **Clarify**: dependencies, target assembly (`.asmdef`), affected systems
-2. **Plan**: outline classes, interfaces, data flow before coding
-3. **Implement**: follow [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code-deep/references/UNITY_CSHARP_PATTERNS.md) and `.opencode/rules/`
-4. **Self-Review**: run Pre-Completion Checklist — fix every violation
-5. **Compile**: `unityMCP_check_compile_errors` — fix errors with `unity-fix-errors`
+## Phase 0: Understand Before You Code
 
-**Every new script MUST follow**: [SCRIPT_TEMPLATE.md](.opencode/skills/unity/unity-code-deep/references/SCRIPT_TEMPLATE.md)
+**NEVER start coding immediately.** Always investigate first.
 
-## Code Quality Standards
+### Step 1: Read Project Context
 
-### 1. Commented Code
-- XML docs (`/// <summary>`) on every public class, method, property
-- Inline comments for *why*, not *what*
-- `[Header]`/`[Tooltip]` on serialized fields
-- No commented-out code blocks
+Search for and read these files (if they exist) — they define project rules and architecture:
 
-### 2. Clean Code
+1. **AGENTS.md / AGENT.md** — Project rules, conventions, constraints
+2. **TDD / Technical Design Documents** — Feature specs, architecture decisions, data schemas
+3. **System Documents** — How existing systems work, data flows, dependencies
 
-| Principle | Violation | Correct |
-|:----------|:----------|:--------|
-| No magic numbers | `if (health < 50)` | `const int LowHealthThreshold = 50;` |
-| Clear naming | `int x`, `void DoIt()` | `int remainingLives`, `void ApplyDamageReduction()` |
-| Single responsibility | 500-line MonoBehaviour | Split into focused components |
-| No deep nesting | 4+ levels if/for | Early returns, guard clauses |
-| Encapsulation | `public int health;` | `[SerializeField] private int _health;` + property |
+Use `glob` and `grep` to find these:
+```
+glob("**/AGENT*.md")
+glob("**/Documents/**/*.md")
+glob("**/Documents/**/*.html")
+grep("pattern related to your feature", include="*.md")
+```
 
-### 3. Smart Logic
-- Composition over inheritance
-- ScriptableObjects for data/config
-- Events for decoupling (`Action<T>` for logic, `UnityEvent` for inspector)
-- Object pooling for frequently spawned objects
-- Guard clauses for early validation
+### Step 2: Explore the Codebase
 
-## Critical Anti-Patterns
+Before writing a single line, understand what exists:
 
-### Performance
+1. **Find related scripts** — `grep` for class names, interfaces, patterns related to your task
+2. **Read existing implementations** — Understand conventions already in use (naming, structure, dependency patterns)
+3. **Check assembly definitions** — `glob("**/*.asmdef")` to understand module boundaries
+4. **Identify dependency patterns** — How does the project wire up dependencies?
 
-| Anti-Pattern | Required Pattern |
-|:-------------|:-----------------|
-| `GetComponent<T>()` in Update | Cache in `Awake` |
-| `Camera.main` in loops | Cache in `Awake` |
-| `Find()`/`FindObjectOfType()` at runtime | `[SerializeField]` injection |
-| `Instantiate`/`Destroy` spam | `ObjectPool<T>` |
-| String concat in hot paths | `StringBuilder` or cache |
-| `new List<>()`, LINQ in Update | Pre-allocate; `NonAlloc` variants |
+### Step 3: Ask Questions
 
-### Async & Lifecycle
+If ANY of these are unclear after investigation, **stop and ask**:
 
-| Anti-Pattern | Required Pattern |
-|:-------------|:-----------------|
-| Use `this` after `await` without null check | `if (this == null) return;` after every `await` |
-| `StartCoroutine` without cleanup | Store handle, `StopCoroutine` in `OnDisable` |
-| `+=` without matching `-=` | Subscribe `OnEnable`, unsubscribe `OnDisable` |
-| `async void` on non-Unity-events | `async Task` or `async Awaitable` |
+- Which assembly/namespace should this code live in?
+- How are dependencies provided in this project?
+- Are there existing interfaces or base classes to implement?
+- What events already exist for this domain?
+- What are the expected edge cases and error conditions?
 
-### General
+**Do NOT guess. Ask.**
 
-| Anti-Pattern | Required Pattern |
-|:-------------|:-----------------|
-| Missing null checks on external data | `?.`, `??`, defensive checks |
-| No try/catch around I/O/network | Wrap with logging and fallback |
-| Field renamed without `[FormerlySerializedAs]` | Add attribute before renaming |
-| Modifying ScriptableObject at runtime | Clone: `Instantiate(configSO)` |
-| Empty `Update()`/`Start()`/`OnGUI()` | Delete empty callbacks |
-| Magic numbers | `const`, `[SerializeField]`, `static readonly` |
+## Phase 1: Plan Before You Implement
 
-## Key Patterns
+### Create a Task List
 
-### Awaitable (Unity 6)
+For any task with 2+ files or steps, create tasks immediately:
+
+```
+TaskCreate("Implement IPlayerService interface")
+TaskCreate("Implement PlayerService with dependency registration")
+TaskCreate("Add PlayerDied event and wire up handlers")
+TaskCreate("Verify compilation and run diagnostics")
+```
+
+### Outline the Design
+
+Before coding, outline:
+- **Classes & interfaces** to create or modify
+- **Dependencies** each class needs (constructor injection or serialized references)
+- **Events** for cross-system communication (C# events/delegates)
+- **Data flow** — who owns state, who reads it, who mutates it
+
+## Phase 2: Implement
+
+Follow `unity-code-standards` strictly. Load specific references as needed:
+
+| When implementing...      | Load reference                                      |
+| ------------------------- | --------------------------------------------------- |
+| Async operations          | `unity-code-standards` → `unitask-patterns.md`          |
+| Performance-critical code | `unity-code-standards` → `performance-optimizations.md` |
+| Modern C# patterns        | `unity-code-standards` → `modern-csharp-features.md`    |
+
+### Architecture Stack
+
+Every new script MUST use this stack:
+
+| Concern              | Approach                   | Pattern                                                                         |
+| -------------------- | -------------------------- | ------------------------------------------------------------------------------- |
+| Dependency Injection | Constructor injection      | Constructor params for services; `Initialize()` method for MonoBehaviours         |
+| Events               | C# events/delegates        | `event Action<T>` for notifications; subscribe in OnEnable, unsubscribe in OnDisable |
+| Async                | UniTask                    | `async UniTask` with `CancellationToken`; `UniTaskVoid` for fire-and-forget           |
+| Data                 | Interface-based state      | State owned by service; exposed via read-only interface properties                |
+| Logging              | ILogger via DI             | No Debug.Log in runtime; no `#if` guards; no `?.` operator; no constructor logging  |
+
+### Script Template
+
+Every new script follows [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md). Key rules:
+
+- **File-scoped namespace** matching directory path
+- **`sealed`** by default (unseal only when inheritance is designed)
+- **`readonly`** on all fields assigned only in constructor
+- **XML docs** (`/// <summary>`) on every public class, method, property
+- **`[Header]`/`[Tooltip]`** on every `[SerializeField]`
+- **No magic numbers** — use `const`, `static readonly`, or `[SerializeField]`
+- **Guard clauses** at method entry, not deep nesting
+- **No commented-out code**
+
+### Code Patterns
+
+See [UNITY_CSHARP_PATTERNS.md](references/UNITY_CSHARP_PATTERNS.md) for complete examples. Key patterns:
+
+#### Plain C# Service
 
 ```csharp
-private async Awaitable PerformDelayedAction(float delay)
+namespace YourProject.YourFeature;
+
+/// <summary>
+/// Manages player scoring and persistence.
+/// </summary>
+public sealed class ScoreService : IDisposable
 {
-    await Awaitable.WaitForSecondsAsync(delay);
-    if (this == null) return; // MANDATORY after every await
-    Debug.Log("Action executed");
+    private readonly ILogger logger;
+    private readonly IScoreRepository scoreRepo;
+
+    /// <summary>Raised when score changes. Passes the new total score.</summary>
+    public event Action<int> ScoreChanged;
+
+    public ScoreService(ILogger logger, IScoreRepository scoreRepo)
+    {
+        this.logger = logger;
+        this.scoreRepo = scoreRepo;
+    }
+
+    public void AddScore(int points)
+    {
+        if (points <= 0) return;
+
+        int newTotal = this.scoreRepo.Add(points);
+        this.ScoreChanged?.Invoke(newTotal);
+        this.logger.Info($"Score added: {points}, total: {newTotal}");
+    }
+
+    public void Dispose()
+    {
+        this.ScoreChanged = null;
+    }
 }
 ```
 
-### Event-Driven
+#### MonoBehaviour with Dependencies
 
 ```csharp
-public event Action<int> OnHealthChanged;
-private void OnEnable() => _source.OnDamage += HandleDamage;
-private void OnDisable() => _source.OnDamage -= HandleDamage;
-```
+namespace YourProject.YourFeature;
 
-### Singleton (use sparingly)
-
-```csharp
-public static GameManager Instance { get; private set; }
-private void Awake()
+/// <summary>
+/// Displays player health bar in the UI.
+/// </summary>
+public sealed class HealthBarView : MonoBehaviour
 {
-    if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-    Instance = this;
-    DontDestroyOnLoad(gameObject);
+    [Header("UI References")]
+    [Tooltip("Slider component for health display")]
+    [SerializeField] private Slider healthSlider;
+
+    private IHealthProvider healthProvider;
+
+    /// <summary>
+    /// Initializes the view with its dependencies. Call after instantiation.
+    /// </summary>
+    public void Initialize(IHealthProvider healthProvider)
+    {
+        this.healthProvider = healthProvider;
+    }
+
+    private void OnEnable()
+    {
+        this.healthProvider.HealthChanged += this.UpdateHealth;
+    }
+
+    private void OnDisable()
+    {
+        this.healthProvider.HealthChanged -= this.UpdateHealth;
+    }
+
+    private void UpdateHealth(int health)
+    {
+        this.healthSlider.value = health;
+    }
 }
 ```
 
-See [UNITY_CSHARP_PATTERNS.md](.opencode/skills/unity/unity-code-deep/references/UNITY_CSHARP_PATTERNS.md) for more.
+#### Event Definitions
 
-## Pre-Completion Checklist
+```csharp
+namespace YourProject.YourFeature;
 
-### Syntax & Compilation
-- [ ] Compiles without errors/warnings
-- [ ] No unresolved types or missing `using`
-- [ ] All string literals properly escaped
+/// <summary>
+/// Event args for combat events. Use readonly record struct for immutable event data.
+/// </summary>
+public readonly record struct EnemyKilledArgs(string EnemyId, int Points);
+public readonly record struct LevelCompletedArgs(int Level, float Time);
 
-### Code Quality
+/// <summary>
+/// Service that raises domain events via C# events.
+/// </summary>
+public sealed class CombatEvents
+{
+    public event Action<EnemyKilledArgs> EnemyKilled;
+    public event Action<LevelCompletedArgs> LevelCompleted;
+    public event Action GamePaused;
+
+    public void RaiseEnemyKilled(EnemyKilledArgs args) => this.EnemyKilled?.Invoke(args);
+    public void RaiseLevelCompleted(LevelCompletedArgs args) => this.LevelCompleted?.Invoke(args);
+    public void RaiseGamePaused() => this.GamePaused?.Invoke();
+}
+```
+
+### Critical Anti-Patterns
+
+**NEVER do these:**
+
+| Anti-Pattern                   | Required Pattern                                         |
+| ------------------------------ | -------------------------------------------------------- |
+| `Debug.Log` in runtime code      | `ILogger` injected via constructor                         |
+| `static Instance` singleton      | Dependency injection                                     |
+| `async void`                     | `async UniTask` or `async UniTaskVoid`                       |
+| `async Task`                     | `async UniTask` (allocation-free)                          |
+| `StartCoroutine` for new code    | `async UniTask` with CancellationToken                     |
+| Field injection on POCO classes  | Constructor injection                                    |
+| `FindObjectOfType` / `Find`        | `[SerializeField]` or dependency injection                 |
+| `GetComponent` in Update         | Cache in Awake                                           |
+| `new List<>()` / LINQ in Update  | Pre-allocate; manual loops in hot paths                  |
+| Logging in constructors        | Move to `Initialize()` or first use                        |
+| `this.logger?.Method()`          | `this.logger.Method()` (DI guarantees non-null)            |
+| `catch (Exception) { }`          | Catch specific; let `OperationCanceledException` propagate |
+| Mutable event arg structs      | `readonly record struct`                                   |
+| Lambda event subscribers       | Named method (so you can unsubscribe)                    |
+
+### When Singletons Are Acceptable
+
+Only as **last resort** when dependency injection is not available (e.g., bootstrapping before DI container exists). Document WHY.
+
+## Phase 3: Verify
+
+### Pre-Completion Checklist
+
+Run through EVERY item before declaring done:
+
+#### Compilation
+- [ ] `lsp_diagnostics` on every changed file — zero errors
+- [ ] `check_compile_errors` — Unity compilation succeeds
+- [ ] No unresolved types or missing `using` statements
+
+#### Architecture (unity-code-standards)
+- [ ] DI: Constructor injection for services, `Initialize()` method for MonoBehaviours
+- [ ] Events: `event Action<T>`, subscribe/unsubscribe paired in OnEnable/OnDisable
+- [ ] UniTask: `CancellationToken` on all async methods, no `async void`
+- [ ] State: Owned by services, exposed via read-only interface properties
+- [ ] ILogger: injected via constructor, no Debug.Log, no `#if` guards, no `?.`, no constructor logging
+
+#### Code Quality
 - [ ] XML docs on all public API
-- [ ] No magic numbers
-- [ ] No deep nesting (4+) — guard clauses used
+- [ ] `sealed` classes by default
+- [ ] `readonly` fields where applicable
+- [ ] File-scoped namespaces
+- [ ] No magic numbers — `const` / `static readonly` / `[SerializeField]`
+- [ ] Guard clauses, no deep nesting (4+ levels)
 - [ ] No dead code or commented-out blocks
+- [ ] `[Header]`/`[Tooltip]` on all `[SerializeField]` fields
 
-### Unity-Specific
-- [ ] `if (this == null) return;` after every `await`
-- [ ] All `+=` have matching `-=` in `OnDisable`
-- [ ] `GetComponent` cached in `Awake`/`Start`
-- [ ] No `Find()`/`FindObjectOfType()` in gameplay
-- [ ] `[FormerlySerializedAs]` on renamed fields
-- [ ] Empty callbacks deleted
+#### Unity Safety
+- [ ] Events: subscribe in `OnEnable`/`Initialize`, unsubscribe in `OnDisable`/`Dispose`
+- [ ] Components cached in `Awake`, no per-frame `GetComponent`
+- [ ] `[FormerlySerializedAs]` on renamed serialized fields
+- [ ] Empty callbacks deleted (`Update`, `Start`, `OnGUI`)
 - [ ] ScriptableObjects cloned before runtime modification
+- [ ] No allocations in hot paths (Update, FixedUpdate)
 
-### Final Verification
-- [ ] `lsp_diagnostics` — zero errors
-- [ ] `unityMCP_check_compile_errors` — compilation succeeds
+### Fix Every Violation
+
+If any checklist item fails:
+1. Fix it immediately
+2. Re-run diagnostics
+3. Do NOT skip items or leave TODOs
+
+## Reference Files
+
+- [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md) — Starting template for every new script
+- [UNITY_CSHARP_PATTERNS.md](references/UNITY_CSHARP_PATTERNS.md) — Complete pattern examples (Services, Events, UniTask, State Machine, Object Pool, Error Handling)

@@ -50,13 +50,13 @@ Animation clips with scale curves but no intended scale animation → extra curv
 
 Unintended `PlayOnAwake` → disable. `SpatialBlend: 1` on UI → set 2D. Large clip uncompressed → Streaming+Vorbis. `loadInBackground: 0` on large clips → enable. `forceToMono: 0` on 3D SFX → enable (stereo in 3D is wasted). Clip > 1MB as `DecompressOnLoad` → use `CompressedInMemory` or `Streaming`.
 
-Audio clip sample rate higher than use-case (e.g., many SFX at 44.1kHz) → unnecessary memory/decode cost. Downsample SFX to appropriate target (often ~22kHz).
+Audio clip sample rate higher than use-case → unnecessary memory/decode cost. Downsample SFX to appropriate target (often ~22kHz).
 
 ## 🔴 Critical — Models (.fbx/.meta)
 
 | Pattern | Issue | Fix |
 |:--------|:------|:----|
-| Tangent import enabled but no normal map usage | Wasted vertex memory in every instance; avoidable runtime cost at scale | Disable tangent import generation for affected models |
+| Tangent import enabled but no normal map usage | Wasted vertex memory in every instance | Disable tangent import generation |
 
 ## 🟡 Major — Models (.fbx/.meta)
 
@@ -68,32 +68,22 @@ Audio clip sample rate higher than use-case (e.g., many SFX at 44.1kHz) → unne
 | `importAnimation: 1` on non-animated model | Phantom clips, build bloat | Disable Import Animation |
 | `animationType: 2` (Generic) when Humanoid expected | Retarget won't work | Match rig type to skeleton |
 | `materialImportMode: 1` (Import) from DCC | Creates unmanaged materials | Set to None, assign manually |
-| Lightmap UV overlap on imported mesh | Light bleeding/artifacts after bake | Fix secondary UV unwrap settings or source mesh |
+| Lightmap UV overlap on imported mesh | Light bleeding/artifacts after bake | Fix secondary UV unwrap settings |
 | BlendShapes imported but never used | Larger mesh memory and skinning overhead | Disable blend shape import |
 
 ## 🟡 Major — ScriptableObject Assets
 
 SO with serialized scene references → null at runtime. SO with `HideFlags.DontSave` checked in → won't persist. Large data SO (>1MB) not in Addressables → bloats initial load.
 
-## 🟡 Major — Components (Prefab/Scene context)
-
-Camera depth conflicts, light shadow resolution `-1`, ParticleSystem `prewarm: 1` on heavy system, NavMeshAgent on disabled GO, Canvas `overrideSorting` without unique sortingOrder.
-
 ## 🔵 Minor
 
 Tiling/offset mismatch, render queue override, maxTextureSize > source, wrong filterMode pixel art, missing sprite atlas tag, redundant animator layers, default audio import settings, model with unused BlendShapes.
 
-SpriteAtlas with mixed-resolution sprites causing wasted atlas space/padding should be normalized or split by resolution class.
+SpriteAtlas with mixed-resolution sprites causing wasted atlas space → normalize or split by resolution class.
 
 ## Grep
 
-```bash
-# Materials — missing shader / default material
-grep -n "m_Shader: {fileID: 0}\|{fileID: 10303}" <changed .mat/.asset files>
-# Textures — memory issues
-grep -n "isReadable: 1\|enableMipMap: 1\|textureCompression: 0" <changed .meta files>
-# Animator/Audio in prefabs
-grep -n "m_Controller: {fileID: 0}\|m_CullingMode: 0\|m_PlayOnAwake: 1" <changed .prefab/.unity files>
-# Model import settings
-grep -n "meshCompression: 0\|isReadable: 1\|importAnimation: 1" <changed .meta files for .fbx>
-```
+- Materials — missing shader / default material: `grep -n "m_Shader: {fileID: 0}\|{fileID: 10303}" <changed .mat/.asset files>`
+- Textures — memory issues: `grep -n "isReadable: 1\|enableMipMap: 1\|textureCompression: 0" <changed .meta files>`
+- Animator/Audio: `grep -n "m_Controller: {fileID: 0}\|m_CullingMode: 0\|m_PlayOnAwake: 1" <changed files>`
+- Model import: `grep -n "meshCompression: 0\|isReadable: 1\|importAnimation: 1" <changed .meta files for .fbx>`

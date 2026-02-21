@@ -36,7 +36,7 @@
 |:--------|:--------|:------|
 | Direct singleton access everywhere | :red_circle: | Find `*.Instance.` pattern count |
 | Service locator with registration | :yellow_circle: | Acceptable if well-organized |
-| DI framework (Zenject/VContainer) | :white_circle: | Check proper scope/lifetime config |
+| DI framework (any) | :white_circle: | Check proper scope/lifetime config |
 | ScriptableObject injection | :white_circle: | Check asset references not null in builds |
 | Interface-based decoupling | :white_circle: | Verify interfaces aren't over-abstracted |
 

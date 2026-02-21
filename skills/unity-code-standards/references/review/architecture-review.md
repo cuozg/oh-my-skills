@@ -2,44 +2,23 @@
 
 ## Dependency Injection
 
-### VContainer Patterns
-- [ ] Constructor injection used (not field `[Inject]`) for non-MonoBehaviour classes
-- [ ] `[Preserve]` attribute on constructors for VContainer
-- [ ] `[Inject]` method used for MonoBehaviours (not field injection)
-- [ ] Dependencies registered in appropriate LifetimeScope
-- [ ] Correct lifetime chosen (Singleton vs Transient)
-- [ ] No service locator pattern (`Container.Resolve<T>()`)
-- [ ] No `FindObjectOfType<T>()` for dependencies
-- [ ] No static singletons for DI-managed services
-- [ ] Circular dependencies resolved via signals or interfaces
-
-### Registration
-- [ ] Interface → implementation bindings where appropriate
-- [ ] Entry points registered with `RegisterEntryPoint<T>()`
-- [ ] ScriptableObject configs registered as instances
-- [ ] No over-registration (only register what's needed)
+### Dependency Injection
+- [ ] Constructor injection used for services (not field injection or service locators)
+- [ ] Dependencies provided through abstractions (interfaces), not concrete implementations
+- [ ] No `FindObjectOfType<T>()` for resolving dependencies
+- [ ] No static singletons for services that could be injected
+- [ ] Circular dependencies resolved via interfaces or events
 
 ## Event Architecture
 
-### SignalBus
-- [ ] Signals are `readonly record struct` (not class)
-- [ ] Signal naming: `[Subject][Verb-PastTense]Signal`
-- [ ] Subscribe in `Initialize()`, unsubscribe in `Dispose()`
-- [ ] No lambda subscriptions (can't unsubscribe)
-- [ ] No signal firing in constructors
-- [ ] Signal handlers are fast (no heavy computation)
-- [ ] No circular signal chains (A→B→A)
-- [ ] Signal data is immutable (no mutable reference types)
-
-## Data Controller Pattern
-
-- [ ] Interface exposes `IReadOnlyReactiveProperty<T>` only
-- [ ] Implementation uses `ReactiveProperty<T>` internally
-- [ ] Implements `IDisposable` to clean up reactive properties
-- [ ] Input validation with exceptions (not logging)
-- [ ] Single responsibility (one domain per controller)
-- [ ] No business logic in data controllers (state management only)
-- [ ] No MonoBehaviour inheritance (plain C# class)
+### Event Architecture
+- [ ] Cross-system communication uses events (C# events, delegates, or event bus)
+- [ ] Event naming follows conventions (e.g., `OnPlayerDied`, `PlayerDiedEvent`)
+- [ ] Subscribe/unsubscribe always paired (subscribe in OnEnable, unsubscribe in OnDisable)
+- [ ] No lambda subscriptions if unsubscription is needed
+- [ ] Event handlers are fast (no heavy computation)
+- [ ] No circular event chains
+- [ ] Event data is immutable where possible
 
 ## Assembly Structure
 
@@ -56,26 +35,20 @@
 - [ ] One type per file (with exception for small related types)
 
 ## Initialization Order
-
-- [ ] `IInitializable` used for post-injection setup
-- [ ] No dependency on Unity lifecycle ordering (`Awake` order)
-- [ ] Explicit initialization sequence in bootstrap
+- [ ] Explicit initialization sequence (not relying on undefined Awake/Start ordering)
 - [ ] No `FindObjectOfType` during initialization
-- [ ] No `Resources.Load` during initialization (use DI-provided configs)
+- [ ] Configuration loaded before dependent systems initialize
 
 ## Module Boundaries
-
-- [ ] Clear module boundaries with separate LifetimeScopes
-- [ ] Cross-module communication via SignalBus (not direct reference)
+- [ ] Clear module boundaries with proper assembly definitions
+- [ ] Cross-module communication via events or shared interfaces (not direct references)
 - [ ] Shared types in Core assembly
 - [ ] No circular module dependencies
 - [ ] Each module can be tested independently
 
 ## Scene Architecture
-
-- [ ] One root LifetimeScope per scene
-- [ ] Scene-specific services scoped to scene LifetimeScope
-- [ ] Global services in root LifetimeScope (DontDestroyOnLoad)
+- [ ] Scene-scoped services cleaned up on scene transition
+- [ ] Global services persist across scenes properly
 - [ ] Scene transition via service (not direct `SceneManager` calls)
 - [ ] No hardcoded scene names (use constants or ScriptableObject)
 
@@ -83,20 +56,17 @@
 
 ### Critical
 - Service locator pattern
-- Static singletons for DI-managed services
+- Static singletons for services that should be injected
 - `FindObjectOfType` for dependency resolution
 - God class (class doing too many things)
 - Circular dependencies
 
 ### Major
-- Field injection instead of constructor injection
-- Missing `[Preserve]` on VContainer constructors
-- Mutable signal data
-- Lambda signal subscriptions
-- Missing unsubscribe/Dispose
+- Event subscription without corresponding unsubscription
+- Missing sealed on non-inheritable classes
+- Assembly .asmdef missing required reference
 
 ### Minor
 - Over-injection (too many dependencies → split class)
-- Missing `sealed` on non-inheritable classes
 - Public members that should be internal
 - Missing interface for testable services

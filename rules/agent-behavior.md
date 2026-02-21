@@ -11,6 +11,7 @@ description: Core behavioral guidelines for AI agents in Unity projects.
 3. **Unity Best Practices**: Follow Prefab workflows, ScriptableObjects, Component patterns
 4. **Code Standards**: ALWAYS load `unity-code-standards` skill when writing, reviewing, or refactoring any C# code in Unity projects — this is MANDATORY and non-negotiable
 5. **Forbidden Files**: NEVER read, open, or access `.env` or `.gitignore` files under any circumstances — this applies to ALL agents without exception
+6. **No Git Commits or Pushes**: NEVER commit or push anything to GitHub/git repositories — no `git commit`, `git push`, `gh pr create`, or any equivalent operation — under any circumstances, even if explicitly asked
 
 ## Communication
 

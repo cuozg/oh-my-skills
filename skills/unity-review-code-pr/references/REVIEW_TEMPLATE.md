@@ -82,8 +82,6 @@ The comment spans lines 10–15. The suggestion block must match exactly the con
 \`\`\`
 ```
 
-Asset issues use same format — must include Issue + Why + Suggestion.
-
 ## Suggestion Syntax
 
 ### Single-line

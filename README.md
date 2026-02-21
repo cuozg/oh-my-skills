@@ -11,7 +11,7 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 
 ## Quick Start
 
-1. **Code Review**: *"Review PR #25141 for performance issues."* (uses `unity-review-pr`)
+1. **Code Review**: *"Review PR #25141 for performance issues."* (uses `unity-review-code-pr`)
 2. **Fix Errors**: *"Fix the compiler errors in the console."* (uses `unity-fix-errors`)
 3. **Plan & Implement**: *"Add a player health bar to the UI."* (uses `unity-plan`)
 4. **Investigate**: *"How does the matchmaking system work?"* (uses `unity-investigate`)
@@ -150,8 +150,8 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 #### Code Review
 | Skill | Description |
 | :--- | :--- |
-| `unity-review-pr` | Automated GitHub PR reviews with Unity-specific patterns and best practices. |
-| `unity-review-pr-local` | Local PR reviews without GitHub posting — generates review as local markdown. |
+| `unity-review-code-pr` | Automated GitHub PR reviews with Unity-specific patterns and best practices. |
+| `unity-review-code-local` | Local code reviews — adds inline review comments directly into the code. |
 
 #### Planning & Documentation
 | Skill | Description |

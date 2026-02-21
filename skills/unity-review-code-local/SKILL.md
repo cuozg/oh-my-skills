@@ -1,11 +1,11 @@
 ---
-name: unity-review-code
-description: "Deep logic review for Unity C# code. Reviews code changes with surgical focus on logic correctness, edge cases, state management, data flow, and concurrency — then adds review comments directly into the code as inline comments. No report document. Input: commit hash, commit range, branch diff, or a feature/logic description to review. Shares core review patterns with unity-review-pr. Use when: reviewing logic before commit, validating a feature implementation, auditing business logic, tracing data flow for correctness, reviewing a specific commit. Triggers: 'review code', 'review logic', 'check this logic', 'review commit', 'review my changes', 'logic review', 'code review', 'review this feature'."
+name: unity-review-code-local
+description: "Deep logic review for Unity C# code in the local project. Reviews code changes with surgical focus on logic correctness, edge cases, state management, data flow, and concurrency — then adds review comments directly into the code as inline comments. No report document. No GitHub interaction. Input: commit hash, commit range, branch diff, or a feature/logic description to review. Use when: reviewing logic before commit, validating a feature implementation, auditing business logic, tracing data flow for correctness, reviewing a specific commit. Triggers: 'review code', 'review logic', 'check this logic', 'review commit', 'review my changes', 'logic review', 'code review', 'review this feature'."
 ---
 
-# Unity Logic Reviewer
+# Unity Logic Reviewer (Local)
 
-Deep logic review. Comments go directly into the code — no report document.
+Deep logic review for the local project. Comments go directly into the code as inline comments — no report document, no GitHub interaction.
 
 ## Input → Diff Command
 
@@ -37,7 +37,7 @@ Always load:
 
 The `unity-code-standards` skill provides:
 - **Logic review patterns** — control flow, state management, data flow, concurrency, Unity-specific gotchas, edge cases (`references/review/logic-review-patterns.md`)
-- **Architecture review** — VContainer DI, SignalBus events, Data Controllers (`references/review/architecture-review.md`)
+- **Architecture review** — dependency management, event architecture, data flow patterns (`references/review/architecture-review.md`)
 - **C# quality gates** — nullable, access modifiers, logging, exceptions, modern C# (`references/review/csharp-quality.md`)
 - **Performance review** — allocations, hot paths, component caching (`references/review/performance-review.md`)
 - **Unity specifics** — lifecycle, serialization, async patterns (`references/review/unity-specifics.md`)
@@ -159,7 +159,7 @@ Apply all findings as inline review comments using the same format from [INLINE_
 - ✅ Verify event subscribe/unsubscribe pairs. Check lifecycle ordering.
 - ✅ For each branch/path: "Can this state actually occur? What happens if it does?"
 - ✅ When reviewing MonoBehaviour lifecycle, check the FULL lifecycle (`Awake -> OnEnable -> Start -> Update -> OnDisable -> OnDestroy`), not just the changed method.
-- ✅ Check if project uses a DI framework (Zenject/VContainer) — injection patterns differ from manual singleton access.
+- ✅ Check dependency injection approach and consistency — injection patterns differ from manual singleton access.
 - ✅ For async code, verify the project's async convention: UniTask vs Awaitable vs raw Task.
 - ✅ For each allocation in changed code, ask: "How often is this called per frame?"
 - ❌ Never flag style-only issues (naming, formatting) as 🔴 or 🟡.

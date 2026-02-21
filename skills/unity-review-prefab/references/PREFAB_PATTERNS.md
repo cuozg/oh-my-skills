@@ -2,7 +2,7 @@
 
 Load when PR modifies `.prefab`, `.unity`, or prefab-related `.asset` files.
 
-## 🔴 Critical
+## :red_circle: Critical
 
 | YAML Pattern | Issue | Fix |
 |:-------------|:------|:----|
@@ -24,7 +24,7 @@ Load when PR modifies `.prefab`, `.unity`, or prefab-related `.asset` files.
 | Root Canvas missing `CanvasScaler` | Resolution-dependent UI size breaks across devices | Add/configure `CanvasScaler` strategy |
 | Nested prefab instance points to missing/deleted source | Broken nested prefab reference and missing content | Re-link nested prefab or replace instance |
 
-## 🟡 Major
+## :yellow_circle: Major
 
 | Pattern | Fix |
 |:--------|:----|
@@ -40,28 +40,23 @@ Load when PR modifies `.prefab`, `.unity`, or prefab-related `.asset` files.
 | `m_PlayOnAwake: 1` unintentional | `m_PlayOnAwake: 0` |
 | `m_Controller: {fileID: 0}` | Assign or remove Animator |
 | `prewarm: 1` on heavy ParticleSystem | Disable prewarm |
-| Small touch target without `m_RaycastPadding` | Hard-to-tap UI on mobile | Add padding to meet minimum tap area (~44px) |
-| TextMeshPro `m_enableAutoSizing: 1` inside LayoutGroup | Layout thrash + text rebuild overhead | Disable autosize or isolate text from layout-driven size loops |
-| UI Animator `updateMode: 0` (Normal) for pause-independent UI | UI stops animating when timeScale=0 | Use UnscaledTime for pause menus/HUD transitions |
-| Collider moved at runtime without matching Rigidbody | Static collider move forces expensive physics rebuild | Add Rigidbody or avoid runtime movement |
-| Multiple AudioSource components on one GO without intent | Audio layering ambiguity and mixer/debug complexity | Split by purpose or document clearly |
-| ParticleSystem default `maxParticles: 1000` on mobile-target effect | Excessive particle budget risk | Set platform-appropriate particle cap |
+| Small touch target without `m_RaycastPadding` | Add padding to meet minimum tap area (~44px) |
+| TextMeshPro `m_enableAutoSizing: 1` inside LayoutGroup | Disable autosize or isolate text from layout-driven size loops |
+| UI Animator `updateMode: 0` (Normal) for pause-independent UI | Use UnscaledTime for pause menus/HUD transitions |
+| Collider moved at runtime without matching Rigidbody | Add Rigidbody or avoid runtime movement |
+| Multiple AudioSource components on one GO without intent | Split by purpose or document clearly |
+| ParticleSystem default `maxParticles: 1000` on mobile-target effect | Set platform-appropriate particle cap |
 
-## 🔵 Minor
+## :large_blue_circle: Minor
 
 Default naming (`GameObject (1)`), empty GameObjects, hardcoded text (localization), added component on variant (confirm variant-specific).
 
 ## Grep — Run on changed prefabs
 
-```bash
-for f in $(gh pr diff <N> --name-only | grep -E '\.(prefab|unity)$'); do
-  grep -n "m_Script: {fileID: 0}" "$f"                    # missing scripts
-  grep -n "m_CorrespondingSourceObject: {fileID: 0}" "$f"  # broken variant
-  grep -n "m_RaycastTarget: 1" "$f"                        # raycast audit
-  grep -n "{fileID: 10303}" "$f"                            # default material
-  grep -n "m_PlayOnAwake: 1" "$f"                          # audio auto-play
-  grep -n "m_Controller: {fileID: 0}" "$f"                 # empty animator
-done
-```
-
-For each `m_RaycastTarget: 1` hit → check if GO has Button/Toggle/InputField. If not → 🔴.
+For each changed .prefab/.unity file, run these grep patterns:
+- `m_Script: {fileID: 0}` — missing scripts
+- `m_CorrespondingSourceObject: {fileID: 0}` — broken variant
+- `m_RaycastTarget: 1` — raycast audit (check if GO has Button/Toggle/InputField, if not → :red_circle:)
+- `{fileID: 10303}` — default material
+- `m_PlayOnAwake: 1` — audio auto-play
+- `m_Controller: {fileID: 0}` — empty animator

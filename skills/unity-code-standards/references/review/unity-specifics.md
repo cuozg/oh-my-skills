@@ -103,9 +103,9 @@
 ## DontDestroyOnLoad
 
 - [ ] Duplicate instance guard in `Awake()`
-- [ ] Used sparingly (prefer DI scope management)
+- [ ] Used sparingly (prefer explicit lifetime management)
 - [ ] References cleaned up on scene transition
-- [ ] Not used for data that should be in a data controller
+- [ ] Not used for data that should be managed by a dedicated service
 
 ## Editor vs Runtime
 

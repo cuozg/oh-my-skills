@@ -199,7 +199,7 @@ global using System.Linq;
 global using System.Threading;
 global using UnityEngine;
 global using Cysharp.Threading.Tasks;
-global using VContainer;
+global using System.Threading.Tasks;
 
 // Benefits:
 // - Removes repetitive using blocks from every file

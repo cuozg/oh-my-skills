@@ -85,35 +85,6 @@ public sealed class SearchService : IDisposable
 }
 ```
 
-## Injection with UniTask
-
-```csharp
-// ✅ GOOD: VContainer with async initialization
-public sealed class GameInitializer : IInitializable
-{
-    private readonly ConfigService configService;
-    private readonly PlayerService playerService;
-
-    [Preserve]
-    public GameInitializer(ConfigService configService, PlayerService playerService)
-    {
-        this.configService = configService;
-        this.playerService = playerService;
-    }
-
-    public void Initialize()
-    {
-        InitializeAsync().Forget(); // Fire-and-forget from sync context
-    }
-
-    private async UniTask InitializeAsync()
-    {
-        await this.configService.LoadAsync();
-        await this.playerService.InitializeAsync();
-    }
-}
-```
-
 ## Parallel Operations
 
 ```csharp

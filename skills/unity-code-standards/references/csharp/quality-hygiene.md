@@ -187,14 +187,14 @@ public class PlayerService : IPlayerService { } // Should be sealed
 public sealed class GameManager
 {
     private readonly ILogger logger;
-    private readonly SignalBus signalBus;
-    private readonly PlayerService playerService;
+    private readonly IPlayerService playerService;
+    private readonly IScoreService scoreService;
 
-    public GameManager(ILogger logger, SignalBus signalBus, PlayerService playerService)
+    public GameManager(ILogger logger, IPlayerService playerService, IScoreService scoreService)
     {
         this.logger = logger;
-        this.signalBus = signalBus;
         this.playerService = playerService;
+        this.scoreService = scoreService;
     }
 }
 
@@ -202,7 +202,7 @@ public sealed class GameManager
 public sealed class GameManager
 {
     private ILogger logger;     // Should be readonly
-    private SignalBus signalBus; // Should be readonly
+    private IPlayerService playerService; // Should be readonly
 }
 ```
 

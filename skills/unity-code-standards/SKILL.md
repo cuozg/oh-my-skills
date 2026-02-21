@@ -1,11 +1,11 @@
 ---
 name: unity-code-standards
-description: "Unity C# coding standards, architecture patterns (VContainer DI, SignalBus events), and code review guidelines. Enforces 4-priority quality gates: code hygiene, modern C#, Unity architecture, and performance."
+description: "Unity C# coding standards and code review guidelines. Enforces 4-priority quality gates: code hygiene, modern C#, Unity best practices, and performance."
 ---
 
 # Unity C# Development Standards
 
-Comprehensive coding standards for Unity C# development. Covers code quality, modern C# patterns, Unity architecture (VContainer + SignalBus), and performance optimization.
+Comprehensive coding standards for Unity C# development. Covers code quality, modern C# patterns, Unity best practices, and performance optimization.
 
 ## How to Use This Skill
 
@@ -28,7 +28,7 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Least accessible modifier | `private` > `internal` > `public` |
 | Fix all warnings | Treat warnings as errors |
 | Throw exceptions for errors | Never return default, never swallow |
-| ILogger for runtime logging | Inject via DI; handles conditional compilation and prefixes automatically |
+| ILogger for runtime logging | Use project-level logging abstraction; handles conditional compilation and prefixes automatically |
 | Debug.Log only in `#if UNITY_EDITOR` | Never in runtime code |
 | No logging in constructors | Keep constructors fast and side-effect free |
 
@@ -54,50 +54,18 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 **Full reference:** [modern-csharp-features.md](references/csharp/modern-csharp-features.md)
 **LINQ patterns:** [linq-patterns.md](references/csharp/linq-patterns.md)
 
-### Priority 3: Unity Architecture
-**Consistent architecture using VContainer + SignalBus.**
+### Priority 3: Unity Best Practices
+**Consistent architecture patterns for Unity development.**
 
-#### Framework Stack: VContainer + SignalBus
+| Rule | Quick Check |
+|:-----|:-----------|
+| Use dependency injection | Constructor injection for services; avoid `FindObjectOfType` and static singletons |
+| Event-driven communication | C# events, delegates, or event bus for cross-system decoupling |
+| Async with UniTask | `async UniTask` with `CancellationToken`; no `async void`; no coroutines for new code |
+| Interface-based design | Depend on abstractions, not concrete implementations |
+| Single responsibility | One purpose per class; split when a class does too many things |
 
-| Concern | Tool | Pattern |
-|:--------|:-----|:--------|
-| Dependency Injection | VContainer | `[Inject]` / `[Preserve]` + LifetimeScope |
-| Event Communication | SignalBus | `SignalBus.Fire<T>()` / `SignalBus.Subscribe<T>()` |
-| Async Operations | UniTask | `async UniTask` / `UniTaskVoid` for fire-and-forget |
-| Data Management | Data Controllers | `IDataController` → `IReadOnlyReactiveProperty<T>` |
-
-**Key patterns:**
-
-```csharp
-// VContainer injection
-public sealed class GameService : IInitializable
-{
-    [Preserve] // Required for VContainer
-    public GameService(ILogger logger, SignalBus signalBus)
-    {
-        this.logger = logger;
-        this.signalBus = signalBus;
-    }
-
-    public void Initialize()
-    {
-        this.signalBus.Subscribe<GameStartedSignal>(this.OnGameStarted);
-    }
-}
-
-// SignalBus events (struct signals)
-public readonly record struct GameStartedSignal(int Level);
-
-// Firing
-this.signalBus.Fire(new GameStartedSignal(1));
-```
-
-**Full references:**
-- [vcontainer-di.md](references/unity/vcontainer-di.md)
-- [signalbus-events.md](references/unity/signalbus-events.md)
-- [data-controllers.md](references/unity/data-controllers.md)
-- [integration-patterns.md](references/unity/integration-patterns.md)
-- [unitask-patterns.md](references/unity/unitask-patterns.md)
+**Full reference:** [unitask-patterns.md](references/unity/unitask-patterns.md)
 
 ### Priority 4: Performance & Review
 **Optimize hot paths, minimize allocations, enforce review checklists.**
@@ -135,26 +103,26 @@ Each assembly should:
 
 ## Logging Standards
 
-**ILogger** (project-level abstraction injected via DI):
+**ILogger** (project-level logging abstraction):
 - ✅ Handles conditional compilation internally (no `#if` guards needed)
 - ✅ Handles prefixes automatically (no `[ClassName]` needed)
 - ❌ NEVER log in constructors
-- ❌ NEVER use `this.logger?.Method()` — DI guarantees non-null
+- ❌ NEVER use `this.logger?.Method()` — Ensure logger is always initialized
 - ❌ NEVER use Debug.Log in runtime code
 
 **Debug.Log**: ONLY in `#if UNITY_EDITOR` blocks for editor tools.
 
 **Exceptions**: Throw for errors — never log-and-continue.
 
-> **Note:** Adapt the ILogger interface to your project's choice (e.g., `Microsoft.Extensions.Logging.ILogger`, Serilog, or a custom wrapper). The key principle is: inject a logger via DI, don't use static logging methods.
+> **Note:** Adapt the ILogger interface to your project's logging solution. The key principle is: use a project-level logging abstraction, don't scatter Debug.Log calls throughout runtime code.
 
 ## Quick Decision Trees
 
 ### "Should I use field injection or constructor injection?"
-→ **Constructor injection** (always). Field `[Inject]` only for MonoBehaviours where constructors don't work.
+→ **Constructor injection** for services. For MonoBehaviours, use initialization methods or `[SerializeField]` references.
 
 ### "Should I use events or direct method calls?"
-→ **SignalBus** for cross-system communication. Direct calls for same-system internal logic.
+→ **Events** (C# events, delegates, or event bus) for cross-system communication. Direct calls for same-system internal logic.
 
 ### "Should I use async/await or coroutines?"
 → **UniTask** for all new async code. Coroutines only for legacy code maintenance.
@@ -175,10 +143,6 @@ Each assembly should:
 ### Unity References
 | File | Content |
 |:-----|:--------|
-| [vcontainer-di.md](references/unity/vcontainer-di.md) | VContainer DI patterns, LifetimeScope, registration |
-| [signalbus-events.md](references/unity/signalbus-events.md) | SignalBus event patterns, signal structs |
-| [data-controllers.md](references/unity/data-controllers.md) | Data controller pattern, reactive properties |
-| [integration-patterns.md](references/unity/integration-patterns.md) | Cross-system integration, service patterns |
 | [unitask-patterns.md](references/unity/unitask-patterns.md) | UniTask async patterns, cancellation, error handling |
 
 ### Review References

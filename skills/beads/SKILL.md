@@ -5,6 +5,14 @@ description: Distributed git-backed issue tracking with the bd CLI. Use when pla
 
 # Beads — Distributed Git-Backed Issue Tracker
 
+## Input
+
+A task description, issue ID, or session context. Optionally: parent issue ID, priority, dependencies, or claim target.
+
+## Output
+
+Issue tracking side-effects (created/updated/closed issues, synced graph DB) and CLI output confirming each action. At session end, a "Landing the Plane" summary of all touched issues.
+
 ## Critical Warnings
 
 > **NEVER use `bd edit`** — Opens `$EDITOR`. Use `bd update <id> --flags` instead.

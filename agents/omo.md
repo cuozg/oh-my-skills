@@ -123,7 +123,7 @@ Evaluate ALL available skills against the task domain. Include every skill whose
 - UI Toolkit: `ui-toolkit-master`, `ui-toolkit-architecture`, `ui-toolkit-patterns`, `ui-toolkit-responsive`, etc.
 - Git: `git-commit`, `git-master`, `git-squash`
 - Planning: `unity-plan`, `unity-plan-detail`, `unity-plan-executor`
-- Review: `unity-review-code`, `unity-review-pr`, `unity-review-pr-local`
+- Review: `unity-review-code-local`, `unity-review-code-pr`
 - Design: `unity-game-designer`, `unity-ux-design`, `unity-sprite-gen`
 - Docs: `unity-write-docs`, `unity-write-tdd`
 - Performance: `unity-optimize-performance`, `unity-object-pooling`

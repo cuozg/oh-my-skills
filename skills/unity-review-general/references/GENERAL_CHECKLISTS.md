@@ -1,13 +1,13 @@
 # General Review Checklists
 
-Technology-agnostic checklists. Apply alongside Unity-specific references (`unity-code-standards` logic review patterns, PREFAB_REVIEW, ASSET_REVIEW).
+Technology-agnostic checklists. Apply alongside Unity-specific references.
 
 ## PR Size → Checklist Focus
 
 | Changed Lines | Focus |
 |:--------------|:------|
 | < 50 | Security + Correctness + Testing only |
-| 50–300 | All 6 checklists |
+| 50–300 | All checklists |
 | > 300 | Request split. If not possible, prioritize Security + Correctness. Note scope risk in summary. |
 
 ## Checklists
