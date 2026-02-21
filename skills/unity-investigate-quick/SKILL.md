@@ -1,5 +1,5 @@
 ---
-name: unity-investigate
+name: unity-investigate-quick
 description: "Quick investigation of Unity projects. Answers questions about how systems work with a short focused summary and 1-3 detailed explanations. No report document — direct conversational answers. Use when: (1) Quick question about how a feature works, (2) Understanding a class or method's purpose, (3) Tracing a call chain or data flow, (4) Finding where something is defined or used, (5) Understanding system dependencies, (6) Answering 'what does X do' or 'how does X work'. Triggers: 'how does X work', 'what does X do', 'explain this code', 'what calls this', 'investigate', 'where is X defined', 'how is X used', 'what triggers X', 'trace the flow', 'analyze this system'."
 ---
 
