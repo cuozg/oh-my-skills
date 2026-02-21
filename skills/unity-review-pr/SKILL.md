@@ -42,8 +42,19 @@ Then by file type:
 | `.cs` | [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) |
 | `.prefab`, `.unity` | [PREFAB_REVIEW.md](references/PREFAB_REVIEW.md) |
 | `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` | [ASSET_REVIEW.md](references/ASSET_REVIEW.md) |
+| `.cs` (standards) | Load `unity-code-standards` skill references for C# quality, architecture, and performance standards enforcement |
 
 Multiple types → load ALL matching.
+
+## Code Standards Enforcement
+
+When reviewing `.cs` files, ALWAYS load the `unity-code-standards` skill to enforce:
+- **Priority 1**: Code quality & hygiene (nullable, access modifiers, logging, exceptions)
+- **Priority 2**: Modern C# patterns (LINQ, expression bodies, null-coalescing)
+- **Priority 3**: Unity architecture (VContainer DI, SignalBus events, Data Controllers)
+- **Priority 4**: Performance (allocations, hot paths, component caching)
+
+Load the relevant `unity-code-standards` references based on the specific patterns found in the diff. Cross-reference findings against both the PR review checklists AND the code standards.
 
 ## Workflow
 

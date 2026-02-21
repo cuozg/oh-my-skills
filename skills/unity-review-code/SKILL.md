@@ -33,6 +33,16 @@ Always load:
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — how to write and place inline review comments
 - [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements
 
+## Code Standards Enforcement
+
+When reviewing C# code, ALWAYS load the `unity-code-standards` skill to enforce project coding standards:
+- **Priority 1**: Code quality & hygiene (nullable, access modifiers, logging, exceptions)
+- **Priority 2**: Modern C# patterns (LINQ, expression bodies, null-coalescing)
+- **Priority 3**: Unity architecture (VContainer DI, SignalBus events, Data Controllers)
+- **Priority 4**: Performance (allocations, hot paths, component caching)
+
+Load the relevant `unity-code-standards` references alongside the logic review references. Apply code standards violations as additional review comments using the same inline comment format.
+
 ## Workflow
 
 1. **Fetch** — Get the diff (see Input table). For feature/logic requests, identify files first via grep/LSP.
