@@ -149,4 +149,4 @@ Cache `Camera.main` and Q<T>() results; transform (not layout) for positioning; 
 
 ---
 
-**← Previous**: [Patterns](../ui-toolkit-patterns/SKILL.md) | **Next →**: [Mobile](../ui-toolkit-mobile/SKILL.md)
+**← Previous**: Patterns (ui-toolkit-patterns) | **Next →**: Mobile (ui-toolkit-mobile)

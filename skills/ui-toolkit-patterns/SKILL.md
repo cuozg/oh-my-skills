@@ -5,7 +5,7 @@ description: "Common UI patterns implemented in Unity UI Toolkit with complete U
 
 # UI Toolkit Common Patterns
 
-Follows [architecture](../ui-toolkit-architecture/SKILL.md): UXML=structure, USS=style, C#=behavior.
+Follows ui-toolkit-architecture: UXML=structure, USS=style, C#=behavior.
 
 ## UI Pattern Implementations
 
@@ -20,7 +20,7 @@ Follows [architecture](../ui-toolkit-architecture/SKILL.md): UXML=structure, USS
 | `experimental.animation` | ❌ linear | `.Stop()` | Position/scale slides |
 | `async Task` | Manual Lerp | `CancellationToken` | Non-MonoBehaviour multi-step |
 
-Only animate **transform properties**. Set `usageHints = DynamicTransform`. See [performance](../ui-toolkit-performance/SKILL.md).
+Only animate **transform properties**. Set `usageHints = DynamicTransform`. See ui-toolkit-performance.
 
 ```css
 .panel { translate: 0 30px; opacity: 0; transition: translate 0.25s ease-out, opacity 0.2s; }

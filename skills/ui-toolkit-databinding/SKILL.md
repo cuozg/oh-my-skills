@@ -15,7 +15,7 @@ Manual event-driven data flow: static `Action` delegates as event bus, controlle
 
 **Key components**: (1) **Event Bus** — 10 static event classes (`CharEvents`, `ShopEvents`, etc.), `Action<T>` delegates, null-conditional invoke. (2) **Controller Subscription** — `+=` in OnEnable, `-=` in OnDisable. (3) **View Updates** — cache `Q()` in `SetVisualElements()`, direct assignment. (4) **SO Data Sources** — `Resources.LoadAll<T>()` pushed via events. (5) **GameData** — `[Serializable]` class, `JsonUtility` persistence via `SaveManager`. (6) **Shop Flow** — click → `ShopItemClicked` → `OnTryBuyItem` → check funds → `TransactionProcessed`/`TransactionFailed`.
 
-Cross-refs: [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) · [ui-toolkit-patterns](../ui-toolkit-patterns/SKILL.md)
+Cross-refs: ui-toolkit-architecture · ui-toolkit-patterns
 
 ## Unity 6 Declarative Data Binding
 

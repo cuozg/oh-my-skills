@@ -1,5 +1,5 @@
 ---
-name: unity-document-quick
+name: unity-document-plan-quick
 description: "Quick costing and impact assessment for Unity features/tasks. Investigates the codebase deeply but responds with a compact, structured summary: task size, time estimate, risks, and downstream impact. Use when: (1) Estimating effort for a new feature or change, (2) Quick feasibility check before committing to work, (3) Understanding risk and blast radius of a proposed change, (4) Getting a high-level cost before detailed planning. Triggers: 'how big is this', 'estimate this', 'quick cost', 'how long will this take', 'is this a big change', 'feasibility check', 'impact assessment', 'effort estimate', 'scope check', 'size this task'."
 ---
 # Quick Task Assessment

@@ -14,24 +14,24 @@ Root skill for the UI Toolkit series. Start here, then follow the learning path.
 | # | Skill | Topics | Time |
 |---|-------|--------|------|
 | 1 | **ui-toolkit-master** (this) | UXML/USS/C# triad, project setup, UIDocument, PanelSettings | 1 hr |
-| 2 | [ui-toolkit-architecture](../ui-toolkit-architecture/SKILL.md) | Custom controls, [UxmlElement], MVC, templates | 2 hrs |
-| 3 | [ui-toolkit-responsive](../ui-toolkit-responsive/SKILL.md) | Flexbox, safe area, orientation | 1.5 hrs |
+| 2 | ui-toolkit-architecture | Custom controls, [UxmlElement], MVC, templates | 2 hrs |
+| 3 | ui-toolkit-responsive | Flexbox, safe area, orientation | 1.5 hrs |
 
 ### Level 2 — Intermediate
 
 | # | Skill | Topics | Time |
 |---|-------|--------|------|
-| 4 | [ui-toolkit-theming](../ui-toolkit-theming/SKILL.md) | Design tokens, TSS cascade, theme switching | 1.5 hrs |
-| 5 | [ui-toolkit-databinding](../ui-toolkit-databinding/SKILL.md) | IDataSource, [CreateProperty], binding modes | 2 hrs |
-| 6 | [ui-toolkit-patterns](../ui-toolkit-patterns/SKILL.md) | Tabs, inventory, modals, scroll snap | 2 hrs |
+| 4 | ui-toolkit-theming | Design tokens, TSS cascade, theme switching | 1.5 hrs |
+| 5 | ui-toolkit-databinding | IDataSource, [CreateProperty], binding modes | 2 hrs |
+| 6 | ui-toolkit-patterns | Tabs, inventory, modals, scroll snap | 2 hrs |
 
 ### Level 3 — Advanced
 
 | # | Skill | Topics | Time |
 |---|-------|--------|------|
-| 7 | [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) | Profiling, draw calls, virtualization, GC-free | 1.5 hrs |
-| 8 | [ui-toolkit-mobile](../ui-toolkit-mobile/SKILL.md) | Touch/gesture, mobile budgets, haptics | 2 hrs |
-| 9 | [ui-toolkit-debugging](../ui-toolkit-debugging/SKILL.md) | UI Debugger, profiler markers, diagnostics | 1.5 hrs |
+| 7 | ui-toolkit-performance | Profiling, draw calls, virtualization, GC-free | 1.5 hrs |
+| 8 | ui-toolkit-mobile | Touch/gesture, mobile budgets, haptics | 2 hrs |
+| 9 | ui-toolkit-debugging | UI Debugger, profiler markers, diagnostics | 1.5 hrs |
 
 ## UI Toolkit vs uGUI
 
@@ -91,7 +91,7 @@ public class MainUIController : MonoBehaviour {
 
 ## Performance Fundamentals
 
-See [ui-toolkit-performance](../ui-toolkit-performance/SKILL.md) for deep-dive.
+See ui-toolkit-performance for deep-dive.
 
 1. **Animate transforms only** — `translate`, `scale`, `opacity` (GPU). Never `width`/`height` (layout recalc).
 2. **ListView for lists** — Virtualization handles 1000+ items.

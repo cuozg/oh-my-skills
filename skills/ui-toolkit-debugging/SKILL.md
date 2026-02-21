@@ -130,4 +130,4 @@ See [dragon-crashers-insights.md](references/dragon-crashers-insights.md): event
 
 ---
 
-**← Previous**: [Mobile](../ui-toolkit-mobile/SKILL.md) | **Series Start →**: [Master](../ui-toolkit-master/SKILL.md)
+**← Previous**: Mobile (ui-toolkit-mobile) | **Series Start →**: Master (ui-toolkit-master)
