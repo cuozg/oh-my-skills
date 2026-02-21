@@ -13,7 +13,8 @@ name: unity-write-tdd
 
 **Input**: Feature or system to document. Optional: file paths, constraints, existing plan.
 
-**Output**: TDD per [UNITY_TDD_TEMPLATE.md](.opencode/skills/unity/unity-write-tdd/assets/templates/UNITY_TDD_TEMPLATE.md) template. Saved to `Documents/TDDs/TDD_[FeatureName].md`.
+## Output
+Technical Design Document (TDD) in markdown covering architecture, data schemas, and implementation strategy.
 
 ## Workflow
 

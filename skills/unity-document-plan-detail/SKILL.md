@@ -5,7 +5,6 @@ description: "Deep-dive planning for Unity features with per-task patch generati
 # Unity Deep Planning Skill
 
 **Input**: Clear task/problem description, optional file paths, constraints, context
-**Output**: 3 HTML files + N per-task `.patch` files at `documents/plans/{plan-name}/`
 
 **IMPORTANT**: Planning only — do NOT implement. DO generate complete per-task code patches.
 

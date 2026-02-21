@@ -9,7 +9,7 @@ description: "Create Mermaid diagrams. Use when: (1) Documenting logic flows, (2
 System/flow to visualize. Optional: preferred diagram type, specific entities.
 
 ## Output
-Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](.opencode/skills/other/mermaid/assets/templates/DIAGRAM_OUTPUT.md).
+Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md).
 
 ## Diagram Types
 
@@ -24,7 +24,7 @@ Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](.openc
 
 1. Analyze entities and relationships
 2. Choose diagram type
-3. Author using [MERMAID_PATTERNS.md](.opencode/skills/other/mermaid/references/MERMAID_PATTERNS.md)
+3. Author using [MERMAID_PATTERNS.md](references/MERMAID_PATTERNS.md)
 4. Validate syntax, ensure accuracy
 5. Embed in ` ```mermaid ` blocks
 

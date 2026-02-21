@@ -6,7 +6,8 @@ description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play 
 
 **Input**: Class, method, or feature to test. Optional: test assembly, mode preference (Edit/Play), coverage target.
 
-**Output**: Comprehensive test suites (10+ cases per feature class) with Edit Mode and Play Mode scripts.
+## Output
+Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensive coverage.
 
 ## Workflow
 

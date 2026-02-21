@@ -7,14 +7,16 @@ description: "(opencode-project - Skill) Create Unity Editor tools and extension
 
 **Input**: Description of Editor tool or automation needed. Optional: target component/asset types, UI framework preference (UI Toolkit vs IMGUI).
 
-**Output**: Editor scripts in `Assets/Scripts/Editor/`, following templates. Compile cleanly, support Undo, Dark/Light themes, domain reloads.
+## Output
+
+Unity Editor tool scripts (C#) following the Templates below.
 
 ## Templates (MANDATORY)
 
-- [EDITOR_WINDOW_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/EDITOR_WINDOW_TEMPLATE.md)
-- [CUSTOM_INSPECTOR_TEMPLATE.md](.opencode/skills/unity/unity-editor-tools/assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- [EDITOR_SCRIPTING_PATTERNS.md](.opencode/skills/unity/unity-editor-tools/references/EDITOR_SCRIPTING_PATTERNS.md)
-- [EDITOR_UI_TOOLKIT_GUIDE.md](.opencode/skills/unity/unity-editor-tools/references/EDITOR_UI_TOOLKIT_GUIDE.md)
+- [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md)
+- [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
+- [EDITOR_SCRIPTING_PATTERNS.md](references/EDITOR_SCRIPTING_PATTERNS.md)
+- [EDITOR_UI_TOOLKIT_GUIDE.md](references/EDITOR_UI_TOOLKIT_GUIDE.md)
 
 Read the relevant template first, then populate all sections.
 

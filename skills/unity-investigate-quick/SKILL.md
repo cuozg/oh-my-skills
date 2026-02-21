@@ -7,6 +7,10 @@ description: "Quick investigation of Unity projects. Answers questions about how
 
 Answer the question. Nothing else.
 
+## Output
+
+Direct conversational answer: short summary + 1-3 detailed explanations with file:line citations.
+
 ## How It Works
 
 1. **Parse** — extract the target (class, method, field, system, flow)

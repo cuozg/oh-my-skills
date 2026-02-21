@@ -6,7 +6,9 @@ description: "Expert QA professional for Unity game projects. Deep investigate g
 # Unity Test Case Generator
 
 **Input**: Game feature/system to test + optional feature spec, existing test cases, priority areas
-**Output**: HTML at `Documents/TestCases/{FeatureName}_TestCases.html` using `assets/test-case-template.html`
+
+## Output
+Comprehensive test case document in HTML format covering all test scenarios for the feature.
 
 ## Workflow
 

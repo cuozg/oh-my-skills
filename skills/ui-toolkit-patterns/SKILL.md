@@ -7,6 +7,9 @@ description: "Common UI patterns implemented in Unity UI Toolkit with complete U
 
 Follows ui-toolkit-architecture: UXML=structure, USS=style, C#=behavior.
 
+## Output
+Complete UXML/USS/C# implementations of common UI patterns (tabs, grids, modals, etc.).
+
 ## UI Pattern Implementations
 
 > **Full code**: See [Pattern Examples](references/pattern-examples.md) — Tabs, Inventory Grid, Modal/Popup, Stateful Buttons, Message List, Scroll Snap, Async Animation, Experimental API, GeometryChangedEvent, World-to-Panel Positioning.

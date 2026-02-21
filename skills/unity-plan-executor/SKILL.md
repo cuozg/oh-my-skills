@@ -13,7 +13,10 @@ name: unity-plan-executor
 # Unity Plan Executor
 
 **Input**: Plan HTML at `Documents/Plans/[FeatureName]_PLAN.html` with GitHub-style split diff views
-**Output**: All code changes applied, clean compilation, git commit
+
+## Output
+
+Exact code changes applied to Unity project files matching the plan specification 100%.
 
 ## Workflow
 

@@ -7,13 +7,15 @@ description: "(opencode-project - Skill) iOS/Android development. Use when: (1) 
 
 **Input**: Mobile task description. Optional: file paths, target platform, constraints.
 
-**Output**: Build report per [MOBILE_BUILD_REPORT.md](.opencode/skills/unity/unity-mobile-deploy/assets/templates/MOBILE_BUILD_REPORT.md) template. Saved to `Documents/Builds/MOBILE_BUILD_[Platform]_[YYYYMMDD].md`.
+## Output
+
+Platform-specific build configurations and deployment scripts for iOS/Android.
 
 ## Workflow
 
 1. **Profile**: Target devices, min specs, permissions, native services
-2. **Implement**: Platform-aware managers (see [MOBILE_INTEROP_PATTERNS.md](.opencode/skills/unity/unity-mobile-deploy/references/MOBILE_INTEROP_PATTERNS.md))
-3. **Optimize**: Real hardware profiling, textures, shaders, memory (see [MOBILE_OPTIMIZATION_GUIDE.md](.opencode/skills/unity/unity-mobile-deploy/references/MOBILE_OPTIMIZATION_GUIDE.md))
+2. **Implement**: Platform-aware managers (see [MOBILE_INTEROP_PATTERNS.md](references/MOBILE_INTEROP_PATTERNS.md))
+3. **Optimize**: Real hardware profiling, textures, shaders, memory (see [MOBILE_OPTIMIZATION_GUIDE.md](references/MOBILE_OPTIMIZATION_GUIDE.md))
 4. **Deploy**: Build report via template, validate Gradle/Xcode
 
 ## Platform Specifics

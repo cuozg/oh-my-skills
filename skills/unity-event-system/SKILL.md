@@ -6,7 +6,10 @@ description: "(opencode-project - Skill) Unity event-driven architecture and dec
 # unity-event-system — Event-Driven Architecture & Decoupling
 
 **Input**: Communication requirement (which systems talk, data flow, subscription lifetime) + optional architecture, perf constraints, inspector needs
-**Output**: Production-ready event channels, listeners, bus implementations with proper subscribe/unsubscribe lifecycle
+
+## Output
+
+Production-ready C# event system code following the patterns and conventions above.
 
 ## Workflow
 

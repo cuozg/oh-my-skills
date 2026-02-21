@@ -6,7 +6,10 @@ description: "(opencode-project - Skill) Object pooling patterns for Unity. Cove
 # unity-object-pooling — Object Pooling Patterns
 
 **Input**: Objects to pool (prefab type, spawn frequency, lifetime pattern), pool size constraints, warming needs
-**Output**: Pool manager, IPoolable interface, warming logic, integration code following `unity-code-deep` standards
+
+## Output
+
+Production-ready C# object pooling code following the patterns above.
 
 ## Workflow
 

@@ -5,10 +5,13 @@ description: "Generate comprehensive commit comments from pull requests or commi
 
 # Git Comment
 
-## Input/Output
+## Input
 
-**Input**: PR number/URL or commit SHA. Optional: repo path, output format.
-**Output**: Structured comment per [COMMIT_COMMENT.md](.opencode/skills/git/git-comment/assets/templates/COMMIT_COMMENT.md) — output directly to user.
+PR number/URL or commit SHA. Optional: repo path, output format.
+
+## Output
+ALWAYS use this exact format:
+- Structured comment per [COMMIT_COMMENT.md](assets/templates/COMMIT_COMMENT.md) — output directly to user
 
 ## Workflow
 

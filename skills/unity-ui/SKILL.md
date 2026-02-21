@@ -6,7 +6,9 @@ description: "Implement UX designs from HTML documents into fully functional Uni
 # Unity UI: UX Design → Prefab Implementation
 
 **Input**: HTML/CSS design document, optional sprite assets, fonts, target resolution, platform constraints
-**Output**: Unity prefab matching design exactly, all components configured, performance settings applied
+
+## Output
+Unity UI prefabs with 100% fidelity to the design specification document.
 
 > **The design document is the source of truth.** Every color, size, spacing, font, and interaction must match exactly.
 
@@ -33,7 +35,7 @@ Extract exact values — see [specification-mapping.md](references/specification
 - Triggers, states (normal/hover/pressed/disabled), responses
 - Orientation, responsive behavior, scroll regions, z-index
 
-**Output**: Use [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md)
+Use [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md) for the analysis output.
 
 ## Step 2: Structure Prefab Hierarchy
 

@@ -7,13 +7,14 @@ description: "(opencode-project - Skill) WebGL deployment and browser platform o
 
 **Input**: WebGL task description. Optional: file paths, browser targets, constraints.
 
-**Output**: Build report per [WEBGL_BUILD_REPORT.md](.opencode/skills/unity/unity-web-deploy/assets/templates/WEBGL_BUILD_REPORT.md) template. Saved to `Documents/Builds/WEBGL_BUILD_[YYYYMMDD].md`.
+## Output
+WebGL build configuration, C#/JavaScript interop code, and deployment scripts.
 
 ## Workflow
 
 1. **Discover**: Required Web APIs (LocalStorage, Fullscreen, WebXR), browser targets
-2. **Implement**: C# interop managers (see [WEBGL_INTEROP_PATTERNS.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
-3. **Optimize**: Build size, memory limits, compression (see [WEBGL_OPTIMIZATION_GUIDE.md](.opencode/skills/unity/unity-web-deploy/references/WEBGL_OPTIMIZATION_GUIDE.md))
+2. **Implement**: C# interop managers (see [WEBGL_INTEROP_PATTERNS.md](references/WEBGL_INTEROP_PATTERNS.md)), JS plugins in `Assets/Plugins/WebGL/`
+3. **Optimize**: Build size, memory limits, compression (see [WEBGL_OPTIMIZATION_GUIDE.md](references/WEBGL_OPTIMIZATION_GUIDE.md))
 4. **Deploy**: Build report via template, validate COOP/COEP headers, HTTPS
 
 ## Build Settings

@@ -11,7 +11,7 @@ Package/tool name (e.g., `shellcheck`, `jq`, `node`). Optional: version, platfor
 
 ## Output
 
-Structured report per [INSTALL_REPORT.md](.opencode/skills/bash/bash-install/assets/templates/INSTALL_REPORT.md). Read template first, populate all sections, output directly to user.
+Structured report per [INSTALL_REPORT.md](assets/templates/INSTALL_REPORT.md). Read template first, populate all sections, output directly to user.
 
 ## Examples
 

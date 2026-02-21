@@ -7,6 +7,9 @@ description: "Component-based architecture for Unity UI Toolkit. Covers UXML/USS
 
 Component-based design patterns for scalable, maintainable UI Toolkit projects.
 
+## Output
+Production-ready UXML/USS/C# code following component-based architecture patterns above.
+
 ## Core Principles
 
 1. **Separation**: UXML (structure), USS (style), C# (behavior) — never cross

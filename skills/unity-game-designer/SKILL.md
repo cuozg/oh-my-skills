@@ -6,7 +6,10 @@ description: "(opencode-project - Skill) Game design documentation and brainstor
 # Unity Game Designer
 
 **Input**: Game concept, feature idea, or design problem + optional platform, audience, genre, constraints
-**Output**: GDD at `Documents/GDD/GDD_[GameName].md`, feature spec at `Documents/GDD/Feature_[FeatureName].md`, or inline brainstorm
+
+## Output
+
+Game Design Document (GDD) in markdown. Covers core loop, progression, economy, and monetization.
 
 ## Workflow
 

@@ -6,7 +6,10 @@ description: "(opencode-project - Skill) Diagnose and fix Unity errors. Use when
 # Unity Debugger
 
 **Input**: Error message, stack trace, or broken behavior description + optional console logs, affected scripts, repro steps
-**Output**: Debug report at `Documents/Debugs/DEBUG_[ErrorName]_[Timestamp].md` per [DEBUG_REPORT_TEMPLATE.md](.opencode/skills/unity/unity-fix-errors/assets/templates/DEBUG_REPORT_TEMPLATE.md)
+
+## Output
+
+Fixed C# scripts with zero compiler errors. Reports diagnosis and applied fixes.
 
 ## Workflow
 

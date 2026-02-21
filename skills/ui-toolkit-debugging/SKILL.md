@@ -5,6 +5,9 @@ description: "Debugging and troubleshooting Unity UI Toolkit. Covers UI Toolkit 
 
 # UI Toolkit Debugging
 
+## Output
+Diagnostic steps, root cause identification, and fix recommendations for UI Toolkit issues.
+
 ## UI Toolkit Debugger
 
 **Window > UI Toolkit > Debugger** → select panel (`PanelSettings`=runtime, `UI Builder`=editor).

@@ -6,7 +6,6 @@ description: "Generate targeted Debug.Log statements wrapped in #if UNITY_EDITOR
 # Unity Debug Log Generator
 
 **Input**: User request describing what they want to understand — a method, flow, state, or behavior
-**Output**: Ready-to-paste Debug.Log snippets using the template from `references/log-format.md`. NEVER modify project files.
 
 ## Hard Constraints
 
@@ -96,6 +95,10 @@ Debug.Log($"<color=green>[DBG] ClassName.OnEnable | Subscribing to EventName</co
 Debug.Log($"<color=white>[DBG] ClassName.MethodName | frame={Time.frameCount}, time={Time.time:F3}, dt={Time.deltaTime:F4}</color>");
 #endif
 ```
+
+## Output
+
+Debug.Log code snippets per the Response Template below. Never modifies project files.
 
 ## Response Template
 

@@ -6,7 +6,9 @@ description: "Generate UX screen specification documents and production-ready Un
 # Unity UX Design — Mobile Game UI
 
 **Input**: Feature requirements, target device, existing assets, optional screen pattern
-**Output**: Unity scene hierarchy, prefab structure, or HTML spec at `Documents/UXSpecs/{ScreenName}_Spec.html`
+
+## Output
+UX screen specification document (HTML) and production-ready Unity scene/prefab hierarchy.
 
 All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameObjects).
 

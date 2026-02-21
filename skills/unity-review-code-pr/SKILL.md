@@ -7,6 +7,9 @@ description: "Focused Unity C# logic reviewer for GitHub Pull Requests. Reviews 
 
 Review `.cs` file changes in GitHub PRs with surgical focus on code logic - correctness, edge cases, state management, data flow, concurrency, and Unity-specific patterns. After review, push comments directly to GitHub via the API.
 
+## Output
+Review comments pushed to GitHub PR via API. Covers correctness, edge cases, state/data flow, and Unity-specific risks.
+
 ## Input → Command
 
 | Input | Command |

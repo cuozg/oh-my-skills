@@ -7,6 +7,9 @@ description: "Unity C# coding standards and code review guidelines. Enforces 4-p
 
 Comprehensive coding standards for Unity C# development. Covers code quality, modern C# patterns, Unity best practices, and performance optimization.
 
+## Output
+Code review feedback and C# code following the 4-priority quality gates defined below.
+
 ## How to Use This Skill
 
 This skill is a **reference library**. Load specific references based on the task:

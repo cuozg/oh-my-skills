@@ -9,7 +9,7 @@ description: "FlatBuffers for Unity. Use when: (1) Creating/updating .fbs schema
 Schema requirements (table name, fields, types, key). Optional: JSON data, existing `.fbs` for updates.
 
 ## Output
-`.fbs` schema + generated C# + binary data. Follow [FBS_TEMPLATE.md](.opencode/skills/other/flatbuffers-coder/assets/templates/FBS_TEMPLATE.md).
+`.fbs` schema + generated C# + binary data. Follow [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md).
 
 ## File Locations
 

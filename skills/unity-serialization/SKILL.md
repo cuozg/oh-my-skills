@@ -6,7 +6,9 @@ description: "(opencode-project - Skill) Unity serialization patterns and data p
 # unity-serialization — Data Persistence & Serialization
 
 **Input**: Data persistence requirement (what to save/load, frequency, size), target platforms, schema history
-**Output**: Data models with attributes, save/load manager, file I/O with error handling, migration logic
+
+## Output
+Production-ready C# serialization code following the patterns above.
 
 ## Workflow
 

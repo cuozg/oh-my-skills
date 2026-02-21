@@ -7,6 +7,9 @@ description: "Theme Style Sheets (TSS) and design token architecture for Unity U
 
 Design token architecture and theme management using TSS, USS custom properties, and runtime theme switching.
 
+## Output
+TSS/USS theme files and C# runtime theme-switching code following design token architecture.
+
 ### Dragon Crashers Theming Pattern
 DC uses a **compound TSS system** (7 TSS: 2 orientations × 3 seasons + 1 base). Key: **BEM utility classes** with hardcoded values (no `:root` tokens), `:root` only for font/cursor in `Common.uss`, TSS inheritance for orientation+seasonal layers, `PanelSettings` + `ThemeStyleSheet` swapped together at runtime.
 

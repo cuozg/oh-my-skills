@@ -6,7 +6,6 @@ description: "Analyze Unity console errors and stack traces to understand the ro
 # Unity Debug Fix
 
 **Input**: Console error output — stack trace, error message, compiler error, or exception log
-**Output**: Root cause explanation + multiple ranked fix solutions using the Response Template below. NEVER modify project files.
 
 ## Hard Constraints
 
@@ -61,6 +60,10 @@ Extract:
 | Pattern match | `grep` / `ast_grep_search` |
 | Check diagnostics | `lsp_diagnostics` |
 | File discovery | `glob` |
+
+## Output
+
+Structured diagnosis with ranked fix solutions per the Response Template below.
 
 ## Response Template
 

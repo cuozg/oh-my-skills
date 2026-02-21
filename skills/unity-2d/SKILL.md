@@ -7,7 +7,8 @@ description: "(opencode-project - Skill) Unity 2D game development — sprites, 
 
 **Input**: 2D game feature or system to implement. Optional: art style (pixel art vs vector), target resolution, physics requirements, target platform.
 
-**Output**: Production-ready C# scripts, prefab configurations, and import settings for 2D game systems.
+## Output
+Production-ready C# scripts, prefab configurations, and import settings for 2D game systems.
 
 ## Workflow
 

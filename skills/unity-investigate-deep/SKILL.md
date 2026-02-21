@@ -6,7 +6,10 @@ description: "Deep investigation of Unity projects with full report output. Prod
 # Unity Deep Investigator
 
 **Input**: Question or system to investigate + optional starting file/class
-**Output**: Report at `Documents/Investigations/INVESTIGATION_[SubjectName]_[YYYYMMDD].md` per `assets/templates/INVESTIGATION_REPORT.md`
+
+## Output
+
+Comprehensive investigation report (markdown) with architecture diagrams, execution flows, and risk tables. Save to `Documents/Investigations/`.
 
 ## Workflow
 

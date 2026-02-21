@@ -7,7 +7,9 @@ description: "Parse and analyze Unity Editor console logs to classify errors, gr
 
 **Input**: Unity console log text (pasted or from `coplay-mcp_get_unity_logs`). Optional: filter (`errors-only`/`warnings-only`/`all`), format (`summary`/`detailed`/`json`).
 
-**Output**: Analysis report — severity counts, grouped/deduplicated errors, category classification, fix suggestions, priority ranking.
+## Output
+
+Structured log analysis: error classification, duplicate grouping, priority ranking, and suggested fixes.
 
 ## Workflow
 

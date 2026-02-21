@@ -6,7 +6,9 @@ description: "(opencode-project - Skill) Unity build automation and pipeline con
 # unity-build-pipeline — Build Automation & Pipeline Configuration
 
 **Input**: Target platform(s), build requirements, optional Addressables config, CI/CD platform, size constraints
-**Output**: Build scripts (C# Editor), Addressables config, CI/CD pipeline YAML, build optimization reports
+
+## Output
+Build scripts (C# Editor), Addressables config, CI/CD pipeline YAML, and build optimization reports.
 
 ## Workflow
 

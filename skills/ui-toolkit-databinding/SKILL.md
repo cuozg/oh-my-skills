@@ -7,6 +7,9 @@ description: "Unity 6 runtime data binding for UI Toolkit. Covers IDataSource, I
 
 **Two approaches**: DC uses static `Action` event bus + direct property assignment (all screens). Unity 6 offers `IDataSource` + `DataBinding` (declarative, not used in DC).
 
+## Output
+Production-ready C# data binding code using either event-driven or Unity 6 declarative patterns above.
+
 ## Dragon Crashers Approach (Event-Driven)
 
 Manual event-driven data flow: static `Action` delegates as event bus, controllers subscribe in `OnEnable`/unsubscribe in `OnDisable`, views update via `Q<T>()` + property assignment.

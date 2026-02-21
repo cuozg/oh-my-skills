@@ -9,6 +9,10 @@ description: "Generate clean, meaningful git commit messages based on code chang
 
 File changes (via `git diff`) or explicit user description. Optional: commit scope, branch name for safety check.
 
+## Output
+ALWAYS use this exact format:
+- A git commit on current branch with message following the format below
+
 ## Commit Message Format
 
 ```

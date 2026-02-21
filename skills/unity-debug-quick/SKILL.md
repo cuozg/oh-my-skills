@@ -6,7 +6,6 @@ description: "Investigate Unity issues to understand root cause, impact, and pro
 # Unity Debug Quick
 
 **Input**: User question about a bug, unexpected behavior, or issue they want investigated
-**Output**: Issue investigation using the Response Template below. NEVER modify project files.
 
 ## Hard Constraints
 
@@ -39,6 +38,10 @@ description: "Investigate Unity issues to understand root cause, impact, and pro
 | Check diagnostics | `lsp_diagnostics` |
 
 Chain tools to build a complete picture. Stop when you have enough evidence to explain the root cause.
+
+## Output
+
+Structured investigation response per the Response Template below.
 
 ## Response Template
 

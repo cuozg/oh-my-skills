@@ -6,7 +6,6 @@ description: "Unity Refactoring Expert. Orchestrate investigation, safe code tra
 # Unity Refactoring Expert
 
 **Input**: Code to refactor (files/classes/methods) and goal (readability, decouple, performance, etc.)
-**Output**: REFACTORING_PLAN + REFACTORING_CHECKLIST in `Documents/Refactorings/`, plus refactored code compiling cleanly
 
 ## Workflow Overview
 
@@ -59,8 +58,8 @@ Consult `references/REFACTORING_PATTERNS.md` for before/after examples of: Extra
 4. Write new tests for refactored structure
 5. Run validation scripts:
    ```bash
-   python .opencode/skills/unity/unity-refactor/scripts/validate_refactoring.py --git-diff
-   python .opencode/skills/unity/unity-refactor/scripts/check_test_coverage.py <source-dir> <test-dir>
+   python scripts/validate_refactoring.py --git-diff
+   python scripts/check_test_coverage.py <source-dir> <test-dir>
    ```
 6. Verify public API unchanged, no unintended side effects
 7. Complete REFACTORING_CHECKLIST.md (all phases)

@@ -9,8 +9,6 @@ Senior Unity developer perspective (15 years). Prioritize architectural clarity,
 
 **Input**: Target system/feature/function to document, optional scope boundaries.
 
-**Output**: System document at `Documents/Systems/SYSTEM_{SystemName}.md` using `assets/templates/SYSTEM_DOCUMENT_TEMPLATE.md`.
-
 ## Non-Negotiable Rules
 
 - **Documentation-Only**: Investigate and explain; do not modify gameplay or project code.
@@ -18,6 +16,10 @@ Senior Unity developer perspective (15 years). Prioritize architectural clarity,
 - **Complete Coverage**: Fill every section; use explicit "N/A — {reason}" only when truly not applicable.
 - **Traceable Claims**: All statements must be backed by code evidence (definitions, references, assets, flows).
 - **Visual Architecture**: Mermaid diagrams are mandatory for context and runtime flows.
+
+## Output
+
+Comprehensive system document per the Template Section Mapping below. Save to `Documents/Systems/`.
 
 ## Template Section Mapping
 

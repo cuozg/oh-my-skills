@@ -7,7 +7,9 @@ description: "(opencode-project - Skill) Fix Unity performance issues and optimi
 
 **Input**: Performance complaint or metric target (e.g., "drops to 15 FPS in combat"). Optional: target platform, profiler captures, specific scenes/systems.
 
-**Output**: Performance report per [PERFORMANCE_REPORT.md](.opencode/skills/unity/unity-optimize-performance/assets/templates/PERFORMANCE_REPORT.md) template. Saved to `Documents/Performance/PERFORMANCE_REPORT_[Area]_[YYYYMMDD].md`.
+## Output
+
+Performance audit report with identified bottlenecks, measurements, and optimized code.
 
 ## Workflow
 

@@ -8,7 +8,7 @@ description: "Find the best matching skill(s) for a user request. Scans all inst
 ## Workflow
 
 1. Read user request
-2. Scan all `SKILL.md` frontmatter under `.opencode/skills/`
+2. Scan all installed `SKILL.md` frontmatter using `get_available_skills`
 3. Score each skill by relevance
 4. Return ranked list
 

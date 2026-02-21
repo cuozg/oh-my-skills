@@ -15,11 +15,12 @@ name: unity-singleton-auditor
 
 **Input**: Optional: directory to audit (default `Assets/Scripts/`), focus area (`dependencies`/`null-checks`/`init-order`/`all`).
 
-**Output**: Audit report — singleton registry, dependency graph, circular dependencies, unsafe access points, anti-patterns, prioritized fixes. Saved to `Documents/Audits/SINGLETON_AUDIT_[YYYYMMDD].md`.
+## Output
+Singleton health audit report: initialization risks, circular dependencies, anti-patterns, and recommendations.
 
 ## Workflow
 
-1. **Discover**: Run `python3 .opencode/skills/unity/unity-singleton-auditor/scripts/audit_singletons.py Assets/Scripts/` → JSON with all Singleton declarations and `.Instance` access points
+1. **Discover**: Run `python3 scripts/audit_singletons.py Assets/Scripts/` → JSON with all Singleton declarations and `.Instance` access points
 2. **Analyze Dependencies**: Build directed graph (A→B = A accesses B.Instance), detect cycles via DFS, flag 5+ dependency coupling, flag Awake-time cross-access
 3. **Pattern Audit**: Check each Singleton against audit table below
 4. **Report**: Generate markdown report with summary, registry, cycles (Mermaid graph), unsafe access list, recommendations

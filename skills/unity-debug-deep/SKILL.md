@@ -6,7 +6,6 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 # Unity Debug Deep
 
 **Input**: Complex question, bug, or system behavior that requires exhaustive investigation
-**Output**: Analysis document at `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the template from `references/analysis-template.md`. NEVER modify project files.
 
 ## Hard Constraints
 
@@ -58,6 +57,10 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 | Check diagnostics | `lsp_diagnostics` |
 
 Use ALL relevant tools. This is a deep investigation — thoroughness over speed.
+
+## Output
+
+Structured analysis document per the Report Template below. Save to `Documents/Debug/`.
 
 ## Report Template
 

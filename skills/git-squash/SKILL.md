@@ -5,10 +5,13 @@ description: "Squash multiple related commits into organized, well-documented co
 
 # Git Squash
 
-## Input/Output
+## Input
 
-**Input**: Commit range (`start..end`), count (`-n`), or PR number. Optional: grouping strategy (`by-feature`|`by-type`|`auto`).
-**Output**: Squash plan per [SQUASH_PLAN.md](.opencode/skills/git/git-squash/assets/templates/SQUASH_PLAN.md) — present for user approval before executing.
+Commit range (`start..end`), count (`-n`), or PR number. Optional: grouping strategy (`by-feature`|`by-type`|`auto`).
+
+## Output
+ALWAYS use this exact format:
+- Squash plan per [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md) — present for user approval before executing
 
 ## Workflow
 

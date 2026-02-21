@@ -7,6 +7,9 @@ description: "Mobile optimization and touch input for Unity UI Toolkit. Covers t
 
 Mobile-first UI: touch input, safe areas, orientation, performance, platform behavior. DC uses SafeAreaHandler on root, bottom tab nav, transform-only animations.
 
+## Output
+Production-ready C# and USS code optimized for mobile touch, safe areas, and performance budgets.
+
 ## Mobile Code Patterns
 
 > **Full patterns**: See [Mobile Code Patterns](references/mobile-code-patterns.md) — Touch Input (44×44dp), GestureDetector, Bottom Nav, SafeArea, World-to-UI, Orientation MediaQuery, Frame Rate Control, OrientationHandler, Performance budgets, Touch Feedback, Haptic, Virtual Keyboard.

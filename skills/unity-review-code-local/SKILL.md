@@ -7,6 +7,9 @@ description: "Deep logic review for Unity C# code in the local project. Reviews 
 
 Deep logic review for the local project. Comments go directly into the code as inline comments — no report document, no GitHub interaction.
 
+## Output
+Inline review comments added directly into C# source files. No report document.
+
 ## Input → Diff Command
 
 | Input | Command |

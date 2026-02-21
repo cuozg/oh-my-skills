@@ -5,7 +5,6 @@ description: "Quick costing and impact assessment for Unity features/tasks. Inve
 # Quick Task Assessment
 
 **Input**: Feature request, task description, or proposed change
-**Output**: Compact 4-section assessment (Size, Time, Risk, Impact)
 
 ## Role
 
@@ -78,7 +77,7 @@ Senior Unity engineer doing a quick feasibility assessment. Investigate thorough
 
 **Input**: "Add daily login reward system"
 
-**Output**:
+**Result**:
 
 ```
 ## Assessment: Daily Login Reward System

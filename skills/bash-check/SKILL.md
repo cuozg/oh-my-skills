@@ -11,7 +11,7 @@ Path to `.sh` file. Optional: target shell version or POSIX-compliance flag.
 
 ## Output
 
-Structured report per [CHECK_REPORT.md](.opencode/skills/bash/bash-check/assets/templates/CHECK_REPORT.md). Read template first, populate all sections, output directly to user.
+Structured report per [CHECK_REPORT.md](assets/templates/CHECK_REPORT.md). Read template first, populate all sections, output directly to user.
 
 ## Examples
 

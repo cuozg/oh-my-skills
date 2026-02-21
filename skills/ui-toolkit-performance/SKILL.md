@@ -7,6 +7,9 @@ description: "Performance optimization for Unity UI Toolkit. Covers profiling, d
 
 Optimize UI Toolkit for 60fps. Target: 2-4 draw calls/screen, < 0.5ms layout cost.
 
+## Output
+Optimized C# and USS code targeting 60fps with minimal draw calls and GC allocations.
+
 ## Performance Mental Model
 
 ```

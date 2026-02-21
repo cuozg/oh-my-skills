@@ -7,6 +7,9 @@ description: "Master guide for Unity UI Toolkit — the retained-mode UI framewo
 
 Root skill for the UI Toolkit series. Start here, then follow the learning path.
 
+## Output
+Production-ready UXML/USS/C# code and project structure following UI Toolkit best practices.
+
 ## Learning Path (~15 hours)
 
 ### Level 1 — Foundations

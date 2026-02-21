@@ -7,6 +7,9 @@ description: "Responsive design for Unity UI Toolkit. Covers flexbox layout, len
 
 Flexbox-based responsive layout: safe area, orientation, adaptive patterns across devices.
 
+## Output
+Responsive USS layouts and C# handlers for safe area, orientation, and multi-device adaptation.
+
 ### Dragon Crashers Responsive Patterns
 DC: flexbox column default, `flex-grow: 1` for content fill, `%` widths for grids, `GeometryChangedEvent` (not Update polling), SafeAreaBorder (borderWidth), MediaQuery (aspect ratio threshold), ThemeManager (PanelSettings+TSS swap), PositionToVisualElement (3D→UI alignment).
 

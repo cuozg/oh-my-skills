@@ -7,14 +7,15 @@ description: "(opencode-project - Skill) Create Unity project documentation. Use
 
 **Input**: Description of documentation task. Optional: file paths, constraints, scope.
 
-**Output**: Markdown documentation following templates from `assets/templates/`. Locations: `README.md` (root), `Docs/ARCHITECTURE.md`, `Docs/API.md`, `CONTRIBUTING.md` (root).
+## Output
+Project documentation following the Templates below.
 
 ## Templates (MANDATORY)
 
-- [README_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/README_TEMPLATE.md)
-- [API_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/API_TEMPLATE.md)
-- [ARCHITECTURE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/ARCHITECTURE_TEMPLATE.md)
-- [GUIDE_TEMPLATE.md](.opencode/skills/unity/unity-write-docs/assets/templates/GUIDE_TEMPLATE.md)
+- [README_TEMPLATE.md](assets/templates/README_TEMPLATE.md)
+- [API_TEMPLATE.md](assets/templates/API_TEMPLATE.md)
+- [ARCHITECTURE_TEMPLATE.md](assets/templates/ARCHITECTURE_TEMPLATE.md)
+- [GUIDE_TEMPLATE.md](assets/templates/GUIDE_TEMPLATE.md)
 
 Read the relevant template first, then populate all sections.
 

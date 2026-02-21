@@ -11,7 +11,7 @@ Path to `.sh` file. Optional: focus — `performance`, `clarity`, `safety`, or `
 
 ## Output
 
-Structured report per [OPTIMIZATION_REPORT.md](.opencode/skills/bash/bash-optimize/assets/templates/OPTIMIZATION_REPORT.md). Read template first, populate all sections, output directly to user.
+Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REPORT.md). Read template first, populate all sections, output directly to user.
 
 ## Examples
 
