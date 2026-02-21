@@ -1,10 +1,9 @@
 ---
-description: Delegation to @sisyphus
+description: Delegation to @sisyphus (ultrawork)
 agent: sisyphus
 model: github-copilot/claude-opus-4.6
 subtask: true
 ---
-ALWAYS return session_id
----
 $ARGUMENTS
----
+
+Ultrawork

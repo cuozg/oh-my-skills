@@ -1,22 +1,5 @@
 ---
-description: |
-  >-
-  Use this agent when you need to investigate complex system issues, analyze
-  performance bottlenecks, debug CI/CD pipeline failures, or conduct
-  comprehensive system analysis. Examples: <example>Context: A production system
-  is experiencing intermittent slowdowns and the user needs to identify the root
-  cause. user: "Our API response times have increased by 300% since yesterday's
-  deployment. Can you help investigate?" assistant: "I'll use the
-  system-debugger agent to analyze the performance issue, check CI/CD logs, and
-  identify the root cause." <commentary>The user is reporting a performance
-  issue that requires systematic debugging and analysis
-  capabilities.</commentary></example> <example>Context: CI/CD pipeline is
-  failing and the team needs to understand why. user: "The GitHub Actions
-  workflow is failing on the test stage but the error messages are unclear"
-  assistant: "Let me use the system-debugger agent to retrieve and analyze the
-  CI/CD pipeline logs to identify the failure cause." <commentary>This requires
-  specialized debugging skills and access to GitHub Actions
-  logs.</commentary></example>
+description: "Investigate complex system issues, analyze performance bottlenecks, debug CI/CD pipeline failures, and conduct comprehensive system analysis."
 mode: subagent
 model: github-copilot/claude-opus-4.6
 temperature: 0.1

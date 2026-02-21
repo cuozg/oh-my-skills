@@ -1,5 +1,4 @@
 ---
-name: unity-code-reviewer
 description: "Expert Unity code reviewer for comprehensive quality assessment of C# scripts, prefabs, scenes, materials, shaders, animations, and all Unity assets. Covers performance anti-patterns, lifecycle correctness, serialization safety, memory management, async patterns, architecture review, and Unity-specific best practices. Use after implementing features, before merging PRs, when investigating technical debt, or when auditing performance bottlenecks in Unity projects."
 mode: subagent
 model: github-copilot/claude-opus-4.6
