@@ -28,20 +28,21 @@ Deep logic review. Comments go directly into the code — no report document.
 ## Load References
 
 Always load:
-- [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) — shared C# patterns (performance, lifecycle, async, state)
-- [DEEP_LOGIC_REVIEW.md](references/DEEP_LOGIC_REVIEW.md) — advanced logic analysis (control flow, data flow, concurrency, edge cases)
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — how to write and place inline review comments
 - [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements
 
-## Code Standards Enforcement
+## Code Standards Enforcement (MANDATORY)
 
-When reviewing C# code, ALWAYS load the `unity-code-standards` skill to enforce project coding standards:
-- **Priority 1**: Code quality & hygiene (nullable, access modifiers, logging, exceptions)
-- **Priority 2**: Modern C# patterns (LINQ, expression bodies, null-coalescing)
-- **Priority 3**: Unity architecture (VContainer DI, SignalBus events, Data Controllers)
-- **Priority 4**: Performance (allocations, hot paths, component caching)
+**ALWAYS** load the `unity-code-standards` skill (`use_skill("unity-code-standards")`) before any review. This is the **sole source** for all logic review patterns, C# quality gates, and architecture standards. Non-negotiable.
 
-Load the relevant `unity-code-standards` references alongside the logic review references. Apply code standards violations as additional review comments using the same inline comment format.
+The `unity-code-standards` skill provides:
+- **Logic review patterns** — control flow, state management, data flow, concurrency, Unity-specific gotchas, edge cases (`references/review/logic-review-patterns.md`)
+- **Architecture review** — VContainer DI, SignalBus events, Data Controllers (`references/review/architecture-review.md`)
+- **C# quality gates** — nullable, access modifiers, logging, exceptions, modern C# (`references/review/csharp-quality.md`)
+- **Performance review** — allocations, hot paths, component caching (`references/review/performance-review.md`)
+- **Unity specifics** — lifecycle, serialization, async patterns (`references/review/unity-specifics.md`)
+
+Apply all findings as inline review comments using the same format from [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 
 ## Workflow
 

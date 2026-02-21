@@ -1,6 +1,6 @@
 # General Review Checklists
 
-Technology-agnostic checklists. Apply alongside Unity-specific references (LOGIC_REVIEW, PREFAB_REVIEW, ASSET_REVIEW).
+Technology-agnostic checklists. Apply alongside Unity-specific references (`unity-code-standards` logic review patterns, PREFAB_REVIEW, ASSET_REVIEW).
 
 ## PR Size → Checklist Focus
 

@@ -1,7 +1,6 @@
 ---
 description: Improve user's prompt
 agent: sisyphus-junior
-model: github-copilot/claude-opus-4.6
 subtask: true
 ---
 1. Load skill: prompt-improver

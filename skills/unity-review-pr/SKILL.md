@@ -39,22 +39,24 @@ Then by file type:
 
 | Files | Reference |
 |:------|:----------|
-| `.cs` | [LOGIC_REVIEW.md](references/LOGIC_REVIEW.md) |
+| `.cs` | Load `unity-code-standards` skill (`use_skill("unity-code-standards")`) — **MANDATORY**. Sole source for logic review patterns, C# quality, architecture, and performance standards. |
 | `.prefab`, `.unity` | [PREFAB_REVIEW.md](references/PREFAB_REVIEW.md) |
 | `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` | [ASSET_REVIEW.md](references/ASSET_REVIEW.md) |
-| `.cs` (standards) | Load `unity-code-standards` skill references for C# quality, architecture, and performance standards enforcement |
 
 Multiple types → load ALL matching.
 
-## Code Standards Enforcement
+## Code Standards Enforcement (MANDATORY)
 
-When reviewing `.cs` files, ALWAYS load the `unity-code-standards` skill to enforce:
-- **Priority 1**: Code quality & hygiene (nullable, access modifiers, logging, exceptions)
-- **Priority 2**: Modern C# patterns (LINQ, expression bodies, null-coalescing)
-- **Priority 3**: Unity architecture (VContainer DI, SignalBus events, Data Controllers)
-- **Priority 4**: Performance (allocations, hot paths, component caching)
+**ALWAYS** load the `unity-code-standards` skill before reviewing any `.cs` files. This is the **sole source** for all logic review patterns, C# quality gates, and architecture standards. Non-negotiable.
 
-Load the relevant `unity-code-standards` references based on the specific patterns found in the diff. Cross-reference findings against both the PR review checklists AND the code standards.
+The `unity-code-standards` skill provides:
+- **Logic review patterns** — control flow, state management, data flow, concurrency, Unity-specific gotchas, edge cases (`references/review/logic-review-patterns.md`)
+- **Architecture review** — VContainer DI, SignalBus events, Data Controllers (`references/review/architecture-review.md`)
+- **C# quality gates** — nullable, access modifiers, logging, exceptions, modern C# (`references/review/csharp-quality.md`)
+- **Performance review** — allocations, hot paths, component caching (`references/review/performance-review.md`)
+- **Unity specifics** — lifecycle, serialization, async patterns (`references/review/unity-specifics.md`)
+
+Cross-reference findings against both the PR review checklists AND the code standards.
 
 ## Workflow
 

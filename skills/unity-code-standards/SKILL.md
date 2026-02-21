@@ -184,6 +184,7 @@ Each assembly should:
 ### Review References
 | File | Content |
 |:-----|:--------|
+| [logic-review-patterns.md](references/review/logic-review-patterns.md) | Comprehensive logic review patterns — performance, async, state, data flow, concurrency, edge cases |
 | [architecture-review.md](references/review/architecture-review.md) | Architecture review checklist |
 | [csharp-quality.md](references/review/csharp-quality.md) | C# quality review checklist |
 | [performance-review.md](references/review/performance-review.md) | Performance review checklist |

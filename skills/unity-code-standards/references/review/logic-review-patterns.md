@@ -1,10 +1,83 @@
-# Deep Logic Review — Advanced Patterns
+# Logic Review Patterns — Unity C#
 
-Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file context, not just diffs.
+Load when reviewing, writing, or refactoring `.cs` files. Covers both standard and advanced patterns.
 
-## Control Flow Analysis
+---
 
-### 🔴 Critical
+## 1. Unity Performance
+
+### 1.1 Critical
+
+| Pattern | Why | Fix |
+|:--------|:----|:----|
+| `GetComponent` in Update/FixedUpdate | O(n) per frame | Cache in Awake |
+| `Camera.main` in loop | FindWithTag each access | Cache in Awake |
+| `Find()`/`FindObjectOfType()` runtime | O(n) traversal | `[SerializeField]` inject |
+| `Instantiate`/`Destroy` spam | GC spikes | Object pool |
+| String concat / LINQ / `new List` in Update | Per-frame alloc | Pre-allocate, `NonAlloc` |
+| `foreach` on non-cached collection in Update | Iterator alloc (older Mono) | Cache or use `for` loop |
+| `Physics.Raycast` without layer mask | Checks all colliders/layers | Use explicit `LayerMask` |
+| `string.Format` / string interpolation in hot paths | Per-frame alloc + boxing | Cache formatters or use `StringBuilder` |
+| `if (obj)` on `UnityEngine.Object` | Unity fake-null semantic mismatch | Use explicit `obj != null`/`obj == null` checks intentionally |
+| `Resources.Load` repeatedly at runtime | Sync load + repeated I/O | Cache loaded assets or move to Addressables |
+| `Texture2D.Apply()` called multiple times per batch | Re-uploads texture to GPU each call | Batch pixel changes, call `Apply()` once |
+| `SendMessage`/`BroadcastMessage` | Reflection dispatch + no compile-time safety | Direct calls, interfaces, or event bus |
+| `OnGUI` in runtime gameplay path | IMGUI runs/rebuilds every frame | Move to uGUI/UI Toolkit or editor-only |
+| `yield return new WaitForEndOfFrame` in WebGL flow | Can hang on browser frame timing edge cases | Use `yield return null`/other safe yield strategy |
+| `Animator.SetTrigger("Name")` string every call | Hash lookup/string typo risk | Cache `Animator.StringToHash` IDs |
+| Large `switch` on animation state names (strings) | String compare cost + typo risk | Compare hashed state IDs |
+| `Material.SetFloat/SetColor("Prop")` in Update | Per-call property name lookup | Cache `Shader.PropertyToID` |
+
+---
+
+## 2. Async & Lifecycle
+
+### 2.1 Critical
+
+| Pattern | Why | Fix |
+|:--------|:----|:----|
+| `this`/`gameObject` after `await` no null check | MissingRef | `if (this == null) return;` |
+| `StartCoroutine` without stop in OnDisable | Runs after destroy | Store handle, stop in OnDisable |
+| `+=` without `-=` in OnDisable | Event leak | OnEnable/OnDisable pair |
+| `async void` on non-Unity-event | Swallowed exceptions | `async Task` / `async UniTask` |
+| Missing `CancellationToken` on long-running async | Can't cancel on destroy | Pass `destroyCancellationToken` (Unity 6) or manual CTS |
+| `await` without `try/catch` in fire-and-forget | Unobserved exception crash | Wrap or use UniTask `.Forget()` with error handler |
+| Coroutine yields `new WaitForSeconds` each frame | GC per yield | Cache `WaitForSeconds` instance |
+| `OnDestroy` accesses other components/singletons | Destroy order undefined during teardown | Guard null and avoid cross-object logic in destroy path |
+| `DontDestroyOnLoad` without singleton guard | Duplicate persistent instances across scenes | Add instance guard + duplicate self-destroy |
+| `SceneManager.sceneLoaded +=` without unsubscribe | Handler leak and duplicate callbacks | Unsubscribe in OnDisable/OnDestroy |
+| `Addressables.LoadAssetAsync` without release ownership tracking | Addressable handle leak | Track handles and call `Addressables.Release` |
+| `UnityWebRequest` not disposed | Native memory/socket leak risk | Use `using var req = ...` or explicit `Dispose()` |
+| Coroutine continues after owner destroy/disable | MissingReference/null access | Guard with `isActiveAndEnabled` and stop on disable |
+| `Time.deltaTime` in `FixedUpdate` | Physics step mismatch | Use `Time.fixedDeltaTime` |
+| `Application.targetFrameRate` set ignoring vSync | Conflicting frame pacing settings | Set with explicit `QualitySettings.vSyncCount` strategy |
+
+**Lifecycle order:** Awake(self) → OnEnable(subscribe) → Start(cross-component) → OnDisable(unsubscribe) → OnDestroy(cleanup)
+
+### 2.2 Critical — General
+
+Breaking API change, NullRef without guard, memory leak (undisposed resources/events), data corruption (serialization change without migration), race conditions, hardcoded secrets.
+
+---
+
+## 3. Serialization & Data
+
+### 3.1 Critical
+
+| Pattern | Why | Fix |
+|:--------|:----|:----|
+| `[SerializeField]` applied to property | Unity serializes fields, not C# properties | Convert to backing field serialization |
+| Public field should not persist but lacks `[NonSerialized]` | Unintended state persistence across saves/domain reload | Mark non-persistent fields explicitly |
+| Interface/abstract type serialized with default Unity serializer | Unity cannot serialize most interface/abstract field data | Use concrete type, custom serializer, or `[SerializeReference]` with constraints |
+| `[SerializeReference]` used without migration/type-stability plan | Type rename/move breaks polymorphic payloads | Add stable type strategy and migration handling |
+| ScriptableObject asset mutated directly at runtime | Shared project asset state corruption | `Instantiate()` runtime copy before mutation |
+| `JsonUtility.FromJson` on Unity object graph expecting references | Object references not restored in plain JSON load | Use ID-based remap/custom serialization layer |
+
+---
+
+## 4. Control Flow
+
+### 4.1 Critical
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -21,7 +94,7 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Method with 5+ parameters | High coupling, call-site mistakes | Recommend parameter object/builder when parameters represent one concept or optional config. |
 | Deep callback nesting (3+ lambdas/delegates) | Callback hell, hidden error paths | Flatten with async/await, extracted methods, or pipeline object; verify error handling at each level. |
 
-### 🟡 Major
+### 4.2 Major
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -37,9 +110,41 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Deferred LINQ chain re-enumerated | Re-executes query with changed source/state | Materialize with `.ToList()`/`.ToArray()` when iterated multiple times. |
 | `Array.Sort` relied on as stable sort | Equal keys may reorder unpredictably | If stability matters, use `OrderBy(...).ThenBy(...)` or custom stable strategy. |
 
-## State Management Deep Dive
+---
 
-### 🔴 Critical
+## 5. Logic Patterns
+
+### 5.1 Major
+
+| Pattern | Fix |
+|:--------|:----|
+| Field renamed without `[FormerlySerializedAs]` | Add attribute |
+| DOTween not killed in OnDisable | `_tween?.Kill()` |
+| Cross-component access in Awake | Move to Start |
+| SO mutated runtime without clone | `Instantiate(configSO)` |
+| Physics calls in Update | Move to FixedUpdate |
+| `private` → `public` on SerializeField | Keep private, add property |
+| Nullable type without null-check before use | Add guard clause or `?.` operator |
+| `switch` on enum without `default` case | Add `default` with warning log |
+| Mutable static field on MonoBehaviour | Race condition across scenes — use SO or singleton pattern |
+| Public field where property needed | Encapsulate: `[field: SerializeField] public int Hp { get; private set; }` |
+| `Mathf.Lerp(current, target, Time.deltaTime)` used as smoothing | Never reaches target predictably, frame-rate dependent. Use damp/speed-based interpolation (`MoveTowards`, exponential decay) |
+| `Vector3 == Vector3` for precision checks | Float equality unstable. Compare `(a - b).sqrMagnitude < epsilon` |
+| `Quaternion == Quaternion` for orientation checks | Float equality unstable. Use `Quaternion.Angle(a, b) < threshold` |
+| `transform.position += ...` in FixedUpdate on Rigidbody object | Bypasses physics solver/interpolation. Use `Rigidbody.MovePosition`/forces in FixedUpdate |
+| `Rigidbody.MovePosition` called from Update | Desync with physics timestep. Move to FixedUpdate |
+| `gameObject.tag == "..."` comparisons | Slower/string-based and typo-prone. Use `CompareTag("...")` |
+| Incorrect layer-mask bit math (`1 << layer` misuse) | Wrong collision/query filter. Validate with `LayerMask.GetMask` or precomputed mask constants |
+| `Debug.DrawRay` endpoint passed as direction | Visual debug lies about actual cast. Pass direction * length, not endpoint |
+| `Invoke`/`InvokeRepeating("Method")` string API | No compile-time safety/rename breakage. Replace with coroutine/timer + direct delegate |
+| `PlayerPrefs` stores sensitive tokens/PII | Plaintext, user-editable storage. Use secure storage/encryption strategy |
+| Misread `Random.Range` bounds (`int` max exclusive, `float` max inclusive) | Off-by-one and spawn distribution bugs. Apply correct overload semantics explicitly |
+
+---
+
+## 6. State Management
+
+### 6.1 Critical
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -55,7 +160,7 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Static event declared on MonoBehaviour | Subscribers leak across scene/domain lifecycle | Enforce unsubscribe/reset strategy on scene unload/domain reload. |
 | `FindObjectOfType<T>(true)` vs default overload mismatch | Includes inactive objects, changes behavior silently | Verify intended search scope and document expectation (active-only vs include inactive). |
 
-### 🟡 Major
+### 6.2 Major
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -69,10 +174,18 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | `[ExecuteInEditMode]`/`[ExecuteAlways]` writes runtime state | Editor update can permanently modify assets/scenes | Split editor/play paths and guard asset mutation with explicit checks. |
 | Singleton `Instance` accessed during teardown (`OnDestroy`) | Destroy order can null/replace singleton unexpectedly | Guard access and avoid cross-singleton logic in destroy path. |
 | `enabled = false` used instead of `SetActive(false)` assumption | Lifecycle/coroutine/event behavior differs | Verify intended disable scope: component-only vs whole GameObject and child hierarchy. |
+| Bool flags for state management (3+ bools) | Combinatorial explosion of states | Extract state machine / enum |
+| Collection modified during enumeration | InvalidOperationException | Copy or use removal list |
+| Dictionary lookup without `TryGetValue` | Double-lookup waste | Replace `ContainsKey` + index with `TryGetValue` |
+| `List.Find()` / `FirstOrDefault()` in hot path | O(n) search per call | Use Dictionary or HashSet for O(1) lookup |
+| Enum changed without updating all `switch` statements | Unhandled case | Grep all switch/if-chains for that enum |
+| `[Serializable]` class with no default constructor | Deserialization will fail silently | Add parameterless constructor |
 
-## Data Flow Tracing
+---
 
-### 🔴 Critical
+## 7. Data Flow
+
+### 7.1 Critical
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -81,14 +194,14 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Collection index from external source without bounds check | `IndexOutOfRangeException` | What if server sends index 999? What if config has wrong array size? |
 | Float comparison with `==` | Floating point imprecision | Use `Mathf.Approximately` or epsilon comparison |
 | Integer overflow in calculation | Wrap-around produces negative/wrong value | Check max realistic values: `count * size * price` — can it overflow int? |
-| `Mathf.InverseLerp(a, b, value)` where `a == b` | Degenerate range can produce invalid normalization (`NaN`) assumptions | Guard equal endpoints before call; define fallback behavior explicitly. |
+| `Mathf.InverseLerp(a, b, value)` where `a == b` | Degenerate range can produce `NaN` | Guard equal endpoints before call; define fallback behavior explicitly. |
 | `Vector3.Normalize()` on zero vector | Returns zero vector, not unit direction | Verify downstream code handles zero magnitude and does not assume normalized length 1. |
 | Linear/gamma color space mixed usage | Wrong brightness/tint in rendering/UI | Verify conversion expectations when passing `Color` between authored data, shaders, and UI. |
 | `Texture2D.GetPixels` on compressed texture | Full decompression allocates large RAM spike | Validate texture format/readability and avoid runtime full readbacks in gameplay path. |
 | `AnimationCurve.Evaluate` outside key range | Extrapolation may produce unexpected values | Check `preWrapMode`/`postWrapMode` and clamp input time when needed. |
 | `NavMesh.SamplePosition` with tiny `maxDistance` | Frequent silent miss and fallback logic errors | Verify radius matches gameplay scale and check return bool every call. |
 
-### 🟡 Major
+### 7.2 Major
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -104,9 +217,11 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | ScriptableObject `List<T>` where `T` stores scene refs | Scene refs become null in builds/runtime instances | Replace with GUID/Addressable IDs or runtime binding step. |
 | Frequent `Color32` ↔ `Color` conversion | Precision loss and subtle color drift | Keep canonical representation and convert only at boundaries. |
 
-## Concurrency & Async Patterns
+---
 
-### 🔴 Critical
+## 8. Concurrency & Async (Advanced)
+
+### 8.1 Critical
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -122,7 +237,7 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Additive scene loads without unload plan | Duplicate objects and memory leak over session | Verify matching `UnloadSceneAsync` and ownership of loaded scenes. |
 | `Resources.UnloadUnusedAssets()` called during gameplay loop | Large stall + GC spike | Restrict to loading screens or controlled transition windows. |
 
-### 🟡 Major
+### 8.2 Major
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -135,9 +250,44 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Multiple `LoadSceneAsync` without activation coordination | Scene activation races and broken transition UX | Coordinate `allowSceneActivation` and loading state machine. |
 | Addressables `InstantiateAsync` without ownership tracking | Spawned objects orphaned and hard to clean up | Track instance handles/parents and release on scene/object teardown. |
 
-## Unity-Specific Gotchas
+---
 
-### 🔴 Critical
+## 9. UI-Specific
+
+### 9.1 Major
+
+| Pattern | Fix |
+|:--------|:----|
+| Canvas dirtied/rebuilt every frame (SetDirty/text/layout toggles) | Batch updates and avoid per-frame UI mutations |
+| Deeply nested LayoutGroups causing cascade recalculation | Flatten hierarchy, minimize nested layout groups |
+| Frequent UI enable/disable toggles for visibility | Use `CanvasGroup` alpha/interactable/blockRaycasts where possible |
+| ScrollRect with large dataset and no virtualization | Implement item pooling/virtualized list |
+| Text/TMP content updated each frame without need | Update only on value change, throttle refresh |
+| Decorative Images keep `raycastTarget=true` | Disable raycast target on non-interactive graphics |
+| Multiple `GraphicRaycaster` components on nested canvases | Keep only required raycasters to reduce UI input overhead |
+
+---
+
+## 10. Networking
+
+Apply when networking/web request code is modified.
+
+### 10.1 Major
+
+| Pattern | Fix |
+|:--------|:----|
+| `UnityWebRequest` without timeout | Set `timeout` or equivalent cancellation policy |
+| JSON parse without error handling | Wrap parse in `try/catch` with fallback/error path |
+| Network calls without retry/backoff strategy | Add bounded retry with jitter/backoff |
+| Missing `Content-Type`/accept headers for payload APIs | Set explicit headers matching backend contract |
+| Deprecated `isNetworkError`/`isHttpError` checks only | Use `UnityWebRequest.result` + status code handling |
+| Large payloads sent uncompressed | Enable/request compression and chunk strategy where supported |
+
+---
+
+## 11. Unity-Specific Gotchas
+
+### 11.1 Critical
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -147,7 +297,7 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | `AssetDatabase` called from runtime assembly path | Build/runtime failures outside editor | Require `#if UNITY_EDITOR` guards and assembly split when needed. |
 | `PrefabUtility` usage during play mode | Unexpected prefab edits/state drift | Verify calls are editor-tooling only and gated from play mode operations. |
 
-### 🟡 Major
+### 11.2 Major
 
 | Pattern | Why | What to check |
 |:--------|:----|:--------------|
@@ -159,9 +309,11 @@ Beyond the shared LOGIC_REVIEW.md patterns. These require reading full file cont
 | Optional feature used without `SystemInfo.supportsXxx` gate | Runtime failures on unsupported hardware | Guard usage and provide fallback path. |
 | `QualitySettings` accessed by index | Reordered quality levels break behavior | Resolve by quality name mapping or config abstraction, not hard-coded index. |
 
-## Edge Case Checklist
+---
 
-Run this against EVERY changed method:
+## 12. Edge Case Checklist
+
+Run against EVERY changed method:
 
 | Question | If Yes → |
 |:---------|:---------|
@@ -176,27 +328,51 @@ Run this against EVERY changed method:
 | What if the network/file operation fails? | Check error handling path exists |
 | What if the referenced object was destroyed? | Check for null/MissingReferenceException |
 
+---
+
+## 13. Minor Issues
+
+Magic numbers, Debug.Log without `#if UNITY_EDITOR`, empty Update/Start, dead code, naming violations, nesting 4+, missing XML docs on public API, `#region` blocks (remove — use partial classes or extract), unnecessary `this.` qualifier.
+
+---
+
+## Suggestion Quality — DO / DON'T
+
+**DO**: Provide exact replacement code in ` ```suggestion ``` `. One issue per comment. Show evidence (caller count, file:line). Explain *why*, not just *what*.
+
+**DON'T**: Combine multiple fixes in one suggestion. Suggest style-only changes as Critical/Major. Flag patterns without grepping for evidence. Suggest rewrites > 20 lines inline (use `<details>` block).
+
+---
+
 ## Investigation Commands
 
 ```bash
-# Trace all callers of a method
+# Callers of a method
 grep -rn "MethodName\s*(" Assets/Scripts/ --include="*.cs"
 
-# Find all state mutations of a field
-grep -rn "_fieldName\s*=" Assets/Scripts/ --include="*.cs"
-
-# Find all subscribers to an event
+# Event subscribers
 grep -rn "EventName\s*[+-]=" Assets/Scripts/ --include="*.cs"
 
-# Check for catch-all exception handlers
+# Serialization refs in prefabs/assets
+grep -rn "TypeName" Assets/ --include="*.prefab" --include="*.asset"
+
+# Enum switch/case usage
+grep -rn "EnumType" Assets/Scripts/ --include="*.cs" | grep -E "switch|case"
+
+# State mutations of a field
+grep -rn "_fieldName\s*=" Assets/Scripts/ --include="*.cs"
+
+# Catch-all exception handlers
 grep -rn "catch\s*(Exception" Assets/Scripts/ --include="*.cs"
 
-# Find async void methods (non-event)
+# Async void methods (non-event)
 grep -rn "async\s\+void\s\+[^O]" Assets/Scripts/ --include="*.cs"
 
-# Find float equality comparisons
+# Float equality comparisons
 grep -rn "==\s*[0-9]*\.[0-9]" Assets/Scripts/ --include="*.cs"
 
-# Find division operations (check for zero guards)
+# Division operations (check for zero guards)
 grep -rn "[^/]/[^/\*=]" Assets/Scripts/ --include="*.cs"
 ```
+
+Every Critical needs caller count + affected files. Every Major needs trigger conditions.
