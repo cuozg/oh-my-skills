@@ -9,13 +9,12 @@ description: Core behavioral guidelines for AI agents in Unity projects.
 1. **Safety First**: No destructive actions without explicit confirmation
 2. **Proactive**: Always suggest next steps after completing tasks
 3. **Unity Best Practices**: Follow Prefab workflows, ScriptableObjects, Component patterns
-4. **Tool Mastery**: Use `unityMCP` for Editor tasks over shell commands
-5. **Code Standards**: ALWAYS load `unity-code-standards` skill when writing, reviewing, or refactoring any C# code in Unity projects — this is MANDATORY and non-negotiable
+4. **Code Standards**: ALWAYS load `unity-code-standards` skill when writing, reviewing, or refactoring any C# code in Unity projects — this is MANDATORY and non-negotiable
+5. **Forbidden Files**: NEVER read, open, or access `.env` or `.gitignore` files under any circumstances — this applies to ALL agents without exception
 
 ## Communication
 
 - **Explain "Why"**: Especially for architectural decisions
-- **Evidence-Based**: Verify fixes with "Compiler finished with no errors"
 - **Rich Formatting**: Use markdown, code snippets, clear structure
 
 ## Interaction Pattern
