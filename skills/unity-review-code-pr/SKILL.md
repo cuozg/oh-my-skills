@@ -31,33 +31,19 @@ Review comments pushed to GitHub PR via API. Covers correctness, edge cases, sta
 
 Full decision tree: [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md).
 
-## Load References
-
-Before any review work, load these references:
-
-```python
-read_skill_file("unity-code-standards", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-standards", "references/review/csharp-quality.md")
-read_skill_file("unity-code-standards", "references/review/performance-review.md")
-read_skill_file("unity-code-standards", "references/review/unity-specifics.md")
-```
-
-These are the review checklists. Apply them against every changed `.cs` file.
-
 ## Workflow
 
-### 1. Fetch PR Diff
+### 1. Fetch PR
 
 ```bash
-gh pr diff <N> --name-only   # Get changed files
-gh pr view <N> --json title,body,files,number  # Get PR context
+gh pr diff <N> --name-only   # Changed files
+gh pr view <N> --json title,body,files,number  # PR context
+gh pr diff <N>               # Full diff
 ```
 
-Filter to `.cs` files ONLY. If no `.cs` files, skip review and APPROVE with note `No C# files to review.`
+Filter to `.cs` files ONLY. If no `.cs` files, APPROVE with note `No C# files to review.`
 
-### 2. Load Review References
-
-Load all 4 reference files from `unity-code-standards`:
+### 2. Load Review Checklists
 
 ```python
 read_skill_file("unity-code-standards", "references/review/logic-review-patterns.md")
@@ -66,83 +52,23 @@ read_skill_file("unity-code-standards", "references/review/performance-review.md
 read_skill_file("unity-code-standards", "references/review/unity-specifics.md")
 ```
 
-### 3. Fetch Full Diff
+### 3. Read Full File Context
 
-```bash
-gh pr diff <N>   # Full diff for .cs files
-```
+For each changed `.cs` file, read the ENTIRE file (not just the diff). Logic bugs hide in surrounding context.
 
-### 4. Read Full File Context
+### 4. Deep Investigate (Parallel)
 
-For each changed `.cs` file, read the ENTIRE file (not just the diff). Logic bugs hide in surrounding context. Use `read` tool to get full file content for each changed file.
+Spawn 2-3 `@explore` agents to gather evidence: call-site analysis, state flow tracing, data contract checks.
 
-### 5. Deep Investigate (Parallel)
+### 5. Logic Review
 
-Spawn 2-3 `@explore` agents in background to gather evidence:
+Apply loaded checklists. Focus: control flow, state management, data flow, edge cases, Unity lifecycle, serialization safety, memory safety, async patterns.
 
-- **Call-site analysis**: For each modified public method/property, find all callers and count call sites.
-- **State flow**: Trace state transitions - what sets each field and what reads it.
-- **Data contract**: Check serialization, API boundaries, and event payloads.
+### 6. Build `/tmp/review.json`
 
-### 6. Logic Review
+Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Do NOT include `commit_id` — `post_review.sh` injects it automatically.
 
-Apply loaded review checklists against each changed file. Focus areas:
-
-- Control flow (branches, loops, early returns, switches)
-- State management (field mutations, init order, lifetime)
-- Data flow (input validation, null propagation, type safety)
-- Edge cases (zero, null, empty, max, negative, concurrent)
-- Unity lifecycle (Awake/OnEnable/Start/OnDisable/OnDestroy balance)
-- Serialization safety (field renames, type changes, migration)
-- Memory safety (per-frame allocations, event leaks, resource disposal)
-- Async patterns (cancellation, shared state, thread safety)
-
-### 7. Build `/tmp/review.json`
-
-Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md).
-
-```json
-{
-  "body": "[SUMMARY - see body template below]",
-  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
-  "comments": [
-    { "path": "Assets/Scripts/Example.cs", "line": 42, "side": "RIGHT", "body": "[INLINE]" }
-  ]
-}
-```
-
-Do NOT include `commit_id` - `post_review.sh` injects it automatically.
-
-Summary body template:
-
-```markdown
-## Code Review - PR #[N]
-**Scope**: [PR title]
-[One-sentence overall assessment].
-
-### Findings Summary
-| Severity | Count |
-|:---------|:------|
-| 🔴 Critical | [N] |
-| 🟡 High | [N] |
-| 🔵 Medium | [N] |
-| 🟢 Low | [N] |
-
-### Acceptance Criteria
-- [ ] No critical or high severity issues remain
-- [ ] Feature works; edge cases handled
-- [ ] No frame drops, GC spikes
-- [ ] No breaking serialization changes
-
-### Breaking Changes ([N])
-### Potential Issues ([N])
-### Unity-Specific Concerns ([N])
-### Code Quality ([N])
-### Impact Analysis
-- Files reviewed: X · Total findings: Y
-```
-
-### 8. Submit
+### 7. Submit
 
 ```bash
 ./skills/unity-review-code-pr/scripts/post_review.sh <pr_number> /tmp/review.json
@@ -150,72 +76,22 @@ Summary body template:
 
 Fallback (merged/closed): handled automatically by `post_review.sh`.
 
-## Suggestion Syntax Quick Reference
-
-| Type | JSON fields | Notes |
-|:-----|:------------|:------|
-| Single-line | `"line": 42` | Suggestion replaces that one line |
-| Multi-line | `"start_line": 10, "line": 15` | Suggestion replaces lines 10–15 |
-| Large rewrite | Single `"line"` | Use `<details>` block instead of suggestion |
-
-`line` = file line number (not diff position). `side` always `"RIGHT"`. Full syntax in [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md).
-
-## Inline Comment Format
-
-**🔴 Critical / 🟡 High:**
-
-```markdown
-**[Issue]**: [What's wrong]
-**Evidence**: [Proof - caller count, file:line, YAML key]
-**Why**: [Impact]
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
-**🔵 Medium:**
-
-```markdown
-**[Issue]**: [What to improve]
-**Why**: [Reason]
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
-**🟢 Low:**
-
-```markdown
-**Suggestion**: [What could be better]
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
-Full format and syntax details: [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md).
-
 ## Evidence Rules
 
-- 🔴 Critical needs: caller count + affected files + reproduction scenario.
-- 🟡 High needs: trigger conditions + what state leads to the bug.
-- 🔵 Medium needs: brief explanation of why current code is suboptimal.
-- 🟢 Low needs: brief note.
-- Never flag without evidence. Investigate before commenting.
+- 🔴 Critical: caller count + affected files + reproduction scenario
+- 🟡 High: trigger conditions + what state leads to the bug
+- 🔵 Medium: brief explanation of why current code is suboptimal
+- 🟢 Low: brief note
+- Never flag without evidence
 
 ## Rules
 
-- ✅ Only review `.cs` files. Skip all other file types.
-- ✅ Read the full file, not just the diff. Logic bugs need context.
-- ✅ Trace data flow end-to-end. Follow the value from source to sink.
-- ✅ One issue = one comment. Each with severity emoji + Evidence + Why + suggestion.
-- ✅ Same issue in N files -> full explanation on first, short ref + suggestion on rest (batch pattern).
-- ✅ Check what happens when assumptions are violated (null, empty, concurrent, out-of-order).
-- ✅ Verify event subscribe/unsubscribe pairs. Check lifecycle ordering.
-- ✅ If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
-- ✅ For serialization-related findings, check whether the project has migration/versioning support.
-- ✅ Submit even if PR is merged - `post_review.sh` handles the fallback.
-- ❌ Never combine issues. Never skip submission. Never flag without evidence.
-- ❌ Never hardcode `commit_id` - `post_review.sh` auto-injects it.
-- ❌ Never modify source files. This is a read-only review.
-- ❌ Never review non-`.cs` files (prefabs, assets, shaders, scenes).
-- ❌ Never delegate to sub-skills. This skill does the review directly.
+- Only review `.cs` files. Read full files, not just diffs.
+- Trace data flow end-to-end. One issue = one comment (severity + evidence + suggestion).
+- Same issue in N files → full explanation on first, short ref on rest (batch pattern).
+- Check assumptions violated: null, empty, concurrent, out-of-order.
+- Verify event subscribe/unsubscribe pairs and lifecycle ordering.
+- If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
+- For serialization findings, check whether the project has migration/versioning support.
+- Submit even if PR is merged — `post_review.sh` handles fallback.
+- Never hardcode `commit_id`, modify source files, review non-`.cs` files, or delegate to sub-skills.

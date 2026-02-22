@@ -17,15 +17,13 @@ Senior Unity engineer doing a quick feasibility assessment. Investigate thorough
 3. **Assess** — Evaluate size, time, risk, and downstream impact.
 4. **Respond** — Use the output template exactly. Nothing else.
 
-### Investigation Checklist
+For investigation checklist, size reference, and time reference, see [references/investigation-checklist.md](references/investigation-checklist.md).
 
-- How many files need changes? New files needed?
-- How much new logic vs. wiring existing systems?
-- Existing patterns to follow or greenfield?
-- What other systems touch the affected code?
-- Tricky edge cases, threading, lifecycle issues?
+For a worked example of the assessment process, see [references/example.md](references/example.md).
 
 ## Output Template
+
+Structured assessment format to present findings:
 
 ```
 ## Assessment: {Feature/Task Name}
@@ -48,66 +46,15 @@ Senior Unity engineer doing a quick feasibility assessment. Investigate thorough
 - _{None — isolated change}_ (if no downstream impact)
 ```
 
-### Size Reference
-
-| Size | Signals |
-|:-----|:--------|
-| Small | 1-3 files, follows existing pattern, no new systems |
-| Medium | 4-10 files, some new logic, touches 2-3 systems |
-| Large | 10+ files, new architecture, cross-cutting concerns |
-
-### Time Reference
-
-| Range | Typical Work |
-|:------|:-------------|
-| 1-4h | Small bug fix, config change, add field |
-| 4-16h | New component, UI screen, system extension |
-| 16-40h | New system, major refactor, cross-cutting feature |
-| 40h+ | Architecture change, new subsystem with tests |
+For size and time reference tables, see [references/investigation-checklist.md](references/investigation-checklist.md).
 
 ## Rules
 
-- **Investigate deep, respond short.** Read as much code as needed. Output stays compact.
-- **No task lists.** Assessment only — not planning.
-- **No implementation details.** Don't describe HOW to build it.
-- **Be honest about unknowns.** If you can't assess something, say so.
-- **Anchor estimates in evidence.** Reference actual file counts, system complexity you found.
-
-## Example
-
-**Input**: "Add daily login reward system"
-
-**Result**:
-
-```
-## Assessment: Daily Login Reward System
-
-### Size: Medium
-New system with data persistence and UI, but follows existing reward patterns.
-- 6-8 files: model, manager, UI screen, save data, config SO, tests
-- Existing RewardManager and popup patterns can be extended
-- Needs new persistent timestamp tracking
-
-### Time Estimate: 12-20 hours
-Core logic is straightforward; UI and edge cases add time.
-- Core logic + data model: 3-5h
-- UI screen + animations: 4-6h
-- Save/load + timezone edge cases: 3-5h
-- Testing + polish: 2-4h
-
-### Risk: Medium
-Timezone and calendar-day boundaries are the main difficulty.
-- Server vs local time discrepancy can allow exploits
-- Day-rollover logic across timezones is error-prone
-- Offline/clock-manipulation detection needed
-- Save data migration if reward structure changes later
-
-### Impact
-- **SaveManager**: New daily-login data block in save file
-- **RewardManager**: New reward source type to integrate
-- **MainMenuUI**: New button/indicator for daily reward status
-- **Analytics**: New events for login streak tracking
-```
+- Investigate deep, respond short — read as much code as needed, output stays compact.
+- No task lists — assessment only, not planning.
+- No implementation details — don't describe HOW to build it.
+- Be honest about unknowns — say so if can't assess something.
+- Anchor estimates in evidence — reference actual file counts and system complexity found.
 
 ## Boundaries
 

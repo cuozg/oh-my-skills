@@ -22,21 +22,7 @@ Issue tracking side-effects (created/updated/closed issues, synced graph DB) and
 
 ## Installation
 
-```bash
-brew install steveyegge/tap/beads    # macOS
-npm install -g beads                  # Node.js
-go install github.com/steveyegge/beads@latest  # Go 1.24+
-```
-
-```bash
-bd init                    # Initialize in current repo
-bd hooks install           # Git hooks for JSONL sync
-bd setup claude            # Configure for Claude/opencode (also: cursor, aider, codex)
-bd init --stealth          # No beads files in main repo
-bd init --contributor      # Separate planning repo
-```
-
-Optional MCP: `uv tool install beads-mcp`
+See [references/install.md](references/install.md) for installation via package managers, repo setup, and optional MCP.
 
 ---
 
@@ -97,24 +83,13 @@ bd link <id1> relates_to|duplicates|supersedes|replies_to <id2>
 
 ## Quick Reference
 
-| Situation | Command |
-|-----------|---------|
-| Start session | `bd prime` |
-| Find work | `bd ready` |
-| Start issue | `bd update <id> --claim --status in_progress` |
-| Finish issue | `bd update <id> --status closed && bd sync` |
-| Create task | `bd create "title" -t task -p 2` |
-| Child task | `bd create "title" -t task --parent <id>` |
-| Dependency | `bd dep add <child> <parent>` |
-| Health check | `bd doctor` |
-| End session | Update all → `bd sync` → commit |
+See [references/quick-reference.md](references/quick-reference.md) for common workflows and mistake fixes.
 
-| Mistake | Fix |
-|---------|-----|
-| `bd edit` | `bd update <id> --flags` |
-| Forget sync | `bd sync` after every change |
-| No ID in commit | Always `(bd-xxxx)` |
-| Skip claim | `bd update <id> --claim` first |
+Key patterns:
+- Always claim atomically: `bd update <id> --claim --status in_progress`
+- Sync after changes: `bd sync`
+- Include ID in commits: `(bd-xxxx)`
+- Land the Plane at session end: Update all → sync → commit
 
 ---
 
@@ -122,3 +97,4 @@ bd link <id1> relates_to|duplicates|supersedes|replies_to <id2>
 
 - `references/commands.md` — bd CLI command reference
 - `references/workflows.md` — Agent session workflows
+- `references/quick-reference.md` — Common workflows and mistake fixes

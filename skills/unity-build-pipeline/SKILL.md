@@ -20,116 +20,13 @@ Build scripts (C# Editor), Addressables config, CI/CD pipeline YAML, and build o
 6. **Add build reporting** — size analysis, build time, warning aggregation
 7. **Integrate CI/CD** (if needed) — GitHub Actions, GitLab CI, Jenkins
 
-## Build Script Foundation
+## Build Scripts & Processors
 
-```csharp
-using UnityEditor;
-using UnityEditor.Build.Reporting;
-using System.IO;
-using System.Linq;
-
-public static class BuildScript
-{
-    private const string BuildFolder = "Builds";
-
-    [MenuItem("Build/Android (Release)")]
-    public static void BuildAndroid()
-    {
-        var options = new BuildPlayerOptions
-        {
-            scenes = GetEnabledScenes(),
-            locationPathName = Path.Combine(BuildFolder, "Android", "game.apk"),
-            target = BuildTarget.Android,
-            options = BuildOptions.CompressWithLz4HC
-        };
-        ConfigureAndroidSettings();
-        ExecuteBuild(options);
-    }
-
-    private static void ExecuteBuild(BuildPlayerOptions options)
-    {
-        string dir = Path.GetDirectoryName(options.locationPathName);
-        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
-
-        BuildReport report = BuildPipeline.BuildPlayer(options);
-        if (report.summary.result == BuildResult.Succeeded)
-            Debug.Log($"Build succeeded: {report.summary.totalSize / (1024 * 1024):F1} MB");
-        else
-        {
-            Debug.LogError($"Build failed: {report.summary.result}");
-            if (Application.isBatchMode) EditorApplication.Exit(1);
-        }
-    }
-
-    private static string[] GetEnabledScenes() =>
-        EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
-
-    private static void ConfigureAndroidSettings()
-    {
-        PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel24;
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
-    }
-}
-```
-
-## Build Pre/Post Processors
-
-```csharp
-public class BuildValidator : IPreprocessBuildWithReport
-{
-    public int callbackOrder => 0;
-    public void OnPreprocessBuild(BuildReport report)
-    {
-        var missing = EditorBuildSettings.scenes
-            .Where(s => s.enabled && !File.Exists(s.path)).ToList();
-        if (missing.Any())
-            throw new BuildFailedException($"Missing scenes: {string.Join(", ", missing.Select(s => s.path))}");
-    }
-}
-```
-
-## GitHub Actions CI/CD Template
-
-```yaml
-name: Unity Build
-on:
-  push: { branches: [main, develop] }
-  pull_request: { branches: [main] }
-env:
-  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        targetPlatform: [Android, WebGL]
-    steps:
-      - uses: actions/checkout@v4
-        with: { lfs: true }
-      - uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-      - uses: game-ci/unity-builder@v4
-        with:
-          targetPlatform: ${{ matrix.targetPlatform }}
-          buildMethod: BuildScript.Build${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Build-${{ matrix.targetPlatform }}
-          path: Builds/${{ matrix.targetPlatform }}
-```
+See [references/build-scripts.md](references/build-scripts.md) for complete `BuildScript` and `BuildValidator` implementations with `BuildPlayerOptions`, error handling, and pre/post processor patterns.
 
 ## Build Size Optimization
 
-| Area | Action | Typical Savings |
-|:-----|:-------|:---------------|
-| Textures | Max 1024 for mobile, ASTC/ETC2 | 20-40% |
-| Audio | Vorbis compression, quality 70% | 10-20% |
-| Code stripping | IL2CPP + High stripping level | 5-15% |
-| Unused assets | Remove from Resources, use Addressables | 10-30% |
-| Shaders | Strip unused variants | 5-20% |
+See [references/build-size-optimization.md](references/build-size-optimization.md) for detailed strategies and typical savings per area (20-40% overall).
 
 ## Critical Anti-Patterns
 
@@ -141,6 +38,10 @@ jobs:
 | Missing LFS checkout in CI | `lfs: true` in checkout step |
 | No Library cache in CI | Cache `Library/` folder by platform |
 | Platform switching in build script | One CI job per platform |
+
+## CI/CD Integration
+
+GitHub Actions, GitLab CI, and Jenkins templates available in [references/ci-cd-templates.md](references/ci-cd-templates.md).
 
 ## Scripting Backend Selection
 

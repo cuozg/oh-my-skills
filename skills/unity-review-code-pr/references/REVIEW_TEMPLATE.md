@@ -15,21 +15,10 @@ Output structure only. Logic/criteria live in SKILL.md, APPROVAL_CRITERIA.md, an
 }
 ```
 
-**`commit_id`** — Required. Latest commit SHA on the PR branch. The post script auto-injects this; do NOT hardcode.
-
-**`line`** — The line number in the **file** (not the diff position). GitHub API maps it when using `line` (not `position`).
-
-**`side`** — Always `"RIGHT"` (review the new version).
-
-### Multi-line Comments
-
-To comment on a range of lines, add `start_line`:
-
-```json
-{ "path": "Assets/Scripts/Example.cs", "start_line": 10, "line": 15, "side": "RIGHT", "body": "[INLINE]" }
-```
-
-The comment spans lines 10–15. The suggestion block must match exactly the content of those lines.
+- **`commit_id`** — Latest commit SHA. Post script auto-injects; do NOT hardcode.
+- **`line`** — Line number in the **file** (not diff position). Always use `line`, not `position`.
+- **`side`** — Always `"RIGHT"`.
+- **Multi-line** — Add `start_line`: `{ "start_line": 10, "line": 15, ... }`. Suggestion must match the full range.
 
 ## Summary Body
 
@@ -55,7 +44,7 @@ The comment spans lines 10–15. The suggestion block must match exactly the con
 
 ## Inline Comment Format
 
-**🔴 Critical / 🟡 High:**
+**🔴 Critical / 🟡 High** — include Evidence + Why:
 ```markdown
 **[Issue]**: [What's wrong]
 **Evidence**: [Proof — caller count, file:line, YAML key]
@@ -65,18 +54,9 @@ The comment spans lines 10–15. The suggestion block must match exactly the con
 \`\`\`
 ```
 
-**🔵 Medium:**
+**🔵 Medium** — include Why. **🟢 Low** — suggestion only:
 ```markdown
-**[Issue]**: [What to improve]
-**Why**: [Reason]
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
-**🟢 Low:**
-```markdown
-**Suggestion**: [What could be better]
+**[Issue/Suggestion]**: [What to improve]
 \`\`\`suggestion
 [Fixed code]
 \`\`\`
@@ -84,47 +64,20 @@ The comment spans lines 10–15. The suggestion block must match exactly the con
 
 ## Suggestion Syntax
 
-### Single-line
-Comment targets one `line`. Suggestion replaces that single line:
-```markdown
-\`\`\`suggestion
-private readonly List<Enemy> _enemies = new();
-\`\`\`
-```
+**Single-line**: Target one `line`. Suggestion replaces that line.
+**Multi-line**: Target `start_line` to `line`. Suggestion replaces the entire range. Content must be the complete replacement.
+**File replacement**: Use `<details>` block for large rewrites instead of inline suggestion.
 
-### Multi-line
-Comment targets `start_line` to `line`. Suggestion replaces the entire range:
 ```markdown
-\`\`\`suggestion
-if (health <= 0)
-{
-    Die();
-    return;
-}
-\`\`\`
-```
-The suggestion content must be the complete replacement for all lines in the range.
-
-### Complete File Replacement
-For large rewrites, use a `<details>` block instead of inline suggestion:
-```markdown
-**[Issue]**: File needs significant restructuring
-**Why**: [Reason]
-
-<details>
-<summary>Suggested replacement</summary>
+<details><summary>Suggested replacement</summary>
 
 \`\`\`csharp
-// Full file content here
+// Full file content
 \`\`\`
-
 </details>
 ```
 
-### Batch Pattern — Same Issue Across Files
-
-When the same issue appears in multiple files (e.g., `GetComponent` in Update), post one detailed comment on the first occurrence with full explanation, then short comments on subsequent files referencing the first:
-
+**Batch pattern**: Same issue in multiple files → detailed comment on first occurrence, short references on subsequent:
 ```markdown
 **Same issue as [Assets/Scripts/First.cs#L42] — cache GetComponent in Awake.**
 \`\`\`suggestion
@@ -132,19 +85,3 @@ When the same issue appears in multiple files (e.g., `GetComponent` in Update), 
 \`\`\`
 ```
 
-This avoids repetitive walls of text while ensuring every instance gets a fix suggestion.
-
-## Troubleshooting
-
-| Problem | Cause | Fix |
-|:--------|:------|:----|
-| 404 on submit | PR doesn't exist or wrong repo | Verify `gh pr view <N>` works first |
-| Suggestion not rendering | Wrong line count in range | Ensure suggestion line count matches `line - start_line + 1` |
-| "Validation Failed" 422 | `line` outside diff range or invalid `path` | Only comment on lines visible in the diff. Run `gh pr diff <N>` to verify line is in diff |
-| Review not appearing | PR merged/closed | Use fallback: `gh pr comment` instead (handled by post_review.sh) |
-| Suggestion breaks code | Suggestion has wrong indentation or partial line | Copy exact line content, modify only the relevant part |
-| Comment on wrong line | `line` counted from wrong file version | `line` = line number on RIGHT side (new file). Verify against diff output |
-| "Stale" commit error | `commit_id` doesn't match HEAD of PR | Don't hardcode — `post_review.sh` auto-injects latest commit SHA |
-| Multiple reviews posted | Script ran twice | Check for existing pending review: `gh api /repos/{owner}/{repo}/pulls/{N}/reviews` |
-| Comments on deleted files | Comment targeted LEFT/deleted side | Only comment files/lines present on diff RIGHT side |
-| Rate limit hit | Too many API calls in short window | Add delay between calls or batch into fewer review submissions |

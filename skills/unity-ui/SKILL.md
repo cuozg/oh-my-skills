@@ -8,14 +8,12 @@ description: "Implement UX designs from HTML documents into fully functional Uni
 **Input**: HTML/CSS design document, optional sprite assets, fonts, target resolution, platform constraints
 
 ## Output
-Unity UI prefabs with 100% fidelity to the design specification document.
-
-> **The design document is the source of truth.** Every color, size, spacing, font, and interaction must match exactly.
+Unity UI prefabs with 100% fidelity to the design specification document. **The design document is the source of truth** — every color, size, spacing, font, and interaction must match exactly.
 
 ## Workflow
 
 1. **Analyze** design document → extract elements, specs, interactions
-2. **Structure** prefab hierarchy → map HTML to GameObjects
+2. **Structure** prefab hierarchy → map HTML to GameObjects (see [component-mapping-reference.md](references/component-mapping-reference.md))
 3. **Configure** components → apply visual and interaction properties
 4. **Validate** against design → verify 100% fidelity
 
@@ -34,29 +32,13 @@ Extract exact values — see [specification-mapping.md](references/specification
 ### Interaction & Layout Specs
 - Triggers, states (normal/hover/pressed/disabled), responses
 - Orientation, responsive behavior, scroll regions, z-index
-
-Use [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md) for the analysis output.
+- Use [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md) for the analysis output.
 
 ## Step 2: Structure Prefab Hierarchy
 
-### Naming: `{Type}_{Purpose}` (Panel_, Button_, Text_, Image_, Toggle_, Slider_, InputField_, ScrollView_, Dropdown_)
+Map HTML elements to GameObjects using [component-mapping-reference.md](references/component-mapping-reference.md). Use `{Type}_{Purpose}` naming: `Panel_`, `Button_`, `Text_`, `Image_`, `Toggle_`, `Slider_`, `InputField_`, `ScrollView_`, `Dropdown_`
 
-### HTML → Unity Mapping
-
-| HTML Element | Unity GameObject |
-|---|---|
-| `<div>` container | Panel_ with Image (if bg) or empty GO |
-| `<button>` | Button_ with Button component |
-| `<span>/<p>/<h1-6>` | Text_ with TextMeshProUGUI |
-| `<img>` | Image_ with Image component |
-| `<input>` | InputField_ with TMP_InputField |
-| `<input checkbox>` | Toggle_ with Toggle |
-| `<select>` | Dropdown_ with TMP_Dropdown |
-| `display:flex` | Panel_ with H/VerticalLayoutGroup |
-| `display:grid` | Panel_ with GridLayoutGroup |
-| `overflow:scroll` | ScrollView_ with ScrollRect |
-
-Max hierarchy depth: 5-6 levels. See [html-to-prefab-patterns.md](references/html-to-prefab-patterns.md) for detailed examples.
+Maximum hierarchy depth: 5-6 levels. See [html-to-prefab-patterns.md](references/html-to-prefab-patterns.md) for detailed layout examples (buttons, cards, forms, nav, modals, tabs, grids, scroll).
 
 ## Step 3: Configure Components
 
@@ -64,15 +46,15 @@ Max hierarchy depth: 5-6 levels. See [html-to-prefab-patterns.md](references/htm
 - Full-screen bg → stretch all: (0,0)-(1,1)
 - Centered popup → center: (0.5,0.5)-(0.5,0.5)
 - Top/Bottom bar → top/bottom stretch
-→ Full reference: [unity-ui-best-practices.md](references/unity-ui-best-practices.md)
+- See [unity-ui-best-practices.md](references/unity-ui-best-practices.md)
 
 ### Layout Groups
+Map CSS properties to LayoutGroups via [specification-mapping.md](references/specification-mapping.md):
 - `flex-direction: row` → HorizontalLayoutGroup
 - `flex-direction: column` → VerticalLayoutGroup
 - `display: grid` → GridLayoutGroup
-→ Full mapping: [specification-mapping.md](references/specification-mapping.md)
 
-### Performance (CRITICAL — apply to EVERY element)
+### Performance (CRITICAL)
 - `raycastTarget = false` on ALL non-interactive Image/Text
 - Only Button/Toggle/InputField/Slider/Dropdown/ScrollRect keep raycastTarget
 - Use RectMask2D instead of Mask for scroll views
@@ -103,15 +85,12 @@ Use [PREFAB_CREATION_CHECKLIST.md](assets/templates/PREFAB_CREATION_CHECKLIST.md
 
 ## Reference Files
 
-| Reference | Content |
-|---|---|
-| [html-to-prefab-patterns.md](references/html-to-prefab-patterns.md) | Buttons, cards, forms, nav, modals, tabs, grids, scroll |
-| [unity-ui-best-practices.md](references/unity-ui-best-practices.md) | Canvas, RectTransform, layout groups, TMP, performance |
-| [specification-mapping.md](references/specification-mapping.md) | Colors, typography, spacing, sizing, borders, interactions |
+- [component-mapping-reference.md](references/component-mapping-reference.md) — HTML→Unity mapping, naming, hierarchy depth
+- [html-to-prefab-patterns.md](references/html-to-prefab-patterns.md) — Buttons, cards, forms, nav, modals, tabs, grids, scroll
+- [unity-ui-best-practices.md](references/unity-ui-best-practices.md) — Canvas, RectTransform, layout groups, TMP, performance
+- [specification-mapping.md](references/specification-mapping.md) — Colors, typography, spacing, sizing, borders, interactions
 
 ## Templates
 
-| Template | Use |
-|---|---|
-| [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md) | Document analysis and config per screen |
-| [PREFAB_CREATION_CHECKLIST.md](assets/templates/PREFAB_CREATION_CHECKLIST.md) | Final validation |
+- [UX_IMPLEMENTATION_TEMPLATE.md](assets/templates/UX_IMPLEMENTATION_TEMPLATE.md) — Document analysis and config per screen
+- [PREFAB_CREATION_CHECKLIST.md](assets/templates/PREFAB_CREATION_CHECKLIST.md) — Final validation checklist

@@ -40,123 +40,23 @@ Load ALL reference checklists before starting:
 ## Workflow
 
 ### Step 1: Project Discovery
-
 Gather project metadata using tools — do NOT modify anything.
+- Run parallel globs: `Assets/**/*.cs`, `*.unity`, `*.prefab`, `*.asmdef`, `*.shader`, `*.shadergraph`
+- Run `codebase-health` tool for quick metrics
+- Read `ProjectSettings/ProjectSettings.asset`, `Packages/manifest.json`
 
-```
-# Run these in parallel:
-glob("Assets/**/*.cs")                     # All C# scripts
-glob("Assets/**/*.unity")                  # All scenes
-glob("Assets/**/*.prefab")                 # All prefabs
-glob("Assets/**/*.asmdef")                 # Assembly definitions
-glob("Assets/**/*.shader")                 # Shaders
-glob("Assets/**/*.shadergraph")            # Shader Graphs
-glob("Packages/manifest.json")             # Package dependencies
-glob("ProjectSettings/*.asset")            # Project settings
-```
-
-Also run:
-- `codebase-health` tool for quick metrics (file counts, largest files, TODOs, singletons, empty Updates)
-- Read `ProjectSettings/ProjectSettings.asset` for Unity version, target platform, rendering pipeline
-- Read `Packages/manifest.json` for dependency list
-
-### Step 2: Architecture Scan (parallel explore agents)
-
-Spawn 3-5 explore agents in parallel:
-
-| Agent | Focus |
-|:------|:------|
-| Architecture patterns | Find Singleton patterns, Manager classes, dependency injection, service locators, event systems, SO channels. Map class hierarchy depth. |
-| Assembly structure | Read all .asmdef files. Map assembly graph. Find circular references, missing refs, overly broad assemblies. |
-| Cross-cutting concerns | Find logging patterns, error handling patterns, analytics/telemetry integration, configuration management. |
-| Coupling analysis | Find tight coupling: direct component references vs interfaces, concrete vs abstract dependencies, static access patterns. |
-| Data flow | Trace data persistence: save/load systems, serialization format, PlayerPrefs usage, ScriptableObject data containers. |
-
-### Step 3: Code Quality Deep-Dive (parallel explore agents)
-
-Spawn 3-5 explore agents in parallel:
-
-| Agent | Focus |
-|:------|:------|
-| Hot path analysis | Find all Update/FixedUpdate/LateUpdate methods. Check for allocations, GetComponent, Find, LINQ, string ops. |
-| Lifecycle audit | Find all MonoBehaviour scripts. Check Awake/Start/OnEnable/OnDisable/OnDestroy balance. Check coroutine lifecycle. |
-| Memory patterns | Find event subscriptions (+= without -=), Addressable loads without Release, UnityWebRequest without Dispose, static collections. |
-| Async patterns | Find all async methods, coroutines, UniTask usage. Check cancellation tokens, error handling, fire-and-forget patterns. |
-| Anti-pattern scan | Find God classes (>500 lines), deep nesting (>4 levels), magic numbers, copy-paste duplication, empty catch blocks. |
-
-### Step 4: Unity-Specific Review (parallel explore agents)
-
-Spawn 2-4 explore agents in parallel:
-
-| Agent | Focus |
-|:------|:------|
-| Serialization safety | Find all [SerializeField], [Serializable], [SerializeReference]. Check FormerlySerializedAs, SO mutation at runtime, interface serialization. |
-| Asset management | Check texture import settings (max size, compression), audio import (load type, compression), mesh import (read/write, compression). |
-| Scene/Prefab health | Sample 3-5 scenes and 5-10 prefabs. Check missing script refs, Canvas setup, nested layout groups, raycast targets. |
-| Physics & rendering | Check layer setup, collision matrix, Rigidbody configs, shader complexity, draw call patterns, batching. |
-
-### Step 5: Project Health Check
-
-Direct tool reads (no agents needed):
-
-- Read `ProjectSettings/ProjectSettings.asset` — check scripting backend (IL2CPP vs Mono), API compatibility, stripping level
-- Read `ProjectSettings/QualitySettings.asset` — check quality levels, shadows, vsync, LOD bias
-- Read `ProjectSettings/TagManager.asset` — check layer/tag organization
-- Read `ProjectSettings/Physics2DSettings.asset` or `DynamicsManager.asset` — check physics config
-- Read `ProjectSettings/EditorBuildSettings.asset` — check scene list
-- Check `.gitignore` exists and covers Library/, Temp/, Logs/, UserSettings/
-- Check for `.editorconfig` or code style configuration
+### Steps 2-5: Parallel Investigation
+See `references/review-workflow.md` for detailed agent tables covering:
+- **Step 2**: Architecture scan (patterns, assembly structure, coupling, data flow)
+- **Step 3**: Code quality deep-dive (hot paths, lifecycle, memory, async, anti-patterns)
+- **Step 4**: Unity-specific review (serialization, assets, scenes/prefabs, physics/rendering)
+- **Step 5**: Project health check (settings, build config, gitignore)
 
 ### Step 6: Compile Report
-
-Read the report template from `assets/templates/QUALITY_REVIEW_REPORT.md`.
-
-**ALWAYS use the template. Fill every section. Delete NO sections — mark empty sections as "No issues found."**
-
-Generate the report as an HTML file at:
-```
-Documents/Reviews/QUALITY_REVIEW_[ProjectName]_[YYYYMMDD].html
-```
-
-If `Documents/Reviews/` does not exist, create the directory (this is the ONLY write operation allowed).
+Read template from `assets/templates/QUALITY_REVIEW_REPORT.md`. Fill every section — mark empty ones "No issues found." Output to: `Documents/Reviews/QUALITY_REVIEW_[ProjectName]_[YYYYMMDD].html`
 
 ### Step 7: Present Summary
-
-After saving the report, present to the user.
-
-**ALWAYS use this exact output template:**
-
-```
-## Quality Review: [ProjectName]
-
-**Grade: [A/B/C/D/F]** — [one-sentence justification]
-**Report**: `Documents/Reviews/QUALITY_REVIEW_[ProjectName]_[YYYYMMDD].html`
-
-### Findings Summary
-| Severity | Count |
-|:---------|------:|
-| :red_circle: Critical | [N] |
-| :orange_circle: High | [N] |
-| :yellow_circle: Medium | [N] |
-| :white_circle: Low | [N] |
-| **Total** | **[N]** |
-
-### Top Critical Issues
-1. **[Issue Title]** — `[File.cs:line]` — [one-sentence description + impact]
-2. **[Issue Title]** — `[File.cs:line]` — [one-sentence description + impact]
-3. **[Issue Title]** — `[File.cs:line]` — [one-sentence description + impact]
-(list up to 5; omit section if 0 critical)
-
-### Top High Issues
-1. **[Issue Title]** — `[File.cs:line]` — [one-sentence description]
-2. **[Issue Title]** — `[File.cs:line]` — [one-sentence description]
-(list up to 5; omit section if 0 high)
-
-### What's Done Well
-- [positive observation 1]
-- [positive observation 2]
-- [positive observation 3]
-```
+Use the template in `references/summary-template.md` to present findings to the user.
 
 ## Grading Criteria
 

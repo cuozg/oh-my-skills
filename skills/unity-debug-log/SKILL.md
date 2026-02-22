@@ -39,62 +39,7 @@ description: "Generate targeted Debug.Log statements wrapped in #if UNITY_EDITOR
 
 ## Log Format Examples
 
-```csharp
-// Flow — method entry with parameters
-#if UNITY_EDITOR
-Debug.Log($"<color=yellow>[DBG] ClassName.MethodName ENTER | param1={param1}, param2={param2}</color>");
-#endif
-
-// Flow — method exit with return value
-#if UNITY_EDITOR
-Debug.Log($"<color=yellow>[DBG] ClassName.MethodName EXIT | result={result}</color>");
-#endif
-
-// Flow — branch taken
-#if UNITY_EDITOR
-Debug.Log($"<color=yellow>[DBG] ClassName.MethodName | Taking path: {(condition ? "A" : "B")}</color>");
-#endif
-
-// State — variable inspection
-#if UNITY_EDITOR
-Debug.Log($"<color=orange>[DBG] ClassName.MethodName | _health={_health}, _shield={_shield}, _isDead={_isDead}</color>");
-#endif
-
-// State — transition
-#if UNITY_EDITOR
-Debug.Log($"<color=orange>[DBG] ClassName | State: {_previousState} -> {_currentState}</color>");
-#endif
-
-// Null Check
-#if UNITY_EDITOR
-Debug.Log($"<color=cyan>[DBG] ClassName.MethodName | _target={(_target != null ? _target.name : "NULL")}, _rb={(_rb != null ? "valid" : "NULL")}</color>");
-#endif
-
-// Lifecycle
-#if UNITY_EDITOR
-Debug.Log($"<color=magenta>[DBG] {GetType().Name}.Awake | gameObject={gameObject.name}, instanceId={GetInstanceID()}</color>");
-#endif
-
-// Collection
-#if UNITY_EDITOR
-Debug.Log($"<color=lime>[DBG] ClassName.MethodName | _items.Count={_items?.Count ?? -1}, firstItem={(_items?.Count > 0 ? _items[0].ToString() : "empty")}</color>");
-#endif
-
-// Error — unexpected condition
-#if UNITY_EDITOR
-Debug.LogWarning($"<color=red>[DBG] ClassName.MethodName | UNEXPECTED: condition={condition}, expected={expected}</color>");
-#endif
-
-// Event
-#if UNITY_EDITOR
-Debug.Log($"<color=green>[DBG] ClassName.OnEnable | Subscribing to EventName</color>");
-#endif
-
-// Timing
-#if UNITY_EDITOR
-Debug.Log($"<color=white>[DBG] ClassName.MethodName | frame={Time.frameCount}, time={Time.time:F3}, dt={Time.deltaTime:F4}</color>");
-#endif
-```
+For detailed log format examples across all log types (flow, state, null check, lifecycle, collection, error, event, timing), see [log-examples.md](references/log-examples.md).
 
 ## Output
 

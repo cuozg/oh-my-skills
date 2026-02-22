@@ -90,69 +90,10 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 - [performance-review.md](references/review/performance-review.md)
 - [unity-specifics.md](references/review/unity-specifics.md)
 
-## Assembly Definition Structure
+## Assembly Definition & Decision Trees
 
-```
-YourProject.Core/          # Shared interfaces, models, utils
-YourProject.Services/      # Business logic services
-YourProject.UI/            # UI controllers and views
-YourProject.Editor/        # Editor-only tools
-```
-
-Each assembly should:
-- Have a `.asmdef` file
-- Reference only what it needs
-- Use `internal` by default, `[InternalsVisibleTo]` for tests
-
-## Logging Standards
-
-**ILogger** (project-level logging abstraction):
-- ✅ Handles conditional compilation internally (no `#if` guards needed)
-- ✅ Handles prefixes automatically (no `[ClassName]` needed)
-- ❌ NEVER log in constructors
-- ❌ NEVER use `this.logger?.Method()` — Ensure logger is always initialized
-- ❌ NEVER use Debug.Log in runtime code
-
-**Debug.Log**: ONLY in `#if UNITY_EDITOR` blocks for editor tools.
-
-**Exceptions**: Throw for errors — never log-and-continue.
-
-> **Note:** Adapt the ILogger interface to your project's logging solution. The key principle is: use a project-level logging abstraction, don't scatter Debug.Log calls throughout runtime code.
-
-## Quick Decision Trees
-
-### "Should I use field injection or constructor injection?"
-→ **Constructor injection** for services. For MonoBehaviours, use initialization methods or `[SerializeField]` references.
-
-### "Should I use events or direct method calls?"
-→ **Events** (C# events, delegates, or event bus) for cross-system communication. Direct calls for same-system internal logic.
-
-### "Should I use async/await or coroutines?"
-→ **UniTask** for all new async code. Coroutines only for legacy code maintenance.
-
-### "Should I cache this?"
-→ If called more than once per frame: **yes, cache it**.
+For assembly structure, decision trees, and quick reference guidance, see [decision-trees.md](references/decision-trees.md).
 
 ## Reference Index
 
-### C# References
-| File | Content |
-|:-----|:--------|
-| [quality-hygiene.md](references/csharp/quality-hygiene.md) | Nullable, access modifiers, logging, exceptions |
-| [linq-patterns.md](references/csharp/linq-patterns.md) | LINQ usage, common patterns, anti-patterns |
-| [modern-csharp-features.md](references/csharp/modern-csharp-features.md) | C# 9-12 features, expression bodies, pattern matching |
-| [performance-optimizations.md](references/csharp/performance-optimizations.md) | Allocation reduction, caching, pooling |
-
-### Unity References
-| File | Content |
-|:-----|:--------|
-| [unitask-patterns.md](references/unity/unitask-patterns.md) | UniTask async patterns, cancellation, error handling |
-
-### Review References
-| File | Content |
-|:-----|:--------|
-| [logic-review-patterns.md](references/review/logic-review-patterns.md) | Comprehensive logic review patterns — performance, async, state, data flow, concurrency, edge cases |
-| [architecture-review.md](references/review/architecture-review.md) | Architecture review checklist |
-| [csharp-quality.md](references/review/csharp-quality.md) | C# quality review checklist |
-| [performance-review.md](references/review/performance-review.md) | Performance review checklist |
-| [unity-specifics.md](references/review/unity-specifics.md) | Unity-specific review checklist |
+For the complete index of C#, Unity, and review references, see [reference-index.md](references/reference-index.md).

@@ -92,25 +92,8 @@ public class InventoryScreenController : MonoBehaviour
 
 > See [Architecture DC Patterns](references/architecture-dc-patterns.md) — UIView base class, HomeView, HomeScreenController, TabbedMenuController, HealthBarComponent, SlideToggle, BEM naming, Composite View, Dynamic UI Generation, Button.userData, UIManager navigation.
 
-## Scaling Guidelines
+## Scaling Guidelines & Pitfalls
 
-| Size | Strategy |
-|------|----------|
-| Small (1-5 screens) | Single UIDocument, screen toggling |
-| Medium (5-15) | UIDocument per screen, ScreenManager |
-| Large (15+) | Module-based, lazy loading, screen pooling |
-
-Large: group by module (Shop/, Inventory/, Social/), shared `Common/` folder, central `UIScreenManager`, lazy-load UXML on first access.
-
-## Common Pitfalls
-
-| Pitfall | Fix |
-|---------|-----|
-| God Screen Controller (500+ lines) | Split into sub-controllers per panel |
-| Inline styles in UXML | Always use USS classes |
-| Deep inheritance chains | Composition with interfaces |
-| Missing `partial` on [UxmlElement] | Source gen fails — always `partial class` |
-| Q() in bindItem | Cache element refs in makeItem |
-| No OnDisable cleanup | Unregister events in OnDisable |
+See [references/scaling-pitfalls.md](references/scaling-pitfalls.md) for project size strategies, large-project architecture, and common pitfalls with fixes.
 
 

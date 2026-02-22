@@ -58,59 +58,11 @@ All HTML files share a sticky `<nav class="plan-nav-bar">` with 3 tabs:
 8. Preserve CSP meta tag from template exactly as-is
 9. **Template output is MANDATORY** — always follow the template structure, no negotiation
 
-## Workflow
+## Workflow Details
 
-1. **Read all templates** in `assets/templates/` (PLAN_OVERVIEW, PLAN_TASKS, PLAN_PATCH, PLAN_PATCH_TEMPLATE)
-2. **Deep-dive investigation** — thoroughly investigate every affected system, file, entry point; understand current behavior before planning
-3. **Analyze requirements** — goals, constraints, acceptance criteria; ask if unclear
-4. **Create output folder**: `mkdir -p documents/plans/{plan-name}/patches`
-5. **Generate overview.html** (Tab 1):
-   - Summary cards (scope, complexity, risk, effort)
-   - Architecture overview (current → proposed)
-   - Technical approach (bullets, not paragraphs)
-   - Risk table with severity tags
-   - Acceptance criteria grid
-6. **Generate tasks.html** (Tab 2):
-   - Epics table with task counts and cost distribution
-   - Task breakdown table with all fields
-   - Dependency graph description
-   - Implementation timeline (phases, milestones)
-   - Task walkthrough — each task with files, effects, criteria, View Patch → links to `patch.html#TASK_ID`
-   - Types: `Logic`, `UI`, `Data`, `API`, `Asset`, `Test`, `Config`
-   - Costs: `badge-s` S (<2h), `badge-m` M (2-4h), `badge-l` L (4-8h), `badge-xl` XL (1-2d)
-   - Task IDs: `T-{uuid}` format (oh-my-opencode Task System)
-   - Per-task fields: id, subject, description, status, blockedBy, blocks, owner, wave
-7. **Generate per-task patches** — one `.patch` file per task in `patches/`:
-   - Unified diff format: `--- a/path` / `+++ b/path` / `@@ hunks @@`
-   - New files: `--- /dev/null`; deleted: `+++ /dev/null`; 3 lines context
-   - **Every task MUST have its own `.patch` file** — never skip a task
-   - Each patch has full information about the change and its effects
-   - Filename: `patches/T-{task-id}.patch`
-8. **Generate tasks.json** — task metadata for patch.html generation:
-   ```json
-   [{"id": "T-{id}", "subject": "...", "type": "Logic", "cost": "M", "wave": 1}]
-   ```
-9. **Generate patch.html** (Tab 3) — run `generate_patch_html.py`:
-   ```
-   python scripts/generate_patch_html.py documents/plans/{plan-name}/patches/ documents/plans/{plan-name}/patch.html --title "Feature Name" --tasks-json documents/plans/{plan-name}/tasks.json
-   ```
+For detailed 10-step workflow (templates, investigation, requirements, generation, summary), see [references/workflow.md](references/workflow.md).
 
-   - Do NOT write patch.html manually — always use the script
-   - The script reads per-task `.patch` files + `tasks.json` metadata
-   - Generates: summary stats, per-task sections with metadata/download/diff viewer
-10. **Verbal summary** — location, effort, risks, critical path, patch stats
-
-## Task Patch Requirements
-
-Each per-task `.patch` file MUST:
-
-- Be a valid unified diff (`patch -p1 --dry-run < T-{id}.patch`)
-- Include ALL files affected by that task
-- Include 3 lines of context around each change
-- Have complete method/class context (not just changed lines)
-- Be independently reviewable
-
-Cost-to-detail: **S** <50 lines · **M** 50-150 · **L** 150-400 · **XL** 400+
+For task patch requirements and cost-to-detail reference, see [references/task-patch-requirements.md](references/task-patch-requirements.md).
 
 ## Output Checklist
 
