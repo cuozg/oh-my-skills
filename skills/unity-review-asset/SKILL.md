@@ -16,15 +16,16 @@ Review comments pushed to GitHub PR via API. Covers shader refs, texture memory,
 |:------|:--------|
 | PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
 
-## Severity → Approval
+## Severity Labels
 
-| Severity | Emoji | Meaning | Approval |
-|:---------|:------|:--------|:---------|
-| CRITICAL | 🔴 | Will break at runtime or cause data loss | `REQUEST_CHANGES` (block) |
-| HIGH | 🟡 | Performance, memory, or correctness issue | `REQUEST_CHANGES` |
-| MEDIUM | 🔵 | Best practice violation, maintainability risk | `COMMENT` (allow merge) |
-| LOW | 🟢 | Style, naming, minor optimization | `APPROVE` (with suggestions) |
-| CLEAN | — | No issues | `APPROVE` |
+| Severity | Emoji | Meaning |
+|:---------|:------|:--------|
+| CRITICAL | 🔴 | Will break at runtime or cause data loss |
+| HIGH | 🟡 | Performance, memory, or correctness issue |
+| MEDIUM | 🔵 | Best practice violation, maintainability risk |
+| LOW | 🟢 | Style, naming, minor optimization |
+
+Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
 
 ## File Type Coverage
 
@@ -59,12 +60,12 @@ Read changed files and their `.meta` counterparts. Apply patterns from [ASSET_PA
 - Animators: `grep -n "m_Controller: {fileID: 0}\|m_CullingMode: 0\|m_PlayOnAwake: 1" <files>`
 - Models: `grep -n "meshCompression: 0\|isReadable: 1\|importAnimation: 1" <.fbx .meta files>`
 
-### 3. Build `/tmp/review.json`
+### 3. Build `/tmp/review-asset.json`
 
 ```json
 {
   "body": "## Asset Review\n**Scope**: [N files reviewed]\n...",
-  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "event": "COMMENT",
   "comments": [
     {
       "path": "Assets/Materials/Player.mat",
@@ -76,12 +77,12 @@ Read changed files and their `.meta` counterparts. Apply patterns from [ASSET_PA
 }
 ```
 
-Do NOT include `commit_id` — `post_review.py` injects it automatically. Set `event` based on highest severity using the Severity → Approval table above.
+Do NOT include `commit_id` — `post_review.py` injects it automatically. Always set `event` to `"COMMENT"`.
 
 ### 4. Submit
 
 ```bash
-./skills/unity-review-asset/scripts/post_review.py <pr_number> /tmp/review.json
+./skills/unity-review-asset/scripts/post_review.py <pr_number> /tmp/review-asset.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`.

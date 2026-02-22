@@ -1,8 +1,8 @@
 # Review Output Format
 
-Output structure only. Logic/criteria live in SKILL.md, APPROVAL_CRITERIA.md, and reference checklists.
+Output structure only. Logic/criteria live in SKILL.md and reference checklists. Approval criteria: `read_skill_file("unity-review-general", "references/APPROVAL_CRITERIA.md")`.
 
-## JSON — `/tmp/review.json`
+## JSON — `/tmp/review-code-pr.json`
 
 ```json
 {

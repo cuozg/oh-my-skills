@@ -19,17 +19,16 @@ Review comments pushed to GitHub PR via API. Covers correctness, edge cases, sta
 | Branch | `git diff <branch>...HEAD` |
 | PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files` |
 
-## Severity → Approval
+## Severity Labels
 
-| Severity | Meaning | Approval |
-|:---------|:--------|:---------|
-| CRITICAL | Crash, data loss, security, breaking API | `REQUEST_CHANGES` (block) |
-| HIGH | Logic bugs, missing tests, arch violations | `REQUEST_CHANGES` |
-| MEDIUM | Code quality, conventions, minor perf | `COMMENT` (allow merge) |
-| LOW | Style preferences, typos, micro-optimization | `APPROVE` (with suggestions) |
-| CLEAN | No issues | `APPROVE` |
+| Severity | Emoji | Meaning |
+|:---------|:------|:--------|
+| CRITICAL | 🔴 | Crash, data loss, security, breaking API |
+| HIGH | 🟡 | Logic bugs, missing tests, arch violations |
+| MEDIUM | 🔵 | Code quality, conventions, minor perf |
+| LOW | 🟢 | Style preferences, typos, micro-optimization |
 
-Full decision tree: [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md).
+Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
 
 ## Workflow
 
@@ -64,14 +63,13 @@ Spawn 2-3 `@explore` agents to gather evidence: call-site analysis, state flow t
 
 Apply loaded checklists. Focus: control flow, state management, data flow, edge cases, Unity lifecycle, serialization safety, memory safety, async patterns.
 
-### 6. Build `/tmp/review.json`
-
-Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Do NOT include `commit_id` — `post_review.py` injects it automatically.
+### 6. Build `/tmp/review-code-pr.json`
+Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py` injects it automatically.
 
 ### 7. Submit
 
 ```bash
-./skills/unity-review-code-pr/scripts/post_review.py <pr_number> /tmp/review.json
+./skills/unity-review-code-pr/scripts/post_review.py <pr_number> /tmp/review-code-pr.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`.

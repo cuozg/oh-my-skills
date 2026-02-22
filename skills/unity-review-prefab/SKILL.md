@@ -16,15 +16,16 @@ Review comments pushed to GitHub PR via API. Covers missing scripts, broken vari
 |:------|:--------|
 | PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
 
-## Severity → Approval
+## Severity Labels
 
-| Severity | Emoji | Meaning | Approval |
-|:---------|:------|:--------|:---------|
-| CRITICAL | 🔴 | Breaks functionality, data loss, crashes | `REQUEST_CHANGES` (block) |
-| HIGH | 🟡 | Performance, UX, or logic issues | `REQUEST_CHANGES` |
-| MEDIUM | 🔵 | Style, maintainability, minor UX | `COMMENT` (allow merge) |
-| LOW | 🟢 | Naming, conventions, suggestions | `APPROVE` (with suggestions) |
-| CLEAN | — | No issues | `APPROVE` |
+| Severity | Emoji | Meaning |
+|:---------|:------|:--------|
+| CRITICAL | 🔴 | Breaks functionality, data loss, crashes |
+| HIGH | 🟡 | Performance, UX, or logic issues |
+| MEDIUM | 🔵 | Style, maintainability, minor UX |
+| LOW | 🟢 | Naming, conventions, suggestions |
+
+Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
 
 ## Workflow
 
@@ -53,12 +54,12 @@ One issue = one comment. Every comment MUST include: severity emoji + title, **E
 - `m_RaycastTarget: 1` — check if the GO has `Button`, `Toggle`, or `InputField`. If not, flag as 🔴 Critical.
 - Batch pattern: full explanation on first occurrence, short reference on subsequent.
 
-### 5. Build `/tmp/review.json`
+### 5. Build `/tmp/review-prefab.json`
 
 ```json
 {
   "body": "## Prefab & Scene Review\n**Scope**: [N files reviewed]\n...",
-  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "event": "COMMENT",
   "comments": [
     {
       "path": "Assets/Prefabs/Player.prefab",
@@ -70,12 +71,12 @@ One issue = one comment. Every comment MUST include: severity emoji + title, **E
 }
 ```
 
-Do NOT include `commit_id` — `post_review.py` injects it automatically. Set `event` based on highest severity using the Severity → Approval table above.
+Do NOT include `commit_id` — `post_review.py` injects it automatically. Always set `event` to `"COMMENT"`.
 
 ### 6. Submit
 
 ```bash
-./skills/unity-review-prefab/scripts/post_review.py <pr_number> /tmp/review.json
+./skills/unity-review-prefab/scripts/post_review.py <pr_number> /tmp/review-prefab.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`.
