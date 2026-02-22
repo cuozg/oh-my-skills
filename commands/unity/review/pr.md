@@ -5,134 +5,128 @@ subtask: true
 ---
 Ultrawork
 
-Review the pull request $ARGUMENTS following this workflow:
+Review pull request $ARGUMENTS following this workflow:
 
-## Step 1 — Fetch PR & Categorize Files
+## Step 1 — Fetch PR & Categorize
 
 ```bash
 gh pr diff <N> --name-only
 gh pr view <N> --json title,body,files,number
 ```
 
-Group changed files into buckets:
+Group files into buckets:
+- **cs_files**: `.cs`
+- **prefab_files**: `.prefab`, `.unity`
+- **asset_files**: `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset`
 
-| Bucket | Extensions |
-|:-------|:-----------|
-| **cs_files** | `.cs` |
-| **prefab_files** | `.prefab`, `.unity` |
-| **asset_files** | `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` |
+## Step 2 — Staleness & Skip List
 
-## Step 2 — Check Existing Reviews & Build Skip List
-
-### 2.1 Fetch existing reviews, inline comments, and HEAD commit
+Fetch existing reviews, inline comments, and HEAD:
 
 ```bash
-gh api repos/<owner>/<repo>/pulls/<N>/reviews --paginate --jq '.[] | {id, body, commit_id, state}'
-gh api repos/<owner>/<repo>/pulls/<N>/comments --paginate --jq '.[] | {id, path, line, body, commit_id}'
+gh api repos/{owner}/{repo}/pulls/<N>/reviews --paginate --jq '.[] | {id, body, commit_id, state}'
+gh api repos/{owner}/{repo}/pulls/<N>/comments --paginate --jq '.[] | {id, path, line, body, commit_id, position}'
 gh pr view <N> --json headRefOid --jq '.headRefOid'
 ```
 
-### 2.2 Detect covered categories by header markers
+### Detect covered categories by header markers in review bodies
 
-| Header Marker (case-sensitive) | Category | Skill |
-|:-------------------------------|:---------|:------|
+| Header Marker | Category | Skill |
+|:------|:---------|:------|
 | `## Code Review` | code | `unity-review-code-pr` |
 | `## Architecture Review` | architecture | `unity-review-architecture` |
 | `## Prefab & Scene Review` | prefab | `unity-review-prefab` |
 | `## Asset Review` | asset | `unity-review-asset` |
 | `## Final Quality Review` | general | `unity-review-general` |
 
-### 2.3 Staleness check
+### Staleness rules
 
-For each covered category, compare `commit_id` vs current HEAD:
-- Matches → **SKIP** (current)
-- Doesn't match → **RE-RUN** (stale)
+For each covered category, compare review `commit_id` vs HEAD:
+- **Matches HEAD** → SKIP (current)
+- **Doesn't match HEAD** → RE-RUN (stale)
 
-### 2.4 Build existing comments index
+### Build existing_comments index (exclude outdated)
 
-Collect inline comments at current HEAD into `existing_comments`:
-```
-[{ path: "Assets/Scripts/Foo.cs", line: 42, body_preview: "🔴 Missing null check..." }, ...]
-```
-
-### 2.5 Log coverage status
+Collect inline comments where `position` is NOT null (non-null = still active on current diff). Comments with `position: null` are **outdated** (code moved/changed) — exclude them entirely.
 
 ```
-Review Coverage Check:
-  ✅ Code Review — found (commit abc1234, current) → SKIP
-  ⚠️ Architecture Review — found (commit def5678, stale) → RE-RUN
-  ❌ Prefab Review — not found → RUN
-  ⏭ Asset Review — no asset files in PR → SKIP (no files)
-  ❌ General Quality Review — not found → RUN
+existing_comments = [{ path, line, body_preview }]  // only active comments
 ```
 
-## Step 3 — Sequential Review
+If a category's review body exists at HEAD but ALL its inline comments are outdated (`position: null`), treat that category as **stale → RE-RUN** even if `commit_id` matches. The comments no longer apply to current code.
 
-Run each reviewer **sequentially** (each must submit before next starts). Skip categories that are current in the skip list or have no matching files.
+### Log coverage
 
-Pass to EACH reviewer: PR number, repo, file list for its bucket, full PR file list, and the `existing_comments` index from Step 2.4 so it can avoid duplicate inline comments.
+```
+Review Coverage:
+  ✅ Code Review — current → SKIP
+  ⚠️ Architecture Review — stale (commit mismatch) → RE-RUN
+  ⚠️ Prefab Review — all comments outdated → RE-RUN
+  ❌ Asset Review — not found → RUN
+  ⏭ General Review — no files need review → SKIP (no files)
+```
 
-### 3a. Code Review — IF `cs_files` non-empty AND not skipped
+## Step 3 — Sequential Review (specialized → general)
+
+Run each reviewer sequentially. Skip if: current in skip list OR no matching files in bucket.
+
+Pass to each: PR number, owner/repo, bucket files, all PR files, `existing_comments` index.
+
+### 3a. Code — IF `cs_files` && not skipped
 
 ```
 task(category="deep", load_skills=["unity-review-code-pr", "unity-code-standards"], run_in_background=false,
-  description="Review .cs files in PR #<N>",
-  prompt="Review C# code in PR #<N> of <owner>/<repo>. Files: [cs_files]. All PR files: [all_files]. PR title: <title>. PR body: <body>. Existing comments to avoid duplicating: [existing_comments]. Load skill unity-review-code-pr and follow its workflow.")
+  description="Code review PR #<N>",
+  prompt="Review C# code in PR #<N> of {owner}/{repo}. CS files: [cs_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-code-pr, follow its workflow.")
 ```
 
-Verify submission succeeded.
-
-### 3b. Architecture Review — IF `cs_files` non-empty AND not skipped
+### 3b. Architecture — IF `cs_files` && not skipped
 
 ```
 task(category="deep", load_skills=["unity-review-architecture", "unity-code-standards"], run_in_background=false,
-  description="Review architecture in PR #<N>",
-  prompt="Review architecture in PR #<N> of <owner>/<repo>. Files: [cs_files]. All PR files: [all_files]. PR title: <title>. PR body: <body>. Existing comments to avoid duplicating: [existing_comments]. Load skill unity-review-architecture and follow its workflow.")
+  description="Architecture review PR #<N>",
+  prompt="Review architecture in PR #<N> of {owner}/{repo}. CS files: [cs_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-architecture, follow its workflow.")
 ```
 
-Verify submission succeeded.
-
-### 3c. Prefab/Scene Review — IF `prefab_files` non-empty AND not skipped
+### 3c. Prefab/Scene — IF `prefab_files` && not skipped
 
 ```
 task(category="deep", load_skills=["unity-review-prefab"], run_in_background=false,
-  description="Review prefab/scene files in PR #<N>",
-  prompt="Review prefab/scene files in PR #<N> of <owner>/<repo>. Files: [prefab_files]. All PR files: [all_files]. PR title: <title>. PR body: <body>. Existing comments to avoid duplicating: [existing_comments]. Load skill unity-review-prefab and follow its workflow.")
+  description="Prefab review PR #<N>",
+  prompt="Review prefab/scene files in PR #<N> of {owner}/{repo}. Files: [prefab_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-prefab, follow its workflow.")
 ```
 
-Verify submission succeeded.
-
-### 3d. Asset Review — IF `asset_files` non-empty AND not skipped
+### 3d. Asset — IF `asset_files` && not skipped
 
 ```
 task(category="deep", load_skills=["unity-review-asset"], run_in_background=false,
-  description="Review asset files in PR #<N>",
-  prompt="Review asset files in PR #<N> of <owner>/<repo>. Files: [asset_files]. All PR files: [all_files]. PR title: <title>. PR body: <body>. Existing comments to avoid duplicating: [existing_comments]. Load skill unity-review-asset and follow its workflow.")
+  description="Asset review PR #<N>",
+  prompt="Review asset files in PR #<N> of {owner}/{repo}. Files: [asset_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-asset, follow its workflow.")
 ```
 
-Verify submission succeeded.
+## Step 4 — General Quality Review (ALWAYS LAST, sole approver)
 
-## Step 4 — General Quality Review (sole approver) — IF not skipped
+Always run after all specialized reviewers complete. Only skip if already current.
 
 ```
 task(category="deep", load_skills=["unity-review-general"], run_in_background=false,
-  description="Final quality review of PR #<N>",
-  prompt="Final quality review of PR #<N> of <owner>/<repo>. You are the SOLE APPROVER. All PR files: [all_files]. PR title: <title>. PR body: <body>. Prior reviewers that ran: [list]. Skipped reviews: [list + reasons]. Existing comments to avoid duplicating: [existing_comments]. Load skill unity-review-general and follow its workflow.")
+  description="Final quality review PR #<N>",
+  prompt="Final quality review of PR #<N> of {owner}/{repo}. SOLE APPROVER. All files: [all_files]. Title: <title>. Body: <body>. Reviewers ran: [list]. Skipped: [list + reasons]. Active comments (avoid duplicates): [existing_comments]. Load unity-review-general, follow its workflow.")
 ```
 
 ## Step 5 — Report
 
-```markdown
+```
 ## PR #[N] Review Complete
 **Scope**: [PR title]
 
-| Step | Reviewer | Files | Status |
-|:-----|:---------|:------|:-------|
-| 1 | Code Logic | [N] | ✅ Submitted / ⏭ Skipped (reason) |
-| 2 | Architecture | [N] | ✅ Submitted / ⏭ Skipped (reason) |
-| 3 | Prefab/Scene | [N] | ✅ Submitted / ⏭ Skipped (reason) |
-| 4 | Asset | [N] | ✅ Submitted / ⏭ Skipped (reason) |
-| 5 | **General (Approver)** | all | ✅ [APPROVE/REQUEST_CHANGES/COMMENT] / ⏭ Skipped (reason) |
+| # | Reviewer | Files | Status |
+|:--|:---------|:------|:-------|
+| 1 | Code Logic | [N] | ✅ / ⏭ (reason) |
+| 2 | Architecture | [N] | ✅ / ⏭ (reason) |
+| 3 | Prefab/Scene | [N] | ✅ / ⏭ (reason) |
+| 4 | Asset | [N] | ✅ / ⏭ (reason) |
+| 5 | **General** | all | ✅ APPROVE/REQUEST_CHANGES / ⏭ (reason) |
 ```
 
 If any reviewer failed, retry using `session_id` continuation.
