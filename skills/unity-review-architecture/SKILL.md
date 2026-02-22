@@ -1,79 +1,100 @@
 ---
 name: unity-review-architecture
-description: "Review Unity project architecture in PRs — dependency management, event systems, assembly structure, cross-system coupling, and architectural pattern compliance. Sub-skill of unity-review-code-pr orchestrator. Use when: delegated by unity-review-code-pr for architecture review. Triggers: 'review architecture', 'architecture review', 'DI review', 'coupling review'."
+description: "Review Unity project architecture in GitHub PRs — dependency management, event systems, assembly structure, cross-system coupling, and architectural pattern compliance. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing architecture in PRs, validating dependency/coupling changes before merge. Triggers: 'review architecture', 'architecture review', 'DI review', 'coupling review', 'PR architecture review', 'review PR architecture'."
 ---
 
-# Architecture Reviewer
+# Architecture PR Reviewer
 
-Review architecture patterns across PR changes. Output partial review JSON for the orchestrator.
+Review architecture patterns across PR changes in `.cs` files. Push review comments directly to GitHub via the API.
 
-## Input
+## Output
+Review comments pushed to GitHub PR via API. Covers dependency management, event systems, assembly structure, cross-system coupling.
 
-Receives from orchestrator: PR number, full file list (all types), diff context. Architecture review is cross-cutting — examines relationships between files, not individual file content.
+## Input → Command
 
-## Severity Levels
+| Input | Command |
+|:------|:--------|
+| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
 
-| Level | Emoji | Meaning |
-|:------|:------|:--------|
-| CRITICAL | :red_circle: | Breaks functionality, data loss, crashes |
-| HIGH | :yellow_circle: | Performance, UX, or logic issues |
-| MEDIUM | :large_blue_circle: | Style, maintainability, minor UX |
-| LOW | :green_circle: | Naming, conventions, suggestions |
+## Severity → Approval
+
+| Severity | Emoji | Meaning | Approval |
+|:---------|:------|:--------|:---------|
+| CRITICAL | 🔴 | Breaks functionality, data loss, crashes | `REQUEST_CHANGES` (block) |
+| HIGH | 🟡 | Performance, UX, or logic issues | `REQUEST_CHANGES` |
+| MEDIUM | 🔵 | Style, maintainability, minor UX | `COMMENT` (allow merge) |
+| LOW | 🟢 | Naming, conventions, suggestions | `APPROVE` (with suggestions) |
+| CLEAN | — | No issues | `APPROVE` |
 
 ## Key Concern Areas
 
 | Area | What to Check |
 |:-----|:-------------|
-| Dependency Management | Proper DI usage, no service locators, no `FindObjectOfType` for service resolution, no manual `new` for injected services |
-| Event Architecture | Event subscribe/unsubscribe pairing, no direct coupling between systems that should communicate via events |
-| Assembly Structure | No circular dependencies, correct `.asmdef` references, internal vs public visibility |
-| Cross-system Coupling | Services don't reference MonoBehaviours directly, proper abstraction layers |
+| Dependency Management | Proper DI, no service locators, no `FindObjectOfType` for service resolution |
+| Event Architecture | Subscribe/unsubscribe pairing, no direct coupling via events |
+| Assembly Structure | No circular dependencies, correct `.asmdef` references |
+| Cross-system Coupling | Services don't reference MonoBehaviours directly, proper abstractions |
 | Data Flow | Interface-based data access, no direct field mutation across systems |
 
 ## Workflow
 
-1. Load `unity-code-standards` skill for architecture patterns reference: `use_skill("unity-code-standards")`
-2. Read full diff to understand scope of changes
-3. Spawn explore agents to trace: dependency injection usage, event subscriptions, assembly references, cross-system calls
-4. Check each changed `.cs` file for architecture violations using [ARCHITECTURE_PATTERNS.md](references/ARCHITECTURE_PATTERNS.md)
-5. Check for new circular dependencies introduced by the PR
-6. Classify findings, create comment objects
-7. Return `{ "comments": [...], "max_severity": "..." }`
+### 1. Fetch PR
 
-## Output Format
+```bash
+gh pr diff <N> --name-only   # Changed files
+gh pr view <N> --json title,body,files,number  # PR context
+gh pr diff <N>               # Full diff
+```
 
-**ALWAYS use this exact output template:**
+Filter to `.cs` files. If none found, APPROVE with note `No C# files to review for architecture.`
 
-Each comment object:
+### 2. Load Architecture Standards
+
+```python
+use_skill("unity-code-standards")  # Load authoritative architecture patterns
+```
+
+### 3. Deep Investigate (Parallel)
+
+Spawn 2-3 `@explore` agents to trace: dependency injection usage, event subscriptions, assembly references, cross-system calls.
+
+### 4. Architecture Review
+
+For each changed `.cs` file, read the ENTIRE file (not just diff). Apply patterns from [ARCHITECTURE_PATTERNS.md](references/ARCHITECTURE_PATTERNS.md). Check for new circular dependencies introduced by the PR. Architecture issues that are pre-existing should only be flagged if the PR makes them worse.
+
+### 5. Build `/tmp/review.json`
 
 ```json
 {
-  "path": "Assets/Scripts/Services/MatchService.cs",
-  "line": 15,
-  "side": "RIGHT",
-  "body": "**:red_circle: Manual Instantiation of Injected Service**: `new LobbyService()` bypasses the dependency injection graph.\n**Evidence**: Line 15 — constructor creates service directly instead of receiving it as a dependency.\n**Why**: Dependencies won't be resolved; class becomes untestable without manual setup.\n```suggestion\n// Receive via constructor injection instead of manual instantiation:\nprivate readonly ILobbyService _lobbyService;\npublic MatchService(ILobbyService lobbyService) { _lobbyService = lobbyService; }\n```"
+  "body": "## Architecture Review\n**Scope**: [N files reviewed]\n...",
+  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "comments": [
+    {
+      "path": "Assets/Scripts/Services/MatchService.cs",
+      "line": 15,
+      "side": "RIGHT",
+      "body": "**🔴 Manual Instantiation of Injected Service**: `new LobbyService()` bypasses DI.\n**Evidence**: Line 15 — constructor creates service directly.\n**Why**: Dependencies won't be resolved; class becomes untestable.\n```suggestion\nprivate readonly ILobbyService _lobbyService;\npublic MatchService(ILobbyService lobbyService) { _lobbyService = lobbyService; }\n```"
+    }
+  ]
 }
 ```
 
-**Return envelope** (MANDATORY — always return this exact JSON structure):
+Do NOT include `commit_id` — `post_review.py` injects it automatically. Set `event` based on highest severity using the Severity → Approval table above.
 
-```json
-{
-  "comments": [ "...array of comment objects above..." ],
-  "max_severity": "CRITICAL|HIGH|MEDIUM|LOW|CLEAN"
-}
+### 6. Submit
+
+```bash
+./skills/unity-review-architecture/scripts/post_review.py <pr_number> /tmp/review.json
 ```
 
-- `comments`: Array of comment objects. Empty array `[]` if no issues found.
-- `max_severity`: The highest severity found across all comments. `"CLEAN"` if no issues.
-```
+Fallback (merged/closed): handled automatically by `post_review.py`.
 
 ## Rules
 
-- One issue = one comment object.
-- Every comment MUST have: severity emoji, issue title, evidence (line/pattern), why, suggestion block.
-- Architecture issues that are pre-existing should only be flagged if the PR makes them worse.
-- Always load `unity-code-standards` for the authoritative architecture patterns.
-- Batch pattern: full explanation on first occurrence, short reference on subsequent.
-- Never handle `commit_id` or review submission — the orchestrator owns that.
+- Only review `.cs` files for architecture concerns. Read full files, not just diffs.
+- One issue = one comment. Every comment needs severity + evidence + suggestion.
+- Always load `unity-code-standards` for authoritative architecture patterns.
+- Pre-existing issues: only flag if the PR makes them worse.
+- Batch pattern: full explanation on first occurrence, short reference on subsequent. Submit even if PR is merged.
+- Never hardcode `commit_id` or modify source files.
 - Refer to [ARCHITECTURE_PATTERNS.md](references/ARCHITECTURE_PATTERNS.md) for the complete pattern catalog.

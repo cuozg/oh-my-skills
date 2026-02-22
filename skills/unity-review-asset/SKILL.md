@@ -1,24 +1,30 @@
 ---
 name: unity-review-asset
-description: "Review Unity asset files (.mat, .shader, .meta, .controller, .anim, .fbx, .asset) in PRs for shader issues, texture memory problems, animation misconfigurations, audio optimization, and model import settings. Sub-skill of unity-review-code-pr orchestrator. Use when: delegated by unity-review-code-pr to review asset files. Triggers: 'review assets', 'asset review', 'material review', 'texture review', 'shader review'."
+description: "Review Unity asset files (.mat, .shader, .meta, .controller, .anim, .fbx, .asset) in GitHub PRs for shader issues, texture memory problems, animation misconfigurations, and model import settings. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing asset files in PRs, validating material/texture/model settings before merge. Triggers: 'review assets', 'asset review', 'material review', 'texture review', 'shader review', 'PR asset review', 'review PR assets'."
 ---
 
-# Asset Reviewer
+# Asset PR Reviewer
 
-Review `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` files. Output partial review JSON for the orchestrator.
+Review `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` file changes in GitHub PRs. Push review comments directly to GitHub via the API.
 
-## Input
+## Output
+Review comments pushed to GitHub PR via API. Covers shader refs, texture memory, animation config, model import settings.
 
-Receives from orchestrator: PR number, list of asset file paths, diff context.
+## Input → Command
 
-## Severity Levels
+| Input | Command |
+|:------|:--------|
+| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
 
-| Level | Label | Meaning |
-|:------|:------|:--------|
-| `CRITICAL` | :red_circle: Critical | Will break at runtime or cause data loss |
-| `HIGH` | :yellow_circle: High | Performance, memory, or correctness issue |
-| `MEDIUM` | :blue_circle: Medium | Best practice violation, maintainability risk |
-| `LOW` | :green_circle: Low | Style, naming, minor optimization |
+## Severity → Approval
+
+| Severity | Emoji | Meaning | Approval |
+|:---------|:------|:--------|:---------|
+| CRITICAL | 🔴 | Will break at runtime or cause data loss | `REQUEST_CHANGES` (block) |
+| HIGH | 🟡 | Performance, memory, or correctness issue | `REQUEST_CHANGES` |
+| MEDIUM | 🔵 | Best practice violation, maintainability risk | `COMMENT` (allow merge) |
+| LOW | 🟢 | Style, naming, minor optimization | `APPROVE` (with suggestions) |
+| CLEAN | — | No issues | `APPROVE` |
 
 ## File Type Coverage
 
@@ -34,50 +40,56 @@ Receives from orchestrator: PR number, list of asset file paths, diff context.
 
 ## Workflow
 
-1. Read changed files and their `.meta` counterparts.
-2. Apply patterns from [ASSET_PATTERNS.md](references/ASSET_PATTERNS.md) by file type.
-3. For texture `.meta` files, check compression, `isReadable`, `mipMaps`, platform overrides.
-4. For materials, check shader assignment, keyword usage, render queue.
-5. For models, check mesh compression, animation import, rig type.
-6. Classify each finding by severity, create comment objects.
-7. Return JSON array of comments + overall severity.
+### 1. Fetch PR
 
-## Output Format
+```bash
+gh pr diff <N> --name-only   # Changed files
+gh pr view <N> --json title,body,files,number  # PR context
+gh pr diff <N>               # Full diff
+```
 
-**ALWAYS use this exact output template:**
+Filter to asset file types listed above. If none found, APPROVE with note `No asset files to review.`
 
-Each finding becomes one comment object:
+### 2. Read Files & Apply Patterns
+
+Read changed files and their `.meta` counterparts. Apply patterns from [ASSET_PATTERNS.md](references/ASSET_PATTERNS.md) by file type. Batch grep for fast detection:
+
+- Materials: `grep -n "m_Shader: {fileID: 0}\|{fileID: 10303}" <.mat files>`
+- Textures: `grep -n "isReadable: 1\|enableMipMap: 1\|textureCompression: 0" <.meta files>`
+- Animators: `grep -n "m_Controller: {fileID: 0}\|m_CullingMode: 0\|m_PlayOnAwake: 1" <files>`
+- Models: `grep -n "meshCompression: 0\|isReadable: 1\|importAnimation: 1" <.fbx .meta files>`
+
+### 3. Build `/tmp/review.json`
 
 ```json
 {
-  "path": "Assets/Materials/Player.mat",
-  "line": 12,
-  "side": "RIGHT",
-  "body": "**:red_circle: Missing Shader**: `m_Shader: {fileID: 0}` — material will render pink/magenta at runtime.\n**Evidence**: Line 12 in material YAML.\n**Why**: Shader reference is null, likely deleted or not included in build.\n```suggestion\nAssign correct shader reference\n```"
+  "body": "## Asset Review\n**Scope**: [N files reviewed]\n...",
+  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "comments": [
+    {
+      "path": "Assets/Materials/Player.mat",
+      "line": 12,
+      "side": "RIGHT",
+      "body": "**🔴 Missing Shader**: `m_Shader: {fileID: 0}` — material will render pink at runtime.\n**Evidence**: Line 12 in material YAML.\n**Why**: Shader reference is null, likely deleted or not included in build.\n```suggestion\nAssign correct shader reference\n```"
+    }
+  ]
 }
 ```
 
-**Return envelope** (MANDATORY — always return this exact JSON structure):
+Do NOT include `commit_id` — `post_review.py` injects it automatically. Set `event` based on highest severity using the Severity → Approval table above.
 
-```json
-{
-  "comments": [ "...array of comment objects above..." ],
-  "max_severity": "CRITICAL|HIGH|MEDIUM|LOW|CLEAN"
-}
+### 4. Submit
+
+```bash
+./skills/unity-review-asset/scripts/post_review.py <pr_number> /tmp/review.json
 ```
 
-- `comments`: Array of comment objects. Empty array `[]` if no issues found.
-- `max_severity`: The highest severity found across all comments. `"CLEAN"` if no issues.
-```
+Fallback (merged/closed): handled automatically by `post_review.py`.
 
 ## Rules
 
-- One issue = one comment. Never combine multiple issues in a single comment.
-- Every comment MUST include: severity emoji + title, **Evidence** (file + line), **Why** (impact), and a `suggestion` block.
-- Batch grep for fast pattern detection before deep reading:
-  - Materials: `grep -n "m_Shader: {fileID: 0}\|{fileID: 10303}" <.mat files>`
-  - Textures: `grep -n "isReadable: 1\|enableMipMap: 1\|textureCompression: 0" <.meta files>`
-  - Animators: `grep -n "m_Controller: {fileID: 0}\|m_CullingMode: 0\|m_PlayOnAwake: 1" <changed files>`
-  - Models: `grep -n "meshCompression: 0\|isReadable: 1\|importAnimation: 1" <.fbx .meta files>`
-- Return `{ "comments": [...], "max_severity": "CRITICAL|HIGH|MEDIUM|LOW|CLEAN" }` to orchestrator.
-- If no issues found, return `{ "comments": [], "max_severity": "CLEAN" }`.
+- Only review asset file types listed above. One issue = one comment.
+- Every comment needs severity + evidence + suggestion.
+- Submit even if PR is merged — `post_review.py` handles fallback.
+- Never hardcode `commit_id` or modify source files.
+- Refer to [ASSET_PATTERNS.md](references/ASSET_PATTERNS.md) for the complete pattern catalog.

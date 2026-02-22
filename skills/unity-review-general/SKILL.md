@@ -1,90 +1,100 @@
 ---
 name: unity-review-general
-description: "Review PRs against general quality checklists — security, correctness, testing, code quality, performance, lifecycle, and documentation. Technology-agnostic checks applied alongside Unity-specific sub-skills. Sub-skill of unity-review-code-pr orchestrator. Use when: delegated by unity-review-code-pr for general review. Triggers: 'general review', 'security review', 'testing review', 'code quality review'."
+description: "Review PRs against general quality checklists — security, correctness, testing, code quality, performance, lifecycle, and documentation. Technology-agnostic checks applied to all file types. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing PR quality, security audit, testing coverage review. Triggers: 'general review', 'security review', 'testing review', 'code quality review', 'PR quality review', 'review PR quality'."
 ---
 
-# General Reviewer
+# General PR Quality Reviewer
 
-Apply technology-agnostic quality checklists to PR changes. Output partial review JSON for the orchestrator.
+Apply technology-agnostic quality checklists to PR changes. Push review comments directly to GitHub via the API.
 
-## Input
+## Output
+Review comments pushed to GitHub PR via API. Covers security, correctness, testing, code quality, performance, lifecycle, documentation.
 
-Receives from orchestrator: PR number, full file list (all types), diff context, PR title/body for intent matching.
+## Input → Command
 
-## Severity Levels
+| Input | Command |
+|:------|:--------|
+| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
 
-| Level | Emoji | Meaning |
-|:------|:------|:--------|
-| CRITICAL | :red_circle: | Breaks functionality, data loss, security vulnerability |
-| HIGH | :yellow_circle: | Performance, correctness, or logic issue |
-| MEDIUM | :large_blue_circle: | Best practice violation, maintainability risk |
-| LOW | :green_circle: | Style, naming, documentation gap |
+## Severity → Approval
+
+| Severity | Emoji | Meaning | Approval |
+|:---------|:------|:--------|:---------|
+| CRITICAL | 🔴 | Breaks functionality, data loss, security vulnerability | `REQUEST_CHANGES` (block) |
+| HIGH | 🟡 | Performance, correctness, or logic issue | `REQUEST_CHANGES` |
+| MEDIUM | 🔵 | Best practice violation, maintainability risk | `COMMENT` (allow merge) |
+| LOW | 🟢 | Style, naming, documentation gap | `APPROVE` (with suggestions) |
+| CLEAN | — | No issues | `APPROVE` |
 
 ## PR Size Focus
 
 | Changed Lines | Focus |
 |:--------------|:------|
 | < 50 | Security + Correctness + Testing only |
-| 50-300 | All 7 checklists |
-| > 300 | Request split. If not possible, prioritize Security + Correctness. Note scope risk in summary. |
-
-## Checklists
-
-Details in [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md). Brief overview:
-
-1. :lock: **Security** — secrets, injection, auth, deserialization
-2. :white_check_mark: **Correctness** — logic vs intent, state transitions, error paths
-3. :test_tube: **Testing** — coverage for new/modified API, determinism
-4. :broom: **Code Quality** — SRP, method length, duplication, naming
-5. :zap: **Performance** — hot path allocations, data structures, async
-6. :arrows_counterclockwise: **Lifecycle** — OnEnable/OnDisable pairs, teardown, quit flow
-7. :books: **Documentation** — XML docs, inline comments, breaking change notes
+| 50–300 | All 7 checklists |
+| > 300 | Request split. If not possible, prioritize Security + Correctness. Note scope risk. |
 
 ## Workflow
 
-1. Read PR title/body to extract intent and acceptance criteria.
-2. Count changed lines to determine checklist focus (see size table).
-3. Read diff for all changed files.
-4. Apply each applicable checklist from [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md) against the changes.
-5. For each violation, classify severity and create comment object.
-6. Check: does the PR actually accomplish what the title/body says? Flag gaps.
-7. Return `{ "comments": [...], "max_severity": "..." }`.
+### 1. Fetch PR
 
-## Output Format
+```bash
+gh pr diff <N> --name-only   # Changed files
+gh pr view <N> --json title,body,files,number  # PR context (title/body = intent)
+gh pr diff <N>               # Full diff
+```
 
-**ALWAYS use this exact output template:**
+### 2. Extract Intent & Size
 
-Each finding becomes one comment object:
+Read PR title/body to extract intent and acceptance criteria. Count changed lines to determine checklist focus (see PR Size Focus table).
+
+### 3. Apply Checklists
+
+Apply each applicable checklist from [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md):
+
+1. 🔒 **Security** — secrets, injection, auth, deserialization
+2. ✅ **Correctness** — logic vs intent, state transitions, error paths
+3. 🧪 **Testing** — coverage for new/modified API, determinism
+4. 🧹 **Code Quality** — SRP, method length, duplication, naming
+5. ⚡ **Performance** — hot path allocations, data structures, async
+6. 🔄 **Lifecycle** — OnEnable/OnDisable pairs, teardown, quit flow
+7. 📚 **Documentation** — XML docs, inline comments, breaking change notes
+
+Also verify: does the PR actually accomplish what the title/body says? Flag gaps.
+
+### 4. Build `/tmp/review.json`
 
 ```json
 {
-  "path": "Assets/Scripts/Auth/LoginManager.cs",
-  "line": 45,
-  "side": "RIGHT",
-  "body": "**:red_circle: Hardcoded API Key**: API key string literal found in source.\n**Evidence**: Line 45 — `private string apiKey = \"sk-...\"`\n**Why**: Secrets in source are exposed in version control and builds.\n```suggestion\nMove to environment config or ScriptableObject excluded from version control.\n```"
+  "body": "## General Quality Review\n**Scope**: [N files, M lines changed]\n...",
+  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "comments": [
+    {
+      "path": "Assets/Scripts/Auth/LoginManager.cs",
+      "line": 45,
+      "side": "RIGHT",
+      "body": "**🔴 Hardcoded API Key**: API key string literal found in source.\n**Evidence**: Line 45 — `private string apiKey = \"sk-...\"`\n**Why**: Secrets in source are exposed in version control and builds.\n```suggestion\nMove to environment config or ScriptableObject excluded from version control.\n```"
+    }
+  ]
 }
 ```
 
-**Return envelope** (MANDATORY — always return this exact JSON structure):
+Do NOT include `commit_id` — `post_review.py` injects it automatically. Set `event` based on highest severity using the Severity → Approval table above.
 
-```json
-{
-  "comments": [ "...array of comment objects above..." ],
-  "max_severity": "CRITICAL|HIGH|MEDIUM|LOW|CLEAN"
-}
+### 5. Submit
+
+```bash
+./skills/unity-review-general/scripts/post_review.py <pr_number> /tmp/review.json
 ```
 
-- `comments`: Array of comment objects. Empty array `[]` if no issues found.
-- `max_severity`: The highest severity found across all comments. `"CLEAN"` if no issues.
-```
+Fallback (merged/closed): handled automatically by `post_review.py`.
 
 ## Rules
 
-- One issue = one comment. Never combine multiple issues in a single comment.
-- Every comment MUST include: severity emoji + title, **Evidence** (file + line), **Why** (impact), and a `suggestion` block.
-- Correctness check: verify PR logic matches stated intent from PR title/body.
-- Security findings are always :red_circle: Critical.
+- One issue = one comment. Every comment needs severity + evidence + suggestion.
+- Security findings are always 🔴 Critical.
 - For PRs > 300 lines, add a comment recommending split.
-- If no issues found, return `{ "comments": [], "max_severity": "CLEAN" }`.
-- Never handle `commit_id` or review submission — the orchestrator owns that.
+- Correctness check: verify PR logic matches stated intent from PR title/body.
+- Submit even if PR is merged — `post_review.py` handles fallback.
+- Never hardcode `commit_id` or modify source files.
 - Refer to [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md) for the complete checklist catalog.
