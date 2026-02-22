@@ -91,25 +91,4 @@ void UpdateScore(int s) => _scoreLabel.text = _cachedStrings[s]; // pre-built ar
 
 Profiler: Window > Analysis > Profiler > **UI Details** module. Watch `UIR.Layout` spikes (layout thrashing), `UIR.RenderChainUpdate` (dirty elements), `UIR.TextRegen` (frequent text changes).
 
-## Dragon Crashers Production Metrics
-
-| Technique | Impact |
-|-----------|--------|
-| ListView virtualization | 95% fewer visual tree elements |
-| USS class toggling | Avoids layout recalculation |
-| Transform animations | GPU-accelerated, no layout cost |
-| `DynamicTransform` hint | Batching optimization |
-| Element pooling | Reduces GC |
-
-Metrics: tree depth 8-12, elements/screen 50-200, draw calls 4-8, memory ~2-4MB, startup <100ms mid-range mobile.
-
-## Optimization Checklist
-
-- [ ] Lists 20+ items → `ListView` with virtualization
-- [ ] Animations: `translate/rotate/scale/opacity` only
-- [ ] Animated elements: `UsageHints.DynamicTransform`
-- [ ] `Q()`/`Q<T>()` cached, never per-frame
-- [ ] No string concat in per-frame updates
-- [ ] Max 2-3 fonts; sprites in atlases
-- [ ] Minimize nested `overflow: hidden`
-- [ ] Opacity on leaf elements, not containers
+See [performance-benchmarks-advanced.md](performance-benchmarks-advanced.md) for production metrics and optimization checklists.

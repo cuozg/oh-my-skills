@@ -51,6 +51,6 @@ Always include at least one Quick Fix and one Proper Fix. Architectural Fix only
 - Read the actual code at the crash site. Don't assume what the code does.
 - Every solution must show BEFORE/AFTER code. No hand-wavy suggestions.
 - Solutions must be ordered: recommended first. Mark exactly one as `[RECOMMENDED]`.
-- If you can't determine root cause with certainty, say so and explain what additional info would help.
+ If the root cause cannot be determined with certainty, state this and explain what additional info would help.
 - If the error is a simple typo or missing reference, still provide the full template.
 - Never say "just add a null check" without explaining WHY the value is null and whether null check is the right fix.

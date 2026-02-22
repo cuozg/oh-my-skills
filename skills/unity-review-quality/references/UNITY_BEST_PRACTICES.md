@@ -84,31 +84,6 @@ OnEnable:  DOTween.To(...)      ↔  OnDisable:  tween.Kill()
 
 ## Async & Coroutines
 
-### Coroutine Safety
-- [ ] Coroutine handles stored for cancellation
-- [ ] `StopCoroutine` / `StopAllCoroutines` called in OnDisable
-- [ ] `yield return null` preferred over `yield return 0`
-- [ ] No `yield return new WaitForSeconds()` in tight loops (cache it)
-- [ ] Coroutine error handling (try/catch around yield points won't work)
+## Advanced Practices
 
-### Async/Await (Unity 6+ Awaitable or UniTask)
-- [ ] No `async void` except Unity event handlers
-- [ ] `CancellationToken` propagated for long-running operations
-- [ ] `destroyCancellationToken` used for MonoBehaviour-scoped async
-- [ ] Null check after `await` (object may be destroyed)
-- [ ] Error handling wraps entire async chain
-
-## Platform & Build
-
-### Cross-Platform
-- [ ] Platform-specific code guarded with `#if UNITY_IOS / UNITY_ANDROID / etc.`
-- [ ] File paths use `Path.Combine` (not hardcoded separators)
-- [ ] Touch vs mouse input abstracted
-- [ ] Screen resolution/aspect ratio handling tested
-
-### Build Configuration
-- [ ] IL2CPP for release builds (not Mono)
-- [ ] Managed stripping level set (Medium or High)
-- [ ] Debug builds stripped of heavy logging
-- [ ] `Debug.Log` calls wrapped in `#if UNITY_EDITOR` or conditional compilation
-- [ ] Development build checkbox OFF for releases
+For cross-platform implementation, advanced build configurations, and specialized patterns, see UNITY_BEST_PRACTICES-advanced.md.

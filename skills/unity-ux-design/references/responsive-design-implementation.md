@@ -96,5 +96,4 @@ public class SafeArea : MonoBehaviour
     }
 }
 ```
-
 **Hierarchy**: Canvas → SafeAreaPanel (full stretch + script) → all screens. Backgrounds/dim overlays outside SafeArea.

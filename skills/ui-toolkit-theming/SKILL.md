@@ -26,7 +26,7 @@ DC uses a **compound TSS system** (7 TSS: 2 orientations × 3 seasons + 1 base).
 
 Single `tokens.uss` = source of truth for colors (primary/secondary/bg/text/border/status), typography (xs–4xl), spacing (4px grid: 0–64px), radius, transitions, shadows.
 
-> **Complete tokens.uss**: See [Theming Code Patterns](references/theming-code-patterns.md#tokensuss--light-theme-default)
+> **Complete tokens.uss**: See [Theming Code Patterns](references/theming-code-patterns-part1.md)
 
 ## Color Token Organization
 
@@ -34,7 +34,7 @@ Use **semantic naming** (purpose-based). Raw values (`--color-primary-500`) map 
 
 ## Typography & Spacing
 
-USS utility classes for font sizes (`.text-xs` through `.text-3xl`), styles, alignment — consuming `var(--font-size-*)` tokens. See [Theming Code Patterns](references/theming-code-patterns.md#typography-uss).
+USS utility classes for font sizes (`.text-xs` through `.text-3xl`), styles, alignment — consuming `var(--font-size-*)` tokens. See [Theming Code Patterns](references/theming-code-patterns-part1.md).
 
 4px spacing grid: `--space-1`(4px) through `--space-16`(64px). Usage: `padding: var(--space-4); margin-bottom: var(--space-3);`
 
@@ -42,11 +42,11 @@ USS utility classes for font sizes (`.text-xs` through `.text-3xl`), styles, ali
 
 **Dark theme**: Copy `tokens.uss` → `tokens-dark.uss`, override only changed values (backgrounds, text, borders).
 
-**TSS files**: One `.tss` per theme (Create > UI Toolkit > TSS Theme File). Each imports token file + shared styles. See [Theming Code Patterns](references/theming-code-patterns.md#tss-file-structure).
+**TSS files**: One `.tss` per theme (Create > UI Toolkit > TSS Theme File). Each imports token file + shared styles. See [Theming Code Patterns](references/theming-code-patterns-part1.md).
 
-**ThemeManager**: Singleton MonoBehaviour swapping `PanelSettings.themeStyleSheet`. Persists via `PlayerPrefs`. Exposes `ToggleTheme()`, `SetTheme(bool)`, `OnThemeChanged` event. See [Theming Code Patterns](references/theming-code-patterns.md#thememanager).
+**ThemeManager**: Singleton MonoBehaviour swapping `PanelSettings.themeStyleSheet`. Persists via `PlayerPrefs`. Exposes `ToggleTheme()`, `SetTheme(bool)`, `OnThemeChanged` event. See [Theming Code Patterns](references/theming-code-patterns-part1.md).
 
-**UXML + base-components.uss**: See [Theming Code Patterns](references/theming-code-patterns.md#base-components-uss-token-consuming).
+**UXML + base-components.uss**: See [Theming Code Patterns](references/theming-code-patterns-part2.md).
 
 ## USS Cascading Rules
 
@@ -62,11 +62,11 @@ Specificity: Type=0-0-1, Class=0-1-0, Name=1-0-0. No `!important` in USS. TSS im
 
 ## Theme-Aware Custom Controls
 
-Consume tokens through USS classes, never hardcode. BEM naming. `[UxmlElement]` + `[UxmlAttribute]`. See [Theming Code Patterns](references/theming-code-patterns.md#theme-aware-custom-control--statusbadge).
+Consume tokens through USS classes, never hardcode. BEM naming. `[UxmlElement]` + `[UxmlAttribute]`. See [Theming Code Patterns](references/theming-code-patterns-part2.md).
 
 ## Dragon Crashers: Compound Theming
 
-7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns.md#dc-compound-theming), [Dragon Crashers Insights](references/dragon-crashers-insights.md), [Project Patterns](references/project-patterns.md).
+7 TSS files (2 orientations × 3 seasons + 1 base), BEM utilities, hardcoded values. Simpler but inflexible. See [Theming Code Patterns](references/theming-code-patterns-part1.md), [Dragon Crashers Insights](references/dragon-crashers-insights.md), [Project Patterns](references/project-patterns.md).
 
 ## Common Pitfalls
 
@@ -79,5 +79,3 @@ Consume tokens through USS classes, never hardcode. BEM naming. `[UxmlElement]` 
 | Skipping semantic tokens | Map raw palette → semantic names |
 | Switching USS at runtime | Switch TSS on PanelSettings instead |
 | Magic spacing numbers | `--space-*` tokens |
-
-

@@ -53,7 +53,7 @@ See `references/review-workflow.md` for detailed agent tables covering:
 - **Step 5**: Project health check (settings, build config, gitignore)
 
 ### Step 6: Compile Report
-Read template from `assets/templates/QUALITY_REVIEW_REPORT.md`. Fill every section — mark empty ones "No issues found." Output to: `Documents/Reviews/QUALITY_REVIEW_[ProjectName]_[YYYYMMDD].html`
+Read template parts in order from `assets/templates/QUALITY_REVIEW_REPORT_SECTION1.md` through `assets/templates/QUALITY_REVIEW_REPORT_SECTION8.md`. Fill every section — mark empty ones "No issues found." Output to: `Documents/Reviews/QUALITY_REVIEW_[ProjectName]_[YYYYMMDD].html`
 
 ### Step 7: Present Summary
 Use the template in `references/summary-template.md` to present findings to the user.

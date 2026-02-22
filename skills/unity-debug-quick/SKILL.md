@@ -55,7 +55,7 @@ For investigation rules and best practices, see the Rules section below.
 - Cite with `FileName.cs:L##` inline throughout.
 - Code snippets only when they clarify the explanation — never dump full methods.
 - If the issue spans multiple systems, focus on the path that explains the root cause. Don't explain everything.
-- If you can't determine the root cause with certainty, say "I'm not certain because {reason}" and note what additional information would help.
+ If the root cause cannot be determined with certainty, state "I'm not certain because {reason}" and note what additional information would help.
 - If the user provides a stack trace, extract the error type, crash site, and call chain before investigating.
 - If the user actually wants code fixes applied, suggest using `unity-debug-fix` or `unity-fix-errors` instead.
 - Solutions describe WHAT to do and WHERE — they do NOT include code changes. That's `unity-debug-fix`'s job.

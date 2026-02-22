@@ -79,44 +79,6 @@ Every prompt follows: `{subject}, {style}, {view}, {background}, {technical}`
 - `a rounded dialog box frame with parchment texture, stylized RPG game UI, flat front-facing view, isolated on transparent background, clean edges no artifacts, mobile game UI element, centered composition`
 - `a star rating icon 5 stars in a row, stylized golden metallic, flat front-facing view, isolated on transparent background, clean edges, game UI icon`
 
----
+## Advanced Techniques
 
-## VFX / Particles (Effects, Auras, Impacts)
-
-**Base Template:**
-```
-{effect_description}, {art_style}, front-facing view, isolated on pure black or transparent background, soft glowing edges, game VFX sprite, centered composition, no hard outlines
-```
-
-**Examples:**
-- `a circular fire explosion burst with orange and yellow flames, stylized cartoon VFX, front-facing view, isolated on transparent background, soft glowing edges, game VFX sprite, centered composition`
-- `a blue healing magic circle with rune symbols, stylized fantasy VFX, top-down view, isolated on transparent background, soft glowing edges, game VFX sprite, centered composition`
-- `a purple poison cloud with green particles, stylized cartoon VFX, front-facing view, isolated on transparent background, soft edges, game VFX sprite, centered composition`
-- `a golden shield barrier dome effect, stylized fantasy VFX, front-facing view, isolated on transparent background, soft glowing edges translucent, game VFX sprite, centered composition`
-
----
-
-## Style Anchor Presets
-
-Use these as prefixes for batch consistency:
-
-| Preset Name | Style Anchor |
-|:---|:---|
-| Stylized RPG | `stylized hand-painted, vibrant saturated colors, dark outline, soft cel shading` |
-| Pixel 16-bit | `pixel art 16-bit retro style, limited 32-color palette, no anti-aliasing, flat shading` |
-| Toon Cartoon | `cartoon style, bright primary colors, thick black outline, flat color fill` |
-| Dark Fantasy | `dark fantasy painted, muted earthy colors with accent glows, thin outline, dramatic lighting` |
-| Chibi | `chibi style, pastel soft colors, round shapes, thin outline, cute proportions` |
-| Realistic | `semi-realistic digital painting, natural muted colors, no outline, soft gradient shading` |
-| Flat Minimal | `flat vector style, bold geometric shapes, limited palette, no outline, no shading` |
-
----
-
-## Negative Prompt Notes
-
-These subjects should be AVOIDED in prompts (add as negative guidance if generation includes them):
-- Text, watermarks, signatures
-- Detailed realistic backgrounds
-- Multiple objects when single requested
-- Photo-realistic human faces (uncanny valley risk)
-- Complex perspective (keep isometric or front-facing)
+For style anchor presets, batch generation patterns, seasonal variants, and negative prompt guidance, see prompt-templates-advanced.md.

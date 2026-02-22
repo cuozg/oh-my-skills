@@ -8,15 +8,13 @@ description: "Generate UX screen specification documents and production-ready Un
 **Input**: Feature requirements, target device, existing assets, optional screen pattern
 
 ## Output
-UX screen specification document (HTML) and production-ready Unity scene/prefab hierarchy.
-
-All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameObjects).
+UX screen specification document (HTML) and production-ready Unity scene/prefab hierarchy. All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameObjects).
 
 ## Workflow
 
 1. **Gather requirements** — screen purpose, target device, aspect ratio, existing assets
 2. **Select pattern** — match from design patterns reference
-3. **Build hierarchy** — Canvas setup template → screen-specific template
+3. **Build hierarchy** — Canvas setup template → screen-specific template (see [canvas-and-naming-reference.md](references/canvas-and-naming-reference.md))
 4. **Configure components** — standard uGUI components per component reference
 5. **Apply responsive rules** — anchoring, Layout Groups, ContentSizeFitter
 6. **Add interactions** — touch feedback, transitions, navigation
@@ -29,14 +27,15 @@ All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameO
 - **[Mobile Design System](./references/mobile-design-system.md)** — Color palette, typography, spacing, icons
 
 ### Implementation
-- **[GameObject Hierarchy Best Practices](./references/gameobject-hierarchy-best-practices.md)** — Canvas structure, naming, anchors
+- **[Canvas Configuration & Naming](./references/canvas-and-naming-reference.md)** — Canvas structure, layer organization, naming conventions
+- **[GameObject Hierarchy Best Practices](./references/gameobject-hierarchy-best-practices.md)** — Naming, anchors, sizing
 - **[Responsive Design Implementation](./references/responsive-design-implementation.md)** — CanvasScaler, anchoring, Layout Groups, SafeArea
 - **[UI Component Reference](./references/ui-component-reference.md)** — Full component census with configs
 
 ### Interaction & UX
 - **[Mobile UX Interaction Patterns](./references/mobile-ux-interaction-patterns.md)** — Touch, navigation, modal, scroll, feedback
 
-### Legacy
+### Examples & Legacy
 - **[Example Specifications](./references/example-specifications.md)** — 4 HTML spec examples
 - **[Unity UI Best Practices](references/unity-ui-best-practices.md)** — General guidelines
 
@@ -52,40 +51,10 @@ All patterns derived from Layer Lab GUI Pro-SuperCasual (81 screens, 5,624 GameO
 | **[Responsive Panel](./assets/templates/RESPONSIVE_PANEL_EXAMPLE.md)** | 5 responsive layout recipes |
 | **[Interactive Demo HTML](./assets/templates/INTERACTIVE_DEMO.html)** | HTML spec document generation |
 
-## Canvas Configuration
+## Example Lobby Screen
 
-```
-Canvas (Screen Space - Camera)
-├── CanvasScaler: ScaleWithScreenSize, ref 1080×1920, matchWidthOrHeight=0.5
-├── GraphicRaycaster
-└── SafeArea (stretch all, script adjusts for notch)
-    ├── Screen_Lobby (one per screen, toggle active)
-    ├── Screen_Shop
-    └── PopupLayer
-```
+Follow [Canvas Setup](./assets/templates/CANVAS_SETUP_TEMPLATE.md) + [Lobby Template](./assets/templates/SCREEN_TEMPLATE_LOBBY.md):
 
-- `matchWidthOrHeight`: 0=portrait, 0.5=mixed, 1=landscape
-- Screens are direct children of SafeArea, activated/deactivated for navigation
-- Popups in separate PopupLayer above all screens
-- Never hardcode pixel positions — use Layout Groups and anchoring
-
-## Naming Conventions
-
-| Prefix | Example |
-|--------|---------|
-| `Screen_` | `Screen_Lobby`, `Screen_Shop` |
-| `Panel_` | `Panel_Header`, `Panel_Content` |
-| `Group_` | `Group_ResourceBar`, `Group_Buttons` |
-| `Button_` | `Button_Play`, `Button_Close` |
-| `Text_` | `Text_Title`, `Text_Score` |
-| `Icon_` | `Icon_Coin`, `Icon_Star` |
-| `Popup_` | `Popup_Reward`, `Popup_Settings` |
-| `Item_` | `Item_LeaderboardRow`, `Item_ShopCard` |
-
-## Examples
-
-### Lobby screen
-→ Read [Canvas Setup](./assets/templates/CANVAS_SETUP_TEMPLATE.md) + [Lobby Template](./assets/templates/SCREEN_TEMPLATE_LOBBY.md)
 ```
 Screen_Lobby
 ├── Panel_Header (top-stretch)
@@ -99,7 +68,7 @@ Screen_Lobby
 └── Background (full-stretch)
 ```
 
-### Full Example Outputs
+## Full Example Outputs
 - **[ExampleLobbyMenu](./assets/examples/ExampleLobbyMenu.md)** — Full lobby (32 Images, 19 TMP, 12 Buttons)
 - **[ExampleItemListScreen](./assets/examples/ExampleItemListScreen.md)** — Leaderboard with ScrollRect
 - **[ExampleRewardPopup](./assets/examples/ExampleRewardPopup.md)** — Reward popup with animation

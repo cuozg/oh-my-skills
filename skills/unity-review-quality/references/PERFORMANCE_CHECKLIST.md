@@ -83,27 +83,7 @@
 - [ ] Fixed timestep appropriate for game type (default 0.02 = 50Hz)
 - [ ] Collision matrix configured (not everything-collides-with-everything)
 - [ ] Trigger volumes on separate layer from physics colliders
-- [ ] Rigidbody `interpolation` set only when needed (has cost)
-- [ ] No `MovePosition`/`velocity` set in Update (use FixedUpdate)
-- [ ] Raycast/SphereCast uses layer mask and max distance
-- [ ] `Physics.autoSyncTransforms` off for batch queries (manual sync)
-- [ ] Contact pair generation mode appropriate (reduce pair count)
 
-## UI Performance
+## Advanced Optimization
 
-- [ ] Canvas not rebuilt every frame (check `Canvas.willRenderCanvases`)
-- [ ] Large lists use virtualization/pooling (not 1000 instantiated items)
-- [ ] Text updates batched (not per-character per-frame)
-- [ ] Decorative Images have `raycastTarget = false`
-- [ ] No deeply nested LayoutGroups (< 3 levels)
-- [ ] Separate Canvas for frequently-updating elements (dirty isolation)
-- [ ] No `CanvasRenderer.SetColor` per frame — use `CanvasGroup.alpha`
-- [ ] `GraphicRaycaster` only on canvases that need input
-
-## Loading & Streaming
-
-- [ ] Scene loading is async (`LoadSceneAsync`)
-- [ ] Heavy initialization spread across frames (not all in Start)
-- [ ] Addressables or AssetBundles for large content
-- [ ] Loading screens mask async work
-- [ ] No synchronous `Resources.Load` for large assets
+For advanced rendering, shader optimization, memory profiling, and concurrency patterns, see PERFORMANCE_CHECKLIST-advanced.md.

@@ -68,7 +68,7 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Interface-based design | Depend on abstractions, not concrete implementations |
 | Single responsibility | One purpose per class; split when a class does too many things |
 
-**Full reference:** [unitask-patterns.md](references/unity/unitask-patterns.md)
+**Full reference:** [unitask-patterns-part1.md](references/unity/unitask-patterns-part1.md) and [unitask-patterns-part2.md](references/unity/unitask-patterns-part2.md)
 
 ### Priority 4: Performance & Review
 **Optimize hot paths, minimize allocations, enforce review checklists.**
@@ -84,16 +84,14 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Use `NativeArray` for large data | Burst-compatible, no GC |
 
 **Full references:**
-- [performance-optimizations.md](references/csharp/performance-optimizations.md)
+- [performance-optimizations-part1.md](references/csharp/performance-optimizations-part1.md)
+- [performance-optimizations-part2.md](references/csharp/performance-optimizations-part2.md)
 - [architecture-review.md](references/review/architecture-review.md)
 - [csharp-quality.md](references/review/csharp-quality.md)
 - [performance-review.md](references/review/performance-review.md)
 - [unity-specifics.md](references/review/unity-specifics.md)
 
-## Assembly Definition & Decision Trees
+## Additional References
 
-For assembly structure, decision trees, and quick reference guidance, see [decision-trees.md](references/decision-trees.md).
-
-## Reference Index
-
-For the complete index of C#, Unity, and review references, see [reference-index.md](references/reference-index.md).
+ [decision-trees.md](references/decision-trees.md) — Assembly structure, decision trees, quick reference guidance
+ [reference-index.md](references/reference-index.md) — Complete index of C#, Unity, and review references

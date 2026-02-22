@@ -22,7 +22,8 @@ Production-ready C# scripts, prefab configurations, and import settings for 2D g
 
 ## References
 
-- [2d-code-patterns.md](references/2d-code-patterns.md) — sorting layers, PlatformerController2D, TilemapController, RuleTile, ContactFilter2D, SpriteAnimationController, 2D lighting, pixel-perfect camera
+- [2d-code-patterns-part1.md](references/2d-code-patterns-part1.md) — sorting layers and project setup
+- [2d-code-patterns-part2.md](references/2d-code-patterns-part2.md) — PlatformerController2D, TilemapController, RuleTile, ContactFilter2D, SpriteAnimationController, 2D lighting, pixel-perfect camera
 - [2d-physics-reference.md](references/2d-physics-reference.md) — Rigidbody2D type selection, collider choices, Physics 2D settings
 
 ## Key Best Practices

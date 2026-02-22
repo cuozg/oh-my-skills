@@ -26,7 +26,7 @@ Direct conversational answer: short summary + 1-3 detailed explanations with fil
 | Find by name | `lsp_symbols` (workspace) |
 | Blast radius | `impact-analyzer` |
 | Pattern match | `grep` / `ast_grep_search` |
-| Broad sweep | `scripts/trace_logic.sh [Target]` |
+| Broad sweep | `scripts/trace_logic.py [Target]` |
 
 Chain tools only when the first result is incomplete. Stop the moment you can answer.
 

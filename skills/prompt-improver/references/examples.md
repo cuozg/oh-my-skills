@@ -96,5 +96,4 @@ Add date range filter to analytics dashboard.
 
 NOTE: Performance, chart styling, Firefox export → separate prompts.
 ```
-
 **Techniques**: Scope Bounding (split multi-task), Structure, Specificity

@@ -86,35 +86,7 @@
 |---|---|
 | `<button>` | Button + Image + Text child |
 | `<input type="text">` | TMP_InputField |
-| `<input type="password">` | TMP_InputField (contentType=Password) |
-| `<input type="number">` | TMP_InputField (contentType=IntegerNumber) |
-| `<input type="checkbox">` | Toggle |
-| `<input type="radio">` | Toggle + ToggleGroup |
-| `<select>` | TMP_Dropdown |
-| `<input type="range">` | Slider |
-| `<textarea>` | TMP_InputField (lineType=MultiLineNewline) |
 
-| CSS State | Unity Button Property |
-|---|---|
-| `:normal/:hover/:active/:disabled/:focus` | normalColor/highlightedColor/pressedColor/disabledColor/selectedColor |
+## Advanced CSS-to-Unity Mapping
 
-## Visibility & Opacity
-
-| CSS | Unity |
-|---|---|
-| `opacity: 0.5` | CanvasGroup.alpha = 0.5 |
-| `display: none` | GameObject.SetActive(false) |
-| `visibility: hidden` | CanvasGroup.alpha=0, blocksRaycasts=false |
-| `pointer-events: none` | CanvasGroup.blocksRaycasts = false |
-| `overflow: hidden` | RectMask2D or Mask |
-| `z-index` | Sibling order (later = on top) |
-
-## Animation & Transition
-
-| CSS | Unity |
-|---|---|
-| `transition: opacity 0.3s` | DOTween/Animator: CanvasGroup.alpha over 0.3s |
-| `transition: transform 0.2s` | DOTween/Animator: RectTransform over 0.2s |
-| `transform: scale(1.1)` | localScale = Vector3(1.1, 1.1, 1) |
-| `transform: rotate(45deg)` | localEulerAngles = Vector3(0, 0, -45) |
-| `transform: translateX(100px)` | anchoredPosition += Vector2(100, 0) |
+For complex animations, gradients, filters, blur effects, advanced positioning, and performance-aware CSS patterns, see specification-mapping-advanced.md.

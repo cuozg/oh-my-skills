@@ -91,7 +91,6 @@ void OnDestroy() { Debug.Log($"<color=magenta>[DBG] {GetType().Name}.OnDestroy |
 #if UNITY_EDITOR
 Debug.Log($"<color=white>[DBG] DataLoader.LoadAsync START | url={url}, frame={Time.frameCount}</color>");
 #endif
-
 var data = await FetchData(url);
 
 #if UNITY_EDITOR

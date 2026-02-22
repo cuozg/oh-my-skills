@@ -95,6 +95,5 @@ Debug.Log($"<color={color}>[DBG] ...</color>");
 - Each log must have: `#if UNITY_EDITOR` wrapper, `<color=X>` tag, `[DBG]` prefix, `ClassName.MethodName` context.
 - Use string interpolation `$"..."` always. Never `string.Format` or concatenation.
 - For null-safe inspection: use ternary `(x != null ? x.name : "NULL")` or `x?.ToString() ?? "NULL"`.
-- Include exact file path and line number for each insertion point.
-- Group logs by file. Order by execution flow (top to bottom).
-- Keep log messages concise — show the value, not a novel.
+ Include exact file path and line number for each insertion point. Group by file, order by execution flow.
+ Keep log messages concise — show the value, not a novel.

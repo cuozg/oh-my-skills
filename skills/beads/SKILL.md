@@ -91,10 +91,7 @@ Key patterns:
 - Include ID in commits: `(bd-xxxx)`
 - Land the Plane at session end: Update all → sync → commit
 
----
 
 ## References
 
-- `references/commands.md` — bd CLI command reference
-- `references/workflows.md` — Agent session workflows
-- `references/quick-reference.md` — Common workflows and mistake fixes
+See: [commands.md](references/commands.md) (CLI reference) | [workflows.md](references/workflows.md) (agent sessions) | [quick-reference.md](references/quick-reference.md) (common fixes)

@@ -57,7 +57,7 @@ Time-limited free+premium progression track. Predictable recurring revenue.
 
 ### 4.2 Gacha / Loot Box
 Randomized rewards for currency spend. High ARPU but legal restrictions.
-- **Required**: pity/guarantee system, rate disclosure, no gameplay-critical exclusives, alternative earn paths.
+- **Required**: pity/guarantee system, rate disclosure, no gameplay-critical exclusives.
 
 ### 4.3 Cosmetic-Only
 Visual-only purchases, no gameplay advantage. Fair perception, high goodwill.
@@ -70,10 +70,10 @@ Optional video ads for in-game rewards. Monetizes non-payers.
 ## 5. Engagement & Retention Patterns
 
 ### 5.1 Daily Login / Streak Rewards
-Escalating rewards for consecutive logins. Variants: forgiving (no reset), punishing (reset on miss), calendar-based.
+Escalating rewards for consecutive logins. Variants: forgiving (no reset), punishing (reset on miss).
 
 ### 5.2 Limited-Time Events
-Temporary content creating urgency. Types: seasonal (2-4 weeks), competitive (3-7 days), collaborative (community-wide goal).
+Temporary content creating urgency. Types: seasonal (2-4 weeks), competitive (3-7 days).
 
 ### 5.3 Daily Quests / Missions
 Rotating objectives directing daily activity. Effective with Battle Pass XP.
@@ -82,20 +82,9 @@ Rotating objectives directing daily activity. Effective with Battle Pass XP.
 
 | Archetype | Loop | Key Tension |
 |:---|:---|:---|
-| **Battle** (RPG) | Prepare → Fight → Reward → Upgrade | Preparation determines outcome |
-| **Build** (Tycoon) | Earn → Build → Earn more → Optimize | Opportunity cost |
-| **Explore** (Adventure) | Discover → Challenge → Reward → Unlock | Curiosity |
-| **Match** (Puzzle) | Play → Score → Feedback → Next round | Improving score |
-| **Create** (Sandbox) | Build → Share → Feedback → Iterate | Self-expression |
-| **Idle** (Incremental) | Automate → Leave → Collect → Upgrade | Prestige timing |
-
-## Pattern Selection Guide
-
-| Constraint | Recommended Patterns |
-|:---|:---|
-| Mobile, casual | Linear progression, Energy gating, Rewarded ads, Daily rewards |
-| Mobile, mid-core | Branching progression, Dual currency, Battle pass, Guilds |
-| PC, hardcore | Open-ended progression, Crafting, Real-time PvP, Cosmetic monetization |
-| Short dev timeline | Linear progression, Soft currency only, Cosmetic shop |
-| Live-service | Battle pass, Limited events, Daily quests, Prestige systems |
-| Competitive focus | Cosmetic-only monetization, Async/Real-time PvP, Leaderboards |
+| **Battle** | Prepare → Fight → Reward → Upgrade | Preparation determines outcome |
+| **Build** | Earn → Build → Earn more → Optimize | Opportunity cost |
+| **Explore** | Discover → Challenge → Reward → Unlock | Curiosity |
+| **Match** | Play → Score → Feedback → Next | Improving score |
+| **Create** | Build → Share → Feedback → Iterate | Self-expression |
+| **Idle** | Automate → Leave → Collect → Upgrade | Prestige timing |

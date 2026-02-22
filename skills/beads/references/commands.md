@@ -92,7 +92,6 @@ bd-a3f8.1.1      # Sub-task
 ```
 
 Hash-based IDs — zero conflicts across branches.
-
 ## Environment Variables
 
 | Variable | Purpose |

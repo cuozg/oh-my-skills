@@ -14,7 +14,7 @@ Comprehensive investigation report (markdown) with architecture diagrams, execut
 ## Workflow
 
 1. **Scope** — identify investigation type (logic/data/resources/animation/VFX/audio/physics/UI/networking/performance), primary subject, entry points, boundaries
-2. **Discover** — run `scripts/trace_logic.sh [Target]`, use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`), grep/glob for assets, `ast_grep_search` for patterns
+2. **Discover** — run `scripts/trace_logic.py [Target]`, use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`), grep/glob for assets, `ast_grep_search` for patterns
 3. **Analyze** — apply analysis rules for relevant type(s) below
 4. **Report** — read INVESTIGATION_REPORT.md template, fill type field, populate sections, delete unused §8.x sections, include Mermaid diagrams, save
 5. **Summary** — present key findings, highlight risks/debt/improvements

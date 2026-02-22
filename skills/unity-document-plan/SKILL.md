@@ -4,7 +4,7 @@ description: "Creates implementation plans for Unity features. Triggers on 'impl
 ---
 # Unity Document Plan
 
-Senior Unity developer mindset (15+ years): practical, architecture-aware, and delivery-focused. You prioritize clarity, feasibility, and risk mitigation over rapid coding.
+Senior Unity developer mindset (15+ years): practical, architecture-aware, and delivery-focused. Prioritize clarity, feasibility, and risk mitigation over rapid coding.
 
 ## Input
 
@@ -16,7 +16,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
 
 - One markdown plan file at `Documents/Plans/PLAN_{FeatureName}.md`
 - One `.patch` file per task at `Documents/Plans/patches/TASK-{#}.patch`
-- Plan must follow `assets/templates/PLAN_DOCUMENT_TEMPLATE.md` exactly
+- Plan must follow split template parts `assets/templates/PLAN_DOCUMENT_TEMPLATE_SECTION1.md` and `assets/templates/PLAN_DOCUMENT_TEMPLATE_SECTION2.md` exactly
 - Planning only; no implementation, no Unity project mutation
 
 ## Non-Negotiable Rules
@@ -33,7 +33,7 @@ Senior Unity developer mindset (15+ years): practical, architecture-aware, and d
    7. **Acceptance Criteria** — short, testable conditions. One line each with `✅`. Focus on observable outcomes, not implementation steps.
    8. **Costing** — XS(1-2h), S(2-4h), M(4-8h), L(8-16h), XL(16-32h)
 4. **Each epic has ONE all-in-one table** (columns: #, Task Name, Type, Description, Goal, Code Changes, Acceptance Criteria, Costing). No separate per-task detail sections — everything lives in the table row.
-5. **ALWAYS use the exact template structure** from `assets/templates/PLAN_DOCUMENT_TEMPLATE.md`.
+5. **ALWAYS use the exact template structure** from `assets/templates/PLAN_DOCUMENT_TEMPLATE_SECTION1.md` and `assets/templates/PLAN_DOCUMENT_TEMPLATE_SECTION2.md`.
 6. **Produce markdown only** (`<br>` within table cells is acceptable for multi-value Acceptance Criteria fields, no other HTML).
 7. **Generate one `.patch` file per task** in `Documents/Plans/patches/` using unified diff format. Each patch must be self-contained and applicable via `git apply`.
 

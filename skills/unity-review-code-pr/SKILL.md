@@ -66,15 +66,15 @@ Apply loaded checklists. Focus: control flow, state management, data flow, edge 
 
 ### 6. Build `/tmp/review.json`
 
-Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Do NOT include `commit_id` — `post_review.sh` injects it automatically.
+Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Do NOT include `commit_id` — `post_review.py` injects it automatically.
 
 ### 7. Submit
 
 ```bash
-./skills/unity-review-code-pr/scripts/post_review.sh <pr_number> /tmp/review.json
+./skills/unity-review-code-pr/scripts/post_review.py <pr_number> /tmp/review.json
 ```
 
-Fallback (merged/closed): handled automatically by `post_review.sh`.
+Fallback (merged/closed): handled automatically by `post_review.py`.
 
 ## Evidence Rules
 
@@ -93,5 +93,5 @@ Fallback (merged/closed): handled automatically by `post_review.sh`.
 - Verify event subscribe/unsubscribe pairs and lifecycle ordering.
 - If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
 - For serialization findings, check whether the project has migration/versioning support.
-- Submit even if PR is merged — `post_review.sh` handles fallback.
+- Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id`, modify source files, review non-`.cs` files, or delegate to sub-skills.

@@ -15,7 +15,7 @@ DC: flexbox column default, `flex-grow: 1` for content fill, `%` widths for grid
 
 ## Responsive Layout Patterns
 
-> **Full code**: See [Responsive Code Patterns](references/responsive-code-patterns.md)
+> **Full code**: See [Responsive Code Patterns Part 1](references/responsive-code-patterns-part1.md) and [Responsive Code Patterns Part 2](references/responsive-code-patterns-part2.md)
 
 ## Dragon Crashers Project Patterns
 

@@ -32,7 +32,7 @@ Load [mechanics-patterns.md](references/mechanics-patterns.md) for reusable patt
 5. Evaluate each: depth/complexity ratio, implementation cost, retention impact, monetization fit
 
 ### Phase 3: GDD Generation
-Load [gdd-template.md](references/gdd-template.md) and populate all sections.
+Load [gdd-template-part1.md](references/gdd-template-part1.md) and [gdd-template-part2.md](references/gdd-template-part2.md), then populate all sections.
 1. Read template, populate using Phase 1+2 outputs
 2. Add Unity implementation notes (scenes, prefabs, systems)
 3. Include platform-specific considerations
@@ -62,5 +62,5 @@ Load [gdd-template.md](references/gdd-template.md) and populate all sections.
 
 | File | When | Content |
 |:---|:---|:---|
-| [gdd-template.md](references/gdd-template.md) | Phase 3 | Full GDD section structure |
+| [gdd-template-part1.md](references/gdd-template-part1.md) + [gdd-template-part2.md](references/gdd-template-part2.md) | Phase 3 | Full GDD section structure |
 | [mechanics-patterns.md](references/mechanics-patterns.md) | Phase 2 | Progression, economy, social, monetization patterns |

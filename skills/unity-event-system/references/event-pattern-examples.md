@@ -74,30 +74,6 @@ public abstract class TypedGameEventListener<TEvent, TVal> : MonoBehaviour, ITyp
 public class IntGameEventListener : TypedGameEventListener<IntGameEvent, int> { }
 ```
 
-## Generic Event Bus
-```csharp
-public static class EventBus<T> where T : struct
-{
-    private static readonly HashSet<Action<T>> _subs = new();
-    public static void Subscribe(Action<T> h) => _subs.Add(h);
-    public static void Unsubscribe(Action<T> h) => _subs.Remove(h);
-    public static void Publish(T e) { foreach (var s in _subs) s?.Invoke(e); }
-    public static void Clear() => _subs.Clear();
-}
-// Event structs
-public struct PlayerDamagedEvent { public int Amount; public int Remaining; public Vector3 HitPos; }
-// Publisher — fully decoupled
-public class DamageDealer : MonoBehaviour
-{
-    public void Deal(int amt, Vector3 pos) =>
-        EventBus<PlayerDamagedEvent>.Publish(new() { Amount = amt, Remaining = 75, HitPos = pos });
-}
-// Subscriber
-public class DamageVFX : MonoBehaviour
-{
-    [SerializeField] private GameObject _hitFx;
-    private void OnEnable() => EventBus<PlayerDamagedEvent>.Subscribe(OnHit);
-    private void OnDisable() => EventBus<PlayerDamagedEvent>.Unsubscribe(OnHit);
-    private void OnHit(PlayerDamagedEvent e) { if (_hitFx) Instantiate(_hitFx, e.HitPos, Quaternion.identity); }
-}
-```
+## Advanced Event Patterns
+
+For advanced patterns including Generic Event Bus, priority event systems, and filtered subscriptions, see event-pattern-examples-advanced.md.

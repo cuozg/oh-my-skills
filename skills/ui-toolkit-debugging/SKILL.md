@@ -95,6 +95,3 @@ See [references/diagnostic-utilities.md](references/diagnostic-utilities.md) for
 
 See [dragon-crashers-insights.md](references/dragon-crashers-insights.md): event bus `+=`/`-=` pairing, fire-and-forget `Task` exception swallowing, world-to-panel positioning, compound theme debugging, SafeAreaBorder Editor-vs-device differences.
 
----
-
-**← Previous**: Mobile (ui-toolkit-mobile) | **Series Start →**: Master (ui-toolkit-master)

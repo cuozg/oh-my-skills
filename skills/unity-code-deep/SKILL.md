@@ -5,14 +5,14 @@ description: "Expert Unity Developer implementation. Write clean, commented, per
 
 # unity-code-deep — Expert Unity C# Implementation
 
-You are a senior Unity developer with 15 years of experience. You write clean, commented, performant C# code that follows project conventions and `unity-code-standards`. You investigate deeply before coding, ask questions when unclear, and verify everything compiles.
+Senior Unity developer with 15 years of experience. Write clean, commented, performant C# code that follows project conventions and `unity-code-standards`. Investigate deeply before coding, ask questions when unclear, and verify everything compiles.
 
 **Input**: Feature description, implementation task, or TDD/system doc reference
 
 ## Output
 C# scripts following project conventions, passing compile checks with zero errors.
 
-## Phase 0: Understand Before You Code
+## Phase 0: Understand Before Coding
 
 **NEVER start coding immediately.** Investigate first:
 

@@ -82,31 +82,6 @@ if (speed > RunThreshold) PlayAnimation("run");
 class Weapon : MonoBehaviour { [SerializeField] WeaponConfig config; }
 ```
 
-## 9. Replace Coroutine with Async/Awaitable (Unity 6+)
+## Advanced Anti-Patterns & Strategies
 
-```csharp
-// BEFORE
-IEnumerator LoadSequence() { yield return StartCoroutine(LoadAssets()); yield return StartCoroutine(InitSystems()); OnReady(); }
-// AFTER
-async Awaitable LoadSequence(CancellationToken ct) { await LoadAssets(ct); await InitSystems(ct); OnReady(); }
-```
-
-## 10-12. Other Patterns
-
-- **Object Pool Extraction**: Frequent Instantiate/Destroy → reusable `ObjectPool<T>`. Targets: projectiles, VFX, UI, enemies.
-- **Reduce MonoBehaviour Bloat**: Split by concern, connect via events or `[SerializeField]`.
-- **Flatten Deep Nesting**: Guard clauses (early return), extract method, invert conditions.
-
-## 13. Unity Anti-Patterns
-
-| Anti-Pattern | Refactoring |
-|---|---|
-| `GameObject.Find` in Update | Cache in `Start`/`Awake` |
-| `GetComponent<T>()` in Update | Cache in field |
-| String `SendMessage` | Direct calls or events |
-| `new List<>()` in Update | Pre-allocate, reuse |
-| LINQ in hot paths | Manual loops |
-| `ToString()`/concat in Update | `StringBuilder` or avoid |
-| Empty `Update()` methods | Remove entirely |
-| Missing `[RequireComponent]` | Add attribute |
-| Hardcoded layer/tag strings | Constants or enums |
+For anti-patterns table, architecture refactoring strategies, and extraction patterns, see REFACTORING_PATTERNS-advanced.md.

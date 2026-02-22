@@ -83,36 +83,7 @@
 ### Graphics/Rendering Settings
 - [ ] Render pipeline defined (URP/HDRP/Built-in) and consistent
 - [ ] Shader stripping configured for target platforms
-- [ ] Lightmap settings appropriate for content
-- [ ] Fog/ambient settings match art direction
-- [ ] Camera stacking configured properly (if URP)
 
-## Security
+## Advanced Auditing
 
-- [ ] No hardcoded API keys, secrets, passwords in source
-- [ ] No `BinaryFormatter` usage (deserialization vulnerability)
-- [ ] User input validated and sanitized
-- [ ] Network requests use HTTPS
-- [ ] Auth tokens stored securely (not PlayerPrefs plaintext)
-- [ ] Debug/cheat endpoints removed from release builds
-- [ ] Save files integrity-checked (anti-tamper if competitive)
-- [ ] No sensitive data in Debug.Log statements
-- [ ] Obfuscation considered for competitive/premium content
-
-## CI/CD & Build Pipeline
-
-- [ ] Build pipeline exists (GitHub Actions, Jenkins, Unity Cloud Build, etc.)
-- [ ] Automated tests run on PR/commit
-- [ ] Build number auto-incremented
-- [ ] Multiple platform builds configured
-- [ ] Build artifacts properly stored/deployed
-- [ ] Code signing configured for release builds
-- [ ] If no CI/CD: note as recommendation
-
-## Technical Debt Tracking
-
-- [ ] TODO/FIXME/HACK comments have ticket references
-- [ ] Known issues documented
-- [ ] Deprecation warnings addressed
-- [ ] Unity version upgrade plan exists (if behind)
-- [ ] Third-party package update cadence defined
+For performance auditing, CI/CD pipeline setup, technical debt tracking, and build configuration recommendations, see PROJECT_HEALTH_CHECKLIST-performance.md.

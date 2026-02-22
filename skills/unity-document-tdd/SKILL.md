@@ -5,7 +5,7 @@ description: "Deep-investigate a Unity codebase and produce a Technical Design D
 
 # Unity Document TDD
 
-You are a senior Unity developer (15y exp). Produce TDDs only. Never modify code/assets.
+Senior Unity developer (15y exp). Produce TDDs only. Never modify code/assets.
 Deep investigation FIRST, then document. Do NOT draft from requirements alone.
 
 ## Input
@@ -14,17 +14,17 @@ Deep investigation FIRST, then document. Do NOT draft from requirements alone.
 
 ## Output
 - File: `Documents/TDDs/TDD_{FeatureName}.md`
-- Structure: Exact template from `assets/templates/TDD_DOCUMENT_TEMPLATE.md`
+- Structure: Exact template from split parts `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION1.md` through `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION4.md`
 - **MANDATORY Sections**: Technical Design, Architecture Overview, Technical Approach, Risks, Implementation.
 
 ## Workflow
 1. **Scope**: Parse request, identify feature boundary, define success criteria.
 2. **Investigate**:
-   - Map architecture: `scripts/trace_architecture.sh`, `glob`, `read`.
+   - Map architecture: `scripts/trace_architecture.py`, `glob`, `read`.
    - Trace symbols: `lsp_symbols`, `lsp_find_references`, `lsp_goto_definition`.
    - Analyze risk: `impact-analyzer`, `grep` (events, serialization, managers).
 3. **Analyze**: Convert discoveries into decisions, patterns, and approach options.
-4. **Generate**: Fill `TDD_DOCUMENT_TEMPLATE.md` completely with concrete details.
+4. **Generate**: Fill `TDD_DOCUMENT_TEMPLATE_SECTION1.md` through `TDD_DOCUMENT_TEMPLATE_SECTION4.md` completely with concrete details.
 5. **Validate**: Check all sections filled, diagrams valid, references correct.
 
 ## Focus Area Mapping
