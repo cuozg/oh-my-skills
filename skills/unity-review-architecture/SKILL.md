@@ -74,7 +74,7 @@ For each changed `.cs` file, read the ENTIRE file (not just diff). Apply pattern
       "path": "Assets/Scripts/Services/MatchService.cs",
       "line": 15,
       "side": "RIGHT",
-      "body": "**🔴 Manual Instantiation of Injected Service**: `new LobbyService()` bypasses DI.\n**Evidence**: Line 15 — constructor creates service directly.\n**Why**: Dependencies won't be resolved; class becomes untestable.\n```suggestion\nprivate readonly ILobbyService _lobbyService;\npublic MatchService(ILobbyService lobbyService) { _lobbyService = lobbyService; }\n```"
+      "body": "**🔴 Manual Instantiation of Injected Service**: `new LobbyService()` bypasses DI.\n- **Why**: Dependencies won't be resolved; class becomes untestable.\n- **Fix**:\n```suggestion\nprivate readonly ILobbyService _lobbyService;\npublic MatchService(ILobbyService lobbyService) { _lobbyService = lobbyService; }\n```"
     }
   ]
 }

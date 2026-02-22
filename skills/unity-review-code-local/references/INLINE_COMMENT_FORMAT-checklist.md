@@ -22,18 +22,18 @@
 
 ## Template Variations by Severity
 
-**🔴 Critical** — Full box, always include WHERE with evidence
-**🟡 Major** — Full box, evidence required
-**🔵 Minor** — OK to use compact single-line format
+- **🔴 Critical** — Full format, always include evidence in WHY bullets
+- **🟡 Major** — Full format, evidence required
+- **🔵 Minor** — Quick single-line format OK
 
 ## Multi-File Coordination
 
-When same issue appears 4+ times, mention batch in first comment:
+When same issue appears 4+ times, use batch pattern on first comment:
 ```
-// ⚠ REVIEW [🟡 MAJOR]: GetComponent in hot path (1 of 4)
+// REVIEW [🟡 MAJOR]: GetComponent in hot path (1 of 4) — cache in Awake.
 ```
 
 Then on subsequent ones:
 ```
-// ⚠ REVIEW [🟡 MAJOR]: Same as line X — cache GetComponent. (2 of 4)
+// REVIEW [🟡 MAJOR]: Same as PlayerController:45 — cache GetComponent. (2 of 4)
 ```

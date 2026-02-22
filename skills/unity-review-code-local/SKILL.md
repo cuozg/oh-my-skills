@@ -50,22 +50,21 @@ Load `unity-code-standards` skill via references: logic-review-patterns.md, arch
 
 5. **Add inline comments** — Per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md):
    - Use `edit` to insert pro-format review comments directly into source files
-   - **Full box format** for 🔴 Critical and 🟡 Major issues:
+   - **Full format** for 🔴 Critical and 🟡 Major issues:
      ```
-     // ╔══════════════════════════════════════════════════════════════
-     // ║ REVIEW [SEVERITY]: Problem Title
-     // ╟──────────────────────────────────────────────────────────────
-     // ║ WHY:  [root cause]
-     // ║ WHERE: [evidence — callers, files, data flow]
-     // ║ FIX:  [concrete code fix]
-     // ╚══════════════════════════════════════════════════════════════
+     // REVIEW [SEVERITY]: One-line problem summary
+     // WHY:
+     //   - Root cause or risk
+     //   - Evidence (callers, files, data flow)
+     // FIX:
+     //   - Concrete fix option
      ```
    - **Quick format** for 🔵 Minor or self-evident issues:
      ```
-     // ⚠ REVIEW [🔵 MINOR]: Problem → fix suggestion.
+     // REVIEW [🔵 MINOR]: Problem → fix suggestion.
      ```
    - Every comment MUST have: problem name, WHY, and FIX
-   - Batch pattern: full box on first, `// ⚠ REVIEW` back-ref on rest
+   - Batch pattern: full comment on first, short ref on rest
 
 6. **Summarize** — After all comments are placed, give a short verdict to the user:
    - Count of findings by severity
@@ -78,9 +77,8 @@ Load `unity-code-standards` skill via references: logic-review-patterns.md, arch
 - **Never** create a separate report document
 - **Never** modify the actual logic — only add review comments
 - One issue = one comment. Don't combine.
-- Same issue in N places → full box on first, `// ⚠ REVIEW` back-ref on rest
-- 🔴 and 🟡 → full box format (╔/╟/╚ borders)
-- 🔵 → quick single-line format (⚠ prefix)
+- Same issue in N places → full comment on first, short ref on rest
+- 🔴 and 🟡 → full format (issue/why/fix). 🔵 → quick single-line.
 
 ## Evidence Rules
 

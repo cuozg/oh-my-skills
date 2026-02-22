@@ -43,20 +43,19 @@ Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 ```
 
 ## Inline Comment Format
-
-**🔴 Critical / 🟡 High** — include Evidence + Why:
+**🔴 Critical / 🟡 High**:
 ```markdown
-**[Issue]**: [What's wrong]
-**Evidence**: [Proof — caller count, file:line, YAML key]
-**Why**: [Impact]
+**🔴 Issue Title**: One-line problem summary
+- **Why**: root cause or risk
+- **Fix**: concrete solution
 \`\`\`suggestion
 [Fixed code]
 \`\`\`
 ```
 
-**🔵 Medium** — include Why. **🟢 Low** — suggestion only:
+**🔵 Medium / 🟢 Low** — short issue + suggestion only:
 ```markdown
-**[Issue/Suggestion]**: [What to improve]
+**🔵 Issue Title**: Problem → fix.
 \`\`\`suggestion
 [Fixed code]
 \`\`\`

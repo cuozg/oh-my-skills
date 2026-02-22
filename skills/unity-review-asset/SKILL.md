@@ -71,7 +71,7 @@ Read changed files and their `.meta` counterparts. Apply patterns from [ASSET_PA
       "path": "Assets/Materials/Player.mat",
       "line": 12,
       "side": "RIGHT",
-      "body": "**🔴 Missing Shader**: `m_Shader: {fileID: 0}` — material will render pink at runtime.\n**Evidence**: Line 12 in material YAML.\n**Why**: Shader reference is null, likely deleted or not included in build.\n```suggestion\nAssign correct shader reference\n```"
+      "body": "**🔴 Missing Shader**: `m_Shader: {fileID: 0}` — material will render pink.\n- **Why**: Shader reference is null, likely deleted or not in build.\n- **Fix**: Assign correct shader reference"
     }
   ]
 }

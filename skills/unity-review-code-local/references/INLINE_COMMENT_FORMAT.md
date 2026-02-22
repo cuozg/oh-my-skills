@@ -1,99 +1,85 @@
 # Inline Comment Format
 
-Pro-grade review comments — highlight the problem, explain why, suggest the fix.
+Short, focused review comments — issue → why → fix. Bullet-based. No walls of text.
 
 ## Comment Template
 
-**ALWAYS use this exact template structure:**
+### Full Format (🔴 Critical / 🟡 Major)
 
 ```
-// ╔══════════════════════════════════════════════════════════════
-// ║ REVIEW [SEVERITY]: Problem Title
-// ╟──────────────────────────────────────────────────────────────
-// ║ WHY:  [Root cause explanation — why this is dangerous]
-// ║ WHERE: [Evidence — caller count, affected files, data flow]
-// ║ FIX:  [Concrete actionable fix]
-// ╚══════════════════════════════════════════════════════════════
+// REVIEW [SEVERITY]: One-line problem summary
+// WHY:
+//   - Root cause or risk explanation
+//   - Evidence (callers, files, data flow)
+// FIX:
+//   - Concrete fix option
+```
+
+### Quick Format (🔵 Minor)
+
+```
+// REVIEW [🔵 MINOR]: Problem → fix suggestion.
 ```
 
 Severity tokens: `🔴 CRITICAL` · `🟡 MAJOR` · `🔵 MINOR`
 
-## Quick Format (1-2 line issues)
+## Examples
 
-For simple, self-evident issues, use the compact single-line format:
+### 🔴 Critical
 
 ```csharp
-// ⚠ REVIEW [🔵 MINOR]: Double hash lookup → use TryGetValue instead of ContainsKey + indexer.
+// REVIEW [🔴 CRITICAL]: Null reference after await — MonoBehaviour may be destroyed
+// WHY:
+//   - `this` can be null between yield points
+//   - Called from 3 async paths (NetworkManager:89, UIController:134, GameLoop:201)
+// FIX:
+//   - Guard: `if (this == null) return;` after await
+//   - Or bind to `destroyCancellationToken` (preferred)
+await SomeAsyncOperation();
+_health = 100;
+```
+
+### 🟡 Major
+
+```csharp
+// REVIEW [🟡 MAJOR]: IndexOutOfRange on empty collection
+// WHY:
+//   - `items[0]` assumes non-empty list
+//   - 3 callers can pass empty: InventoryManager:45, ShopController:112, LootDrop:78
+// FIX:
+//   - Add `if (items.Count == 0) return default;`
+var first = items[0];
+```
+
+### 🔵 Minor
+
+```csharp
+// REVIEW [🔵 MINOR]: Double hash lookup → use TryGetValue instead of ContainsKey + indexer.
 if (_cache.ContainsKey(key))
     return _cache[key];
 ```
 
-## Full Format Examples
+## Batch Pattern
 
-### 🔴 Critical — Crash / Data Loss / Security
+Same issue in N files → full comment on first, short ref on rest:
 
-```csharp
-// ╔══════════════════════════════════════════════════════════════
-// ║ REVIEW [🔴 CRITICAL]: Null reference after await
-// ╟──────────────────────────────────────────────────────────────
-// ║ WHY:  MonoBehaviour can be destroyed between yield points.
-// ║       After any await, `this` may be null — accessing
-// ║       members here crashes with MissingReferenceException.
-// ║ WHERE: Called from 3 async paths:
-// ║         → NetworkManager.cs:89 (on disconnect)
-// ║         → UIController.cs:134 (on scene transition)
-// ║         → GameLoop.cs:201 (on round end)
-// ║ FIX:  Guard after await, or bind to destroyCancellationToken:
-// ║
-// ║       // Option A — guard:
-// ║       await SomeAsyncOperation();
-// ║       if (this == null) return;
-// ║
-// ║       // Option B — cancellation (preferred):
-// ║       await SomeAsyncOperation()
-// ║           .AttachExternalCancellation(destroyCancellationToken);
-// ╚══════════════════════════════════════════════════════════════
-await SomeAsyncOperation();
-_health = 100; // ← accesses destroyed object
+```
+// REVIEW [🟡 MAJOR]: GetComponent in hot path (1 of 4) — cache in Awake.
+```
+```
+// REVIEW [🟡 MAJOR]: Same as PlayerController:45 — cache GetComponent. (2 of 4)
 ```
 
-### 🟡 Major — Logic Bug / Missing Edge Case / State Corruption
+## Rules
 
-```csharp
-// ╔══════════════════════════════════════════════════════════════
-// ║ REVIEW [🟡 MAJOR]: IndexOutOfRange on empty collection
-// ╟──────────────────────────────────────────────────────────────
-// ║ WHY:  `items[0]` assumes non-empty list, but 3 callers can
-// ║       pass empty collections:
-// ║         → InventoryManager.cs:45  (after filtering)
-// ║         → ShopController.cs:112  (on empty shop)
-// ║         → LootDrop.cs:78        (zero drop rate)
-// ║ FIX:  Add empty guard before access:
-// ║
-// ║       if (items.Count == 0) return default;
-// ╚══════════════════════════════════════════════════════════════
-var first = items[0];
-```
+- One issue = one comment. Don't combine.
+- 🔴/🟡 → full format. 🔵 → quick format OK.
+- WHY: 1-3 bullets max. Evidence inline, not separate section.
+- FIX: 1-3 concrete solutions. Code snippet only if non-obvious.
+- Never comment without evidence. Investigate first.
 
-### 🔵 Minor — Optimization / Clarity / Defensive Coding
+## Advanced
 
-```csharp
-// ╔══════════════════════════════════════════════════════════════
-// ║ REVIEW [🔵 MINOR]: Repeated GetComponent in Update loop
-// ╟──────────────────────────────────────────────────────────────
-// ║ WHY:  GetComponent is O(n) per component count. Called every
-// ║       frame at 60fps = 60 unnecessary lookups/sec.
-// ║ FIX:  Cache in Awake/Start:
-// ║
-// ║       private Renderer _renderer;
-// ║       void Awake() => _renderer = GetComponent<Renderer>();
-// ╚══════════════════════════════════════════════════════════════
-var r = GetComponent<Renderer>();
-```
-
-
-## Advanced & Quality Gates
-
-For batch patterns, context-dependent severity, placement rules, Edit Tool usage, and the 5-gate quality checklist, see:
+For quality gates and false-positive detection, see:
 - INLINE_COMMENT_FORMAT-patterns.md
 - INLINE_COMMENT_FORMAT-checklist.md

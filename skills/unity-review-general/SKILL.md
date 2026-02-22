@@ -79,9 +79,9 @@ Set `event` based on **highest severity across ALL reviewers** (prior + own) usi
 
 ## Rules
 
- You are the **sole approver** — only this skill sets `APPROVE` or `REQUEST_CHANGES`. All other review skills (`unity-review-code-pr`, `unity-review-prefab`, `unity-review-asset`, `unity-review-architecture`) post as `COMMENT` only.
+- You are the **sole approver** — only this skill sets `APPROVE` or `REQUEST_CHANGES`. All other review skills (`unity-review-code-pr`, `unity-review-prefab`, `unity-review-asset`, `unity-review-architecture`) post as `COMMENT` only.
 - Prior reviewer findings with 🔴 or 🟡 severity → you MUST set `REQUEST_CHANGES`.
-- One issue = one comment. Every comment needs severity + evidence + suggestion.
+- One issue = one comment. Every comment needs severity + issue summary + suggestion.
 - Security findings are always 🔴 Critical.
 - For PRs > 300 lines, add a comment recommending split.
 - Correctness check: verify PR logic matches stated intent from PR title/body.

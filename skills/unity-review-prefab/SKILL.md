@@ -65,7 +65,7 @@ One issue = one comment. Every comment MUST include: severity emoji + title, **E
       "path": "Assets/Prefabs/Player.prefab",
       "line": 42,
       "side": "RIGHT",
-      "body": "**🔴 Missing Script Reference**: `m_Script: {fileID: 0}`\n**Evidence**: Line 42\n**Why**: MissingReferenceException at runtime\n```suggestion\nRemove the component or restore the script GUID\n```"
+      "body": "**🔴 Missing Script Reference**: `m_Script: {fileID: 0}`\n- **Why**: MissingReferenceException at runtime\n- **Fix**: Remove the component or restore the script GUID"
     }
   ]
 }
