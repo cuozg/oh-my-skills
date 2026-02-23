@@ -25,7 +25,7 @@ ALWAYS use this exact format:
    git commit -m "feat: First group message"
    git commit -m "fix: Second group message"
    ```
-6. **Generate messages** using git-comment format with `Squashed from:` listing original hashes
+6. **Generate messages** using git-description format with `Squashed from:` listing original hashes
 7. **Push**: `git push --force-with-lease origin <branch>` (or create `-clean` branch for shared branches)
 
 **Types**: `feat` | `fix` | `refactor` | `chore` | `docs` | `test` | `style` | `perf`

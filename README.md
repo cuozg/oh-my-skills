@@ -26,7 +26,7 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ├── README.md            # This file
 ├── opencode.json        # Plugin and agent configuration
 ├── commands/            # Slash commands for common workflows
-│   ├── git/             # Git operations (comment, squash)
+│   ├── git/             # Git operations (description, squash)
 │   ├── unity/           # Unity workflows (plan, debug, deploy, etc.)
 │   ├── omo/             # Orchestrator/meta commands (sisyphus, task, etc.)
 │   └── skill/           # Skill management (create)
@@ -76,7 +76,7 @@ Slash commands provide quick-access workflows, organized by category:
 
 | Command | Description |
 | :--- | :--- |
-| `/git/comment` | Generate structured commit comments |
+| `/git/description` | Generate structured PR descriptions |
 | `/git/squash` | Squash and organize commits |
 
 ### Orchestrator (`commands/omo/`)
@@ -209,7 +209,7 @@ Skills are **specialized capabilities** that extend the agent's expertise. Each 
 | Skill | Description |
 | :--- | :--- |
 | `git-commit` | Generate clean, meaningful commit messages from code changes. |
-| `git-comment` | Generate structured commit comments from PRs or commit hashes. |
+| `git-description` | Generate structured PR descriptions from pull request links. |
 | `git-squash` | Squash related commits into organized, well-documented commits. |
 
 ---
