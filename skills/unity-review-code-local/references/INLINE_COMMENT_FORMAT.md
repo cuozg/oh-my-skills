@@ -1,90 +1,82 @@
 # Inline Comment Format
 
-Short, focused review comments — issue → why → fix. Bullet-based. No walls of text.
+Short comment explaining the issue → applied fix below. Evidence-backed.
 
-## Comment Templates
+## Severity Tokens
 
-### Full Format (🔴 Critical / 🟡 Major)
+| Token | Meaning | When |
+|:------|:--------|:-----|
+| `🔴 CRITICAL` | Crash, data loss, security | Proven path to failure with evidence |
+| `🟠 MAJOR` | Logic bug, silent failure | Trigger conditions identified |
+| `🟡 MINOR` | Suboptimal, perf hint | Brief reason why suboptimal |
 
-```
-// REVIEW [SEVERITY]: One-line problem summary
-//   ├── WHY: Root cause or risk explanation
-//   │   └── Evidence (callers, files, data flow)
-//   └── FIX: Concrete fix option
-```
+## Comment + Fix Format (🔴 / 🟠)
 
-### Quick Format (🔵 Minor)
-
-```
-// REVIEW [🔵 MINOR]: Problem → fix suggestion.
-```
-
-Severity tokens: `🔴 CRITICAL` · `🟡 MAJOR` · `🔵 MINOR`
-
-## Examples
+Comment explains the issue. Fix is applied directly below as real code.
 
 ```csharp
-// REVIEW [🔴 CRITICAL]: Null reference after await — MonoBehaviour may be destroyed
-//   ├── WHY: `this` can be null between yield points
-//   │   └── Called from 3 async paths (NetworkManager:89, UIController:134, GameLoop:201)
-//   └── FIX: Guard `if (this == null) return;` after await
-//       └── Or: bind to `destroyCancellationToken` (preferred)
-await SomeAsyncOperation();
+// ── REVIEW [🔴 CRITICAL] Null ref after await — MonoBehaviour may be destroyed
+// WHY: `this` can be null between yield points (3 async callers)
+// ── APPLIED FIX ──
+await SomeAsyncOperation().AttachExternalCancellation(destroyCancellationToken);
 ```
 
 ```csharp
-// REVIEW [🔴 CRITICAL]: Serialized field mutated at runtime
-//   ├── WHY: `_config` is a shared ScriptableObject — changes persist across instances + reloads
-//   │   └── Mutated by: UpgradeShop.cs:156, AIController.cs:89
-//   └── FIX: Clone in Awake: `_config = Instantiate(_config);`
-[SerializeField] private WeaponConfig _config;
-```
-
-```csharp
-// REVIEW [🔴 CRITICAL]: String allocation in Update (60fps)
-//   ├── WHY: String concat allocates every frame → GC stalls
-//   └── FIX: Cache StringBuilder or use TextMeshPro SetText (zero-alloc)
-void Update() { _healthText.text = "Health: " + _health; }
-```
-
-```csharp
-// REVIEW [🟡 MAJOR]: IndexOutOfRange on empty collection
-//   ├── WHY: `items[0]` assumes non-empty list
-//   │   └── 3 callers can pass empty: InventoryManager:45, ShopController:112, LootDrop:78
-//   └── FIX: Add `if (items.Count == 0) return default;`
+// ── REVIEW [🟠 MAJOR] IndexOutOfRange on empty collection
+// WHY: `items[0]` assumes non-empty — 3 callers can pass empty
+// ── APPLIED FIX ──
+if (items.Count == 0) return default;
 var first = items[0];
 ```
 
+## Quick Format (🟡 Minor)
+
+Comment + fix inline. One-liner when possible.
+
 ```csharp
-// REVIEW [🔵 MINOR]: Double hash lookup → use TryGetValue instead of ContainsKey + indexer.
-if (_cache.ContainsKey(key)) return _cache[key];
+// ── REVIEW [🟡 MINOR] Double hash lookup → use TryGetValue
+// ── APPLIED FIX ──
+if (_cache.TryGetValue(key, out var value)) return value;
+```
+
+## Comment-Only (when fix is too risky or ambiguous)
+
+If the fix would change architecture or has multiple valid approaches, comment only — don't apply.
+
+```csharp
+// ── REVIEW [🟠 MAJOR] Shared SO mutated at runtime — changes persist across instances
+// WHY: `_config` is a ScriptableObject, mutated by UpgradeShop:156, AIController:89
+// FIX OPTIONS: (1) Clone in Awake (2) Use runtime data class instead
+[SerializeField] private WeaponConfig _config;
 ```
 
 ## Batch Pattern
 
-Same issue in N files → full comment on first, short ref on rest:
+Same issue in N files → full comment+fix on first, short ref on rest:
 
 ```
-// REVIEW [🟡 MAJOR]: GetComponent in hot path (1 of 4) — cache in Awake.
-// REVIEW [🟡 MAJOR]: Same as PlayerController:45 — cache GetComponent. (2 of 4)
+// ── REVIEW [🟠 MAJOR] GetComponent in hot path (1 of 4) — cached in Awake
+// ── REVIEW [🟠 MAJOR] Same as PlayerController:45 (2 of 4) — cached
 ```
 
 ## Common Anti-Patterns
 
 | Pattern | Severity | Fix |
-|:---|:---|:---|
-| Subscribe without unsubscribe | 🔴 | Add OnDisable with matching -= |
+|:--------|:---------|:----|
+| Subscribe without unsubscribe | 🔴 | Add OnDisable with -= |
 | GetComponent in Update | 🔴 | Cache in Awake |
-| Null deref after Destroy | 🔴 | Check == null or null-coalescing |
-| Event leak (no -= in OnDisable) | 🔴 | Verify -= via grep |
-| Float comparison == | 🟡 | Use Mathf.Approximately |
-| Magic numbers | 🔵 | Extract to const |
-| Missing [RequireComponent] | 🔵 | Add attribute |
+| Null deref after Destroy | 🔴 | Guard == null |
+| Event leak (no -= in OnDisable) | 🔴 | Add -= via grep |
+| String concat in Update | 🔴 | StringBuilder or SetText |
+| Float == comparison | 🟠 | Mathf.Approximately |
+| Magic numbers | 🟡 | Extract to const |
 
 ## Rules
 
-- One issue = one comment. Don't combine.
-- 🔴/🟡 → tree format. 🔵 → quick single-line OK.
-- WHY: 1-3 sub-nodes max. Evidence as leaf.
-- FIX: 1-3 solutions. Nested "Or:" for alternatives.
+- One issue = one comment block + one fix. Don't combine multiple issues.
+- Comments are short: 1-2 lines max. No verbose trees.
+- `// ── APPLIED FIX ──` marker before the changed code when replacing existing code.
+- When adding new code (e.g., null guard), insert comment + code without the marker.
+- 🔴/🟠 → comment + WHY line + applied fix. 🟡 → single-line comment + fix.
+- Skip fix when: architectural change needed, multiple valid approaches, or risk of breaking behavior.
 - Never comment without evidence. Investigate first.
