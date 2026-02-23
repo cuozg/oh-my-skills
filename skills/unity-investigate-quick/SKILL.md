@@ -6,34 +6,32 @@ description: "Quick investigation of Unity projects. Answers questions about how
 
 Answer the question. Nothing else.
 
-## Output
+## Output Format
 
-Direct conversational answer as a tree view: target → summary → detail branches with file:line leaves.
+Use the tree template from `references/output-template.md` for every response. No prose, no preamble, no summary — just the tree.
 
-## How It Works
+## Workflow
 
 1. **Parse** — extract the target (class, method, field, system, flow)
 2. **Find** — pick the fastest tool, get the answer
-3. **Reply** — use the template from `references/output-template.md`
+3. **Reply** — output the tree
 
 ## Tool Selection
 
 | Need                | Tool                                                                                      |
 | :------------------ | :---------------------------------------------------------------------------------------- |
-| Definition / source | `lsp_goto_definition`                                                                   |
-| Who calls it        | `lsp_find_references`                                                                   |
-| Find by name        | `lsp_symbols` (workspace)                                                               |
-| Blast radius        | `impact-analyzer`                                                                       |
-| Pattern match       | `grep` / `ast_grep_search`                                                            |
-| Broad sweep         | `scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]` |
+| Definition / source | `lsp_goto_definition`                                                                     |
+| Who calls it        | `lsp_find_references`                                                                     |
+| Find by name        | `lsp_symbols` (workspace)                                                                 |
+| Blast radius        | `impact-analyzer`                                                                         |
+| Pattern match       | `grep` / `ast_grep_search`                                                                |
+| Broad sweep         | `scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]`   |
 
-Chain tools only when the first result is incomplete. Stop the moment you can answer.
+Chain tools only when the first result is incomplete. Stop once the answer is clear.
 
 ## Rules
 
-- Answer the question directly. No narration, no preamble.
-- Use `references/output-template.md` format. Always.
-- 1-3 details max. Skip obvious stuff.
+- 1-3 details max. Skip obvious information.
 - Code snippets only when they clarify — never dump full methods.
 - Cite with `File.cs:L##` inline. No separate refs section.
-- If unsure, say so. Don't speculate.
+- State uncertainty inside the tree summary. Never speculate.
