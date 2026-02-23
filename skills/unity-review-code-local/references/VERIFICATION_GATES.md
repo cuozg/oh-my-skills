@@ -62,7 +62,11 @@ grep -rn "MethodName" Assets/Scripts/ --include="*.cs" | grep -E "null|==\s*null
 - Pattern is theoretical only — no real caller triggers it
 - Issue exists but is already guarded elsewhere in the call chain
 - "Best practice" violation with zero practical impact in this codebase
-- Style preference disguised as logic issue
+- Style/formatting preference (handled by linters)
+- Naming suggestions without logic impact
+- "Consider refactoring" without concrete cause
+- Code that's already self-documenting
+- Test-only code with no production impact
 
 ## When to Upgrade Severity
 
