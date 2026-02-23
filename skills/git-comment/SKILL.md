@@ -1,63 +1,48 @@
 ---
 name: git-comment
-description: "Generate comprehensive commit comments from pull requests or commit hashes. Use when analyzing code changes to produce structured documentation with High Level Summary and Specific Details sections. Triggers on: (1) PR review comment generation, (2) Commit message drafting, (3) Code change documentation, (4) Release notes generation from commits."
+description: "Generate GitHub PR descriptions from pull request links. Deep investigate all PR changes — logic, architecture impact, behavioral changes — and produce a structured PR description following the project template. Input: GitHub PR URL or PR number. Output: Structured PR description ready to paste into GitHub. Triggers: 'describe this PR', 'generate PR description', 'PR comment', 'PR description', GitHub PR links."
 ---
 
 # Git Comment
 
 ## Input
 
-PR number/URL or commit SHA. Optional: repo path, output format.
+GitHub pull request URL (e.g., `https://github.com/org/repo/pull/12345`).
 
 ## Output
-ALWAYS use this exact format:
-- Structured comment per [COMMIT_COMMENT.md](assets/templates/COMMIT_COMMENT.md) — output directly to user
+
+PR description per [PR_DESCRIPTION_TEMPLATE.md](assets/templates/PR_DESCRIPTION_TEMPLATE.md) — print directly to user. See [EXAMPLE_OUTPUT.md](assets/templates/EXAMPLE_OUTPUT.md) for a complete example.
 
 ## Workflow
 
-1. **Fetch changes**:
-   - PR: `gh pr diff <pr> --patch` + `gh pr view <pr> --json title,body,files`
-   - Commit: `git show <hash> --stat --patch` + `git log -1 --format="%B" <hash>`
-2. **Analyze**: Group files by category, identify logic/behavior changes, architecture impact, dependencies
-3. **Generate comment** using template structure:
-   ```markdown
-   ## High Level Summary
-   {2-3 sentence overview}
-   **Type**: {Feature|Bugfix|Refactor|Chore|Test|Documentation}
-   **Impact**: {Low|Medium|High}
-   **Breaking Changes**: {Yes/No}
+1. **Fetch PR data**:
+   - `gh pr view <url> --json title,body,baseRefName,headRefName,files,commits`
+   - `gh pr diff <url>` for full diff
+   - Extract JIRA ticket from branch name or title (pattern: `WHIP-\d+`)
 
-   ## Specific Details
-   ### Changes Made
-   - **{File}**: {What and why}
-   ### Logic Changes
-   - {Behavioral changes}
-   ### Technical Notes
-   - {Implementation details, perf, deps}
-   ```
-4. **Verify**: Summary captures intent, all significant files mentioned, logic described clearly
+2. **Investigate changes**:
+   - Group changed files by system/module
+   - For each significant change: identify the WHY, not just the WHAT
+   - Distinguish logic/behavioral changes from cosmetic/formatting changes
+   - Note architecture impact, new dependencies, breaking changes
+   - Trace data flow changes and state management impacts
+   - Flag Unity-specific concerns: serialization, lifecycle, prefab conflicts, .meta changes
 
-## Example
+3. **Generate PR description** per template:
+   - **✅ Checklist**: Keep all checkboxes unchecked (author fills these)
+   - **🔍 High Level Summary**: 2-4 sentences — overall purpose, scope, and impact
+   - **🔍 Specific details**: Organize by system/module with bullets. Include file names. Explain what changed AND why
+   - **🔍 Linked Feature TDD**: Extract from PR body if present, otherwise leave placeholder
+   - **🎯 JIRA Ticket(s)**: Insert extracted ticket URL or leave placeholder
+   - **🏗️ Build Number**: Leave as placeholder
+   - **👀 Screenshots**: Leave as placeholder
+   - **💬 Additional Notes**: Add reviewer warnings — breaking changes, migration steps, config changes, testing focus areas
 
-**Input**: PR #1234 (OAuth2 auth)
+4. **Output**: Print the complete PR description ready to paste into GitHub
 
-```markdown
-## High Level Summary
-Implements OAuth2 authentication with Google/GitHub providers, improving onboarding and security.
-**Type**: Feature | **Impact**: High | **Breaking Changes**: No
+## Guidelines
 
-## Specific Details
-### Changes Made
-- **AuthController.cs**: OAuth callbacks and token validation
-- **UserService.cs**: External identity provider support
-### Logic Changes
-- Login redirects to provider selection; JWT tokens with 24h expiry
-### Technical Notes
-- Uses Microsoft.Identity.Web; requires CLIENT_ID/CLIENT_SECRET env vars
-- DB migration needed for OAuthProviders table
-```
-
-## Best Practices
-
-- Be specific: "Fixed NRE when user closes dialog before animation completes" not "Fixed null reference"
-- Focus on **why**, use active voice, keep scannable with bullets
+- Investigate logic depth — write "Replaces polling with event-driven updates via SO channels" not "Updated lobby code"
+- Include file names in specific details
+- Extract JIRA tickets automatically when possible
+- Flag breaking changes and migration steps in Additional Notes

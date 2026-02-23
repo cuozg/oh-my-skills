@@ -1,8 +1,6 @@
 ---
-description: Generate structured commit comments from PRs or commit hashes
-agent: sisyphus
+description: Generate structured PR descriptions from GitHub pull request links
+agent: sisyphus-junior
 subtask: true
 ---
-Use skill git-comment to generate structured commit documentation for $ARGUMENTS
-
-Ultrawork
+Use skill git-comment to generate a structured PR description for $ARGUMENTS
