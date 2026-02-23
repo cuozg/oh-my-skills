@@ -1,8 +1,14 @@
-"""Tests for trace_logic.py CLI interface."""
+"""Tests for trace_logic.py — CLI interface + unit tests with fixtures."""
 
 import subprocess
 import sys
 import os
+import re
+import tempfile
+
+# Import internal functions for unit testing
+sys.path.insert(0, os.path.dirname(__file__))
+from trace_logic import _walk_files, _grep_lines
 
 SCRIPT = os.path.join(os.path.dirname(__file__), "trace_logic.py")
 
@@ -231,3 +237,155 @@ def test_root_and_asset_root_combined():
     assert r.returncode == 0
     assert "=== Unity Investigation: TestPattern ===" in r.stdout
     assert "=== Investigation Complete ===" in r.stdout
+
+
+
+# ══════════════════════════════════════════════════════════
+# Unit tests with temp-file fixtures
+# ══════════════════════════════════════════════════════════
+
+
+def _create_tree(base: str, files: dict[str, str]) -> None:
+    """Create a directory tree with files from {relative_path: content}."""
+    for rel_path, content in files.items():
+        full = os.path.join(base, rel_path)
+        os.makedirs(os.path.dirname(full), exist_ok=True)
+        with open(full, "w", encoding="utf-8") as f:
+            f.write(content)
+
+
+# ── _walk_files ────────────────────────────────────────────
+
+
+def test_walk_files_collects_matching_extensions():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "Scripts/Player.cs": "class Player {}",
+            "Scripts/Enemy.cs": "class Enemy {}",
+            "Scripts/readme.txt": "not a script",
+            "Scripts/Sub/Health.cs": "class Health {}",
+        })
+        result = _walk_files(os.path.join(tmp, "Scripts"), (".cs",))
+        assert len(result) == 3
+        assert all(f.endswith(".cs") for f in result)
+        assert not any("readme.txt" in f for f in result)
+
+
+def test_walk_files_sorted_deterministic():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "Z.cs": "",
+            "A.cs": "",
+            "M.cs": "",
+        })
+        result = _walk_files(tmp, (".cs",))
+        assert result == sorted(result)
+
+
+def test_walk_files_nonexistent_directory():
+    result = _walk_files("/nonexistent/path/abc123", (".cs",))
+    assert result == []
+
+
+def test_walk_files_empty_directory():
+    with tempfile.TemporaryDirectory() as tmp:
+        result = _walk_files(tmp, (".cs",))
+        assert result == []
+
+
+def test_walk_files_multiple_extensions():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "a.cs": "",
+            "b.prefab": "",
+            "c.unity": "",
+            "d.txt": "",
+        })
+        result = _walk_files(tmp, (".cs", ".prefab"))
+        assert len(result) == 2
+
+
+# ── _grep_lines ───────────────────────────────────────────
+
+
+def test_grep_lines_finds_matching_content():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "Player.cs": "public class Player : MonoBehaviour\n{\n    void Start() {}\n}",
+            "Enemy.cs": "public class Enemy : MonoBehaviour\n{\n    void Update() {}\n}",
+        })
+        results = _grep_lines(tmp, (".cs",), re.compile(r"MonoBehaviour"))
+        assert len(results) == 2
+        assert all("MonoBehaviour" in r for r in results)
+
+
+def test_grep_lines_returns_file_line_content_format():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "Test.cs": "line1\nclass Foo\nline3",
+        })
+        results = _grep_lines(tmp, (".cs",), re.compile(r"Foo"))
+        assert len(results) == 1
+        parts = results[0].split(":")
+        assert parts[1] == "2"  # line number
+        assert "Foo" in parts[2]  # content
+
+
+def test_grep_lines_files_only_mode():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "a.prefab": "guid: abc Player\n",
+            "b.prefab": "no match here\n",
+            "c.prefab": "guid: xyz Player\n",
+        })
+        results = _grep_lines(tmp, (".prefab",), re.compile(r"Player"), files_only=True)
+        assert len(results) == 2
+        assert all(r.endswith(".prefab") for r in results)
+        assert not any("b.prefab" in r for r in results)
+
+
+def test_grep_lines_limit_caps_results():
+    with tempfile.TemporaryDirectory() as tmp:
+        content = "\n".join(f"match line {i}" for i in range(50))
+        _create_tree(tmp, {"big.cs": content})
+        results = _grep_lines(tmp, (".cs",), re.compile(r"match"), limit=5)
+        assert len(results) == 5
+
+
+def test_grep_lines_exclude_patterns():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {
+            "Code.cs": "public class Player {}\nPlayer.Move();\npublic interface Player {}",
+        })
+        excl = [re.compile(r"public\s+class"), re.compile(r"public\s+interface")]
+        results = _grep_lines(tmp, (".cs",), re.compile(r"Player"), exclude_patterns=excl)
+        assert len(results) == 1
+        assert "Move" in results[0]
+
+
+def test_grep_lines_no_matches():
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {"Empty.cs": "nothing relevant here"})
+        results = _grep_lines(tmp, (".cs",), re.compile(r"ZzzzNotFound"))
+        assert results == []
+
+
+def test_grep_lines_regex_special_chars():
+    """Ensure regex special chars in pattern don't crash."""
+    with tempfile.TemporaryDirectory() as tmp:
+        _create_tree(tmp, {"Code.cs": "List<int> items = new List<int>();\n"})
+        results = _grep_lines(tmp, (".cs",), re.compile(re.escape("List<int>")))
+        assert len(results) == 1
+        assert "List<int>" in results[0]
+
+
+def test_grep_lines_skips_unreadable_files(tmp_path):
+    """OSError on unreadable files should be silently skipped."""
+    f = tmp_path / "bad.cs"
+    f.write_text("content")
+    f.chmod(0o000)
+    try:
+        results = _grep_lines(str(tmp_path), (".cs",), re.compile(r"content"))
+        assert isinstance(results, list)
+    finally:
+        f.chmod(0o644)
