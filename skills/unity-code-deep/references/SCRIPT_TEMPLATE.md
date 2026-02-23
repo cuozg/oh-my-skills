@@ -78,16 +78,3 @@ public sealed class NewView : MonoBehaviour
     }
 }
 ```
-
-## Key Rules
-
-- **File-scoped namespace** — `namespace X.Y;` not `namespace X.Y { }`
-- **`sealed`** by default — unseal only when inheritance is explicitly designed
-- **`readonly`** on all fields assigned only in constructor/Initialize
-- **Constructor injection** for plain C# services — all dependencies via constructor params
-- **`Initialize()` method** on MonoBehaviours — for injecting dependencies after instantiation
-- **`ILogger`** via DI — no `Debug.Log`, no `#if UNITY_EDITOR` guards
-- **No `#region`** blocks
-- **No commented-out code**
-
-See [verification-checklist.md](verification-checklist.md) for the full pre-commit checklist.
