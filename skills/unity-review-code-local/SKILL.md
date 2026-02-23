@@ -9,7 +9,7 @@ Deep logic review for local project. Comment directly into C# source files AND a
 
 ## Output
 
-1. **Short inline comments** in C# source files explaining the issue — per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
+1. **Short inline comments** in C# source files — per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 2. **Applied code fixes** directly in the same files — the actual fix, not just a suggestion.
 3. User reviews the combined diff (comments + fixes) before committing.
 
@@ -25,31 +25,33 @@ Deep logic review for local project. Comment directly into C# source files AND a
 
 ## Severity
 
-Three levels: 🔴 Critical, 🟠 Major, 🟡 Minor. See [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
+Four levels: 🔴 CRITICAL, 🟡 HIGH, 🔵 MEDIUM, 🟢 LOW. See [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 
 ## Load References
 
-Always load:
+Always load the output format reference:
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — comment format, severity tokens, applied-fix marker
-- [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md) — evidence requirements, false positive detection
 
-## Code Standards Enforcement
+Load shared review engine from `unity-code-standards`:
 
-Load `unity-code-standards` skill for review logic. Apply its review references based on findings:
-- `review/logic-review-patterns.md` — logic correctness patterns
-- `review/architecture-review.md` — architecture checklist
-- `review/csharp-quality.md` — C# quality checklist
-- `review/performance-review.md` — performance checklist
-- `review/unity-specifics.md` — Unity-specific checklist
+```python
+read_skill_file("unity-code-standards", "references/review/deep-review-workflow.md")
+read_skill_file("unity-code-standards", "references/review/VERIFICATION_GATES.md")
+read_skill_file("unity-code-standards", "references/review/logic-review-patterns.md")
+read_skill_file("unity-code-standards", "references/review/csharp-quality.md")
+read_skill_file("unity-code-standards", "references/review/performance-review.md")
+read_skill_file("unity-code-standards", "references/review/unity-specifics.md")
+read_skill_file("unity-code-standards", "references/review/architecture-review.md")
+```
 
 ## Workflow
 
 1. **Fetch** — Get diff (see Input table). For feature/logic requests, identify files via grep/LSP first.
 2. **Read full context** — Read the **entire file** for each changed file, not just the diff.
-3. **Deep investigate** (parallel) — Spawn explore agents for evidence. See [deep-review-workflow.md](references/deep-review-workflow.md).
-4. **Logic review** — Apply `unity-code-standards` review references + [deep-review-workflow.md](references/deep-review-workflow.md) focus areas.
+3. **Deep investigate** (parallel) — Spawn explore agents per `deep-review-workflow.md`: call-site analysis, state flow, data contracts.
+4. **Logic review** — Apply all loaded review checklists + `deep-review-workflow.md` focus areas. Enforce `VERIFICATION_GATES.md` evidence rules.
 5. **Comment + Fix** — For each finding:
-   - Insert a short `// ── REVIEW` comment explaining the issue (per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md)).
+   - Insert a short `// ── REVIEW` comment (per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md)).
    - Apply the fix directly in the code below the comment.
    - Use `edit` tool for both comment and fix in a single edit operation.
 
@@ -60,5 +62,6 @@ Load `unity-code-standards` skill for review logic. Apply its review references 
 - Apply the actual code fix — don't just suggest it.
 - Never commit. Never push. User reviews the diff.
 - Read full file. Trace data flow end-to-end. Verify lifecycle ordering.
-- For evidence and false-positive rules, see [VERIFICATION_GATES.md](references/VERIFICATION_GATES.md).
-- For comment formatting rules, see [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
+- If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
+- For serialization findings, check whether the project has migration/versioning support.
+- Never comment without evidence. Investigate first — see `VERIFICATION_GATES.md`.

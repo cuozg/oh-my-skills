@@ -30,3 +30,5 @@ Map of all available reference files by category.
 | [csharp-quality.md](review/csharp-quality.md) | C# quality review checklist |
 | [performance-review.md](review/performance-review.md) | Performance review checklist |
 | [unity-specifics.md](review/unity-specifics.md) | Unity-specific review checklist |
+| [deep-review-workflow.md](review/deep-review-workflow.md) | Deep investigation focus areas, lifecycle/serialization/memory audits |
+| [VERIFICATION_GATES.md](review/VERIFICATION_GATES.md) | Evidence requirements, false positive detection, investigation protocol |

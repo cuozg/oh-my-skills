@@ -7,10 +7,11 @@ Short comment explaining the issue → applied fix below. Evidence-backed.
 | Token | Meaning | When |
 |:------|:--------|:-----|
 | `🔴 CRITICAL` | Crash, data loss, security | Proven path to failure with evidence |
-| `🟠 MAJOR` | Logic bug, silent failure | Trigger conditions identified |
-| `🟡 MINOR` | Suboptimal, perf hint | Brief reason why suboptimal |
+| `🟡 HIGH` | Logic bug, silent failure | Trigger conditions identified |
+| `🔵 MEDIUM` | Suboptimal, perf hint | Brief reason why suboptimal |
+| `🟢 LOW` | Style, typo, micro-optimization | Brief note |
 
-## Comment + Fix Format (🔴 / 🟠)
+## Comment + Fix Format (🔴 / 🟡)
 
 Comment explains the issue. Fix is applied directly below as real code.
 
@@ -22,21 +23,30 @@ await SomeAsyncOperation().AttachExternalCancellation(destroyCancellationToken);
 ```
 
 ```csharp
-// ── REVIEW [🟠 MAJOR] IndexOutOfRange on empty collection
+// ── REVIEW [🟡 HIGH] IndexOutOfRange on empty collection
 // WHY: `items[0]` assumes non-empty — 3 callers can pass empty
 // ── APPLIED FIX ──
 if (items.Count == 0) return default;
 var first = items[0];
 ```
 
-## Quick Format (🟡 Minor)
+## Quick Format (🔵 Medium)
 
 Comment + fix inline. One-liner when possible.
 
 ```csharp
-// ── REVIEW [🟡 MINOR] Double hash lookup → use TryGetValue
+// ── REVIEW [🔵 MEDIUM] Double hash lookup → use TryGetValue
 // ── APPLIED FIX ──
 if (_cache.TryGetValue(key, out var value)) return value;
+```
+
+## Minimal Format (🟢 Low)
+
+Comment only. No fix applied — too minor or purely stylistic.
+
+```csharp
+// ── REVIEW [🟢 LOW] Magic number → extract to const for readability
+private const float DashCooldown = 0.5f;
 ```
 
 ## Comment-Only (when fix is too risky or ambiguous)
@@ -44,7 +54,7 @@ if (_cache.TryGetValue(key, out var value)) return value;
 If the fix would change architecture or has multiple valid approaches, comment only — don't apply.
 
 ```csharp
-// ── REVIEW [🟠 MAJOR] Shared SO mutated at runtime — changes persist across instances
+// ── REVIEW [🟡 HIGH] Shared SO mutated at runtime — changes persist across instances
 // WHY: `_config` is a ScriptableObject, mutated by UpgradeShop:156, AIController:89
 // FIX OPTIONS: (1) Clone in Awake (2) Use runtime data class instead
 [SerializeField] private WeaponConfig _config;
@@ -55,8 +65,8 @@ If the fix would change architecture or has multiple valid approaches, comment o
 Same issue in N files → full comment+fix on first, short ref on rest:
 
 ```
-// ── REVIEW [🟠 MAJOR] GetComponent in hot path (1 of 4) — cached in Awake
-// ── REVIEW [🟠 MAJOR] Same as PlayerController:45 (2 of 4) — cached
+// ── REVIEW [🟡 HIGH] GetComponent in hot path (1 of 4) — cached in Awake
+// ── REVIEW [🟡 HIGH] Same as PlayerController:45 (2 of 4) — cached
 ```
 
 ## Common Anti-Patterns
@@ -68,8 +78,8 @@ Same issue in N files → full comment+fix on first, short ref on rest:
 | Null deref after Destroy | 🔴 | Guard == null |
 | Event leak (no -= in OnDisable) | 🔴 | Add -= via grep |
 | String concat in Update | 🔴 | StringBuilder or SetText |
-| Float == comparison | 🟠 | Mathf.Approximately |
-| Magic numbers | 🟡 | Extract to const |
+| Float == comparison | 🟡 | Mathf.Approximately |
+| Magic numbers | 🟢 | Extract to const |
 
 ## Rules
 
@@ -77,6 +87,6 @@ Same issue in N files → full comment+fix on first, short ref on rest:
 - Comments are short: 1-2 lines max. No verbose trees.
 - `// ── APPLIED FIX ──` marker before the changed code when replacing existing code.
 - When adding new code (e.g., null guard), insert comment + code without the marker.
-- 🔴/🟠 → comment + WHY line + applied fix. 🟡 → single-line comment + fix.
+- 🔴/🟡 → comment + WHY line + applied fix. 🔵 → single-line comment + fix. 🟢 → comment only.
 - Skip fix when: architectural change needed, multiple valid approaches, or risk of breaking behavior.
 - Never comment without evidence. Investigate first.

@@ -6,14 +6,15 @@ Evidence before claims. Investigate before commenting.
 
 | Severity | Required Before Commenting | NOT Sufficient |
 |:---------|:--------------------------|:---------------|
-| 🔴 Critical | Caller count + affected files + reproduction scenario | "Looks wrong", "might crash" |
-| 🟠 Major | Trigger conditions + what state leads to the bug | "Could be a problem" |
-| 🟡 Minor | Brief explanation of why current code is suboptimal | "I prefer it differently" |
+| 🔴 CRITICAL | Caller count + affected files + reproduction scenario | "Looks wrong", "might crash" |
+| 🟡 HIGH | Trigger conditions + what state leads to the bug | "Could be a problem" |
+| 🔵 MEDIUM | Brief explanation of why current code is suboptimal | "I prefer it differently" |
+| 🟢 LOW | Brief note why this is worth mentioning | Style preference alone |
 
 ## Investigation Protocol
 
 ```
-BEFORE adding any // ── REVIEW comment:
+BEFORE adding any review comment:
 
 1. IDENTIFY: What evidence proves this is a real issue?
 2. SEARCH: grep/LSP for callers, subscribers, state mutations
@@ -73,8 +74,8 @@ grep -rn "MethodName" Assets/Scripts/ --include="*.cs" | grep -E "null|==\s*null
 | Situation | Upgrade to |
 |:----------|:-----------|
 | Bug affects serialized data (saves, configs, network) | 🔴 — data corruption |
-| Bug only triggers in editor, not runtime | Downgrade to 🟡 |
+| Bug only triggers in editor, not runtime | Downgrade to 🟢 |
 | Bug affects 10+ callers | 🔴 — wide blast radius |
-| Bug requires specific rare state to trigger | Keep at 🟠, note rarity |
+| Bug requires specific rare state to trigger | Keep at 🟡, note rarity |
 
-If a pattern would be 🔴 but the project has an established convention/wrapper that handles it (e.g., a SafeGetComponent wrapper, event bus with auto-cleanup), downgrade to 🟡 and note the convention.
+If a pattern would be 🔴 but the project has an established convention/wrapper that handles it (e.g., a SafeGetComponent wrapper, event bus with auto-cleanup), downgrade to 🟢 and note the convention.
