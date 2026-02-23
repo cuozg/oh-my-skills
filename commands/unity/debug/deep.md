@@ -1,6 +1,6 @@
 ---
 description: Deep investigation of complex Unity issues
-agent: sisyphus
+agent: prometheus
 subtask: true
 ---
 1. Load skill: unity-debug-deep
