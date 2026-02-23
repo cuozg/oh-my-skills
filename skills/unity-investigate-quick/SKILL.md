@@ -8,7 +8,7 @@ Answer the question. Nothing else.
 
 ## Output Format
 
-Use the tree template from `references/output-template.md` for every response. No prose, no preamble, no summary — just the tree.
+Use the Vercel-themed tree template from `references/output-template.md` for every response. Tree connectors (`├──`, `└──`) for flow. Inline code (`cyan`) for all code identifiers, file refs, and values. **Bold** for labels. Emoji indicators for risk. No prose, no preamble — just the formatted tree.
 
 ## Workflow
 
