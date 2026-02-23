@@ -33,8 +33,8 @@ gh pr view <N> --json headRefOid --jq '.headRefOid'
 
 | Header Marker | Category | Skill |
 |:------|:---------|:------|
-| `## Code Review` | code | `unity-review-code-pr` |
 | `## Architecture Review` | architecture | `unity-review-architecture` |
+| `## Code Review` | code | `unity-review-code-pr` |
 | `## Prefab & Scene Review` | prefab | `unity-review-prefab` |
 | `## Asset Review` | asset | `unity-review-asset` |
 | `## Final Quality Review` | general | `unity-review-general` |
@@ -59,8 +59,8 @@ If a category's review body exists at HEAD but ALL its inline comments are outda
 
 ```
 Review Coverage:
-  ✅ Code Review — current → SKIP
-  ⚠️ Architecture Review — stale (commit mismatch) → RE-RUN
+  ✅ Architecture Review — current → SKIP
+  ⚠️ Code Review — stale (commit mismatch) → RE-RUN
   ⚠️ Prefab Review — all comments outdated → RE-RUN
   ❌ Asset Review — not found → RUN
   ⏭ General Review — no files need review → SKIP (no files)
@@ -72,20 +72,20 @@ Run each reviewer sequentially. Skip if: current in skip list OR no matching fil
 
 Pass to each: PR number, owner/repo, bucket files, all PR files, `existing_comments` index.
 
-### 3a. Code — IF `cs_files` && not skipped
-
-```
-task(category="deep", load_skills=["unity-review-code-pr", "unity-code-standards"], run_in_background=false,
-  description="Code review PR #<N>",
-  prompt="Review C# code in PR #<N> of {owner}/{repo}. CS files: [cs_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-code-pr, follow its workflow.")
-```
-
-### 3b. Architecture — IF `cs_files` && not skipped
+### 3a. Architecture — IF `cs_files` && not skipped
 
 ```
 task(category="deep", load_skills=["unity-review-architecture", "unity-code-standards"], run_in_background=false,
   description="Architecture review PR #<N>",
   prompt="Review architecture in PR #<N> of {owner}/{repo}. CS files: [cs_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-architecture, follow its workflow.")
+```
+
+### 3b. Code — IF `cs_files` && not skipped
+
+```
+task(category="deep", load_skills=["unity-review-code-pr", "unity-code-standards"], run_in_background=false,
+  description="Code review PR #<N>",
+  prompt="Review C# code in PR #<N> of {owner}/{repo}. CS files: [cs_files]. All files: [all_files]. Title: <title>. Body: <body>. Active comments (avoid duplicates): [existing_comments]. Load unity-review-code-pr, follow its workflow.")
 ```
 
 ### 3c. Prefab/Scene — IF `prefab_files` && not skipped
@@ -122,8 +122,8 @@ task(category="deep", load_skills=["unity-review-general"], run_in_background=fa
 
 | # | Reviewer | Files | Status |
 |:--|:---------|:------|:-------|
-| 1 | Code Logic | [N] | ✅ / ⏭ (reason) |
-| 2 | Architecture | [N] | ✅ / ⏭ (reason) |
+| 1 | Architecture | [N] | ✅ / ⏭ (reason) |
+| 2 | Code Logic | [N] | ✅ / ⏭ (reason) |
 | 3 | Prefab/Scene | [N] | ✅ / ⏭ (reason) |
 | 4 | Asset | [N] | ✅ / ⏭ (reason) |
 | 5 | **General** | all | ✅ APPROVE/REQUEST_CHANGES / ⏭ (reason) |
