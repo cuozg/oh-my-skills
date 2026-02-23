@@ -9,6 +9,8 @@ class Args(argparse.Namespace):
     pattern: str | None = None
     assets: bool = False
     deep: bool = False
+    root: str = "Assets/Scripts"
+    asset_root: str = "Assets"
     help: bool = False
 
 
@@ -25,10 +27,12 @@ def run_shell(command: str) -> str:
 
 
 def print_usage(script_name: str) -> None:
-    print(f"Usage: {script_name} [SearchPattern] [--assets] [--deep]")
-    print("  SearchPattern  Class name, method name, or ClassName.MethodName")
-    print("  --assets       Include asset search (prefabs, scenes, ScriptableObjects)")
-    print("  --deep         Include animation, audio, and shader references")
+    print(f"Usage: {script_name} [SearchPattern] [--assets] [--deep] [--root PATH] [--asset-root PATH]")
+    print("  SearchPattern   Class name, method name, or ClassName.MethodName")
+    print("  --assets        Include asset search (prefabs, scenes, ScriptableObjects)")
+    print("  --deep          Include animation, audio, and shader references")
+    print("  --root PATH     Code search directory (default: Assets/Scripts)")
+    print("  --asset-root PATH  Asset search directory (default: Assets)")
 
 
 def main() -> int:
@@ -38,6 +42,8 @@ def main() -> int:
     _ = parser.add_argument("pattern", nargs="?")
     _ = parser.add_argument("--assets", action="store_true")
     _ = parser.add_argument("--deep", action="store_true")
+    _ = parser.add_argument("--root", default="Assets/Scripts")
+    _ = parser.add_argument("--asset-root", default="Assets")
     _ = parser.add_argument("-h", "--help", action="store_true")
 
     args = parser.parse_args(sys.argv[1:], namespace=Args())
@@ -51,13 +57,17 @@ def main() -> int:
 
     pattern = args.pattern
     quoted_pattern = shlex.quote(pattern)
+    root = args.root
+    asset_root = args.asset_root
+    quoted_root = shlex.quote(root)
+    quoted_asset_root = shlex.quote(asset_root)
 
     try:
         print(f"=== Unity Investigation: {pattern} ===")
 
         print("\n--- Direct Code References ---")
         cmd = (
-            f"grep -rn {quoted_pattern} Assets/Scripts --include='*.cs' "
+            f"grep -rn {quoted_pattern} {quoted_root} --include='*.cs' "
             "| grep -v 'public class' | grep -v 'public interface' | head -n 30"
         )
         _ = sys.stdout.write(run_shell(cmd))
@@ -68,7 +78,7 @@ def main() -> int:
             + shlex.quote(
                 f"class {pattern}\\b\\|interface {pattern}\\b\\|struct {pattern}\\b\\|enum {pattern}\\b"
             )
-            + " Assets/Scripts --include='*.cs'"
+            + f" {quoted_root} --include='*.cs'"
         )
         _ = sys.stdout.write(run_shell(cmd))
 
@@ -78,7 +88,7 @@ def main() -> int:
             cmd = (
                 "grep -rn "
                 + shlex.quote(f":.*\\b{clean_name}\\b")
-                + " Assets/Scripts --include='*.cs' | head -n 20"
+                + f" {quoted_root} --include='*.cs' | head -n 20"
             )
             _ = sys.stdout.write(run_shell(cmd))
 
@@ -88,7 +98,7 @@ def main() -> int:
             + shlex.quote(
                 f"event.*{pattern}\\|Action.*{pattern}\\|Func.*{pattern}\\|UnityEvent.*{pattern}\\|delegate.*{pattern}"
             )
-            + " Assets/Scripts --include='*.cs' | head -n 15"
+            + f" {quoted_root} --include='*.cs' | head -n 15"
         )
         _ = sys.stdout.write(run_shell(cmd))
 
@@ -98,41 +108,41 @@ def main() -> int:
             + shlex.quote(
                 f"\\[Serializable\\].*{pattern}\\|\\[SerializeField\\].*{pattern}\\|ScriptableObject.*{pattern}"
             )
-            + " Assets/Scripts --include='*.cs' | head -n 10"
+            + f" {quoted_root} --include='*.cs' | head -n 10"
         )
         _ = sys.stdout.write(run_shell(cmd))
 
         if args.assets:
             print("\n--- Asset Bindings (Prefabs) ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.prefab' | head -n 10"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.prefab' | head -n 10"
             _ = sys.stdout.write(run_shell(cmd))
 
             print("\n--- Asset Bindings (Scenes) ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.unity' | head -n 10"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.unity' | head -n 10"
             _ = sys.stdout.write(run_shell(cmd))
 
             print("\n--- ScriptableObject Assets ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.asset' | head -n 10"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.asset' | head -n 10"
             _ = sys.stdout.write(run_shell(cmd))
 
         if args.deep:
             print("\n--- Animator Controllers ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.controller' | head -n 10"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.controller' | head -n 10"
             _ = sys.stdout.write(run_shell(cmd))
 
             print("\n--- Animation Clips ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.anim' | head -n 10"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.anim' | head -n 10"
             _ = sys.stdout.write(run_shell(cmd))
 
             print("\n--- Shader References ---")
             cmd = (
-                f"grep -rn {quoted_pattern} Assets --include='*.shader' --include='*.cginc' --include='*.hlsl' "
+                f"grep -rn {quoted_pattern} {quoted_asset_root} --include='*.shader' --include='*.cginc' --include='*.hlsl' "
                 "| head -n 10"
             )
             _ = sys.stdout.write(run_shell(cmd))
 
             print("\n--- Audio Mixer References ---")
-            cmd = f"grep -rl {quoted_pattern} Assets --include='*.mixer' | head -n 5"
+            cmd = f"grep -rl {quoted_pattern} {quoted_asset_root} --include='*.mixer' | head -n 5"
             _ = sys.stdout.write(run_shell(cmd))
 
         print("\n=== Investigation Complete ===")
