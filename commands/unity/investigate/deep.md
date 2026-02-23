@@ -3,6 +3,4 @@ description: Deep investigation with full report output
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-investigate-deep to deep investigate $ARGUMENTS
-
-Ultrawork
+Use skill @unity-investigate-deep to deep investigate $ARGUMENTS (ulw)
