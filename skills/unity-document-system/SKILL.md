@@ -1,56 +1,39 @@
 ---
 name: unity-document-system
-description: "Documentation-only deep investigation skill. Produces comprehensive system documents covering architecture, data flows, usage, and extension guides. Triggers: 'document system', 'explain system', 'how does X work', 'system overview'."
+description: "Documentation-only deep investigation skill. Produces comprehensive system documents covering architecture, data flows, usage, and extension guides. Use when: (1) Documenting a Unity system's architecture and data flow, (2) Creating onboarding docs for a complex system, (3) Generating extension/implementation guides for a system, (4) Producing integration and dependency maps. Triggers: 'document system', 'explain system', 'system overview', 'system document', 'architecture document'."
 ---
 
 # Unity System Documenter
 
-Senior Unity developer perspective (15 years). Prioritize architectural clarity, call-chain accuracy, and actionable implementation guidance.
+Read-only. Investigate and document — never modify project code.
 
-**Input**: Target system/feature/function to document, optional scope boundaries.
+**Input**: System/feature/class to document + optional scope boundaries.
+**Output**: System document saved to `Documents/Systems/{SystemName}.md`.
 
-## Non-Negotiable Rules
+## Workflow
 
-- **Documentation-Only**: Investigate and explain; do not modify gameplay or project code.
-- **Strict Template Adherence**: ALWAYS use the exact structure from split parts `assets/templates/SYSTEM_DOCUMENT_TEMPLATE_SECTION1.md` and `assets/templates/SYSTEM_DOCUMENT_TEMPLATE_SECTION2.md`.
-- **Complete Coverage**: Fill every section; use explicit "N/A — {reason}" only when truly not applicable.
-- **Traceable Claims**: All statements must be backed by code evidence (definitions, references, assets, flows).
-- **Visual Architecture**: Mermaid diagrams are mandatory for context and runtime flows.
+1. **Scope** — parse request, define in/out boundaries, normalize document name
+2. **Discover** — run `scripts/trace_system.py [Term]`, use LSP tools, grep/glob for assets
+3. **Analyze** — reconstruct init + execution flows, map data structures, find constraints
+4. **Generate** — fill template from `assets/templates/SYSTEM_DOCUMENT_TEMPLATE_SECTION1.md` + `SECTION2.md`, create Mermaid diagrams
+5. **Validate** — all template headings present, diagrams match real code, guides are actionable
 
-## Output
+## Tool Selection
 
-Comprehensive system document per the Template Section Mapping below. Save to `Documents/Systems/`.
+| Need | Tool |
+| --- | --- |
+| Broad system scan | `scripts/trace_system.py [Term]` |
+| Definition jump | `lsp_goto_definition` |
+| All usages | `lsp_find_references` |
+| File outline | `lsp_symbols` (scope=document) |
+| Pattern matching | `grep` / `glob` / `ast_grep_search` |
+| Blast radius | `impact-analyzer` |
 
-## Template Section Mapping
+## Rules
 
-Map user requirements to template sections:
-
-1. **What it is?** → Section 1 (What It Is) + Section 2 (Purpose & Responsibility)
-2. **Data structure** → Section 3 (Data Structures - Models, SOs, Configs)
-3. **How it works?** → Section 4 (How It Works - Flows, Diagrams)
-4. **Detailed feature analysis** → Section 5 (Architecture & Feature Details) + Section 8 (Integration) + Section 9 (Error Handling)
-5. **How to implement/update?** → Section 6 (How to Implement / Update)
-6. **Attention points** → Section 7 (Attention Points - Constraints, Perf, Threads)
-
-## Required Tools
-
-- `scripts/trace_system.py` for system-level discovery
-- `lsp_goto_definition`, `lsp_find_references` for symbol flow validation
-- `grep`, `glob`, `read` for code and asset investigation
-- `impact-analyzer` for dependency blast-radius checks
-
-## Workflow (Sequential)
-
-1. **Scope**: Parse request. Define boundaries (in-scope/out-of-scope). Normalize document name.
-2. **Investigate**: Trace system terms. Resolve entry points. Find related assets/configs. Map dependencies.
-3. **Analyze**: Reconstruct init/execution flows. Map data structures. Identify constraints/edge cases.
-4. **Generate**: Fill `SYSTEM_DOCUMENT_TEMPLATE_SECTION1.md` and `SYSTEM_DOCUMENT_TEMPLATE_SECTION2.md`. Create Mermaid diagrams. Write concrete implementation guides.
-5. **Validate**: Check all headings exist. Verify diagrams match code. Ensure guide is usable.
-
-## Quality Bar
-
-- **Why + How > What**: Explain the *reasoning* and *mechanism*, not just the existence.
-- **Diagrams**: Must be syntactically valid Mermaid. Must depict *actual* code paths, not idealized ones.
-- **Extension Guides**: Must be step-by-step (1, 2, 3...) and copy-paste ready.
-- **Attention Points**: Explicitly list threading rules, initialization order dependencies, and performance cliffs.
-- **Conciseness**: High-signal prose. Bullet points over walls of text.
+- Every claim backed by code evidence (`File.cs:L##`)
+- Mermaid diagrams mandatory for init flow + execution flow + system context
+- Fill every template section; use "N/A — {reason}" only when truly not applicable
+- Explain **why + how**, not just what exists
+- Extension guides must be step-by-step and copy-paste ready
+- Bullet points over prose walls
