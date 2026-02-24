@@ -46,6 +46,38 @@ Organized by domain:
 | Art | `unity-tech-art`, `unity-sprite-gen`, `unity-2d` |
 | Execute | `unity-plan-executor`, `unity-log-analyzer` |
 
+
+#### Skill Reference
+
+| Skill | Use when |
+|---|---|
+| `unity-review-code-local` | Reviewing logic before commit — correctness, edge cases, state management, data flow |
+| `unity-review-code-pr` | Reviewing `.cs` changes in GitHub PRs, validating C# behavior before merge |
+| `unity-review-architecture` | Reviewing dependency management, event systems, assembly structure, coupling in PRs |
+| `unity-review-asset` | Reviewing `.mat`, `.shader`, `.controller`, `.anim`, `.fbx` files in PRs |
+| `unity-review-prefab` | Reviewing `.prefab` and `.unity` files for missing scripts, broken variants, hierarchy issues |
+| `unity-review-general` | Security, correctness, testing, code quality, and documentation checks on any PR |
+| `unity-review-quality` | Full project quality audit — architecture, performance, best practices, technical debt |
+| `git-commit` | Generating clean commit messages from staged changes |
+| `git-comment` | Amending the last commit with a better message (local only) |
+| `git-description` | Generating and applying structured PR descriptions from a PR link |
+| `git-squash` | Squashing messy commit history into organized, well-documented commits |
+| `unity-investigate-quick` | Quick question about how a system works — direct conversational answer |
+| `unity-investigate-deep` | Thorough written report with architecture diagrams, execution flows, risk tables |
+| `unity-debug-quick` | Interactive bug investigation — proposes solutions, lets you pick, applies the fix |
+| `unity-debug-deep` | Exhaustive multi-angle analysis producing a structured document (never modifies code) |
+| `unity-debug-fix` | Analyzing console errors/stack traces and suggesting ranked fix options (never modifies code) |
+| `unity-debug-log` | Generating targeted `Debug.Log` statements to trace execution flow and state |
+| `unity-test-unit` | Creating Edit Mode or Play Mode tests, mocking dependencies, maximizing coverage |
+| `unity-test-case` | Generating comprehensive QA test case documents in HTML for game features |
+| `unity-document-plan` | Creating implementation plans for Unity features with work breakdown |
+| `unity-document-plan-detail` | Deep-dive planning with per-task patch generation and full implementation detail |
+| `unity-document-plan-quick` | Quick costing — task size, time estimate, risks, and downstream impact |
+| `unity-document-system` | Comprehensive system documents covering architecture, data flows, and extension guides |
+| `unity-document-tdd` | Technical Design Documents focused on architecture and implementation strategy |
+| `unity-write-tdd` | Formalizing feature plans into specs — game systems, API specs, data schemas |
+| `unity-write-docs` | README, API references, onboarding guides, code comments, XML docs |
+
 **UI Toolkit (9)** — Full coverage of Unity's retained-mode UI framework
 
 `ui-toolkit-master` · `ui-toolkit-architecture` · `ui-toolkit-databinding` · `ui-toolkit-debugging` · `ui-toolkit-mobile` · `ui-toolkit-patterns` · `ui-toolkit-performance` · `ui-toolkit-responsive` · `ui-toolkit-theming`
