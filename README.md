@@ -18,7 +18,7 @@ Just ask naturally. Skills are auto-routed based on your request:
 | *"Fix the compiler errors in the console."* | `unity-fix-errors` |
 | *"How does the matchmaking system work?"* | `unity-investigate-quick` |
 | *"Deep dive into the inventory architecture."* | `unity-investigate-deep` |
-| *"Plan the player health bar feature."* | `unity-document-plan` |
+| *"Plan the player health bar feature."* | `unity-plan-deep` |
 | *"Simplify the coupling in PlayerManager."* | `unity-refactor` |
 | *"Write tests for the quest system."* | `unity-test-unit` |
 | *"Generate a sprite for an iron sword icon."* | `unity-sprite-gen` |
@@ -35,7 +35,7 @@ Organized by domain:
 |---|---|
 | Code | `unity-code-deep`, `unity-code-standards`, `unity-fix-errors`, `unity-refactor` |
 | Debug | `unity-debug-quick`, `unity-debug-deep`, `unity-debug-fix`, `unity-debug-log` |
-| Document | `unity-document-plan`, `unity-document-plan-detail`, `unity-document-plan-quick`, `unity-document-system`, `unity-document-tdd`, `unity-write-tdd`, `unity-write-docs` |
+| Document | `unity-plan-deep`, `unity-plan-detail`, `unity-plan-quick`, `unity-document-system`, `unity-document-tdd`, `unity-write-tdd`, `unity-write-docs` |
 | Investigate | `unity-investigate-quick`, `unity-investigate-deep` |
 | Review | `unity-review-code-local`, `unity-review-code-pr`, `unity-review-architecture`, `unity-review-asset`, `unity-review-prefab`, `unity-review-general`, `unity-review-quality` |
 | Test | `unity-test-unit`, `unity-test-case` |
@@ -70,9 +70,9 @@ Organized by domain:
 | `unity-debug-log` | Generating targeted `Debug.Log` statements to trace execution flow and state |
 | `unity-test-unit` | Creating Edit Mode or Play Mode tests, mocking dependencies, maximizing coverage |
 | `unity-test-case` | Generating comprehensive QA test case documents in HTML for game features |
-| `unity-document-plan` | Creating implementation plans for Unity features with work breakdown |
-| `unity-document-plan-detail` | Deep-dive planning with per-task patch generation and full implementation detail |
-| `unity-document-plan-quick` | Quick costing — task size, time estimate, risks, and downstream impact |
+| `unity-plan-deep` | Creating implementation plans for Unity features with work breakdown |
+| `unity-plan-detail` | Deep-dive planning with per-task patch generation and full implementation detail |
+| `unity-plan-quick` | Quick costing — task size, time estimate, risks, and downstream impact |
 | `unity-document-system` | Comprehensive system documents covering architecture, data flows, and extension guides |
 | `unity-document-tdd` | Technical Design Documents focused on architecture and implementation strategy |
 | `unity-write-tdd` | Formalizing feature plans into specs — game systems, API specs, data schemas |

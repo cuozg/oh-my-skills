@@ -1,6 +1,6 @@
 # Investigation Checklist
 
-Use this checklist to guide deep investigation before assessment:
+Use before assessment/planning to gather evidence:
 
 - How many files need changes? New files needed?
 - How much new logic vs. wiring existing systems?
