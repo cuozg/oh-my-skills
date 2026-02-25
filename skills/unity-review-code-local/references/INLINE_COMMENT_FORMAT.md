@@ -1,6 +1,6 @@
 # Inline Comment Format
 
-Short comment explaining the issue → applied fix below. Evidence-backed.
+Short comment explaining the issue. Fix delegated to `unity-code-quick`. Evidence-backed.
 
 ## Severity Tokens
 
@@ -11,33 +11,29 @@ Short comment explaining the issue → applied fix below. Evidence-backed.
 | `🔵 MEDIUM` | Suboptimal, perf hint | Brief reason why suboptimal |
 | `🟢 LOW` | Style, typo, micro-optimization | Brief note |
 
-## Comment + Fix Format (🔴 / 🟡)
+## Comment + Delegate Format (🔴 / 🟡)
 
-Comment explains the issue. Fix is applied directly below as real code.
+Reviewer inserts comment only. Fix is delegated to `unity-code-quick` background task.
 
 ```csharp
 // ── REVIEW [🔴 CRITICAL] Null ref after await — MonoBehaviour may be destroyed
 // WHY: `this` can be null between yield points (3 async callers)
-// ── APPLIED FIX ──
-await SomeAsyncOperation().AttachExternalCancellation(destroyCancellationToken);
+// FIX: Use destroyCancellationToken — await SomeAsyncOperation().AttachExternalCancellation(destroyCancellationToken);
 ```
 
 ```csharp
 // ── REVIEW [🟡 HIGH] IndexOutOfRange on empty collection
 // WHY: `items[0]` assumes non-empty — 3 callers can pass empty
-// ── APPLIED FIX ──
-if (items.Count == 0) return default;
-var first = items[0];
+// FIX: Guard with if (items.Count == 0) return default; before access
 ```
 
 ## Quick Format (🔵 Medium)
 
-Comment + fix inline. One-liner when possible.
+Comment + fix description inline. One-liner when possible.
 
 ```csharp
 // ── REVIEW [🔵 MEDIUM] Double hash lookup → use TryGetValue
-// ── APPLIED FIX ──
-if (_cache.TryGetValue(key, out var value)) return value;
+// FIX: Replace ContainsKey+index with TryGetValue
 ```
 
 ## Minimal Format (🟢 Low)
@@ -46,7 +42,6 @@ Comment only. No fix applied — too minor or purely stylistic.
 
 ```csharp
 // ── REVIEW [🟢 LOW] Magic number → extract to const for readability
-private const float DashCooldown = 0.5f;
 ```
 
 ## Comment-Only (when fix is too risky or ambiguous)
@@ -57,16 +52,15 @@ If the fix would change architecture or has multiple valid approaches, comment o
 // ── REVIEW [🟡 HIGH] Shared SO mutated at runtime — changes persist across instances
 // WHY: `_config` is a ScriptableObject, mutated by UpgradeShop:156, AIController:89
 // FIX OPTIONS: (1) Clone in Awake (2) Use runtime data class instead
-[SerializeField] private WeaponConfig _config;
 ```
 
 ## Batch Pattern
 
-Same issue in N files → full comment+fix on first, short ref on rest:
+Same issue in N files → full comment on first, short ref on rest:
 
 ```
-// ── REVIEW [🟡 HIGH] GetComponent in hot path (1 of 4) — cached in Awake
-// ── REVIEW [🟡 HIGH] Same as PlayerController:45 (2 of 4) — cached
+// ── REVIEW [🟡 HIGH] GetComponent in hot path (1 of 4) — cache in Awake
+// ── REVIEW [🟡 HIGH] Same as PlayerController:45 (2 of 4)
 ```
 
 ## Common Anti-Patterns
@@ -83,10 +77,11 @@ Same issue in N files → full comment+fix on first, short ref on rest:
 
 ## Rules
 
-- One issue = one comment block + one fix. Don't combine multiple issues.
+- One issue = one comment block. Don't combine multiple issues.
 - Comments are short: 1-2 lines max. No verbose trees.
-- `// ── APPLIED FIX ──` marker before the changed code when replacing existing code.
-- When adding new code (e.g., null guard), insert comment + code without the marker.
-- 🔴/🟡 → comment + WHY line + applied fix. 🔵 → single-line comment + fix. 🟢 → comment only.
-- Skip fix when: architectural change needed, multiple valid approaches, or risk of breaking behavior.
+- 🔴/🟡 → comment + WHY line + FIX description. Actual fix delegated to `unity-code-quick`.
+- 🔵 → single-line comment + FIX description. Delegated to `unity-code-quick`.
+- 🟢 → comment only. No fix needed.
+- Skip delegation when: architectural change needed, multiple valid approaches, or risk of breaking behavior — use FIX OPTIONS instead.
 - Never comment without evidence. Investigate first.
+- **Reviewer never applies code fixes directly.** All fixes go through `unity-code-quick`.
