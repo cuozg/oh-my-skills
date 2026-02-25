@@ -1,6 +1,6 @@
 # Oh My Unity
 
-A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 65+ specialized skills, 12 custom tools, 30 slash commands, and 4 agent personas — all tuned for Unity C# development.
+A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 61+ specialized skills, 11 custom tools, 30 slash commands, and 4 agent personas — all tuned for Unity C# development.
 
 ## Installation
 
@@ -8,7 +8,7 @@ A comprehensive skill pack and tooling configuration for AI agents working with 
 git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ```
 
-### Skills (66)
+## Skills (61)
 
 ### Unity — Code
 | Skill | Use When | Do | Don't | Result | Notes |
@@ -16,13 +16,12 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 | `unity-code-deep` | **Complex C#** implementation | **Write production C#**, MonoBehaviours, SO | **Skip** simple boilerplate | **Production-ready** `.cs` files | **Unity 6** features supported |
 | `unity-code-standards` | **Code quality** gates | **Enforce 4-priority gates**, hygiene, perf | **Auto-fix** code | **Quality assessment** | **Review** guidelines only |
 | `unity-code-quick` | **Fast C#** generation | **Generate production C#**, verify diagnostics | **Write** untested code | **Production-ready** `.cs` files | **Delegated** by other skills |
-| `unity-fix-errors` | **Compiler/runtime** errors | **Diagnose and fix**, resolve assembly conflicts | **Ignore** stack traces | **Fixed** project state | **Handles** build failures |
 | `unity-refactor` | **Safe code** transformation | **Extract, rename, decouple**, remove dead code | **Break** existing logic | **Refactored** `.cs` files | **Orchestrates** verification |
 
 ### Unity — Debug
 | Skill | Use When | Do | Don't | Result | Notes |
 |---|---|---|---|---|---|
-| `unity-debug-quick` | **Interactive bug** investigation | **Propose solutions**, apply user choice | **Stop** after one try | **Fixed** bug | **Loops** until done |
+| `unity-debug-quick` | **Interactive bug** investigation + **error fixing** | **Diagnose errors, propose solutions**, apply user choice | **Stop** after one try | **Fixed** bug | **Loops** until done |
 | `unity-debug-deep` | **Exhaustive multi-angle** analysis | **Analyze lifecycle, state**, edge cases | **Modify** code | **Structured** document | **Team review** artifact |
 | `unity-debug-fix` | **Error/stack trace** analysis | **Suggest ranked** fix options | **Modify** code | **Ranked** solutions | **Presents** trade-offs |
 | `unity-debug-log` | **Tracing execution** flow | **Generate targeted logs**, color-coded | **Modify** project code | **Log** snippets | **Wrapped** in `#if UNITY_EDITOR` |
@@ -74,13 +73,14 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 | `unity-ux-design` | **UX screen** specs | **Document UI layouts**, navigation flows | **Write** code | **Spec documents**, prefabs | **Mobile game** UI |
 | `unity-ui` | **Implement UX** designs | **Translate HTML to prefabs**, map design specs | **Lose** design fidelity | **Unity UI** prefabs | **100%** fidelity |
 
-### Unity — Systems
+### Unity — Systems & Editor
 | Skill | Use When | Do | Don't | Result | Notes |
 |---|---|---|---|---|---|
 | `unity-event-system` | **Event-driven** architecture | **Design communication**, decouple systems | **Skip** pattern selection | **Event** implementation | **C# events**, UnityEvent, SO |
 | `unity-serialization` | **Data** persistence | **Build save/load**, serialize complex data | **Handle** encryption | **Serialization** implementation | **JSON, binary**, PlayerPrefs |
 | `unity-object-pooling` | **Object pooling** patterns | **Reduce GC**, manage pool lifecycles | **Handle** non-poolable objects | **Pool** implementation | **Generic, UI**, particles |
 | `unity-singleton-auditor` | **Audit singleton** usage | **Detect init order risks**, circular deps | **Modify** code | **Audit** report | **Finds** anti-patterns |
+| `unity-editor-tools` | **Custom Editor** extensions | **Build Editor Windows**, inspectors, utilities | **Handle** runtime logic | **Editor** scripts | **UXML/USS**, Gizmos |
 
 ### Unity — Performance & Build
 | Skill | Use When | Do | Don't | Result | Notes |
@@ -105,6 +105,7 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 | Skill | Use When | Do | Don't | Result | Notes |
 |---|---|---|---|---|---|
 | `unity-log-analyzer` | **Parse console** logs | **Classify errors, group duplicates**, suggest fixes | **Fix** the errors | **Error summary** report | **Maps errors** to files |
+| `unity-fix-errors` | **Console errors** and **build failures** | **Diagnose and fix** compiler/runtime errors | **Ignore** root cause | **Fixed** project | **Assembly**, package errors |
 
 ### UI Toolkit
 | Skill | Use When | Do | Don't | Result | Notes |
@@ -148,6 +149,79 @@ git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 | `beads` | **Git-backed issue** tracking | **Plan work, track tasks**, manage dependencies | **Write** code | **`bd` CLI** commands | **Multi-agent** coordination |
 | `prompt-improver` | **Rewrite vague** prompts | **Score on 5 dimensions**, structure output | **Execute** the task | **Optimized** prompt | **Maximizes** agent success |
 
+## Tools (11)
+
+Custom MCP tools for Unity project analysis and skill management.
+
+| Tool | Description |
+|---|---|
+| `blueprint-inspector` | Inspect Unity Blueprint data files (JSON) — schema, record count, validation |
+| `change-summarizer` | Summarize uncommitted git changes — files changed, systems affected, risk level |
+| `codebase-health` | Analyze Unity codebase health metrics — file counts, TODOs, Singletons, line distribution |
+| `impact-analyzer` | Analyze blast radius of a C# class/file — traces references, reports risk level |
+| `prefab-ref-finder` | Find prefab/scene/asset files that reference a C# script by GUID |
+| `skill-deps` | Analyze skill dependencies — build dependency graph, detect missing references |
+| `skill-finder` | Find the best matching skill for a task description — ranks by relevance |
+| `skill-scaffold-generator` | Generate domain-aware skill scaffolds — tailored SKILL.md templates |
+| `skill-scaffold` | Smart skill scaffolding — type-aware templates for unity/bash/git/other |
+| `skill-validator` | Deep structural validation of a skill folder — frontmatter, body, references |
+| `unity-log-analyzer` | Analyze Unity Editor console logs — classify errors, group duplicates, suggest fixes |
+
+## Commands (30)
+
+Slash commands for common workflows.
+
+| Command | Description |
+|---|---|
+| `/git comment` | Generate and apply concise commit messages for the last commit |
+| `/git description` | Generate structured PR descriptions from GitHub pull request links |
+| `/git review` | Review a pull request on GitHub |
+| `/git squash` | Squash and organize commits into clean, well-documented history |
+| `/omo plan` | Delegation to @prometheus to plan |
+| `/omo prompt` | Improve user's prompt |
+| `/omo quick` | Delegation to @sisyphus-junior |
+| `/omo ulw` | Delegation to @sisyphus (ultrawork) |
+| `/skill deep` | Create or update a skill (ultrawork) |
+| `/skill quick` | Create or update a skill (quick) |
+| `/unity debug deep` | Deep investigation of complex Unity issues |
+| `/unity debug fix` | Analyze errors and suggest fix solutions |
+| `/unity debug log` | Generate targeted Debug.Log statements |
+| `/unity debug quick` | Explain Unity issues, flows, or logic |
+| `/unity document system` | Create a system architecture document |
+| `/unity document tdd` | Create a Technical Design Document |
+| `/unity investigate deep` | Deep investigation with full report output |
+| `/unity investigate quick` | Quick investigation of how systems work |
+| `/unity plan deep` | Create an implementation plan document |
+| `/unity plan detail` | Create a detailed plan with patch generation |
+| `/unity plan quick` | Quick costing and impact assessment |
+| `/unity review architecture` | Review Unity project architecture in PRs |
+| `/unity review asset` | Review Unity asset files in PRs |
+| `/unity review code-pr` | Review C# code logic in GitHub PRs |
+| `/unity review general` | Review PR against general quality checklists |
+| `/unity review local` | Review local code changes with deep logic analysis |
+| `/unity review prefab` | Review .prefab and .unity files in PRs |
+| `/unity review quality` | Full project quality audit and review |
+| `/unity test case` | Create QA test cases plan for a Unity feature |
+| `/unity test unit` | Create unit tests for a Unity feature |
+
+## Agents (4)
+
+| Agent | Mode | Description |
+|---|---|---|
+| `omo` | Primary | Prompt-optimizing agent — rewrites vague prompts into structured, actionable format |
+| `sisyphus-raw-proxy` | Primary | Zero-modification proxy — forwards exact user prompt to Sisyphus unchanged |
+| `unity-code-reviewer` | Subagent | Expert Unity code reviewer for C# scripts, prefabs, scenes, materials, shaders |
+| `unity-debugger` | Subagent | Investigate complex system issues, analyze performance bottlenecks, debug pipelines |
+
+## Rules (3)
+
+Shared rules applied across all agents.
+
+| Rule | Purpose |
+|---|---|
+| `agent-behavior` | Core agent behavior guidelines and interaction patterns |
+| `unity-asset-rules` | Unity asset handling conventions and best practices |
+| `unity-csharp-conventions` | C# coding standards specific to Unity projects |
 
 ## License
 

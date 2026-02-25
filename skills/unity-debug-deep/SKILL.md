@@ -67,7 +67,7 @@ Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the templat
 - Investigate thoroughly. This is NOT the quick skill — take time to be certain.
 - Minimum 3 cross-cut angles explored.
 - Every claim must cite `File.cs:L##`.
-- Solutions describe WHAT to do and WHERE — they do NOT include implementation code. If the user needs exact code changes, suggest using `unity-debug-fix` or `unity-fix-errors` instead.
+- Solutions describe WHAT to do and WHERE — they do NOT include implementation code. If the user needs exact code changes, suggest using `unity-debug-fix` or `unity-debug-quick` instead.
 - Never speculate without labeling it as such. Use "likely" or "unverified" for uncertain claims.
 - If the investigation reveals the issue is simple, still fill the template — the user asked for deep analysis.
  If the root cause cannot be determined with certainty, state this and explain what additional information would help.

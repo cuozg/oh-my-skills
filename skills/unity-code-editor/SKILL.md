@@ -1,15 +1,15 @@
 ---
-name: unity-editor-tools
-description: "(opencode-project - Skill) Create Unity Editor tools and extensions. Use when: (1) Custom Editor Windows/Inspectors, (2) Automating asset/scene validation, (3) Building engineer utilities (search, batch processors), (4) UI Toolkit (UXML/USS) editor interfaces, (5) Custom Gizmos and Handles, (6) Editor-only automation scripts. Triggers: 'editor window', 'custom inspector', 'PropertyDrawer', 'EditorWindow', 'ScriptableWizard', 'menu item', 'MenuItem', 'asset validation', 'scene validation', 'batch processor', 'editor utility', 'IMGUI', 'editor UI Toolkit', 'SerializedProperty', 'SerializedObject', 'OnInspectorGUI', 'CreateAssetMenu', 'editor automation', 'editor tool', 'custom tool', 'editor script', 'Gizmos', 'Handles', 'editor extension', 'toolbar button'."
+name: unity-code-editor
+description: "(opencode-project - Skill) Write Unity Editor C# code — custom EditorWindows, Inspectors, PropertyDrawers, ScriptableWizards, editor automation scripts, asset/scene validation tools, and batch processors. Covers both UI Toolkit (UXML/USS) and IMGUI approaches, Gizmos, Handles, MenuItem/Shortcut registration, SerializedObject/Property workflows, and AssetPostprocessor pipelines. Triggers: 'editor window', 'custom inspector', 'PropertyDrawer', 'EditorWindow', 'ScriptableWizard', 'menu item', 'MenuItem', 'asset validation', 'scene validation', 'batch processor', 'editor utility', 'IMGUI', 'editor UI Toolkit', 'SerializedProperty', 'SerializedObject', 'OnInspectorGUI', 'CreateAssetMenu', 'editor automation', 'editor tool', 'custom tool', 'editor script', 'Gizmos', 'Handles', 'editor extension', 'toolbar button', 'write editor code', 'create editor tool'."
 ---
 
-# Unity Editor Developer
+# Unity Editor Code Writer
 
 **Input**: Description of Editor tool or automation needed. Optional: target component/asset types, UI framework preference (UI Toolkit vs IMGUI).
 
 ## Output
 
-Unity Editor tool scripts (C#) following the Templates below.
+Production-ready Unity Editor C# scripts following the Templates below.
 
 ## Templates (MANDATORY)
 

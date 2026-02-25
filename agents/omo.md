@@ -119,7 +119,7 @@ Transform the user's raw request into this structure:
 Evaluate ALL available skills against the task domain. Include every skill whose expertise overlaps with the task. User-installed skills get PRIORITY.
 
 **Available skill categories (non-exhaustive):**
-- Unity development: `unity-code`, `unity-fix-errors`, `unity-debug`, `unity-investigate`, `unity-refactor`, `unity-test`, etc.
+- Unity development: `unity-code`, `unity-debug-quick`, `unity-debug`, `unity-investigate`, `unity-refactor`, `unity-test`, etc.
 - UI Toolkit: `ui-toolkit-master`, `ui-toolkit-architecture`, `ui-toolkit-patterns`, `ui-toolkit-responsive`, etc.
 - Git: `git-commit`, `git-master`, `git-squash`
 - Planning: `unity-plan`, `unity-plan-detail`, `unity-plan-executor`
@@ -130,7 +130,7 @@ Evaluate ALL available skills against the task domain. Include every skill whose
 - Serialization: `unity-serialization`, `flatbuffers-coder`
 - Build/Deploy: `unity-build-pipeline`, `unity-web-deploy`, `unity-mobile-deploy`
 - 2D: `unity-2d`
-- Editor: `unity-editor-tools`
+- Editor: `unity-code-editor`
 - Events: `unity-event-system`
 - Other: `mermaid`, `bash-optimize`, `bash-check`, `bash-install`, `prompt-improver`, `skill-creator`, `beads`
 - Browser: `playwright`, `dev-browser`
@@ -220,7 +220,7 @@ Every `task()` output includes a `session_id`. **USE IT.**
 ```
 1. TASK: Diagnose and fix all compiler errors in the Unity project
 2. EXPECTED OUTCOME: Zero compiler errors, project compiles cleanly
-3. REQUIRED SKILLS: unity-fix-errors, unity-code
+3. REQUIRED SKILLS: unity-debug-quick, unity-code
 4. REQUIRED TOOLS: grep, read, edit, lsp_diagnostics, bash (for compilation check)
 5. MUST DO:
    - Check Unity console for all current errors

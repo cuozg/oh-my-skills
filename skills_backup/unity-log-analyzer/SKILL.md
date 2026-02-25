@@ -43,5 +43,5 @@ Structured log analysis: error classification, duplicate grouping, priority rank
 
 ## Handoff
 
-- **Delegates to**: `unity-fix-errors` (apply fixes), `unity-debug` (deep single-error investigation)
+- **Delegates to**: `unity-debug-quick` (diagnose and apply fixes), `unity-debug-deep` (deep single-error investigation)
 - **Does NOT**: Fix errors directly or perform deep root cause analysis
