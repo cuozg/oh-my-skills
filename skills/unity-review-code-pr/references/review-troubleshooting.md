@@ -3,12 +3,14 @@
 | Problem | Cause | Fix |
 |:--------|:------|:----|
 | 404 on submit | PR doesn't exist or wrong repo | Verify `gh pr view <N>` works first |
-| Suggestion not rendering | Wrong line count in range | Ensure suggestion line count matches `line - start_line + 1` |
-| "Validation Failed" 422 | `line` outside diff range or invalid `path` | Only comment on lines visible in the diff. Run `gh pr diff <N>` to verify line is in diff |
-| Review not appearing | PR merged/closed | Use fallback: `gh pr comment` instead (handled by post_review.sh) |
-| Suggestion breaks code | Suggestion has wrong indentation or partial line | Copy exact line content, modify only the relevant part |
-| Comment on wrong line | `line` counted from wrong file version | `line` = line number on RIGHT side (new file). Verify against diff output |
-| "Stale" commit error | `commit_id` doesn't match HEAD of PR | Don't hardcode — `post_review.sh` auto-injects latest commit SHA |
-| Multiple reviews posted | Script ran twice | Check for existing pending review: `gh api /repos/{owner}/{repo}/pulls/{N}/reviews` |
-| Comments on deleted files | Comment targeted LEFT/deleted side | Only comment files/lines present on diff RIGHT side |
-| Rate limit hit | Too many API calls in short window | Add delay between calls or batch into fewer review submissions |
+| "Validation Failed" 422 | `line` outside diff hunk or invalid `path` | Parse `@@ +START,COUNT @@` headers — line must be in `[START, START+COUNT-1]`. Run `gh pr diff <N>` to verify |
+| Suggestion not rendering | Suggestion text doesn't match targeted line range | Suggestion replaces WHOLE line(s). Content must be exact full-line replacement with correct indentation |
+| Suggestion shows garbled | Wrong indentation or missing newlines | Copy the original line's indentation exactly, then modify the code part only |
+| Comment on wrong line | `line` counted from wrong file version | `line` = new-file line number (RIGHT side). Count from `+START` in hunk header, not from diff position |
+| Suggestion wrong code | Partial line targeted or extra whitespace | Suggestion replaces entire line(s) from column 0. Include leading spaces/tabs |
+| Review not appearing | PR merged/closed | Fallback `gh pr comment` handled automatically by `post_review.py` |
+| "Stale" commit error | `commit_id` mismatch | Don't hardcode — `post_review.py` auto-injects latest SHA |
+| Multiple reviews posted | Script ran twice | Check existing: `gh api /repos/{owner}/{repo}/pulls/{N}/reviews` |
+| Comments on deleted files | Targeted LEFT/deleted side | Only comment files/lines on RIGHT side of diff |
+| Multi-line suggestion off | Missing `start_side` field | Multi-line requires both `start_line` AND `start_side: "RIGHT"` |
+| Rate limit hit | Too many API calls | Batch into fewer review submissions |

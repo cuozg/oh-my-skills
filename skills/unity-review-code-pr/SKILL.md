@@ -71,8 +71,13 @@ Apply all loaded review checklists + `deep-review-workflow.md` focus areas (cont
 
 ### 5. Build `/tmp/review-code-pr.json`
 
-Assemble the final review JSON per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md). Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py` injects it automatically.
+Parse the diff output to determine which lines are commentable (see [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) "How to Determine `line`"). For each comment:
+1. `line` = new-file line number, must be within a diff hunk (`@@ +START,COUNT @@`)
+2. `path` = exact path from `gh pr diff --name-only`
+3. Suggestion content must be the EXACT full-line replacement for the targeted line(s), preserving indentation
+4. Multi-line: include `start_line` and `start_side: "RIGHT"`
 
+Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py` injects it.
 ### 6. Submit
 
 ```bash
@@ -86,6 +91,8 @@ Fallback (merged/closed): handled automatically by `post_review.py`. See [review
 - Only review `.cs` files. Read full files, not just diffs.
 - Trace data flow end-to-end. One issue = one comment (severity + evidence + suggestion).
 - Same issue in N files → full explanation on first, short ref on rest (batch pattern).
+- `line` MUST be within a diff hunk. Verify against `gh pr diff` output before adding comment.
+- Suggestion content = exact full-line replacement with correct indentation. Never suggest partial lines.
 - If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
 - For serialization findings, check whether the project has migration/versioning support.
 - Submit even if PR is merged — `post_review.py` handles fallback.

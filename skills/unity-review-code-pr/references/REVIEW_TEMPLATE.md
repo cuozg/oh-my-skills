@@ -1,24 +1,61 @@
 # Review Output Format
 
-Output structure only. Logic/criteria live in SKILL.md and reference checklists. Approval criteria: `read_skill_file("unity-review-general", "references/APPROVAL_CRITERIA.md")`.
+Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 
 ## JSON — `/tmp/review-code-pr.json`
 
 ```json
 {
-  "commit_id": "abc123...",
   "body": "[SUMMARY]",
-  "event": "REQUEST_CHANGES|COMMENT|APPROVE",
+  "event": "COMMENT",
   "comments": [
-    { "path": "Assets/Scripts/Example.cs", "line": 42, "side": "RIGHT", "body": "[INLINE]" }
+    { "path": "Assets/Scripts/Example.cs", "line": 42, "side": "RIGHT",
+      "body": "**🔴 Issue**: ...\n```suggestion\nexactReplacementCode();\n```" }
   ]
 }
 ```
 
-- **`commit_id`** — Latest commit SHA. Post script auto-injects; do NOT hardcode.
-- **`line`** — Line number in the **file** (not diff position). Always use `line`, not `position`.
-- **`side`** — Always `"RIGHT"`.
-- **Multi-line** — Add `start_line`: `{ "start_line": 10, "line": 15, ... }`. Suggestion must match the full range.
+Do NOT include `commit_id` — `post_review.py` injects it.
+
+## Field Rules
+
+| Field | Value | Notes |
+|:------|:------|:------|
+| `path` | Relative path from `gh pr diff --name-only` | Case-sensitive, exact match |
+| `line` | Line number in **new file** (RIGHT side) | **MUST be within a diff hunk** — 422 if outside |
+| `side` | Always `"RIGHT"` | |
+| `start_line` | First line of multi-line range | Required with `start_side: "RIGHT"` |
+| `commit_id` | Omit | `post_review.py` injects automatically |
+| `event` | Always `"COMMENT"` | Only `unity-review-general` sets APPROVE/REQUEST_CHANGES |
+
+## How to Determine `line`
+
+Parse `gh pr diff <N>`. Hunk header `@@ -12,8 +14,10 @@` → new-file lines **14–23** are commentable.
+
+1. `line` must fall within `[+START, +START+COUNT-1]` of some hunk
+2. For `+` lines (added): use the new-file line number
+3. For context lines (no prefix): use the new-file line number
+4. Never target `-` lines (deleted) with `side: "RIGHT"`
+
+## Suggestion Syntax
+
+Content inside ` ```suggestion ` **replaces** the targeted line(s) character-for-character.
+
+**Single-line** — `line: 42` → suggestion replaces ONLY line 42:
+```
+"body": "**🔴 Issue**\n```suggestion\n    private readonly List<int> _cache = new();\n```"
+```
+
+**Multi-line** — `start_line: 10, line: 15, start_side: "RIGHT"` → replaces ALL 6 lines:
+```
+"body": "...\n```suggestion\n    // complete replacement for lines 10-15\n    private void Init() { }\n```"
+```
+
+**Rules:**
+- Suggestion replaces the WHOLE line(s), not a substring — include full line content
+- Preserve original indentation exactly
+- Line count in suggestion can differ from range (add/remove lines)
+- Line outside diff → 422 Validation Failed
 
 ## Summary Body
 
@@ -26,14 +63,6 @@ Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 ## Code Review - PR #[N]
 **Scope**: [TICKET] - [Description]
 [One-sentence assessment].
-
-### Acceptance Criteria
-- [ ] UI displays correctly
-- [ ] Feature works; edge cases handled
-- [ ] No frame drops, GC spikes
-- [ ] No breaking serialization changes
-- [ ] No missing scripts, correct shaders, proper imports
-
 ### Breaking Changes ([N])
 ### Potential Issues ([N])
 ### Unity-Specific Concerns ([N])
@@ -43,44 +72,17 @@ Output structure only. Logic/criteria live in SKILL.md and reference checklists.
 ```
 
 ## Inline Comment Format
+
 **🔴 Critical / 🟡 High**:
 ```markdown
 **🔴 Issue Title**: One-line problem summary
 - **Why**: root cause or risk
 - **Fix**: concrete solution
 \`\`\`suggestion
-[Fixed code]
+[Fixed code — exact replacement, preserving indentation]
 \`\`\`
 ```
 
-**🔵 Medium / 🟢 Low** — short issue + suggestion only:
-```markdown
-**🔵 Issue Title**: Problem → fix.
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
+**🔵 Medium / 🟢 Low** — `**🔵 Issue**: Problem → fix.` + suggestion block.
 
-## Suggestion Syntax
-
-**Single-line**: Target one `line`. Suggestion replaces that line.
-**Multi-line**: Target `start_line` to `line`. Suggestion replaces the entire range. Content must be the complete replacement.
-**File replacement**: Use `<details>` block for large rewrites instead of inline suggestion.
-
-```markdown
-<details><summary>Suggested replacement</summary>
-
-\`\`\`csharp
-// Full file content
-\`\`\`
-</details>
-```
-
-**Batch pattern**: Same issue in multiple files → detailed comment on first occurrence, short references on subsequent:
-```markdown
-**Same issue as [Assets/Scripts/First.cs#L42] — cache GetComponent in Awake.**
-\`\`\`suggestion
-[Fixed code]
-\`\`\`
-```
-
+**Batch**: Same issue in N files → full on first, `**Same issue as [path#L42]**` on rest.
