@@ -14,7 +14,7 @@ After the tree output and interactive prompt, handle user's choice:
    ```
    task(
      category="quick",  // or "deep" for architectural fixes
-     load_skills=["unity-fix-errors"],
+     load_skills=["unity-code-quick"],
      description="Apply fix: {solution title}",
      prompt="
        1. TASK: Apply {solution title} to fix {issue}.
@@ -55,10 +55,10 @@ End the session. No further output.
 
 | Fix Type | Category | Skills |
 | :--- | :--- | :--- |
-| Quick/small fix (1-2 files) | `quick` | `["unity-fix-errors"]` |
-| Moderate fix (logic change) | `unspecified-low` | `["unity-fix-errors"]` |
-| Architectural fix | `deep` | `["unity-fix-errors", "unity-code-deep"]` |
-| Performance fix | `deep` | `["unity-fix-errors", "unity-optimize-performance"]` |
+| Quick/small fix (1-2 files) | `quick` | `["unity-code-quick"]` |
+| Moderate fix (logic change) | `unspecified-low` | `["unity-code-quick"]` |
+| Architectural fix | `deep` | `["unity-code-quick", "unity-code-deep"]` |
+| Performance fix | `deep` | `["unity-code-quick", "unity-optimize-performance"]` |
 
 ## Rules
 

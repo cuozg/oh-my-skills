@@ -53,5 +53,5 @@ Chain tools to build evidence. Stop once root cause is clear.
 - If uncertain, state "uncertain: {reason}" inside the tree and note what info would help.
 - Stack trace input → extract error type, crash site, call chain first.
 - After the tree, ALWAYS present the interactive choice prompt.
-- When user picks a solution, delegate via `task()` with appropriate category and `load_skills=["unity-fix-errors"]`.
+- When user picks a solution, delegate via `task()` with appropriate category and `load_skills=["unity-code-quick"]`.
 - After fix delegation completes, verify with `lsp_diagnostics` then ask if there are more issues.
