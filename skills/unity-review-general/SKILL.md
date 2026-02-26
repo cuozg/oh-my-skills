@@ -74,7 +74,7 @@ Set `event` based on **highest severity across ALL reviewers** (prior + own) usi
 ### 5. Submit
 
 ```bash
-./skills/unity-review-general/scripts/post_review.py <pr_number> /tmp/review-general.json
+./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-general.json
 ```
 
 ## Rules

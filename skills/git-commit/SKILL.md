@@ -5,26 +5,10 @@ description: "Generate clean, meaningful git commit messages based on code chang
 
 # Git Commit
 
-## Input
+Generate clean commit messages from staged changes. Local only — never pushes.
 
-File changes (via `git diff`) or explicit user description. Optional: commit scope, branch name for safety check.
-
-## Output
-ALWAYS use this exact format:
-- A git commit on current branch with message following the format below
-
-## Commit Message Format
-
-```
-<type>: <subject>
-
-<body (optional, bullet points)>
-```
-
-**Types**: `feat` | `fix` | `refactor` | `docs` | `chore` | `test` | `perf` | `style`
-
-**Subject**: ≤50 chars, imperative mood, lowercase, no period.
-**Body**: What/why (not how), bullets, wrap 72 chars, blank line after subject.
+**Input**: File changes (via `git diff`) or explicit user description. Optional: commit scope, branch name.
+**Output**: A git commit on current branch with structured message.
 
 ## Restrictions
 
@@ -33,31 +17,6 @@ ALWAYS use this exact format:
 - **NEVER** include code snippets in message
 - **DO** use imperative mood, bullet points, verify branch first
 
-## Workflow
+## Reference Files
 
-1. **Analyze**: `git diff --stat` / `git diff --cached --stat` / `git status`
-2. **Generate**: Identify type → write subject (<50 chars) → body if complex
-3. **Commit**: `git add <files>` → `git commit -m "type: subject" -m "body"`
-4. **Verify**: `git log --oneline -1`
-
-## Examples
-
-```
-fix: resolve null reference in PlayerManager initialization
-```
-
-```
-feat: add daily boss event handler system
-
-- Implement BaseHUDEventHandler subclass for Daily Boss events
-- Extend HUDEventBus to route new event types
-- Add unit tests for handler initialization and event dispatch
-```
-
-## Anti-Patterns
-
-| Bad | Good |
-|-----|------|
-| "Fixed stuff" | `fix: resolve null reference in PlayerManager` |
-| "WIP" or "test" | `feat: add daily boss notification system` |
-| `Co-authored-by: Claude AI` | (no metadata) |
+- [workflow.md](references/workflow.md) — Commit message format, 4-step workflow, examples, anti-patterns

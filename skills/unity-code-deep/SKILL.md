@@ -30,13 +30,13 @@ For any task with 2+ files, create tasks and outline:
 
 Load and follow `unity-code-shared` strictly for all coding rules, anti-patterns, and quality gates.
 
-Every new script follows [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md).
+Every new script follows [SCRIPT_TEMPLATE.md](../unity-code-shared/references/SCRIPT_TEMPLATE.md).
 
 ### Code Patterns
 Load the relevant pattern file when implementing:
 
-- [patterns-core.md](references/patterns-core.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
-- [patterns-advanced.md](references/patterns-advanced.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
+- [patterns-core.md](../unity-code-shared/references/patterns-core.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
+- [patterns-advanced.md](../unity-code-shared/references/patterns-advanced.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
 
 ## Phase 3: Verify
 1. `lsp_diagnostics` on every changed file — zero errors
@@ -47,6 +47,6 @@ Load the relevant pattern file when implementing:
 Fix every violation immediately. Re-run diagnostics. Do NOT skip items or leave TODOs.
 
 ## Reference Files
-- [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md) — Starting template for every new script
-- [patterns-core.md](references/patterns-core.md) — Service, State, MonoBehaviour patterns
-- [patterns-advanced.md](references/patterns-advanced.md) — Async, StateMachine, SO Config, Cleanup
+- [SCRIPT_TEMPLATE.md](../unity-code-shared/references/SCRIPT_TEMPLATE.md) — Starting template for every new script
+- [patterns-core.md](../unity-code-shared/references/patterns-core.md) — Service, State, MonoBehaviour patterns
+- [patterns-advanced.md](../unity-code-shared/references/patterns-advanced.md) — Async, StateMachine, SO Config, Cleanup

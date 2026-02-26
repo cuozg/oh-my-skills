@@ -95,3 +95,6 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 
  [decision-trees.md](references/decision-trees.md) — Assembly structure, decision trees, quick reference guidance
  [reference-index.md](references/reference-index.md) — Complete index of C#, Unity, and review references
+ [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md) — Starting template for every new script (Plain C# Service + MonoBehaviour)
+ [patterns-core.md](references/patterns-core.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
+ [patterns-advanced.md](references/patterns-advanced.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS

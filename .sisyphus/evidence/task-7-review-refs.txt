@@ -1,0 +1,45 @@
+Task 7: Update 5 review SKILL.md files to use shared post_review.py path
+========================================================================
+
+## Changes Made
+
+All 5 review SKILL.md files updated from local `./skills/unity-review-XXXX/scripts/post_review.py`
+to shared `./skills/unity-review-shared/scripts/post_review.py`.
+
+| Skill | Line | Old Path | New Path |
+|-------|------|----------|----------|
+| unity-review-architecture | 88 | ./skills/unity-review-architecture/scripts/post_review.py | ./skills/unity-review-shared/scripts/post_review.py |
+| unity-review-asset | 85 | ./skills/unity-review-asset/scripts/post_review.py | ./skills/unity-review-shared/scripts/post_review.py |
+| unity-review-code-pr | 84 | ./skills/unity-review-code-pr/scripts/post_review.py | ./skills/unity-review-shared/scripts/post_review.py |
+| unity-review-general | 77 | ./skills/unity-review-general/scripts/post_review.py | ./skills/unity-review-shared/scripts/post_review.py |
+| unity-review-prefab | 74 | ./skills/unity-review-prefab/scripts/post_review.py | ./skills/unity-review-shared/scripts/post_review.py |
+
+## Verification: grep -rn 'scripts/post_review' skills/unity-review-*/SKILL.md
+
+skills/unity-review-architecture/SKILL.md:88:./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-architecture.json
+skills/unity-review-asset/SKILL.md:85:./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-asset.json
+skills/unity-review-code-pr/SKILL.md:84:./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-code-pr.json
+skills/unity-review-general/SKILL.md:77:./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-general.json
+skills/unity-review-prefab/SKILL.md:74:./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-prefab.json
+skills/unity-review-shared/SKILL.md:13:| `scripts/post_review.py` | Post review comments to GitHub PRs via API |
+
+✅ All 5 skills reference unity-review-shared/scripts/post_review.py — no local paths remain.
+
+## Line Count Verification (all under 100)
+
+skills/unity-review-architecture/SKILL.md: 100 lines
+skills/unity-review-asset/SKILL.md: 96 lines
+skills/unity-review-code-pr/SKILL.md: 100 lines
+skills/unity-review-general/SKILL.md: 90 lines
+skills/unity-review-prefab/SKILL.md: 88 lines
+
+## skill-validator Results
+
+All 5 skills pass validation with no errors.
+
+## Not Modified (per requirements)
+
+- unity-review-quality: does not use post_review.py
+- unity-review-code-local: does not use post_review.py
+- No reference files were modified
+- No content other than script path references was changed

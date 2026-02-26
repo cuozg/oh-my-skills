@@ -1,0 +1,37 @@
+Task 8: Update investigate skills' SKILL.md to reference shared trace_logic.py
+==============================================================================
+Date: 2026-02-26
+
+## Changes Made
+
+### unity-investigate-quick/SKILL.md (line 28)
+- BEFORE: `scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]`
+- AFTER:  `../unity-investigate-shared/scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]`
+
+### unity-investigate-deep/SKILL.md (lines 17, 26)
+- Line 17 BEFORE: `scripts/trace_logic.py [Target]`
+- Line 17 AFTER:  `../unity-investigate-shared/scripts/trace_logic.py [Target]`
+- Line 26 BEFORE: `scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH]`
+- Line 26 AFTER:  `../unity-investigate-shared/scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH]`
+
+## Verification
+
+### No local trace_logic.py copies
+- skills/unity-investigate-quick/scripts/trace_logic.py — NOT FOUND ✅
+- skills/unity-investigate-deep/scripts/trace_logic.py — NOT FOUND ✅
+
+### scripts/ dirs retained (contain requirements.txt only)
+- skills/unity-investigate-quick/scripts/requirements.txt — EXISTS ✅
+- skills/unity-investigate-deep/scripts/requirements.txt — EXISTS ✅
+
+### All references now point to shared location
+- investigate-quick: 1 reference → ../unity-investigate-shared/scripts/trace_logic.py ✅
+- investigate-deep: 2 references → ../unity-investigate-shared/scripts/trace_logic.py ✅
+
+### skill-validator results
+- unity-investigate-quick: PASS ✅
+- unity-investigate-deep: PASS ✅
+
+### Files NOT modified (as required)
+- references/output-template.md — untouched ✅
+- references/analysis-rules.md — untouched ✅

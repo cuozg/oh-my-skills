@@ -85,7 +85,7 @@ Do NOT include `commit_id` — `post_review.py` injects it automatically. Always
 ### 6. Submit
 
 ```bash
-./skills/unity-review-architecture/scripts/post_review.py <pr_number> /tmp/review-architecture.json
+./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-architecture.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`.

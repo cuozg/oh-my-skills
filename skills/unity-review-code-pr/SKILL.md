@@ -81,7 +81,7 @@ Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py`
 ### 6. Submit
 
 ```bash
-./skills/unity-review-code-pr/scripts/post_review.py <pr_number> /tmp/review-code-pr.json
+./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-code-pr.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`. See [review-troubleshooting.md](references/review-troubleshooting.md).
