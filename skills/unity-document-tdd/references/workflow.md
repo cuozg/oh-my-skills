@@ -2,7 +2,7 @@
 
 1. **Scope**: Parse request, identify feature boundary, define success criteria.
 2. **Investigate**:
-   - Map architecture: `../unity-investigate-shared/scripts/trace_unified.py architecture`, `glob`, `read`.
+   - Map architecture: `../../unity-investigate-shared/scripts/trace_unified.py architecture`, `glob`, `read`.
    - Trace symbols: `lsp_symbols`, `lsp_find_references`, `lsp_goto_definition`.
    - Analyze risk: `impact-analyzer`, `grep` (events, serialization, managers).
 3. **Analyze**: Convert discoveries into decisions, patterns, and approach options.

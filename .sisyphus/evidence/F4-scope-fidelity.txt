@@ -1,0 +1,38 @@
+F4 Scope Fidelity Check
+
+Scope: commits 92c4788, 781bf6b, bd9763f, a3968ae, f929a48, 1e7165a
+Plan source: .sisyphus/plans/skill-refactor-combined.md
+
+Required Diff Checks
+- git diff -- skills/skill-creator/ -> EMPTY
+- git diff -- skills/unity-plan-shared/ skills/unity-plan-quick/ skills/unity-plan-deep/ skills/unity-plan-detail/ -> EMPTY
+
+Commit-by-Commit Plan Match
+1) 92c4788 (Wave 1: shared scaffolds + script dedup) -> MISMATCH
+   - Includes Wave 2 rename/update work (unity-code-standards -> unity-code-shared and consumer updates), which is outside Wave 1 scope label.
+   - Includes pycache artifacts under shared scripts, not part of plan deliverables.
+
+2) 781bf6b (Wave 2: consumer ref updates) -> MISMATCH
+   - Contains Wave 3-5 workflow extraction changes (bash/git/flatbuffers/review quality workflow files), beyond Wave 2 scope label.
+
+3) bd9763f (Waves 3-5: workflow extraction) -> MATCH
+   - Workflow extraction across consumer skills aligns with Waves 3-5 objectives.
+
+4) a3968ae (Wave 6: unified tracing + dedup audit) -> MISMATCH
+   - Core trace_unified + dedup audit is in scope.
+   - Extra unplanned artifacts added (.sisyphus/detect_dupes*.py and pycache files).
+
+5) f929a48 (T27: document skills unified tracing) -> MATCH
+   - Updates document workflow refs to trace_unified and removes old tracing scripts as planned.
+
+6) 1e7165a (T29: validation fixes) -> MATCH
+   - Validation remediation consistent with Task 29 "fix issues found and re-validate" intent.
+
+Must-NOT Guardrails
+- No skill-creator modifications: PASS
+- No plan-skill modifications (plan-shared/quick/deep/detail): PASS
+- No run_skill_script references introduced in skills/README diff range: PASS
+- No workflow.md in *-shared skills: PASS
+- No content rewrites (only moves): PARTIAL/UNPROVEN from commit metadata alone; no direct blocking evidence found here, but strict scope fidelity already fails due out-of-scope commit content.
+
+Tasks [3/6 compliant] | skill-creator [UNTOUCHED] | plan-skills [UNTOUCHED] | VERDICT: REJECT
