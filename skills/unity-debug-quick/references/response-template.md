@@ -88,16 +88,9 @@ Use markdown formatting — NOT a single code block. Tree connectors (`├──
 
 - **Minimum 2 solutions**, maximum 4. Mark exactly one `✅ [RECOMMENDED]`.
 - **Cite `File.cs:L##`** in inline code for every claim — root cause, flow, solution `where`.
-- **Flow tree**: 2-8 nodes from trigger to ⛔ failure. Use `├──` / `└──` connectors. Last node = ⛔.
-- **Repro tree**: concrete steps, last node = 👁️ observable symptom.
-- **Verify tree**: minimum 2 nodes confirming the fix works.
-- **Prevent tree**: 1-3 actionable practices, not generic advice.
-- **Inline code** for: file refs, class names, method names, field names, values (`null`, `0`, `false`).
-- **Bold** for: failure descriptions, section labels, solution titles.
-- **No narration** before or after the tree — except the interactive prompt at the end.
-- **No wrapping in a single code block** — use markdown formatting for visual hierarchy.
-- Solutions describe approach and location — no code in the tree. Code changes happen during fix delegation.
-- Severity uses emoji + inline code: 🔴 `CRITICAL`, 🟠 `HIGH`, 🟡 `MEDIUM`, ⚪ `LOW`.
-- **Interactive prompt is MANDATORY** — always end with the numbered choice prompt.
-- User says `skip` → ask if there is another issue to investigate.
-- User says `stop` → end the session.
+- **Flow tree**: 2-8 nodes from trigger to ⛔ failure. Last node = ⛔. **Repro tree**: concrete steps, last = 👁️ symptom.
+- **Verify tree**: minimum 2 nodes confirming the fix. **Prevent tree**: 1-3 actionable practices.
+- **Inline code** for: file refs, class/method/field names, values (`null`, `0`, `false`). **Bold** for: labels, titles, failures.
+- **No narration** before/after the tree. No wrapping in a single code block. Solutions describe approach — no code in tree.
+- Severity: 🔴 `CRITICAL`, 🟠 `HIGH`, 🟡 `MEDIUM`, ⚪ `LOW`.
+- **Interactive prompt is MANDATORY** — always end with numbered choice. `skip` → next issue, `stop` → end session.

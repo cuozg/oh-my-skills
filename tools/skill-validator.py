@@ -128,7 +128,7 @@ def check_body(body, skill_dir):
         if in_code_block:
             continue
         for m in re.finditer(
-            r"(?:\.\./)*(scripts|references|assets)/[^\s\)\"'`]+", line
+            r"(?:\.\./)*(?:(?:[\w-]+/)*)?(?:scripts|references|assets)/[^\s\)\"'`]+", line
         ):
             ref = m.group(0)
             pre = line[: m.start()]
