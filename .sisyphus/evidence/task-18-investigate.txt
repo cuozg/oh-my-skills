@@ -1,0 +1,38 @@
+Task 18: Extract workflow from unity-investigate-quick and unity-investigate-deep
+================================================================================
+
+## Model Pattern
+- unity-code-deep/SKILL.md (22L) — Workflow section is 2 lines: summary + pointer to references/workflow.md
+- Reference Files section lists all refs with descriptions
+
+## unity-investigate-quick
+- BEFORE: 37L SKILL.md (inline workflow steps, tool table, rules)
+- AFTER:  20L SKILL.md + 27L references/workflow.md
+- Extracted: Workflow steps, Tool Selection table, Rules → references/workflow.md
+- Kept inline: Output Format (core operational — must see immediately)
+- Existing refs untouched: output-template.md (50L)
+- All files <100L ✅
+
+## unity-investigate-deep
+- BEFORE: 40L SKILL.md (inline workflow steps, tool table, best practices)
+- AFTER:  21L SKILL.md + 29L references/workflow.md
+- Extracted: Workflow steps, Tool Selection table, Best Practices → references/workflow.md
+- Kept inline: Output section (core — must see immediately)
+- Existing refs untouched: analysis-rules.md (41L)
+- All files <100L ✅
+
+## Line Count Summary
+| File | Lines | <100L |
+|------|-------|-------|
+| unity-investigate-quick/SKILL.md | 20 | ✅ |
+| unity-investigate-quick/references/workflow.md | 27 | ✅ |
+| unity-investigate-quick/references/output-template.md | 50 | ✅ |
+| unity-investigate-deep/SKILL.md | 21 | ✅ |
+| unity-investigate-deep/references/workflow.md | 29 | ✅ |
+| unity-investigate-deep/references/analysis-rules.md | 41 | ✅ |
+
+## Validation
+- skill-validator: PASS (both skills)
+- Content moved verbatim — no rewrites
+- Descriptions, names, triggers unchanged
+- Existing reference files untouched

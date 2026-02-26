@@ -10,24 +10,7 @@ Read-only. Investigate and document — never modify project code.
 **Input**: System/feature/class to document + optional scope boundaries.
 **Output**: System document saved to `Documents/Systems/{SystemName}.md`.
 
-## Workflow
-
-1. **Scope** — parse request, define in/out boundaries, normalize document name
-2. **Discover** — run `scripts/trace_system.py [Term]`, use LSP tools, grep/glob for assets
-3. **Analyze** — reconstruct init + execution flows, map data structures, find constraints
-4. **Generate** — fill template from `assets/templates/SYSTEM_DOCUMENT_TEMPLATE_SECTION1.md` + `SECTION2.md`, create Mermaid diagrams
-5. **Validate** — all template headings present, diagrams match real code, guides are actionable
-
-## Tool Selection
-
-| Need | Tool |
-| --- | --- |
-| Broad system scan | `scripts/trace_system.py [Term]` |
-| Definition jump | `lsp_goto_definition` |
-| All usages | `lsp_find_references` |
-| File outline | `lsp_symbols` (scope=document) |
-| Pattern matching | `grep` / `glob` / `ast_grep_search` |
-| Blast radius | `impact-analyzer` |
+Load [workflow.md](references/workflow.md) for step-by-step workflow and tool selection.
 
 ## Rules
 

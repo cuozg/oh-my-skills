@@ -1,0 +1,37 @@
+Task 16: Extract workflow from unity-debug-deep and unity-debug-log
+Date: 2026-02-26
+Status: COMPLETE
+
+## Changes Made
+
+### unity-debug-deep (74L → 40L SKILL.md + 42L workflow.md)
+- BEFORE: 74 lines — workflow (9 steps) + tool selection table inline
+- AFTER:
+  - SKILL.md: 40 lines (frontmatter, input, constraints, workflow ref, output, rules, reference table)
+  - references/workflow.md: 42 lines (verbatim 9-step workflow + tool selection table)
+  - references/analysis-template.md: 95 lines (UNTOUCHED)
+- Workflow replaced with: `Follow [workflow.md](references/workflow.md) — Scope → Survey → Trace Forward → Trace Backward → Cross-Cut → Root Cause → Impact → Solutions → Report.`
+
+### unity-debug-log (47L → 37L SKILL.md + 18L workflow.md)
+- BEFORE: 47 lines — workflow (5 steps) + tool selection table inline
+- AFTER:
+  - SKILL.md: 37 lines (frontmatter, output format, constraints, workflow ref, rules, reference table)
+  - references/workflow.md: 18 lines (verbatim 5-step workflow + tool selection table)
+  - references/debug-log-reference.md: 88 lines (UNTOUCHED)
+- Workflow replaced with: `Follow [workflow.md](references/workflow.md) — Parse → Read → Classify → Generate → Present.`
+
+## Validation
+- skill-validator: PASS (both skills, no output = clean)
+- All files < 100 lines:
+  - unity-debug-deep/SKILL.md: 40L ✅
+  - unity-debug-deep/references/workflow.md: 42L ✅
+  - unity-debug-deep/references/analysis-template.md: 95L ✅
+  - unity-debug-log/SKILL.md: 37L ✅
+  - unity-debug-log/references/workflow.md: 18L ✅
+  - unity-debug-log/references/debug-log-reference.md: 88L ✅
+
+## What was NOT touched
+- Frontmatter (name, description, triggers): UNCHANGED
+- analysis-template.md: UNCHANGED
+- debug-log-reference.md: UNCHANGED
+- No content rewritten — moved verbatim

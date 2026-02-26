@@ -1,0 +1,30 @@
+Task 25: Extract workflow from mermaid SKILL.md
+================================================
+
+## What Changed
+- Created `references/workflow.md` (40L) — extracted verbatim from SKILL.md
+- Slimmed `SKILL.md` from 51L → 22L (57% reduction)
+
+## Content Moved to workflow.md
+- Diagram Types table (Flowchart, Sequence, Class, State)
+- Workflow steps (5 steps)
+- Quick Examples (2 mermaid blocks)
+- Best Practices (4 bullet points)
+
+## Final SKILL.md Structure (22L)
+- Frontmatter (name, description, triggers) — unchanged
+- Title, Input, Output — unchanged
+- Workflow summary (1-liner + reference)
+- Reference Files table (workflow.md, MERMAID_PATTERNS.md, DIAGRAM_OUTPUT.md)
+
+## Line Counts (all <100L)
+- SKILL.md: 22L ✅
+- references/workflow.md: 40L ✅
+- references/MERMAID_PATTERNS.md: 38L ✅ (unchanged)
+
+## Validation
+- skill-validator: ✅ All skills valid
+- Warning: "Description has few Unity trigger keywords" — expected, not a Unity skill
+
+## Model Pattern Used
+- unity-code-deep (22L): frontmatter → title → input/output → workflow ref → reference files table

@@ -1,0 +1,36 @@
+TASK 22: Extract workflow from unity-review-quality
+===================================================
+Date: 2026-02-26
+Status: COMPLETE
+
+## Changes Made
+
+### SKILL.md: 78L → 37L (53% reduction)
+- Extracted severity classification table (4 rows) → references/grading.md
+- Extracted grading criteria table (5 rows) → references/grading.md
+- Extracted workflow (Steps 1-7) → references/workflow.md
+- Extracted review principles (6 items) → references/workflow.md
+- Replaced with 2 reference lines
+
+### New Reference Files
+1. references/grading.md (18L) — severity levels + grading criteria A–F
+2. references/workflow.md (29L) — 7-step workflow + review principles
+
+### Existing Reference Files (UNCHANGED — 10 files)
+- ARCHITECTURE_CHECKLIST.md (91L)
+- CODE_QUALITY_CHECKLIST.md (98L)
+- PERFORMANCE_CHECKLIST.md (89L)
+- PERFORMANCE_CHECKLIST-advanced.md (44L)
+- PROJECT_HEALTH_CHECKLIST.md (89L)
+- PROJECT_HEALTH_CHECKLIST-performance.md (38L)
+- UNITY_BEST_PRACTICES.md (89L)
+- UNITY_BEST_PRACTICES-advanced.md (32L)
+- review-workflow.md (47L)
+- summary-template.md (35L)
+
+## Validation
+- skill-validator: PASS (clean)
+- All files <100L: YES (max 98L = CODE_QUALITY_CHECKLIST.md)
+- SKILL.md: 37L (target <65L) ✅
+- Content moved verbatim, no rewrites
+- Description, name, triggers unchanged

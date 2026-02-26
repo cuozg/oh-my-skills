@@ -15,46 +15,21 @@ Deep logic review for local project. Add review comments into C# source files, t
 
 ## Input → Diff Command
 
-| Input | Command |
-|:------|:--------|
-| None (default) | `git diff` + `git diff --cached` |
-| Commit SHA | `git show <hash>` |
-| Commit range | `git diff <base>..<head>` |
-| Branch | `git diff <branch>...HEAD` |
-| Feature/logic request | Find relevant files via grep/LSP |
+See [tool-usage.md](references/tool-usage.md) for input-to-diff command mapping.
 
 ## Severity
 
 Four levels: 🔴 CRITICAL, 🟡 HIGH, 🔵 MEDIUM, 🟢 LOW. See [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 
-## Load References
-
-Always load the output format reference:
-- [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — comment format, severity tokens, delegation markers
-
-Load shared review engine from `unity-code-shared`:
-
-```python
-read_skill_file("unity-code-shared", "references/review/deep-review-workflow.md")
-read_skill_file("unity-code-shared", "references/review/VERIFICATION_GATES.md")
-read_skill_file("unity-code-shared", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-shared", "references/review/csharp-quality.md")
-read_skill_file("unity-code-shared", "references/review/performance-review.md")
-read_skill_file("unity-code-shared", "references/review/unity-specifics.md")
-read_skill_file("unity-code-shared", "references/review/architecture-review.md")
-```
-
 ## Workflow
 
-1. **Fetch** — Get diff (see Input table). For feature/logic requests, identify files via grep/LSP first.
-2. **Read full context** — Read the **entire file** for each changed file, not just the diff.
-3. **Deep investigate** (parallel) — Spawn explore agents per `deep-review-workflow.md`: call-site analysis, state flow, data contracts.
-4. **Logic review** — Apply all loaded review checklists + `deep-review-workflow.md` focus areas. Enforce `VERIFICATION_GATES.md` evidence rules.
-5. **Comment + Delegate** — For each finding:
-   - Insert a short `// ── REVIEW` comment (per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md)).
-   - For 🔴/🟡 findings: delegate the fix to `unity-code-quick` via `task(category="quick", load_skills=["unity-code-quick"], run_in_background=true)`.
-   - Include in the delegation prompt: file path, line number, the review comment, and the exact fix to apply.
-   - Multiple fixes → multiple parallel background tasks. Collect results after all complete.
+Load references, then follow the 5-step workflow: Fetch → Read → Investigate → Review → Comment+Delegate.
+Read [workflow.md](references/workflow.md) before starting any review.
+
+## Reference Files
+- [workflow.md](references/workflow.md) — Load references + 5-step review workflow
+- [tool-usage.md](references/tool-usage.md) — Input-to-diff command mapping
+- [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — Comment format, severity tokens, delegation markers
 
 ## Rules
 

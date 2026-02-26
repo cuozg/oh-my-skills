@@ -1,0 +1,49 @@
+# Task 10: Extract Bash Skill Workflows — Evidence
+# Date: 2026-02-26
+
+## Summary
+Extracted workflow/template/example content from 3 bash SKILL.md files into references/workflow.md.
+bash-optimize additionally got references/patterns.md for optimization code patterns.
+
+## Line Counts — SKILL.md (all <100L ✅)
+  35 skills/bash-check/SKILL.md     (was 64)
+  36 skills/bash-install/SKILL.md   (was 71)
+  34 skills/bash-optimize/SKILL.md  (was 78)
+
+## Line Counts — Reference Files (all <100L ✅)
+  42 skills/bash-check/references/workflow.md
+  49 skills/bash-install/references/workflow.md
+  24 skills/bash-optimize/references/workflow.md
+  44 skills/bash-optimize/references/patterns.md
+
+## Reduction
+  bash-check:    64 → 35 (-45%)
+  bash-install:  71 → 36 (-49%)
+  bash-optimize: 78 → 34 (-56%)
+
+## Validation
+  skill-validator: ✅ all 3 pass (no errors)
+
+## What Was Extracted
+  bash-check/references/workflow.md:
+    - Steps 1-6 with code blocks (syntax validation, shellcheck, manual review checklist)
+    - Common Issues table
+
+  bash-install/references/workflow.md:
+    - Steps 1-7 with code blocks (detect env, strategy order, execute, verify, handle failures)
+    - Package Managers Quick Reference table
+
+  bash-optimize/references/workflow.md:
+    - Steps 1-3 analysis workflow
+    - Optimization Checklist table
+
+  bash-optimize/references/patterns.md:
+    - Performance optimization code examples (subshells, parameter expansion, loops, forks)
+    - Clarity improvements list
+    - Modern bash practices list
+    - Error handling code example
+    - Documentation guidance
+
+## What Remains in SKILL.md
+  All 3 retain: frontmatter, title, input/output, examples table, concise workflow summary,
+  reference links, reference files index table.

@@ -11,41 +11,12 @@ System/flow to visualize. Optional: preferred diagram type, specific entities.
 ## Output
 Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md).
 
-## Diagram Types
-
-| Type | Use Case |
-|------|----------|
-| Flowchart | Logic flows, decision trees |
-| Sequence | Component communication, API calls |
-| Class | Data relationships, inheritance |
-| State | UI states, game states |
-
 ## Workflow
 
-1. Analyze entities and relationships
-2. Choose diagram type
-3. Author using [MERMAID_PATTERNS.md](references/MERMAID_PATTERNS.md)
-4. Validate syntax, ensure accuracy
-5. Embed in ` ```mermaid ` blocks
+Follow the diagram workflow: Analyze → Choose type → Author → Validate → Embed.
+Read [workflow.md](references/workflow.md) for diagram types, examples, and best practices.
 
-## Quick Examples
-
-```mermaid
-graph TD
-    A[Start] --> B{Check Health}
-    B -->|> 0| C[Continue]
-    B -->|<= 0| D[Game Over]
-```
-
-```mermaid
-sequenceDiagram
-    Player->>Server: Attack Request
-    Server->>Player: Damage Result
-```
-
-## Best Practices
-
-- Multiple small diagrams > one giant chart
-- Prefer `TD` or `LR` direction
-- Use `style`/`classDef` for critical paths
-- Consistent participant names across docs
+## Reference Files
+- [workflow.md](references/workflow.md) — Diagram types, workflow steps, examples, best practices
+- [MERMAID_PATTERNS.md](references/MERMAID_PATTERNS.md) — Chart patterns for all diagram types
+- [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md) — Output template

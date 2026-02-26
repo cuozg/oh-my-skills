@@ -22,57 +22,13 @@ Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REP
 
 ## Workflow
 
-### 1. Analyze Current Script
-Understand purpose, functions, dependencies, complex/repeated patterns.
+1. Analyze current script — purpose, functions, dependencies, complex patterns
+2. Apply optimization patterns — performance, clarity, modern bash, error handling
+3. Report findings — categorize by Performance / Clarity / Safety / Style
 
-### 2. Performance Optimizations
+**Full workflow:** [workflow.md](references/workflow.md)
+**Optimization patterns:** [patterns.md](references/patterns.md)
 
-```bash
-# Subshells → built-ins
-var=$(echo "$input" | tr '[:lower:]' '[:upper:]')  # ❌
-var="${input^^}"                                      # ✅
-
-# External cmds → parameter expansion
-basename "$filepath"  # ❌ → ${filepath##*/}   ✅
-dirname "$filepath"   # ❌ → ${filepath%/*}    ✅
-
-# Loop optimization
-cat file.txt | while read line; do echo "$line"; done  # ❌
-while IFS= read -r line; do echo "$line"; done < file.txt  # ✅
-
-# Fork reduction
-files=$(ls -1 | wc -l)  # ❌
-files=(*); count=${#files[@]}  # ✅
-```
-
-### 3. Clarity Improvements
-- Extract repeated code into descriptive functions
-- `snake_case` vars, `UPPERCASE` constants
-- Combine nested `if` → `if [[ cond1 && cond2 ]]`
-- Replace long if-elif chains with `case` statements
-
-### 4. Modern Bash Practices
-- `[[ ]]` over `[ ]` (supports `&&`, `||`, `=~`)
-- `$(command)` over backticks
-- Arrays over space-separated strings
-
-### 5. Error Handling
-```bash
-set -euo pipefail
-IFS=$'\n\t'
-
-cleanup() { rm -rf "$temp_dir"; }
-trap cleanup EXIT
-```
-
-### 6. Documentation
-Add header: script name, description, usage, options.
-
-## Optimization Checklist
-
-| Category | Check |
-|----------|-------|
-| Performance | Replace external commands with built-ins, avoid subshells, efficient loops |
-| Clarity | Extract functions, descriptive names, simplify conditionals |
-| Safety | Strict mode, error handling |
-| Style | Consistent indentation, comments for complex logic |
+## Reference Files
+- [workflow.md](references/workflow.md) — Analysis workflow and optimization checklist
+- [patterns.md](references/patterns.md) — Performance, clarity, modern bash, and error handling patterns

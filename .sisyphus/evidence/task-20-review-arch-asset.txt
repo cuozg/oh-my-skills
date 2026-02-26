@@ -1,0 +1,36 @@
+Task 20: Extract workflow from unity-review-architecture & unity-review-asset
+Date: 2026-02-26
+Session: ses_36718d098ffeC7S6YudCaOponE
+
+## Model Pattern
+- Used unity-code-deep/SKILL.md (22L) as reference — compact frontmatter + workflow ref + reference table
+
+## unity-review-architecture
+- Before: 100L (at ceiling)
+- After:  56L SKILL.md + 52L references/workflow.md
+- Extracted: Workflow steps 1-6 (lines 40-91) — fetch, load standards, investigate, review, build JSON, submit
+- Kept: frontmatter, title, intro, output, input→command, severity table, key concern areas table, rules, reference table
+- Validator: PASS (no errors)
+
+## unity-review-asset
+- Before: 96L
+- After:  56L SKILL.md + 47L references/workflow.md
+- Extracted: Workflow steps 1-4 (lines 42-88) — fetch, read & apply patterns (with grep commands), build JSON, submit
+- Kept: frontmatter, title, intro, output, input→command, severity table, file type coverage table, rules, reference table
+- Validator: PASS (no errors)
+
+## Files Created
+- skills/unity-review-architecture/references/workflow.md (52L) — verbatim workflow with JSON example
+- skills/unity-review-asset/references/workflow.md (47L) — verbatim workflow with grep patterns and JSON example
+
+## Files Modified
+- skills/unity-review-architecture/SKILL.md (100L → 56L, -44%)
+- skills/unity-review-asset/SKILL.md (96L → 56L, -42%)
+
+## Verification
+- All SKILL.md: <80L ✅ (both 56L)
+- All refs: <100L ✅ (52L, 47L)
+- skill-validator: PASS on both ✅
+- Content verbatim moved, no rewrites ✅
+- No descriptions/names/triggers changed ✅
+- Existing reference files untouched ✅

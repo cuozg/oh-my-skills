@@ -1,0 +1,56 @@
+# Task 19: unity-review-code-local + unity-review-code-pr — Workflow Extraction
+# Date: 2026-02-26
+
+## unity-review-code-local (68L → 43L)
+### Extracted to references/
+- references/workflow.md (28L) — Load References block + 5-step workflow (verbatim)
+- references/tool-usage.md (9L) — Input → Diff Command table (verbatim)
+
+### SKILL.md changes
+- Replaced Input table (9L) with 1-line ref pointer
+- Replaced Load References + Workflow sections (28L) with 4-line summary + ref pointer
+- Added Reference Files section (5L) — model pattern from unity-code-deep
+- Existing reference: INLINE_COMMENT_FORMAT.md (87L) — untouched
+
+### Validation
+- skill-validator: ✅ PASSED
+- SKILL.md: 43L (< 100L ✅)
+- All refs: < 100L ✅ (max 87L INLINE_COMMENT_FORMAT.md)
+
+---
+
+## unity-review-code-pr (100L → 45L) — HIGHEST PRIORITY
+### Extracted to references/
+- references/workflow.md (54L) — Load References block + 6-step workflow (verbatim)
+- references/tool-usage.md (19L) — Input → Command table + Severity table (verbatim)
+
+### SKILL.md changes
+- Replaced Input table (8L) with 1-line ref pointer
+- Replaced Severity table (10L) with 2-line summary + ref pointer
+- Replaced Load References + Workflow sections (54L) with 4-line summary + ref pointer
+- Added Reference Files section (5L) — model pattern from unity-code-deep
+- Existing references untouched: REVIEW_TEMPLATE.md (88L), review-troubleshooting.md (16L)
+
+### Validation
+- skill-validator: ✅ PASSED (1 INFO: unreferenced scripts/requirements.txt — pre-existing)
+- SKILL.md: 45L (< 80L ✅, < 100L ✅)
+- All refs: < 100L ✅ (max 88L REVIEW_TEMPLATE.md)
+
+---
+
+## Summary
+| Skill                     | Before | After | Reduction | Target | Status |
+|:--------------------------|:-------|:------|:----------|:-------|:-------|
+| unity-review-code-local   | 68L    | 43L   | -25L (37%)| < 100L | ✅     |
+| unity-review-code-pr      | 100L   | 45L   | -55L (55%)| < 80L  | ✅     |
+
+## Files created
+- skills/unity-review-code-local/references/workflow.md (28L)
+- skills/unity-review-code-local/references/tool-usage.md (9L)
+- skills/unity-review-code-pr/references/workflow.md (54L)
+- skills/unity-review-code-pr/references/tool-usage.md (19L)
+
+## Methodology
+- Verbatim extraction — no content rewritten
+- Path updates in extracted refs: references/ links adjusted for same-directory context
+- Model pattern: unity-code-deep (22L) — Reference Files section with bullet links

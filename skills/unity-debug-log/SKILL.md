@@ -21,21 +21,7 @@ Use the response template from `references/debug-log-reference.md` for every res
 
 ## Workflow
 
-1. **Parse** — Extract what the user wants to understand (flow, state, null check, lifecycle, event, timing).
-2. **Read** — Open target file(s). Understand method signatures, parameters, fields, and call chain.
-3. **Classify** — Determine log types needed. See color guide in `references/debug-log-reference.md`.
-4. **Generate** — Produce log snippets following `references/debug-log-reference.md` format. One code block per insertion point.
-5. **Present** — Output using `references/debug-log-reference.md` template. Show WHERE each snippet goes (file:line, before/after which statement).
-
-## Tool Selection
-
-| Need                 | Tool                       |
-| :------------------- | :------------------------- |
-| Read target code     | `read`                     |
-| Find definition      | `lsp_goto_definition`      |
-| Find callers         | `lsp_find_references`      |
-| Find by pattern      | `grep` / `ast_grep_search` |
-| Locate file          | `glob`                     |
+Follow [workflow.md](references/workflow.md) — Parse → Read → Classify → Generate → Present.
 
 ## Rules
 
@@ -45,3 +31,7 @@ Use the response template from `references/debug-log-reference.md` for every res
 - For null-safe inspection: use `(x != null ? x.name : "NULL")` or `x?.ToString() ?? "NULL"`.
 - Include exact file path and line number for each insertion point. Group by file, order by execution flow.
 - Keep log messages concise — show the value, not a novel.
+
+## Reference Files
+- [workflow.md](references/workflow.md) — 5-step generation workflow and tool selection
+- [debug-log-reference.md](references/debug-log-reference.md) — Color guide, format rules, response template
