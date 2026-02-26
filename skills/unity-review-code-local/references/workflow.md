@@ -3,21 +3,17 @@
 Always load the output format reference:
 - [INLINE_COMMENT_FORMAT.md](INLINE_COMMENT_FORMAT.md) — comment format, severity tokens, delegation markers
 
-Load shared review engine from `unity-code-shared`:
+Load shared review engine and common rules from `unity-review-code-shared`:
 
 ```python
-read_skill_file("unity-code-shared", "references/review/deep-review-workflow.md")
-read_skill_file("unity-code-shared", "references/review/VERIFICATION_GATES.md")
-read_skill_file("unity-code-shared", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-shared", "references/review/csharp-quality.md")
-read_skill_file("unity-code-shared", "references/review/performance-review.md")
-read_skill_file("unity-code-shared", "references/review/unity-specifics.md")
-read_skill_file("unity-code-shared", "references/review/architecture-review.md")
+read_skill_file("unity-review-code-shared", "references/review-engine.md")
+read_skill_file("unity-review-code-shared", "references/common-rules.md")
+read_skill_file("unity-review-code-shared", "references/tool-usage.md")
 ```
 
 ## Workflow
 
-1. **Fetch** — Get diff (see [tool-usage.md](tool-usage.md) Input table). For feature/logic requests, identify files via grep/LSP first.
+1. **Fetch** — Get diff (see `tool-usage.md` Input table). For feature/logic requests, identify files via grep/LSP first.
 2. **Read full context** — Read the **entire file** for each changed file, not just the diff.
 3. **Deep investigate** (parallel) — Spawn explore agents per `deep-review-workflow.md`: call-site analysis, state flow, data contracts.
 4. **Logic review** — Apply all loaded review checklists + `deep-review-workflow.md` focus areas. Enforce `VERIFICATION_GATES.md` evidence rules.

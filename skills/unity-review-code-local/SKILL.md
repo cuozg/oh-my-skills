@@ -7,19 +7,18 @@ description: "Deep logic review for Unity C# code in the local project. Reviews 
 
 Deep logic review for local project. Add review comments into C# source files, then delegate code fixes to `unity-code-quick` via background tasks. No report, no summary, no GitHub, no commit.
 
+## Shared References
+
+Load shared review resources from `unity-review-code-shared`:
+- [tool-usage.md](../unity-review-code-shared/references/tool-usage.md) — Input-to-command mapping + severity
+- [review-engine.md](../unity-review-code-shared/references/review-engine.md) — Review logic references to load
+- [common-rules.md](../unity-review-code-shared/references/common-rules.md) — Shared review rules
+
 ## Output
 
 1. **Short inline comments** in C# source files — per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 2. **Code fixes** applied by `unity-code-quick` background tasks — one task per finding (🔴/🟡).
 3. User reviews the combined diff (comments + fixes) before committing.
-
-## Input → Diff Command
-
-See [tool-usage.md](references/tool-usage.md) for input-to-diff command mapping.
-
-## Severity
-
-Four levels: 🔴 CRITICAL, 🟡 HIGH, 🔵 MEDIUM, 🟢 LOW. See [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
 
 ## Workflow
 
@@ -27,17 +26,11 @@ Load references, then follow the 5-step workflow: Fetch → Read → Investigate
 Read [workflow.md](references/workflow.md) before starting any review.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — Load references + 5-step review workflow
-- [tool-usage.md](references/tool-usage.md) — Input-to-diff command mapping
+- [workflow.md](references/workflow.md) — 5-step review workflow
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — Comment format, severity tokens, delegation markers
 
-## Rules
+## Rules (Local-Specific)
 
 - **Review only** — insert `// ── REVIEW` comments using `edit`. Never apply code fixes directly.
-- Delegate code fixes to `unity-code-quick` via background tasks. One task per fix or per file.
 - Comments are short, focused, highlight-style. No verbose explanations.
 - Never commit. Never push. User reviews the diff.
-- Read full file. Trace data flow end-to-end. Verify lifecycle ordering.
-- If project uses UniTask, `async UniTaskVoid` can be valid for Unity event entry points.
-- For serialization findings, check whether the project has migration/versioning support.
-- Never comment without evidence. Investigate first — see `VERIFICATION_GATES.md`.

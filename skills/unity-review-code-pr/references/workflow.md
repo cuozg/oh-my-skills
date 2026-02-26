@@ -1,15 +1,11 @@
 # Load References
 
-Load shared review engine from `unity-code-shared`:
+Load shared review engine and common rules from `unity-review-code-shared`:
 
 ```python
-read_skill_file("unity-code-shared", "references/review/deep-review-workflow.md")
-read_skill_file("unity-code-shared", "references/review/VERIFICATION_GATES.md")
-read_skill_file("unity-code-shared", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-shared", "references/review/csharp-quality.md")
-read_skill_file("unity-code-shared", "references/review/performance-review.md")
-read_skill_file("unity-code-shared", "references/review/unity-specifics.md")
-read_skill_file("unity-code-shared", "references/review/architecture-review.md")
+read_skill_file("unity-review-code-shared", "references/review-engine.md")
+read_skill_file("unity-review-code-shared", "references/common-rules.md")
+read_skill_file("unity-review-code-shared", "references/tool-usage.md")
 ```
 
 ## Workflow
