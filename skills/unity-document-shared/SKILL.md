@@ -6,6 +6,12 @@ description: "Shared references for Unity documentation skills (unity-document-s
 
 Shared by `unity-document-system`, `unity-document-tdd`.
 
+## Scripts
+
+| Script | Content |
+|--------|---------|
+| `../unity-investigate-shared/scripts/trace_unified.py` | Unified tracer — `system` and `architecture` subcommands used by document skills |
+
 ## References
 
 | File | Content |

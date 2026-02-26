@@ -1,0 +1,24 @@
+Task 27: Update Document Skills to Use Unified Tracing — Evidence
+==================================================================
+Date: 2026-02-26
+
+## Files Modified
+- skills/unity-document-system/references/workflow.md — updated trace_system.py refs → trace_unified.py system
+- skills/unity-document-tdd/references/workflow.md — updated trace_architecture.py ref → trace_unified.py architecture
+- skills/unity-document-shared/SKILL.md — added Scripts table referencing trace_unified.py
+
+## Files Removed
+- skills/unity-document-system/scripts/trace_system.py (164L)
+- skills/unity-document-system/scripts/__pycache__/
+- skills/unity-document-tdd/scripts/trace_architecture.py (121L)
+- skills/unity-document-tdd/scripts/__pycache__/
+
+## Files NOT Removed (guardrail: requirements.txt not in scope)
+- skills/unity-document-system/scripts/requirements.txt
+- skills/unity-document-tdd/scripts/requirements.txt
+
+## Acceptance Criteria
+- [x] trace_system.py removed
+- [x] trace_architecture.py removed
+- [x] Both SKILL.md reference trace_unified.py
+- [x] skill-validator passes for all 3 skills
