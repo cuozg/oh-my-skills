@@ -4,9 +4,27 @@ A comprehensive skill pack and tooling configuration for AI agents working with 
 
 ## Installation
 
+### 1. Clone
+
 ```bash
 git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
 ```
+
+### 2. Install GitHub CLI (`gh`)
+
+Several skills (PR reviews, PR descriptions, git workflows) use the [GitHub CLI](https://cli.github.com/) to interact with GitHub. Install it and authenticate:
+
+**macOS**
+```bash
+brew install gh
+```
+
+Then authenticate:
+```bash
+gh auth login
+```
+
+> For other platforms, see the [official install docs](https://github.com/cli/cli#installation).
 
 ## Skills (61)
 
