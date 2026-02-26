@@ -11,6 +11,7 @@ Shared by `unity-investigate-quick`, `unity-investigate-deep`.
 | Script | Usage |
 |--------|-------|
 | `scripts/trace_logic.py` | Trace logic flows, find callers/callees, analyze code patterns |
+| `scripts/trace_unified.py` | Unified tracer — subcommands: `logic`, `system`, `architecture` |
 
 ## References
 

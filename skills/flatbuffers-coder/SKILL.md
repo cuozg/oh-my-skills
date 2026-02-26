@@ -13,11 +13,7 @@ Schema requirements (table name, fields, types, key). Optional: JSON data, exist
 
 ## Key Rules
 
-- Always `ID:string (key)` for lookup tables
-- Provide sensible defaults to save binary space
-- Comment fields for purpose/valid ranges
-- Pause Unity Editor before generation
-- Verify generated C# compiles
+See [schema-pattern.md](references/schema-pattern.md) for schema design rules and best practices.
 
 ## Reference Files
 - [schema-pattern.md](references/schema-pattern.md) — Schema pattern + best practices

@@ -1,0 +1,48 @@
+Task 26: Create trace_unified.py — Evidence
+============================================
+Date: 2026-02-26
+
+## Files Created
+- skills/unity-investigate-shared/scripts/trace_unified.py (202 lines)
+- skills/unity-investigate-shared/scripts/tests/test_trace_unified.py (414 lines)
+
+## Files Modified
+- skills/unity-investigate-shared/SKILL.md (added trace_unified.py to Scripts table)
+
+## Files NOT Modified (preserved as-is)
+- skills/unity-investigate-shared/scripts/trace_logic.py
+- skills/unity-document-system/scripts/trace_system.py
+- skills/unity-document-tdd/scripts/trace_architecture.py
+
+## trace_unified.py Design
+- argparse with 3 subcommands: logic, system, architecture
+- Uses importlib.util.spec_from_file_location for dynamic imports from sibling skills
+- Each subcommand preserves original script's CLI interface exactly
+- sys.argv is saved/restored around delegated main() calls
+- No code duplication — imports and delegates to originals
+
+## Subcommand Interfaces
+- `logic [pattern] [--assets] [--deep] [--root PATH] [--asset-root PATH]`
+  → delegates to trace_logic.py
+- `system [term]`
+  → delegates to trace_system.py
+- `architecture [term]`
+  → delegates to trace_architecture.py
+
+## Test Results
+- 77/77 tests passed (37 existing trace_logic + 40 new trace_unified)
+- Test categories:
+  - Top-level help/no-args (4 tests)
+  - Logic subcommand CLI (10 tests)
+  - System subcommand CLI (4 tests)
+  - Architecture subcommand CLI (4 tests)
+  - Invalid subcommand (1 test)
+  - build_parser unit tests (6 tests)
+  - main() routing with mocks (4 tests)
+  - sys.argv restoration (3 tests)
+  - sys.argv forwarding correctness (4 tests)
+
+## Validation
+- skill-validator: clean (no errors)
+- pytest: 77 passed in 1.59s
+- Line count: 202 lines
