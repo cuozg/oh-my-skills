@@ -1,6 +1,6 @@
 # Core Patterns
 
-Concrete implementation recipes. For coding rules and standards → load `unity-code-standards`.
+Concrete implementation recipes. For coding rules and standards → load `unity-code-shared`.
 
 ## Service with Events
 

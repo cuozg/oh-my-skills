@@ -1,6 +1,6 @@
 ---
-name: unity-code-standards
-description: "Unity C# coding standards and code review guidelines. Enforces 4-priority quality gates: code hygiene, modern C#, Unity best practices, and performance."
+name: unity-code-shared
+description: "Unity C# coding standards and code review guidelines. Enforces 4-priority quality gates: code hygiene, modern C#, Unity best practices, and performance. Not intended to be activated directly — loaded by code and review skills as needed."
 ---
 
 # Unity C# Development Standards

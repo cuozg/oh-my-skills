@@ -1,0 +1,26 @@
+## Task 5: Create unity-debug-shared + Move common-fixes.md
+
+### Created
+- `skills/unity-debug-shared/SKILL.md` (14 lines, <40L ✅)
+- `skills/unity-debug-shared/references/common-fixes.md` (49 lines, unchanged content)
+
+### Moved
+- FROM: `skills/unity-debug-quick/references/common-fixes.md`
+- TO:   `skills/unity-debug-shared/references/common-fixes.md`
+- Original deleted ✅
+
+### Updated References
+- `skills/unity-debug-quick/SKILL.md` line 34: `references/common-fixes.md` → `../unity-debug-shared/references/common-fixes.md`
+- `skills/unity-debug-quick/SKILL.md` line 57: `references/common-fixes.md` → `../unity-debug-shared/references/common-fixes.md`
+
+### Untouched (as required)
+- unity-debug-quick: fix-loop.md, response-template.md — NOT moved
+- unity-debug-deep/SKILL.md — NOT modified
+- unity-debug-log/SKILL.md — NOT modified
+
+### Validation
+- skill-validator unity-debug-shared: ✅ PASS
+- skill-validator unity-debug-quick: ✅ PASS
+- common-fixes.md exists in shared: ✅
+- common-fixes.md removed from quick: ✅
+- grep '../unity-debug-shared/' in quick SKILL.md: ✅ 2 matches

@@ -5,7 +5,7 @@ description: "Expert Unity Developer implementation. Write clean, commented, per
 
 # unity-code-deep — Expert Unity C# Implementation
 
-Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles. Follow `unity-code-standards` for all coding rules.
+Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles. Follow `unity-code-shared` for all coding rules.
 
 **Input**: Feature description, implementation task, or TDD/system doc reference
 **Output**: C# scripts following project conventions, zero compile errors.
@@ -28,7 +28,7 @@ For any task with 2+ files, create tasks and outline:
 
 ## Phase 2: Implement
 
-Load and follow `unity-code-standards` strictly for all coding rules, anti-patterns, and quality gates.
+Load and follow `unity-code-shared` strictly for all coding rules, anti-patterns, and quality gates.
 
 Every new script follows [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md).
 
@@ -41,7 +41,7 @@ Load the relevant pattern file when implementing:
 ## Phase 3: Verify
 1. `lsp_diagnostics` on every changed file — zero errors
 2. `check_compile_errors` — Unity compilation succeeds
-3. All `unity-code-standards` rules followed
+3. All `unity-code-shared` rules followed
 4. XML docs on public API, `sealed` classes, `readonly` fields
 5. No dead code, magic numbers, or deep nesting
 Fix every violation immediately. Re-run diagnostics. Do NOT skip items or leave TODOs.

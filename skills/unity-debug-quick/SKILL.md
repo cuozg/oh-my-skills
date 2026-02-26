@@ -31,7 +31,7 @@ Use the Vercel-themed tree template from `references/response-template.md` for e
 6. **Output** — deliver the tree + interactive prompt (see `references/response-template.md`)
 7. **Fix Loop** — see `references/fix-loop.md` for delegation and iteration workflow
 
-For common Unity errors (NullRef, MissingRef, IndexOutOfRange, race conditions), check `references/common-fixes.md` for known fix patterns before deep investigation.
+For common Unity errors (NullRef, MissingRef, IndexOutOfRange, race conditions), check `../unity-debug-shared/references/common-fixes.md` for known fix patterns before deep investigation.
 
 ## Tool Selection
 | Need              | Tool                          |
@@ -54,7 +54,7 @@ Chain tools to build evidence. Stop once root cause is clear.
 - Code snippets only when they clarify — never dump full methods.
 - Focus on the path that explains root cause. Don't explain everything.
 - If uncertain, state "uncertain: {reason}" inside the tree and note what info would help.
-- Stack trace input → extract error type, crash site, call chain first. Use `references/common-fixes.md` for known patterns.
+- Stack trace input → extract error type, crash site, call chain first. Use `../unity-debug-shared/references/common-fixes.md` for known patterns.
 - After the tree, ALWAYS present the interactive choice prompt.
 - When user picks a solution, delegate via `task()` with appropriate category and `load_skills=["unity-code-quick"]`.
 - After fix delegation completes, verify with `lsp_diagnostics` then ask if there are more issues.

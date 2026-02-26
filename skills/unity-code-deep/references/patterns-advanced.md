@@ -1,6 +1,6 @@
 # Advanced Patterns
 
-For coding rules and standards → load `unity-code-standards`.
+For coding rules and standards → load `unity-code-shared`.
 
 ## Async with UniTask
 

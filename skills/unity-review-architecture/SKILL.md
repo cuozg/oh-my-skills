@@ -52,7 +52,7 @@ Filter to `.cs` files. If none found, APPROVE with note `No C# files to review f
 ### 2. Load Architecture Standards
 
 ```python
-use_skill("unity-code-standards")  # Load authoritative architecture patterns
+use_skill("unity-code-shared")  # Load authoritative architecture patterns
 ```
 
 ### 3. Deep Investigate (Parallel)
@@ -94,7 +94,7 @@ Fallback (merged/closed): handled automatically by `post_review.py`.
 
 - Only review `.cs` files for architecture concerns. Read full files, not just diffs.
 - One issue = one comment. Every comment needs severity + evidence + suggestion.
-- Always load `unity-code-standards` for authoritative architecture patterns.
+- Always load `unity-code-shared` for authoritative architecture patterns.
 - Pre-existing issues: only flag if the PR makes them worse.
 - Batch pattern: full explanation on first occurrence, short reference on subsequent. Submit even if PR is merged.
 - Never hardcode `commit_id` or modify source files. Refer to [ARCHITECTURE_PATTERNS.md](references/ARCHITECTURE_PATTERNS.md) for the complete pattern catalog.

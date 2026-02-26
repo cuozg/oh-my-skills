@@ -50,4 +50,4 @@ Clean                ──────▶  ✅ APPROVE
 - **Mixed severities** → Highest severity wins for the review event. All issues still get inline comments.
 - **Pre-existing issues** → Only flag if the PR makes them worse or touches the affected code. Note: "Pre-existing, surfaced by this change."
 - **Partial fix is OK** → If a PR fixes 3 of 5 issues, approve the fix. File a follow-up for the remaining 2.
-- **Unity-specific references take precedence** → `unity-code-standards` logic review patterns, PREFAB_REVIEW, ASSET_REVIEW checklists override generic guidance when they conflict.
+- **Unity-specific references take precedence** → `unity-code-shared` logic review patterns, PREFAB_REVIEW, ASSET_REVIEW checklists override generic guidance when they conflict.

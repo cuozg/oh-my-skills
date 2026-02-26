@@ -9,8 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
-# Add parent dir to path so we can import post_review
-sys.path.insert(0, os.path.dirname(__file__))
+# conftest.py handles sys.path setup
 import post_review
 
 

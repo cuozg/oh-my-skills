@@ -32,16 +32,16 @@ Four levels: 🔴 CRITICAL, 🟡 HIGH, 🔵 MEDIUM, 🟢 LOW. See [INLINE_COMMEN
 Always load the output format reference:
 - [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — comment format, severity tokens, delegation markers
 
-Load shared review engine from `unity-code-standards`:
+Load shared review engine from `unity-code-shared`:
 
 ```python
-read_skill_file("unity-code-standards", "references/review/deep-review-workflow.md")
-read_skill_file("unity-code-standards", "references/review/VERIFICATION_GATES.md")
-read_skill_file("unity-code-standards", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-standards", "references/review/csharp-quality.md")
-read_skill_file("unity-code-standards", "references/review/performance-review.md")
-read_skill_file("unity-code-standards", "references/review/unity-specifics.md")
-read_skill_file("unity-code-standards", "references/review/architecture-review.md")
+read_skill_file("unity-code-shared", "references/review/deep-review-workflow.md")
+read_skill_file("unity-code-shared", "references/review/VERIFICATION_GATES.md")
+read_skill_file("unity-code-shared", "references/review/logic-review-patterns.md")
+read_skill_file("unity-code-shared", "references/review/csharp-quality.md")
+read_skill_file("unity-code-shared", "references/review/performance-review.md")
+read_skill_file("unity-code-shared", "references/review/unity-specifics.md")
+read_skill_file("unity-code-shared", "references/review/architecture-review.md")
 ```
 
 ## Workflow

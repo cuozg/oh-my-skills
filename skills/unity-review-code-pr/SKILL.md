@@ -33,16 +33,16 @@ Severity labels are for categorization only. This skill always posts as `COMMENT
 
 ## Load References
 
-Load shared review engine from `unity-code-standards`:
+Load shared review engine from `unity-code-shared`:
 
 ```python
-read_skill_file("unity-code-standards", "references/review/deep-review-workflow.md")
-read_skill_file("unity-code-standards", "references/review/VERIFICATION_GATES.md")
-read_skill_file("unity-code-standards", "references/review/logic-review-patterns.md")
-read_skill_file("unity-code-standards", "references/review/csharp-quality.md")
-read_skill_file("unity-code-standards", "references/review/performance-review.md")
-read_skill_file("unity-code-standards", "references/review/unity-specifics.md")
-read_skill_file("unity-code-standards", "references/review/architecture-review.md")
+read_skill_file("unity-code-shared", "references/review/deep-review-workflow.md")
+read_skill_file("unity-code-shared", "references/review/VERIFICATION_GATES.md")
+read_skill_file("unity-code-shared", "references/review/logic-review-patterns.md")
+read_skill_file("unity-code-shared", "references/review/csharp-quality.md")
+read_skill_file("unity-code-shared", "references/review/performance-review.md")
+read_skill_file("unity-code-shared", "references/review/unity-specifics.md")
+read_skill_file("unity-code-shared", "references/review/architecture-review.md")
 ```
 
 ## Workflow

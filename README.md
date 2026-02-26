@@ -32,7 +32,7 @@ gh auth login
 | Skill | Use When | Do | Don't | Result | Notes |
 |---|---|---|---|---|---|
 | `unity-code-deep` | **Complex C#** implementation | **Write production C#**, MonoBehaviours, SO | **Skip** simple boilerplate | **Production-ready** `.cs` files | **Unity 6** features supported |
-| `unity-code-standards` | **Code quality** gates | **Enforce 4-priority gates**, hygiene, perf | **Auto-fix** code | **Quality assessment** | **Review** guidelines only |
+| `unity-code-shared` | **Code quality** gates | **Enforce 4-priority gates**, hygiene, perf | **Auto-fix** code | **Quality assessment** | **Review** guidelines only |
 | `unity-code-quick` | **Fast C#** generation | **Generate production C#**, verify diagnostics | **Write** untested code | **Production-ready** `.cs` files | **Delegated** by other skills |
 | `unity-refactor` | **Safe code** transformation | **Extract, rename, decouple**, remove dead code | **Break** existing logic | **Refactored** `.cs` files | **Orchestrates** verification |
 

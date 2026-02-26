@@ -1,6 +1,6 @@
 ---
 name: unity-code-quick
-description: "Fast Unity C# code generation. Receives a code request, generates production-ready C# following unity-code-standards, verifies with diagnostics. Other skills delegate code generation tasks here. Use when: (1) Generating a new MonoBehaviour, ScriptableObject, or plain C# class, (2) Implementing a method, interface, or data model, (3) Writing boilerplate code (events, state, services), (4) Quick code changes delegated from planning/debug/refactor skills, (5) Adding a feature to an existing script. Triggers: 'write code', 'generate class', 'create script', 'implement method', 'add feature', 'quick code', 'code this'."
+description: "Fast Unity C# code generation. Receives a code request, generates production-ready C# following unity-code-shared, verifies with diagnostics. Other skills delegate code generation tasks here. Use when: (1) Generating a new MonoBehaviour, ScriptableObject, or plain C# class, (2) Implementing a method, interface, or data model, (3) Writing boilerplate code (events, state, services), (4) Quick code changes delegated from planning/debug/refactor skills, (5) Adding a feature to an existing script. Triggers: 'write code', 'generate class', 'create script', 'implement method', 'add feature', 'quick code', 'code this'."
 ---
 
 # unity-code-quick — Fast Unity C# Code Generation
@@ -8,7 +8,7 @@ description: "Fast Unity C# code generation. Receives a code request, generates 
 Generate production-ready Unity C# code fast. No lengthy investigation — receive request, match codebase conventions, write code, verify.
 
 **Input**: Code request with context (what to create, where it goes, dependencies)
-**Output**: C# code following `unity-code-standards`, zero compile errors
+**Output**: C# code following `unity-code-shared`, zero compile errors
 
 ## Workflow
 
@@ -22,7 +22,7 @@ Read only what's needed to write correct code:
 
 ### 2. Generate Code
 
-Load and follow `unity-code-standards` for all rules. Apply the matching pattern:
+Load and follow `unity-code-shared` for all rules. Apply the matching pattern:
 
 | Need | Pattern Reference |
 |------|-------------------|
@@ -36,7 +36,7 @@ Load and follow `unity-code-standards` for all rules. Apply the matching pattern
 | SO config | [patterns-advanced.md](../unity-code-deep/references/patterns-advanced.md) — ScriptableObject Config |
 | Lifecycle cleanup | [patterns-advanced.md](../unity-code-deep/references/patterns-advanced.md) — Cleanup & CTS |
 
-**Quick rules** (from `unity-code-standards` priorities):
+**Quick rules** (from `unity-code-shared` priorities):
 - `sealed` classes, `readonly` fields, file-scoped namespaces
 - Constructor injection for services, `Initialize()` for MonoBehaviours
 - `event Action<T>` for cross-system communication

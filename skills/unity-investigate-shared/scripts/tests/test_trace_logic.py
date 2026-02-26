@@ -6,11 +6,10 @@ import os
 import re
 import tempfile
 
-# Import internal functions for unit testing
-sys.path.insert(0, os.path.dirname(__file__))
+# conftest.py adds scripts/ to sys.path
 from trace_logic import _walk_files, _grep_lines
 
-SCRIPT = os.path.join(os.path.dirname(__file__), "trace_logic.py")
+SCRIPT = os.path.join(os.path.dirname(__file__), os.pardir, "trace_logic.py")
 
 
 def run_trace(args: list[str]) -> subprocess.CompletedProcess:
