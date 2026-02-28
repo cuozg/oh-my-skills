@@ -46,7 +46,7 @@ documents/plans/{plan-name}/
 ## Workflow Details
 
 For the 10-step workflow (templates, investigation, requirements, generation, summary), see [references/workflow.md](references/workflow.md).
-For task patch requirements and cost-to-detail reference, see [references/task-patch-requirements.md](references/task-patch-requirements.md).
+For task patch requirements and cost-to-detail reference, see [../unity-shared/references/task-patch-requirements.md](../unity-shared/references/task-patch-requirements.md).
 For costing standards, see [../unity-shared/references/costing-and-types.md](../unity-shared/references/costing-and-types.md).
 
 ## Cross-Skill Integration

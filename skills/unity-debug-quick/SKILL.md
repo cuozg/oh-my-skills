@@ -9,13 +9,13 @@ Investigate the issue. Output the tree. Ask user to pick a solution. Delegate th
 
 ## Output Format
 
-Use the Vercel-themed tree template from `references/response-template.md` for every response. Tree connectors (`├──`, `└──`) for flow, repro, verify, prevent, and solutions. Inline code (`cyan`) for all code identifiers, file refs, and values. **Bold** for failure points and labels. Emoji indicators for severity. No prose, no preamble — just the formatted tree, then the interactive prompt.
+Use the Vercel-themed tree template from `references/output-template.md` for every response. Tree connectors (`├──`, `└──`) for flow, repro, verify, prevent, and solutions. Inline code (`cyan`) for all code identifiers, file refs, and values. **Bold** for failure points and labels. Emoji indicators for severity. No prose, no preamble — just the formatted tree, then the interactive prompt.
 
 ## Workflow
 
 Follow [references/workflow.md](references/workflow.md) for the 7-step investigation flow (Parse → Read → Trace → Assess → Solve → Output → Fix Loop).
 
-Use [references/tool-selection.md](references/tool-selection.md) for tool choices. Chain tools to build evidence. Stop once root cause is clear.
+Use [../unity-shared/references/debug-tool-selection.md](../unity-shared/references/debug-tool-selection.md) for tool choices. Chain tools to build evidence. Stop once root cause is clear.
 
 ## Rules
 
@@ -34,8 +34,8 @@ Use [references/tool-selection.md](references/tool-selection.md) for tool choice
 - After fix delegation completes, verify with `lsp_diagnostics` then ask if there are more issues. Loop until user stops.
 
 ## Reference Files
-- [response-template.md](references/response-template.md) — Vercel-themed tree output template
+- [output-template.md](references/output-template.md) — Vercel-themed tree output template
 - [workflow.md](references/workflow.md) — 7-step investigation flow
-- [tool-selection.md](references/tool-selection.md) — Tool lookup table
-- [fix-loop.md](references/fix-loop.md) — Delegation and iteration workflow
+- [debug-tool-selection.md](../unity-shared/references/debug-tool-selection.md) — Tool lookup table
+- [debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) — Delegation and iteration workflow
  [common-fixes.md](../unity-shared/references/common-fixes.md) — Known fix patterns for common Unity errors

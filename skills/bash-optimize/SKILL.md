@@ -27,8 +27,8 @@ Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REP
 3. Report findings — categorize by Performance / Clarity / Safety / Style
 
 **Full workflow:** [workflow.md](references/workflow.md)
-**Optimization patterns:** [patterns.md](references/patterns.md)
+**Optimization patterns:** [patterns.md](../unity-shared/references/bash-patterns.md)
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — Analysis workflow and optimization checklist
-- [patterns.md](references/patterns.md) — Performance, clarity, modern bash, and error handling patterns
+- [patterns.md](../unity-shared/references/bash-patterns.md) — Performance, clarity, modern bash, and error handling patterns

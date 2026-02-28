@@ -18,4 +18,4 @@ Read [workflow.md](references/workflow.md) for tool selection table and best pra
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — Steps, tool selection, best practices
-- [analysis-rules.md](references/analysis-rules.md) — Type-specific analysis rules
+- [investigation-analysis-rules.md](../unity-shared/references/investigation-analysis-rules.md) — Type-specific analysis rules

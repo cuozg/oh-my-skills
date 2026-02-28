@@ -52,7 +52,7 @@ For costing standards and types, see [../unity-shared/references/costing-and-typ
 
 Register ALL plan elements after generating the document. Create parent → epic → sub-task hierarchy via `task_create`. Set `blockedBy` from dependency graph. Include metadata on every sub-task.
 
-See [references/task-system-integration.md](references/task-system-integration.md) for exact `task_create` patterns.
+See [../unity-shared/references/task-system-integration.md](../unity-shared/references/task-system-integration.md) for exact `task_create` patterns.
 
 ## Cross-Skill Pipeline
 

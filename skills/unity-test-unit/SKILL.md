@@ -18,6 +18,6 @@ Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensiv
 ## References
 
 - [Workflow](references/workflow.md) — test case categories, directory structure, edit/play mode guidance, class organization
-- [Test Patterns &amp; Organization](references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
-- [Assembly Definition Setup](references/test-assembly-setup.md) — `.asmdef` templates, compilation errors, test discovery
-- [TEST_EXAMPLES.md](references/TEST_EXAMPLES.md) — comprehensive examples: Edit/Play Mode, mocking, parameterized, event testing
+- [Test Patterns &amp; Organization](../unity-shared/references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
+- [Assembly Definition Setup](../unity-shared/../unity-shared/references/test-assembly-setup.md) — `.asmdef` templates, compilation errors, test discovery
+- [test-examples.md](../unity-shared/references/test-examples.md) — comprehensive examples: Edit/Play Mode, mocking, parameterized, event testing

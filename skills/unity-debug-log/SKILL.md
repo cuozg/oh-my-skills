@@ -9,7 +9,7 @@ Generate debug log snippets. Output the template. Nothing else.
 
 ## Output Format
 
-Use the response template from `references/debug-log-reference.md` for every response. No prose, no preamble — just the template.
+Use the response template from `../unity-shared/references/debug-log-reference.md` for every response. No prose, no preamble — just the template.
 
 ## Hard Constraints
 
@@ -17,7 +17,7 @@ Use the response template from `references/debug-log-reference.md` for every res
 - **No commits**: No git operations.
 - **#if UNITY_EDITOR**: Every Debug.Log MUST be wrapped in `#if UNITY_EDITOR` / `#endif`.
 - **[DBG] prefix**: Every log message starts with `[DBG]` for easy filtering.
-- **Color-coded**: Every log uses `<color=X>` tags per `references/debug-log-reference.md`.
+- **Color-coded**: Every log uses `<color=X>` tags per `../unity-shared/references/debug-log-reference.md`.
 
 ## Workflow
 
@@ -34,4 +34,4 @@ Follow [workflow.md](references/workflow.md) — Parse → Read → Classify →
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 5-step generation workflow and tool selection
-- [debug-log-reference.md](references/debug-log-reference.md) — Color guide, format rules, response template
+- [debug-log-reference.md](../unity-shared/references/debug-log-reference.md) — Color guide, format rules, response template

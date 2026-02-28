@@ -53,4 +53,4 @@ Read [workflow.md](references/workflow.md) before starting any review.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 4-step review workflow with grep patterns, JSON format, and submit commands
-- [ASSET_PATTERNS.md](references/ASSET_PATTERNS.md) — Complete asset pattern catalog
+- [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog

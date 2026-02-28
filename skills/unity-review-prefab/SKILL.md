@@ -40,10 +40,10 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - If a subagent fails, log the error and continue with remaining results.
 - Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id` or modify source files.
-- Refer to [PREFAB_PATTERNS.md](references/PREFAB_PATTERNS.md) for the complete pattern catalog.
-- Refer to [parallel-review-workflow.md](references/parallel-review-workflow.md) for delegation details.
+- Refer to [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) for the complete pattern catalog.
+- Refer to [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) for delegation details.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 4-step review and submission workflow
-- [PREFAB_PATTERNS.md](references/PREFAB_PATTERNS.md) — Complete pattern catalog for prefab/scene review
-- [parallel-review-workflow.md](references/parallel-review-workflow.md) — Subagent delegation details
+- [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
+- [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) — Subagent delegation details

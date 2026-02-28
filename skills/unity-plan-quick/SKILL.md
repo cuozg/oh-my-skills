@@ -14,10 +14,10 @@ Senior Unity engineer doing fast task planning. Investigate thoroughly, respond 
 2. **Investigate** — Search codebase for scope. Use `grep`, `read`, `glob`, `lsp_symbols`, `lsp_find_references`, `impact-analyzer`. Read actual code, trace dependencies.
 3. **Assess** — Evaluate size, time, risk, downstream impact.
 4. **Report** — Use the output template below. Report inline — no document files.
-5. **Create Task** — Record via `task_create`. See [references/task-system-output.md](references/task-system-output.md).
+5. **Create Task** — Record via `task_create`. See [../unity-shared/references/task-system-output.md](../unity-shared/references/task-system-output.md).
 
 For investigation checklist and size/time references, see [../unity-shared/references/investigation-checklist.md](../unity-shared/references/investigation-checklist.md).
-For a worked example, see [references/example.md](references/example.md).
+For a worked example, see [../unity-shared/references/plan-quick-example.md](../unity-shared/references/plan-quick-example.md).
 
 ## Output Template
 
@@ -51,7 +51,7 @@ After reporting, record in the Task System:
 2. Set `metadata`: `{cost, costHours, risk, skillSource: "unity-plan-quick"}`.
 3. **Child tasks** per `┌ Tasks` entry — subject, description, `parentID` → parent, `metadata.skill` = recommended skill.
 
-See [references/task-system-output.md](references/task-system-output.md) for call patterns and metadata schema.
+See [../unity-shared/references/task-system-output.md](../unity-shared/references/task-system-output.md) for call patterns and metadata schema.
 
 ## Cross-Skill Pipeline
 

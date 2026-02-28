@@ -12,7 +12,7 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 - **READ-ONLY**: Never edit, add, or modify any project file. Analysis only.
 - **Never commit**: No git operations.
 - **ALWAYS output document**: Save analysis to `Documents/Debug/` directory.
-- **ALWAYS use template**: Follow `references/analysis-template.md` exactly.
+- **ALWAYS use template**: Follow `references/output-template.md` exactly.
 - **Multi-angle**: Investigate from at least 3 different angles before concluding.
 - **Multiple solutions**: ALWAYS propose at least 2 solutions, maximum 4. Let the user choose.
 
@@ -22,7 +22,7 @@ Follow [workflow.md](references/workflow.md) — Scope → Survey → Trace Forw
 
 ## Output
 
-Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the template in `references/analysis-template.md`.
+Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the template in `references/output-template.md`.
 
 ## Rules
 
@@ -37,4 +37,4 @@ Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the templat
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 9-step investigation workflow and tool selection
-- [analysis-template.md](references/analysis-template.md) — Output template for analysis documents
+- [output-template.md](references/output-template.md) — Output template for analysis documents

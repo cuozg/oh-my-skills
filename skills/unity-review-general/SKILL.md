@@ -27,7 +27,7 @@ Final review comment pushed to GitHub PR with approval decision. Aggregates prio
 | CLEAN | — | No issues from any reviewer | `APPROVE` |
 
 
-Full decision tree and severity classification: [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md).
+Full decision tree and severity classification: [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md).
 
 ## Workflow
 
@@ -44,9 +44,9 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - Correctness check: verify PR logic matches stated intent from PR title/body.
 - Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id` or modify source files.
-- Refer to [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md) for the complete checklist catalog.
+- Refer to [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) for the complete checklist catalog.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 5-step review and approval workflow
-- [APPROVAL_CRITERIA.md](references/APPROVAL_CRITERIA.md) — Decision tree and severity classification
-- [GENERAL_CHECKLISTS.md](references/GENERAL_CHECKLISTS.md) — Complete checklist catalog
+- [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
+- [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) — Complete checklist catalog

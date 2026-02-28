@@ -47,4 +47,4 @@ Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py`
 ./skills/unity-shared/scripts/review/post_review.py <pr_number> /tmp/review-code-pr.json
 ```
 
-Fallback (merged/closed): handled automatically by `post_review.py`. See [review-troubleshooting.md](review-troubleshooting.md).
+Fallback (merged/closed): handled automatically by `post_review.py`. See [review-troubleshooting.md](../../unity-shared/references/review-troubleshooting.md).

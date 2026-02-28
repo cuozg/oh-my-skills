@@ -15,8 +15,8 @@ Production-ready Unity Editor C# scripts following the Templates below.
 
 - [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md)
 - [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- [EDITOR_SCRIPTING_PATTERNS.md](references/EDITOR_SCRIPTING_PATTERNS.md)
-- [EDITOR_UI_TOOLKIT_GUIDE.md](references/EDITOR_UI_TOOLKIT_GUIDE.md)
+- [editor-scripting-patterns.md](../unity-shared/references/editor-scripting-patterns.md)
+- [editor-ui-toolkit-guide.md](../unity-shared/references/editor-ui-toolkit-guide.md)
 
 Read the relevant template first, then populate all sections.
 

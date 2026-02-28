@@ -53,4 +53,4 @@ Read [workflow.md](references/workflow.md) before starting any review.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 6-step review workflow with JSON format and submit commands
-- [ARCHITECTURE_PATTERNS.md](references/ARCHITECTURE_PATTERNS.md) — Complete architecture pattern catalog
+- [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog

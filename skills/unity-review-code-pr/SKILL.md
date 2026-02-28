@@ -16,7 +16,7 @@ Load shared review resources from `unity-shared`:
 
 ## Output
 
-Review comments pushed to GitHub PR via API per [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md).
+Review comments pushed to GitHub PR via API per [output-template.md](references/output-template.md).
 
 ## Workflow
 
@@ -25,8 +25,8 @@ Read [workflow.md](references/workflow.md) before starting any review.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 6-step PR review workflow
-- [REVIEW_TEMPLATE.md](references/REVIEW_TEMPLATE.md) — GitHub API review comment format
-- [review-troubleshooting.md](references/review-troubleshooting.md) — Merged/closed PR fallback handling
+- [output-template.md](references/output-template.md) — GitHub API review comment format
+- [review-troubleshooting.md](../unity-shared/references/review-troubleshooting.md) — Merged/closed PR fallback handling
 
 ## Rules (PR-Specific)
 

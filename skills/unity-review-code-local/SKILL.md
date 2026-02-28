@@ -16,7 +16,7 @@ Load shared review resources from `unity-shared`:
 
 ## Output
 
-1. **Short inline comments** in C# source files — per [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md).
+1. **Short inline comments** in C# source files — per [output-template.md](references/output-template.md).
 2. **Code fixes** applied by `unity-code-quick` background tasks — one task per finding (🔴/🟡).
 3. User reviews the combined diff (comments + fixes) before committing.
 
@@ -27,7 +27,7 @@ Read [workflow.md](references/workflow.md) before starting any review.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — 5-step review workflow
-- [INLINE_COMMENT_FORMAT.md](references/INLINE_COMMENT_FORMAT.md) — Comment format, severity tokens, delegation markers
+- [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
 
 ## Rules (Local-Specific)
 

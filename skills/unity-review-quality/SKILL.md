@@ -21,16 +21,16 @@ Comprehensive HTML quality report. Read-only — never modifies project files.
 
 ## Severity Classification & Grading
 
-See [grading.md](references/grading.md) for severity levels (Critical/High/Medium/Low) and project grading criteria (A–F).
+See [quality-grading.md](../unity-shared/references/quality-grading.md) for severity levels (Critical/High/Medium/Low) and project grading criteria (A–F).
 
 ## Load References (ALL — full audit)
 
 Load ALL reference checklists before starting:
-- [ARCHITECTURE_CHECKLIST.md](references/ARCHITECTURE_CHECKLIST.md) — architecture, design patterns, SOLID, coupling
-- [PERFORMANCE_CHECKLIST.md](references/PERFORMANCE_CHECKLIST.md) — CPU, GPU, memory, GC, assets
-- [CODE_QUALITY_CHECKLIST.md](references/CODE_QUALITY_CHECKLIST.md) — code quality, conventions, anti-patterns, testing
-- [UNITY_BEST_PRACTICES.md](references/UNITY_BEST_PRACTICES.md) — lifecycle, serialization, scenes, prefabs, assets
-- [PROJECT_HEALTH_CHECKLIST.md](references/PROJECT_HEALTH_CHECKLIST.md) — project structure, settings, packages, build config, security
+- [quality-architecture-checklist.md](../unity-shared/references/quality-architecture-checklist.md) — architecture, design patterns, SOLID, coupling
+- [quality-performance-checklist.md](../unity-shared/references/quality-performance-checklist.md) — CPU, GPU, memory, GC, assets
+- [quality-code-checklist.md](../unity-shared/references/quality-code-checklist.md) — code quality, conventions, anti-patterns, testing
+- [quality-unity-best-practices.md](../unity-shared/references/quality-unity-best-practices.md) — lifecycle, serialization, scenes, prefabs, assets
+- [quality-project-health-checklist.md](../unity-shared/references/quality-project-health-checklist.md) — project structure, settings, packages, build config, security
 
 ## Workflow & Review Principles
 

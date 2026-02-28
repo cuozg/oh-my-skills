@@ -18,5 +18,5 @@ Read [workflow.md](references/workflow.md) for diagram types, examples, and best
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — Diagram types, workflow steps, examples, best practices
-- [MERMAID_PATTERNS.md](references/MERMAID_PATTERNS.md) — Chart patterns for all diagram types
+- [mermaid-patterns.md](../unity-shared/references/mermaid-patterns.md) — Chart patterns for all diagram types
 - [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md) — Output template

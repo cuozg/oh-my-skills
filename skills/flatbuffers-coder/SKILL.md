@@ -13,9 +13,9 @@ Schema requirements (table name, fields, types, key). Optional: JSON data, exist
 
 ## Key Rules
 
-See [schema-pattern.md](references/schema-pattern.md) for schema design rules and best practices.
+See [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) for schema design rules and best practices.
 
 ## Reference Files
-- [schema-pattern.md](references/schema-pattern.md) — Schema pattern + best practices
+- [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) — Schema pattern + best practices
 - [workflow.md](references/workflow.md) — Workflow steps + file locations
 - [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md) — Schema template
