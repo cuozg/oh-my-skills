@@ -10,23 +10,30 @@ Deep logic review for local project. Add review comments into C# source files, t
 ## Shared References
 
 Load shared review resources from `unity-shared`:
- [common-rules.md](../unity-shared/references/common-rules.md) — Shared review rules + input-to-command mapping + severity
- [review-engine.md](../unity-shared/references/review-engine.md) — Review logic references to load
- [common-rules.md](../unity-shared/references/common-rules.md) — Shared review rules
 
+```python
+read_skill_file("unity-shared", "references/common-rules.md")
+read_skill_file("unity-shared", "references/review-deep-workflow.md")
+read_skill_file("unity-shared", "references/review-gates.md")
+read_skill_file("unity-shared", "references/review-logic-data.md")
+read_skill_file("unity-shared", "references/review-csharp.md")
+read_skill_file("unity-shared", "references/review-perf.md")
+read_skill_file("unity-shared", "references/review-unity.md")
+read_skill_file("unity-shared", "references/review-architecture-patterns.md")
+```
 ## Output
 
 1. **Short inline comments** in C# source files — per [output-template.md](references/output-template.md).
-2. **Code fixes** applied by `unity-code-quick` background tasks — one task per finding (🔴/🟡).
+2. **Code fixes** delegated to `unity-code-quick` background tasks — one task per 🔴/🟡 finding. Reviewer never applies fixes directly.
 3. User reviews the combined diff (comments + fixes) before committing.
 
 ## Workflow
 
 Load references, then follow the 5-step workflow: Fetch → Read → Investigate → Review → Comment+Delegate.
+
 ## Reference Files
 - [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
-- [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
-- workflow.md — 5-step local code review workflow
+- [workflow.md](references/workflow.md) — 5-step local code review workflow
 
 ## Rules (Local-Specific)
 
