@@ -30,8 +30,6 @@ Severity labels are for categorization only. This skill always posts as `COMMENT
 ## Workflow
 
 Follow the 4-step workflow: Fetch PR & Filter → Parallel Review → Collect & Merge → Submit.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Rules
 
 - Only review `.prefab` and `.unity` files. Read full files, not just diffs.
@@ -44,6 +42,6 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - Refer to [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) for delegation details.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 4-step review and submission workflow
+- [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
 - [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
 - [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) — Subagent delegation details

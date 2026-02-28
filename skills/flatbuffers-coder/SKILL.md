@@ -17,5 +17,4 @@ See [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md
 
 ## Reference Files
 - [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) — Schema pattern + best practices
-- [workflow.md](references/workflow.md) — Workflow steps + file locations
 - [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md) — Schema template

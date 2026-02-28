@@ -30,7 +30,3 @@ Structured report per [INSTALL_REPORT.md](assets/templates/INSTALL_REPORT.md). R
 6. Handle failures — diagnose, try next method, search alternatives, direct binary, source build
 7. Report results — version, path, post-install steps or all failure details
 
-**Full workflow:** [workflow.md](references/workflow.md)
-
-## Reference Files
-- [workflow.md](references/workflow.md) — Step-by-step installation workflow and package manager reference

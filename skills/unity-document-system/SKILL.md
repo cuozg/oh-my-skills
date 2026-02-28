@@ -10,7 +10,6 @@ Read-only. Investigate and document — never modify project code.
 **Input**: System/feature/class to document + optional scope boundaries.
 **Output**: System document saved to `Documents/Systems/{SystemName}.md`.
 
-Load [workflow.md](references/workflow.md) for step-by-step workflow and tool selection.
 
 ## Rules
 

@@ -14,9 +14,7 @@ Comprehensive investigation report (markdown) with architecture diagrams, execut
 ## Workflow
 
 Follow the 5-step workflow: Scope → Discover → Analyze → Report → Summary.
-Read [workflow.md](references/workflow.md) for tool selection table and best practices.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — Steps, tool selection, best practices
 - [output-template.md](references/output-template.md) — Investigation report template
 - [investigation-analysis-rules.md](../unity-shared/references/investigation-analysis-rules.md) — Type-specific analysis rules

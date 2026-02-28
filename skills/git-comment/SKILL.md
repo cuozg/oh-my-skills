@@ -19,6 +19,3 @@ Amend the last commit with a generated message from diff analysis. Local only â€
 - **DO** verify the commit is not a merge commit from remote before amending
 - **DO** warn the user if the commit appears to belong to someone else
 
-## Reference Files
-
-- [workflow.md](references/workflow.md) â€” Commit message format, 5-step workflow, example, anti-patterns

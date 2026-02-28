@@ -18,7 +18,6 @@ description: "Deep investigation of Unity issues with exhaustive multi-angle ana
 
 ## Workflow
 
-Follow [workflow.md](references/workflow.md) — Scope → Survey → Trace Forward → Trace Backward → Cross-Cut → Root Cause → Impact → Solutions → Report.
 
 ## Output
 
@@ -36,5 +35,4 @@ Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the templat
 - Output the document. Do NOT just explain in conversation.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 9-step investigation workflow and tool selection
 - [output-template.md](references/output-template.md) — Output template for analysis documents

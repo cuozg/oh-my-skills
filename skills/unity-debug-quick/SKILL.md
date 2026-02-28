@@ -13,7 +13,6 @@ Use the Vercel-themed tree template from `references/output-template.md` for eve
 
 ## Workflow
 
-Follow [references/workflow.md](references/workflow.md) for the 7-step investigation flow (Parse → Read → Trace → Assess → Solve → Output → Fix Loop).
 
 
 Use [../unity-shared/references/debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) for tool choices and fix delegation workflow. Chain tools to build evidence. Stop once root cause is clear.
@@ -35,6 +34,5 @@ Use [../unity-shared/references/debug-fix-loop.md](../unity-shared/references/de
 
 ## Reference Files
 - [output-template.md](references/output-template.md) — Vercel-themed tree output template
-- [workflow.md](references/workflow.md) — 7-step investigation flow
 - [debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) — Tool selection + delegation workflow
  [common-fixes.md](../unity-shared/references/common-fixes.md) — Known fix patterns for common Unity errors

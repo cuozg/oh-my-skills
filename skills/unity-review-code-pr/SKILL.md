@@ -21,10 +21,8 @@ Review comments pushed to GitHub PR via API per [output-template.md](references/
 ## Workflow
 
 Load references, then follow the 6-step workflow: Fetch PR → Read → Investigate → Review → Build JSON → Submit.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Reference Files
-- [workflow.md](references/workflow.md) — 6-step PR review workflow
+- [output-template.md](references/output-template.md) — GitHub API review comment format
 - [output-template.md](references/output-template.md) — GitHub API review comment format
 - [review-troubleshooting.md](../unity-shared/references/review-troubleshooting.md) — Merged/closed PR fallback handling
 

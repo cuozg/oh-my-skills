@@ -13,11 +13,11 @@ Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensiv
 
 1. **Analyze**: Identify feature under test, list expected behaviors (happy path, edge cases, errors), define scope
 2. **Investigate**: Read target code, map public API, identify dependencies (singletons, MonoBehaviour refs, SOs), classify testability (pure logic → Edit Mode, lifecycle → Play Mode)
-3. **Generate**: Create test scripts per feature — cover all categories in [workflow.md](references/workflow.md), target 10+ test cases per class
+3. **Generate**: Create test scripts per feature — cover all categories, target 10+ test cases per class
 
 ## References
 
-- [Workflow](references/workflow.md) — test case categories, directory structure, edit/play mode guidance, class organization
+- [Test Patterns &amp; Organization](../unity-shared/references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
 - [Test Patterns &amp; Organization](../unity-shared/references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
 - [Assembly Definition Setup](../unity-shared/../unity-shared/references/test-assembly-setup.md) — `.asmdef` templates, compilation errors, test discovery
 - [test-examples.md](../unity-shared/references/test-examples.md) — comprehensive examples: Edit/Play Mode, mocking, parameterized, event testing

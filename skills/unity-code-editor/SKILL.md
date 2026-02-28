@@ -28,6 +28,3 @@ Read the relevant template first, then populate all sections.
 | AssetPostprocessor | Import automation |
 | MenuItem/Shortcut | Quick actions |
 
-## Workflow & Best Practices
-
-Follow [workflow.md](references/workflow.md) — Assess → Architect → Implement → Verify + key rules.

@@ -32,8 +32,6 @@ Full decision tree and severity classification: [review-approval-criteria.md](..
 ## Workflow
 
 Follow the 5-step workflow: Collect Prior Reviews → Fetch PR → Apply Checklists → Build JSON → Submit.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Rules
 
 - You are the **sole approver** — only this skill sets `APPROVE` or `REQUEST_CHANGES`. All other review skills (`unity-review-code-pr`, `unity-review-prefab`, `unity-review-asset`, `unity-review-architecture`) post as `COMMENT` only.
@@ -47,6 +45,6 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - Refer to [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) for the complete checklist catalog.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 5-step review and approval workflow
+- [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
 - [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
 - [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) — Complete checklist catalog

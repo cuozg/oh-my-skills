@@ -17,7 +17,6 @@ Deep investigation FIRST, then document. Do NOT draft from requirements alone.
 - Structure: Exact template from split parts `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION1.md` through `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION4.md`
 - **MANDATORY Sections**: Technical Design, Architecture Overview, Technical Approach, Risks, Implementation.
 
-Load [workflow.md](references/workflow.md) for step-by-step workflow, focus area mapping, and investigation checklist.
 
 ## Core Difference
 Unlike `unity-write-tdd` (drafts from specs), this skill **investigates the actual codebase first** to ensure the TDD reflects reality, dependencies, and constraints.

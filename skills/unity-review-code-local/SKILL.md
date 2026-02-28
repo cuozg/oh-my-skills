@@ -23,10 +23,8 @@ Load shared review resources from `unity-shared`:
 ## Workflow
 
 Load references, then follow the 5-step workflow: Fetch → Read → Investigate → Review → Comment+Delegate.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Reference Files
-- [workflow.md](references/workflow.md) — 5-step review workflow
+- [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
 - [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
 
 ## Rules (Local-Specific)

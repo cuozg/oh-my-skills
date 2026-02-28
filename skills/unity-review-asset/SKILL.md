@@ -42,8 +42,6 @@ Severity labels are for categorization only. This skill always posts as `COMMENT
 ## Workflow
 
 Follow the 4-step workflow: Fetch PR → Read & Apply Patterns → Build JSON → Submit.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Rules
 
 - Only review asset file types listed above. One issue = one comment.
@@ -52,5 +50,5 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - Never hardcode `commit_id` or modify source files.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 4-step review workflow with grep patterns, JSON format, and submit commands
+- [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog
 - [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog

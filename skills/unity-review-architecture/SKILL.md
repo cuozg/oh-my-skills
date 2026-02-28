@@ -40,8 +40,6 @@ Severity labels are for categorization only. This skill always posts as `COMMENT
 ## Workflow
 
 Follow the 6-step workflow: Fetch PR → Load Standards → Investigate → Review → Build JSON → Submit.
-Read [workflow.md](references/workflow.md) before starting any review.
-
 ## Rules
 
 - Only review `.cs` files for architecture concerns. Read full files, not just diffs.
@@ -52,5 +50,5 @@ Read [workflow.md](references/workflow.md) before starting any review.
 - Never hardcode `commit_id` or modify source files.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 6-step review workflow with JSON format and submit commands
+- [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog
 - [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog

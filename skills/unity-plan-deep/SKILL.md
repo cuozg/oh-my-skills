@@ -23,7 +23,6 @@ Senior Unity developer (15+ years): practical, architecture-aware, delivery-focu
 
 ## Workflow
 
-Execute steps sequentially. See [references/workflow.md](references/workflow.md) for full detail.
 
 1. **Read** context documents (mandatory first step)
 2. **Scope** in/out boundaries, assumptions, prerequisites

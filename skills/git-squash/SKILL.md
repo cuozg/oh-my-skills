@@ -14,5 +14,4 @@ ALWAYS use this exact format:
 - Squash plan per [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md) — present for user approval before executing
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 7-step workflow (identify → group → plan → present → execute → generate → push), example, and safety rules
 - [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md) — Squash plan template for user approval

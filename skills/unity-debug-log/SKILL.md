@@ -21,7 +21,6 @@ Use the response template from `../unity-shared/references/debug-log-reference.m
 
 ## Workflow
 
-Follow [workflow.md](references/workflow.md) — Parse → Read → Classify → Generate → Present.
 
 ## Rules
 
@@ -33,5 +32,4 @@ Follow [workflow.md](references/workflow.md) — Parse → Read → Classify →
 - Keep log messages concise — show the value, not a novel.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — 5-step generation workflow and tool selection
 - [debug-log-reference.md](../unity-shared/references/debug-log-reference.md) — Color guide, format rules, response template

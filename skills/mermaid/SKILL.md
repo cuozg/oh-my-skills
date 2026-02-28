@@ -14,9 +14,7 @@ Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](assets
 ## Workflow
 
 Follow the diagram workflow: Analyze → Choose type → Author → Validate → Embed.
-Read [workflow.md](references/workflow.md) for diagram types, examples, and best practices.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — Diagram types, workflow steps, examples, best practices
 - [mermaid-patterns.md](../unity-shared/references/mermaid-patterns.md) — Chart patterns for all diagram types
 - [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md) — Output template

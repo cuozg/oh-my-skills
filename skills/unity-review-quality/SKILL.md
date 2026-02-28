@@ -32,6 +32,3 @@ Load ALL reference checklists before starting:
 - [quality-unity-best-practices.md](../unity-shared/references/quality-unity-best-practices.md) — lifecycle, serialization, scenes, prefabs, assets
 - [quality-project-health-checklist.md](../unity-shared/references/quality-project-health-checklist.md) — project structure, settings, packages, build config, security
 
-## Workflow & Review Principles
-
-See [workflow.md](references/workflow.md) for the 7-step review workflow (discovery → investigation → report → summary) and review principles.

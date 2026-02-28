@@ -20,7 +20,7 @@ Comprehensive test case document in HTML format covering all test scenarios for 
 
 ## References
 
-- [Workflow](references/workflow.md) — investigation questions, test sections, priority definitions, template features, quality checklist
+- `../unity-shared/references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP
 - `../unity-shared/references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP
 - `../unity-shared/references/test-case-patterns.md` — ID conventions, writing style
 - `assets/test-case-template.html` — dark-themed responsive template

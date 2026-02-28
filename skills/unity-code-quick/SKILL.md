@@ -14,5 +14,4 @@ Generate production-ready Unity C# code fast. No lengthy investigation — recei
 
 | File | Purpose |
 |------|---------|
-| [workflow.md](references/workflow.md) | Orient → Generate → Verify steps, pattern table, quick rules, anti-patterns |
 | [unity-shared](../unity-shared/SKILL.md) | Coding standards and quality gates (loaded during generation) |

@@ -17,6 +17,3 @@ Generate clean commit messages from staged changes. Local only — never pushes.
 - **NEVER** include code snippets in message
 - **DO** use imperative mood, bullet points, verify branch first
 
-## Reference Files
-
-- [workflow.md](references/workflow.md) — Commit message format, 4-step workflow, examples, anti-patterns

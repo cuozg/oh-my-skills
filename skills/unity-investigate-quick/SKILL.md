@@ -13,8 +13,6 @@ Use the Vercel-themed tree template from `references/output-template.md` for eve
 ## Workflow
 
 Follow the 3-step workflow: Parse → Find → Reply.
-Read [workflow.md](references/workflow.md) for tool selection table and rules.
 
 ## Reference Files
-- [workflow.md](references/workflow.md) — Steps, tool selection, rules
 - [output-template.md](references/output-template.md) — Vercel-themed tree output format
