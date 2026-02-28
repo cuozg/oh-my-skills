@@ -20,13 +20,13 @@ For any task with 2+ files, create tasks and outline:
 
 Load and follow `unity-code-shared` strictly for all coding rules, anti-patterns, and quality gates.
 
-Every new script follows [SCRIPT_TEMPLATE.md](../../unity-code-shared/references/SCRIPT_TEMPLATE.md).
+Every new script follows [template.md](../../unity-code-shared/references/template.md).
 
 ### Code Patterns
 Load the relevant pattern file when implementing:
 
-- [patterns-core.md](../../unity-code-shared/references/patterns-core.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
-- [patterns-advanced.md](../../unity-code-shared/references/patterns-advanced.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
+ [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
+ [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
 
 ## Phase 3: Verify
 1. `lsp_diagnostics` on every changed file — zero errors

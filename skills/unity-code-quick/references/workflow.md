@@ -14,15 +14,15 @@ Load and follow `unity-code-shared` for all rules. Apply the matching pattern:
 
 | Need | Pattern Reference |
 |------|-------------------|
-| New service/class | [SCRIPT_TEMPLATE.md](../../unity-code-shared/references/SCRIPT_TEMPLATE.md) — Plain C# Service |
-| New MonoBehaviour | [SCRIPT_TEMPLATE.md](../../unity-code-shared/references/SCRIPT_TEMPLATE.md) — MonoBehaviour |
-| Service + events | [patterns-core.md](../../unity-code-shared/references/patterns-core.md) — Service with Events |
-| State container | [patterns-core.md](../../unity-code-shared/references/patterns-core.md) — State with Read-Only Interface |
-| View/UI component | [patterns-core.md](../../unity-code-shared/references/patterns-core.md) — MonoBehaviour View |
-| Async operations | [patterns-advanced.md](../../unity-code-shared/references/patterns-advanced.md) — UniTask |
-| State machine | [patterns-advanced.md](../../unity-code-shared/references/patterns-advanced.md) — State Machine |
-| SO config | [patterns-advanced.md](../../unity-code-shared/references/patterns-advanced.md) — ScriptableObject Config |
-| Lifecycle cleanup | [patterns-advanced.md](../../unity-code-shared/references/patterns-advanced.md) — Cleanup & CTS |
+| New service/class | [template.md](../../unity-code-shared/references/template.md) — Plain C# Service |
+| New MonoBehaviour | [template.md](../../unity-code-shared/references/template.md) — MonoBehaviour |
+| Service + events | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — Service with Events |
+| State container | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — State with Read-Only Interface |
+| View/UI component | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — MonoBehaviour View |
+| Async operations | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — UniTask |
+| State machine | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — State Machine |
+| SO config | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — ScriptableObject Config |
+| Lifecycle cleanup | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — Cleanup & CTS |
 
 **Quick rules** (from `unity-code-shared` priorities):
 - `sealed` classes, `readonly` fields, file-scoped namespaces

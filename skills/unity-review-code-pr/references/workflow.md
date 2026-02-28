@@ -26,11 +26,11 @@ For each changed `.cs` file, read the ENTIRE file (not just the diff). Logic bug
 
 ### 3. Deep Investigate (Parallel)
 
-Spawn explore agents per `deep-review-workflow.md`: call-site analysis, state flow tracing, data contract checks. Enforce `VERIFICATION_GATES.md` evidence rules.
+Spawn explore agents per `deep-workflow.md`: call-site analysis, state flow tracing, data contract checks. Enforce `gates.md` evidence rules.
 
 ### 4. Logic Review
 
-Apply all loaded review checklists + `deep-review-workflow.md` focus areas (control flow, state management, data flow, edge cases, Unity lifecycle, serialization safety, memory safety).
+Apply all loaded review checklists + `deep-workflow.md` focus areas (control flow, state management, data flow, edge cases, Unity lifecycle, serialization safety, memory safety).
 
 ### 5. Build `/tmp/review-code-pr.json`
 

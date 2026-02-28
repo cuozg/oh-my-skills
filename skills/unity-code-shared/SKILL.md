@@ -35,7 +35,7 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Debug.Log only in `#if UNITY_EDITOR` | Never in runtime code |
 | No logging in constructors | Keep constructors fast and side-effect free |
 
-**Full reference:** [quality-hygiene.md](references/csharp/quality-hygiene.md)
+**Full reference:** [hygiene.md](references/csharp/hygiene.md)
 
 ### Priority 2: Modern C# Patterns
 **Leverage modern C# for cleaner, safer, more expressive code.**
@@ -54,8 +54,8 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Global using directives | Common namespaces in one file |
 | File-scoped namespaces | One less indentation level |
 
-**Full reference:** [modern-csharp-features.md](references/csharp/modern-csharp-features.md)
-**LINQ patterns:** [linq-patterns.md](references/csharp/linq-patterns.md)
+**Full reference:** [modern-syntax.md](references/csharp/modern-syntax.md)
+**LINQ patterns:** [linq.md](references/csharp/linq.md)
 
 ### Priority 3: Unity Best Practices
 **Consistent architecture patterns for Unity development.**
@@ -68,7 +68,7 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Interface-based design | Depend on abstractions, not concrete implementations |
 | Single responsibility | One purpose per class; split when a class does too many things |
 
-**Full reference:** [unitask-patterns-part1.md](references/unity/unitask-patterns-part1.md) and [unitask-patterns-part2.md](references/unity/unitask-patterns-part2.md)
+**Full reference:** [unitask.md](references/unity/unitask.md)
 
 ### Priority 4: Performance & Review
 **Optimize hot paths, minimize allocations, enforce review checklists.**
@@ -84,15 +84,12 @@ All rules follow a 4-priority hierarchy. Higher priority = more important to enf
 | Use `NativeArray` for large data | Burst-compatible, no GC |
 
 **Full references:**
-- [performance-optimizations-part1.md](references/csharp/performance-optimizations-part1.md)
-- [performance-optimizations-part2.md](references/csharp/performance-optimizations-part2.md)
-- [architecture-review.md](references/review/architecture-review.md)
-- [csharp-quality.md](references/review/csharp-quality.md)
-- [performance-review.md](references/review/performance-review.md)
-- [unity-specifics.md](references/review/unity-specifics.md)
-
- [decision-trees.md](references/decision-trees.md) — Assembly structure, decision trees, quick reference guidance
- [reference-index.md](references/reference-index.md) — Complete index of C#, Unity, and review references
- [SCRIPT_TEMPLATE.md](references/SCRIPT_TEMPLATE.md) — Starting template for every new script (Plain C# Service + MonoBehaviour)
- [patterns-core.md](references/patterns-core.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
- [patterns-advanced.md](references/patterns-advanced.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
+ [perf-alloc.md](references/csharp/perf-alloc.md)
+ [architecture.md](references/review/architecture.md)
+ [csharp.md](references/review/csharp.md)
+ [perf.md](references/review/perf.md)
+ [unity.md](references/review/unity.md)
+[decisions.md](references/decisions.md) — Assembly structure, decision trees, quick reference guidance
+[template.md](references/template.md) — Starting template for every new script (Plain C# Service + MonoBehaviour)
+[patterns-service.md](references/patterns-service.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
+[patterns-async-state.md](references/patterns-async-state.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
