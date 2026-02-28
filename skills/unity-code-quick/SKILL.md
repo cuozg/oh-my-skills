@@ -15,3 +15,4 @@ Generate production-ready Unity C# code fast. No lengthy investigation — recei
 | File | Purpose |
 |------|---------|
 | [unity-shared](../unity-shared/SKILL.md) | Coding standards and quality gates (loaded during generation) |
+| workflow.md | Step-by-step code generation workflow |

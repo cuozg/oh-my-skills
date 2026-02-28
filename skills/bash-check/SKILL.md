@@ -29,3 +29,6 @@ Structured report per [CHECK_REPORT.md](assets/templates/CHECK_REPORT.md). Read 
 5. Manual review checklist (shebang, quoting, exit codes, portability)
 6. Report findings — categorize as Error / Warning / Info
 
+## Reference Files
+- workflow.md — Step-by-step validation workflow
+

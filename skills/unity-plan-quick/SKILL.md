@@ -70,3 +70,6 @@ For the full pipeline guide, see [../unity-shared/references/prometheus-pipeline
 
 - **OWNS**: Investigation, assessment, cost/risk/impact evaluation, task creation.
 - **Does NOT**: Create implementation plans, write code, generate documents, modify project files.
+
+## Reference Files
+- workflow.md — 5-step quick planning workflow

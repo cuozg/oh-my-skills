@@ -30,3 +30,4 @@ Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REP
 
 ## Reference Files
 - [patterns.md](../unity-shared/references/bash-patterns.md) — Performance, clarity, modern bash, and error handling patterns
+- workflow.md — Step-by-step optimization workflow

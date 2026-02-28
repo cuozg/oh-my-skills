@@ -16,3 +16,4 @@ Follow the 3-step workflow: Parse → Find → Reply.
 
 ## Reference Files
 - [output-template.md](references/output-template.md) — Vercel-themed tree output format
+- workflow.md — 3-step quick investigation workflow

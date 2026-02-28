@@ -19,3 +19,7 @@ Read-only. Investigate and document — never modify project code.
 - Explain **why + how**, not just what exists
 - Extension guides must be step-by-step and copy-paste ready
 - Bullet points over prose walls
+
+## Reference Files
+- workflow.md — 5-step documentation workflow
+- output-template.md — System document output template

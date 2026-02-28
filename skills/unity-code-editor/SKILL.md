@@ -28,3 +28,6 @@ Read the relevant template first, then populate all sections.
 | AssetPostprocessor | Import automation |
 | MenuItem/Shortcut | Quick actions |
 
+## Reference Files
+- workflow.md — 4-step editor code workflow
+

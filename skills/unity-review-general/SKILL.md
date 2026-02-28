@@ -48,3 +48,4 @@ Follow the 5-step workflow: Collect Prior Reviews → Fetch PR → Apply Checkli
 - [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
 - [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
 - [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) — Complete checklist catalog
+- workflow.md — 5-step general quality review workflow

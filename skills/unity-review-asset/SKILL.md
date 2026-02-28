@@ -52,3 +52,4 @@ Follow the 4-step workflow: Fetch PR → Read & Apply Patterns → Build JSON �
 ## Reference Files
 - [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog
 - [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog
+- workflow.md — 4-step asset review workflow

@@ -30,3 +30,6 @@ Structured report per [INSTALL_REPORT.md](assets/templates/INSTALL_REPORT.md). R
 6. Handle failures — diagnose, try next method, search alternatives, direct binary, source build
 7. Report results — version, path, post-install steps or all failure details
 
+## Reference Files
+- workflow.md — Step-by-step install workflow
+

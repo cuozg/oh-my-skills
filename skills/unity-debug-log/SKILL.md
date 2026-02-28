@@ -33,3 +33,4 @@ Use the response template from `../unity-shared/references/debug-log-reference.m
 
 ## Reference Files
 - [debug-log-reference.md](../unity-shared/references/debug-log-reference.md) — Color guide, format rules, response template
+- workflow.md — Log generation workflow

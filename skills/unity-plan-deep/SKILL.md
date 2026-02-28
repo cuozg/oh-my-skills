@@ -71,3 +71,6 @@ For full pipeline details, see [../unity-shared/references/prometheus-pipeline.m
 
 - **OWNS**: Investigation, planning, plan document, patches, task registration
 - **Does NOT**: Write gameplay code, modify scenes/prefabs, generate HTML, execute tasks
+
+## Reference Files
+- workflow.md — 7-step planning workflow

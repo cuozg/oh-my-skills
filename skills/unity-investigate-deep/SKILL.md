@@ -18,3 +18,4 @@ Follow the 5-step workflow: Scope → Discover → Analyze → Report → Summar
 ## Reference Files
 - [output-template.md](references/output-template.md) — Investigation report template
 - [investigation-analysis-rules.md](../unity-shared/references/investigation-analysis-rules.md) — Type-specific analysis rules
+- workflow.md — 5-step investigation workflow

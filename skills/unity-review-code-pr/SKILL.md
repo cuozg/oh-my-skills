@@ -25,6 +25,7 @@ Load references, then follow the 6-step workflow: Fetch PR → Read → Investig
 - [output-template.md](references/output-template.md) — GitHub API review comment format
 - [output-template.md](references/output-template.md) — GitHub API review comment format
 - [review-troubleshooting.md](../unity-shared/references/review-troubleshooting.md) — Merged/closed PR fallback handling
+- workflow.md — 6-step PR code review workflow
 
 ## Rules (PR-Specific)
 

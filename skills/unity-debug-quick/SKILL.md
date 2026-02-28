@@ -36,3 +36,4 @@ Use [../unity-shared/references/debug-fix-loop.md](../unity-shared/references/de
 - [output-template.md](references/output-template.md) — Vercel-themed tree output template
 - [debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) — Tool selection + delegation workflow
  [common-fixes.md](../unity-shared/references/common-fixes.md) — Known fix patterns for common Unity errors
+- workflow.md — 7-step debug workflow

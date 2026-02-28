@@ -18,3 +18,4 @@ See [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md
 ## Reference Files
 - [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) — Schema pattern + best practices
 - [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md) — Schema template
+- workflow.md — FlatBuffers pipeline workflow

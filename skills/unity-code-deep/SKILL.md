@@ -18,3 +18,4 @@ Follow the 4-phase workflow: Understand → Plan → Implement → Verify.
  [template.md](../unity-shared/references/template.md) — Starting template for every new script
  [patterns-service.md](../unity-shared/references/patterns-service.md) — Service, State, MonoBehaviour patterns
  [patterns-async-state.md](../unity-shared/references/patterns-async-state.md) — Async, StateMachine, SO Config, Cleanup
+ workflow.md — 4-phase implementation workflow

@@ -11,7 +11,8 @@ Commit range (`start..end`), count (`-n`), or PR number. Optional: grouping stra
 
 ## Output
 ALWAYS use this exact format:
-- Squash plan per [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md) — present for user approval before executing
+- Squash plan per [output-template.md](references/output-template.md) — present for user approval before executing
 
 ## Reference Files
-- [SQUASH_PLAN.md](assets/templates/SQUASH_PLAN.md) — Squash plan template for user approval
+- [output-template.md](references/output-template.md) — Squash plan template for user approval
+- workflow.md — Step-by-step squash workflow

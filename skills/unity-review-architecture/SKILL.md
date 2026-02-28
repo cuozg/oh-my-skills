@@ -52,3 +52,4 @@ Follow the 6-step workflow: Fetch PR → Load Standards → Investigate → Revi
 ## Reference Files
 - [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog
 - [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog
+- workflow.md — 6-step architecture review workflow

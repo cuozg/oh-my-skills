@@ -36,3 +36,4 @@ Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the templat
 
 ## Reference Files
 - [output-template.md](references/output-template.md) — Output template for analysis documents
+- workflow.md — 9-step deep investigation workflow

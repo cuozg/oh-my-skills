@@ -69,3 +69,6 @@ For the full Prometheus pipeline context, see [../unity-shared/references/promet
 
 - **OWNS**: Investigation, requirement analysis, epic/task breakdown, estimation, risk, patches
 - **Does NOT**: Create tasks in Task System, execute plans, modify source code
+
+## Reference Files
+- workflow.md — 10-step detail planning workflow

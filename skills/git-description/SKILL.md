@@ -11,8 +11,8 @@ GitHub pull request URL (e.g., `https://github.com/org/repo/pull/123`) or PR num
 
 ## Output
 
-PR description per [PR_DESCRIPTION_TEMPLATE.md](assets/templates/PR_DESCRIPTION_TEMPLATE.md), applied directly to GitHub via `gh pr edit`. See [EXAMPLE_OUTPUT.md](assets/templates/EXAMPLE_OUTPUT.md) for format reference.
+PR description per [output-template.md](references/output-template.md), applied directly to GitHub via `gh pr edit`.
 
 ## Reference Files
-- [PR_DESCRIPTION_TEMPLATE.md](assets/templates/PR_DESCRIPTION_TEMPLATE.md) — PR description template
-- [EXAMPLE_OUTPUT.md](assets/templates/EXAMPLE_OUTPUT.md) — Example output
+- [output-template.md](references/output-template.md) — PR description template
+- [workflow.md](references/workflow.md) — PR description generation workflow

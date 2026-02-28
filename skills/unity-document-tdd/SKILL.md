@@ -27,3 +27,6 @@ Unlike `unity-write-tdd` (drafts from specs), this skill **investigates the actu
 - **Concrete Implementation**: Code patterns, specific class names, file paths.
 - **Verifiable**: Testing strategy includes unit/integration/manual cases.
 - **Complete**: No "TODO" or "TBD" sections; all 14 sections filled.
+
+## Reference Files
+- workflow.md — 5-step TDD workflow

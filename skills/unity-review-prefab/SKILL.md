@@ -45,3 +45,4 @@ Follow the 4-step workflow: Fetch PR & Filter → Parallel Review → Collect & 
 - [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
 - [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
 - [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) — Subagent delegation details
+- workflow.md — 4-step prefab review workflow

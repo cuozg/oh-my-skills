@@ -26,6 +26,7 @@ Load references, then follow the 5-step workflow: Fetch → Read → Investigate
 ## Reference Files
 - [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
 - [output-template.md](references/output-template.md) — Comment format, severity tokens, delegation markers
+- workflow.md — 5-step local code review workflow
 
 ## Rules (Local-Specific)
 
