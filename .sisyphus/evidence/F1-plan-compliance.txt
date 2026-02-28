@@ -1,0 +1,150 @@
+===============================================================================
+F1 — PLAN COMPLIANCE AUDIT
+Date: 2026-02-28
+Plan: .sisyphus/plans/skill-refactor-combined.md
+===============================================================================
+
+=== MUST HAVE CHECKS (9 items) ===
+
+[1] All 9 shared skill directories exist with valid SKILL.md
+    Command: ls -d skills/unity-{review,investigate,code,debug,document,test,plan}-shared skills/git-shared skills/bash-shared | wc -l
+    Result: 9
+    Directories: bash-shared, git-shared, unity-code-shared, unity-debug-shared,
+                 unity-document-shared, unity-investigate-shared, unity-plan-shared,
+                 unity-review-shared, unity-test-shared
+    All have valid SKILL.md: YES
+    VERDICT: ✅ PASS
+
+[2] Zero duplicate scripts (same MD5)
+    Command: find skills/ -name "*.py" -not -name "test_*" -not -name "__*" -not -name "conftest*" -exec md5 -r {} + | sort -k1,1 | awk '{print $1}' | uniq -d
+    Result: (empty — no duplicates)
+    VERDICT: ✅ PASS
+
+[3] All read_skill_file("unity-code-standards"...) updated
+    Command: grep -r 'unity-code-standards' skills/ README.md --include='*.md' | wc -l
+    Result: 0
+    VERDICT: ✅ PASS
+
+[4] All use_skill("unity-code-standards") updated
+    Command: (same grep — 0 matches)
+    Result: 0
+    VERDICT: ✅ PASS
+
+[5] All hardcoded paths to post_review.py point to unity-review-shared
+    Check 1: grep -rn 'scripts/post_review' skills/unity-review-*/SKILL.md
+    Result: Only skills/unity-review-shared/SKILL.md:13 references it (as the canonical location)
+    Check 2: grep in all 5 review skills' references/workflow.md
+    Result: All 5 workflow.md files reference ./skills/unity-review-shared/scripts/post_review.py
+    - unity-review-architecture/references/workflow.md:49
+    - unity-review-asset/references/workflow.md:44
+    - unity-review-code-pr/references/workflow.md:47
+    - unity-review-general/references/workflow.md:46
+    - unity-review-prefab/references/workflow.md:45
+    Check 3: No consumer skill has a local scripts/post_review.py path
+    VERDICT: ✅ PASS
+
+[6] Every consumer skill (28 actual, plan says 29) has references/workflow.md
+    Count verified: 28 / 28 consumer skills have references/workflow.md
+    Skills verified: bash-check, bash-install, bash-optimize, flatbuffers-coder,
+                     git-comment, git-commit, git-description, git-squash, mermaid,
+                     unity-code-deep, unity-code-editor, unity-code-quick,
+                     unity-debug-deep, unity-debug-log, unity-debug-quick,
+                     unity-investigate-quick, unity-investigate-deep,
+                     unity-review-architecture, unity-review-asset,
+                     unity-review-code-local, unity-review-code-pr,
+                     unity-review-general, unity-review-prefab, unity-review-quality,
+                     unity-document-system, unity-document-tdd,
+                     unity-test-unit, unity-test-case
+    NOTE: Plan says "29 total" but task definitions (T10-T25) list exactly 28 unique
+          consumer skills. The plan description says "28 listed + mermaid = 29" but
+          mermaid IS in the 28-item list. This is a plan counting error, not impl gap.
+    VERDICT: ✅ PASS (28/28 — all plan-defined consumer skills covered)
+
+[7] Content MOVED not rewritten (spot check)
+    Spot-checked: bash-check, git-commit, unity-debug-quick workflow.md files
+    - bash-check: Has structured workflow sections (Identify → Select → Validate → Report)
+    - git-commit: Has commit message format template with code fence examples
+    - unity-debug-quick: Has workflow steps matching SKILL.md diagnostic approach
+    Content style consistent with original SKILL.md content extraction
+    VERDICT: ✅ PASS (spot check confirms move, not rewrite)
+
+[8] Unified tracing module exists
+    Command: test -f skills/unity-investigate-shared/scripts/trace_unified.py
+    Result: EXISTS
+    VERDICT: ✅ PASS
+
+[9] trace_unified.py has 3 modes
+    Command: grep -c 'def.*logic\|def.*system\|def.*architecture' skills/unity-investigate-shared/scripts/trace_unified.py
+    Result: 9 (multiple functions per mode — _get_trace_logic, _run_logic, _get_trace_system, _run_system, _get_trace_architecture, _run_architecture + lazy loaders)
+    CLI subcommands: logic, system, architecture — all present
+    VERDICT: ✅ PASS
+
+MUST HAVE SUMMARY: 9/9 PASS
+
+===============================================================================
+
+=== MUST NOT HAVE CHECKS (7 items) ===
+
+[1] skill-creator NOT modified
+    Command: git diff skills/skill-creator/ | wc -l
+    Result: 0
+    VERDICT: ✅ PASS
+
+[2] unity-plan-shared/quick/deep/detail NOT modified
+    Command: git diff skills/unity-plan-shared/ skills/unity-plan-quick/ skills/unity-plan-deep/ skills/unity-plan-detail/ | wc -l
+    Result: 0
+    VERDICT: ✅ PASS
+
+[3] No run_skill_script references in SKILL.md files
+    Command: grep -r 'run_skill_script' skills/*/SKILL.md | wc -l
+    Result: 0
+    VERDICT: ✅ PASS
+
+[4] Reference files NOT exceed 100L
+    Command: find skills/ -path '*/references/*.md' -exec wc -l {} + | awk '$1 >= 100 && !/total/' | wc -l
+    Result: 0
+    Top files: 99L (parallel-review-workflow.md), 98L (3 files) — all under limit
+    VERDICT: ✅ PASS
+
+[5] SKILL.md files NOT exceed 100L (except skill-creator)
+    Command: wc -l skills/*/SKILL.md | awk '$1 >= 100 && $2 !~ /skill-creator/ && !/total/' | wc -l
+    Result: 0
+    Top files: unity-code-shared (98L), unity-plan-deep (74L) — all under limit
+    skill-creator: 265L (excluded as expected)
+    VERDICT: ✅ PASS
+
+[6] No references/workflow.md for *-shared skills
+    Checked: unity-review-shared, unity-review-code-shared, unity-investigate-shared,
+             unity-code-shared, unity-debug-shared, unity-document-shared,
+             unity-test-shared, unity-plan-shared, git-shared, bash-shared
+    Result: None have references/workflow.md
+    VERDICT: ✅ PASS
+
+[7] No empty scripts dirs
+    Command: find skills/ -type d -name "scripts" -empty | wc -l
+    Result: 0
+    VERDICT: ✅ PASS
+
+MUST NOT HAVE SUMMARY: 7/7 PASS
+
+===============================================================================
+
+=== ADDITIONAL CHECKS ===
+
+Evidence Files:
+    All 32 expected evidence files present: task-1 through task-29, F2, F3, F4
+    Result: 32/32 found
+    VERDICT: ✅ PASS
+
+Pytest Suites:
+    Command: python3 -m pytest skills/unity-review-shared/scripts/tests/ skills/unity-investigate-shared/scripts/tests/ skills/unity-plan-shared/scripts/tests/ -q
+    Result: 102 passed in 1.68s
+    VERDICT: ✅ PASS
+
+===============================================================================
+
+FINAL VERDICT:
+
+Must Have [9/9] | Must NOT Have [7/7] | Evidence Files [32/32] | Tests [PASS — 102/102] | VERDICT: APPROVE
+
+===============================================================================
