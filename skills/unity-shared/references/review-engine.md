@@ -7,6 +7,6 @@ read_skill_file("unity-shared", "references/review-logic-data.md")
 read_skill_file("unity-shared", "references/review-csharp.md")
 read_skill_file("unity-shared", "references/review-perf.md")
 read_skill_file("unity-shared", "references/review-unity.md")
-read_skill_file("unity-shared", "references/review-architecture.md")
+read_skill_file("unity-shared", "references/review-architecture-patterns.md")
 ```
 These provide the review focus areas, verification gates, and checklists that both PR and local reviews use.

@@ -5,7 +5,6 @@ Load shared review engine and common rules from `unity-shared`:
 ```python
 read_skill_file("unity-shared", "references/review-engine.md")
 read_skill_file("unity-shared", "references/common-rules.md")
-read_skill_file("unity-shared", "references/tool-usage.md")
 ```
 
 ## Workflow

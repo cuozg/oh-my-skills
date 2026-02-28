@@ -51,13 +51,5 @@
 - [ ] `CancellationTokenSource` disposed when no longer needed
 - [ ] Static collections cleared on scene transitions
 
-### GC Optimization
-- [ ] `struct` for small, immutable value types
-- [ ] `readonly record struct` for signal/event data
-- [ ] `IEquatable<T>` implemented on structs used as dictionary keys
-- [ ] `ArrayPool<T>.Shared` for temporary arrays
-- [ ] No boxing of structs (use generic methods/collections)
-- [ ] `Span<T>` / `ReadOnlySpan<T>` for temporary slicing
-- [ ] Delegate caching for repeated callbacks
 
-Continue in [perf-render.md](perf-render.md) for Rendering, Async/Threading, Animation, UI, and Profiling sections.
+See [csharp-perf.md](csharp-perf.md) for GC optimization patterns (struct vs class, ArrayPool, Span, delegate caching).

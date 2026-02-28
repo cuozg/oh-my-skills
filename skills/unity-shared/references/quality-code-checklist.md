@@ -18,14 +18,7 @@
 - [ ] Proper access modifiers (not everything public)
 - [ ] `sealed` on classes not designed for inheritance
 
-### Naming Conventions
-- [ ] PascalCase for public methods, properties, classes, enums
-- [ ] camelCase for private fields, local variables, parameters
-- [ ] `_camelCase` or `m_camelCase` for private fields (consistent within project)
-- [ ] `I` prefix for interfaces
-- [ ] No abbreviations except widely understood ones (UI, ID, HP)
-- [ ] Boolean names read as questions: `isReady`, `hasItem`, `canMove`
-- [ ] Event handlers named `On[Event]`: `OnPlayerDied`, `OnItemCollected`
+See [csharp-hygiene.md](csharp-hygiene.md) for canonical naming conventions.
 
 ## Anti-Patterns
 
@@ -58,16 +51,8 @@
 | TODO/FIXME/HACK without ticket reference | Grep for markers | Add ticket or resolve |
 | Excessive null checks cascading | `if (x != null && x.y != null && ...)` | Null Object pattern or restructure |
 
-## Error Handling
+See [review-csharp.md](review-csharp.md) § Exception Handling for error handling checklist.
 
-- [ ] No empty catch blocks — every catch either handles, logs, or rethrows
-- [ ] Specific exception types caught (not bare `catch (Exception)`)
-- [ ] Error paths return meaningful feedback (not silent failure)
-- [ ] Network/IO operations have timeout and retry logic
-- [ ] User-facing errors are localized and helpful
-- [ ] Debug.LogError used for actual errors, not flow control
-- [ ] `try/finally` or `using` for resource cleanup
-- [ ] Async error handling: no `async void` except Unity event handlers
 
 ## Testing
 

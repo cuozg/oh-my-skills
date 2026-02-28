@@ -21,7 +21,7 @@ Comprehensive HTML quality report. Read-only — never modifies project files.
 
 ## Severity Classification & Grading
 
-See [quality-grading.md](../unity-shared/references/quality-grading.md) for severity levels (Critical/High/Medium/Low) and project grading criteria (A–F).
+See [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) for severity levels (Critical/High/Medium/Low), grading criteria (A–F), and approval gates.
 
 ## Load References (ALL — full audit)
 

@@ -83,5 +83,3 @@
 - [ ] Trigger vs Collider used correctly
 - [ ] `Physics.SyncTransforms()` called if modifying transforms in physics callbacks
 - [ ] No `MovePosition` / `AddForce` in `Update()` (use `FixedUpdate()`)
-
-Continue in [unity-platform.md](unity-platform.md) for Camera, Audio, DontDestroyOnLoad, Editor, Platform, and Anti-Patterns sections.

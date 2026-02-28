@@ -83,12 +83,5 @@ public class Player
 }
 ```
 
-## Span & Using Declarations
-
-```csharp
-Span<int> temp = stackalloc int[16];  // Zero heap allocation
-using FileStream stream = new(path, FileMode.Open);  // Auto-disposed at scope end
-```
-
 ## Quick Reference
-Pattern Matching (type-safe branching) · Records (immutable value equality) · Init-Only/Required (compile-time safety) · Global Using (less boilerplate) · File-Scoped Namespace (cleaner structure) · Target-Typed new (no type redundancy) · Static Local Functions (zero-alloc helpers) · Span/stackalloc (stack allocation)
+Pattern Matching (type-safe branching) · Records (immutable value equality) · Init-Only/Required (compile-time safety) · Global Using (less boilerplate) · File-Scoped Namespace (cleaner structure) · Target-Typed new (no type redundancy) · Static Local Functions (zero-alloc helpers)

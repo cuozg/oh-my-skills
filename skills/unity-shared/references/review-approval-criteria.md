@@ -51,3 +51,13 @@ Clean                ──────▶  ✅ APPROVE
 - **Pre-existing issues** → Only flag if the PR makes them worse or touches the affected code. Note: "Pre-existing, surfaced by this change."
 - **Partial fix is OK** → If a PR fixes 3 of 5 issues, approve the fix. File a follow-up for the remaining 2.
  **Unity-specific references take precedence** → `unity-shared` logic review patterns, PREFAB_REVIEW, ASSET_REVIEW checklists override generic guidance when they conflict.
+
+## Grading Criteria
+
+| Grade | Criteria |
+|:------|:---------|
+| A | 0 Critical, <=3 High, clean architecture, good test coverage, follows conventions |
+| B | 0 Critical, <=8 High, mostly clean architecture, some tests, minor debt |
+| C | <=2 Critical, <=15 High, architectural concerns, limited tests, moderate debt |
+| D | <=5 Critical, >15 High, significant architectural issues, no tests, heavy debt |
+| F | >5 Critical, project stability at risk, major architectural failures |

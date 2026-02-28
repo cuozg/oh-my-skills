@@ -51,4 +51,4 @@ Assets/Scripts/Test/Editor/MyTests.cs  ← compiles into Assembly-CSharp-Editor 
 ```
 
 ## References
-- [TEST_EXAMPLES.md](TEST_EXAMPLES.md) — Edit/Play Mode test examples, mocking, parameterized tests
+- [test-examples.md](test-examples.md) — Edit/Play Mode test examples, mocking, and parameterized tests

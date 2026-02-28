@@ -52,14 +52,5 @@
 - [ ] No sensitive data in logs (passwords, tokens, PII)
 - [ ] No string concatenation in log calls (use interpolation)
 
-## Naming Conventions
 
-- [ ] PascalCase: types, methods, properties, constants, enum values
-- [ ] camelCase with `_` prefix: private fields
-- [ ] `I` prefix: interfaces
-- [ ] PascalCase: local functions
-- [ ] Descriptive names (no abbreviations except well-known: `id`, `url`, `ui`)
-- [ ] Boolean names start with `is`, `has`, `can`, `should`
-- [ ] Async methods end with `Async`
-
-Continue in [csharp-design.md](csharp-design.md) for Class Design, Collections, String Handling, Modern C# Features, and Code Smells sections.
+See [csharp-hygiene.md](csharp-hygiene.md) for canonical naming conventions.

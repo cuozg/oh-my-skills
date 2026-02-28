@@ -24,12 +24,11 @@ Consolidated shared library for all Unity skills. Load specific references by do
 - `patterns-async-state.md` — Async, state machine, SO config, cleanup
 
 ### Review Checklists
-7 files loaded by `review-engine.md`: `review-architecture.md`, `review-csharp.md`, `review-deep-workflow.md`, `review-gates.md`, `review-logic-data.md`, `review-perf.md`, `review-unity.md`
+7 files loaded by `review-engine.md`: `review-architecture-patterns.md`, `review-csharp.md`, `review-deep-workflow.md`, `review-gates.md`, `review-logic-data.md`, `review-perf.md`, `review-unity.md`
 
 ## Review Code
 - `review-engine.md` — Review engine loader (loads 7 review checklist files above)
 - `common-rules.md` — Common review rules
-- `tool-usage.md` — Review tool usage guide
 
 ## Plan Pipeline
 - `costing-and-types.md` — Cost/type definitions

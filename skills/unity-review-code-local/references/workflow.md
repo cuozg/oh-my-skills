@@ -8,12 +8,11 @@ Load shared review engine and common rules from `unity-shared`:
 ```python
 read_skill_file("unity-shared", "references/review-engine.md")
 read_skill_file("unity-shared", "references/common-rules.md")
-read_skill_file("unity-shared", "references/tool-usage.md")
 ```
 
 ## Workflow
 
-1. **Fetch** — Get diff (see `tool-usage.md` Input table). For feature/logic requests, identify files via grep/LSP first.
+1. **Fetch** — Get diff (see `common-rules.md` Input table). For feature/logic requests, identify files via grep/LSP first.
 2. **Read full context** — Read the **entire file** for each changed file, not just the diff.
 3. **Deep investigate** (parallel) — Spawn explore agents per `deep-workflow.md`: call-site analysis, state flow, data contracts.
 4. **Logic review** — Apply all loaded review checklists + `deep-workflow.md` focus areas. Enforce `gates.md` evidence rules.
