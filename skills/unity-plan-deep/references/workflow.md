@@ -13,7 +13,7 @@
 
 ## 3) Investigate
 
-- Run `../../unity-plan-shared/scripts/investigate_feature.py "<feature-term>"` to discover current state.
+ Run `../../unity-shared/scripts/plan/investigate_feature.py "<feature-term>"` to discover current state.
 - Use `read`, `glob`, `grep`, LSP tools to validate what exists, what's missing, integration points.
 - Never guess without repository evidence.
 

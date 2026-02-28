@@ -15,7 +15,7 @@
 | Find by name        | `lsp_symbols` (workspace)                                                                 |
 | Blast radius        | `impact-analyzer`                                                                         |
 | Pattern match       | `grep` / `ast_grep_search`                                                                |
-| Broad sweep         | `../../unity-investigate-shared/scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]`   |
+| Broad sweep         | `../../unity-shared/scripts/investigate/trace_logic.py [Target] [--assets] [--deep] [--root PATH] [--asset-root PATH]`   |
 
 Chain tools only when the first result is incomplete. Stop once the answer is clear.
 

@@ -38,4 +38,4 @@ Use [references/tool-selection.md](references/tool-selection.md) for tool choice
 - [workflow.md](references/workflow.md) — 7-step investigation flow
 - [tool-selection.md](references/tool-selection.md) — Tool lookup table
 - [fix-loop.md](references/fix-loop.md) — Delegation and iteration workflow
-- [common-fixes.md](../unity-debug-shared/references/common-fixes.md) — Known fix patterns for common Unity errors
+ [common-fixes.md](../unity-shared/references/common-fixes.md) — Known fix patterns for common Unity errors

@@ -88,7 +88,7 @@ Write to `/tmp/review-prefab.json`.
 ## 5. Submit
 
 ```bash
-./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-prefab.json
+./skills/unity-shared/scripts/review/post_review.py <pr_number> /tmp/review-prefab.json
 ```
 
 ## Comment Format Rules

@@ -18,20 +18,20 @@ For any task with 2+ files, create tasks and outline:
 
 ## Phase 2: Implement
 
-Load and follow `unity-code-shared` strictly for all coding rules, anti-patterns, and quality gates.
+Load and follow `unity-shared` strictly for all coding rules, anti-patterns, and quality gates.
 
-Every new script follows [template.md](../../unity-code-shared/references/template.md).
+Every new script follows [template.md](../../unity-shared/references/template.md).
 
 ### Code Patterns
 Load the relevant pattern file when implementing:
 
- [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
- [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
+ [patterns-service.md](../../unity-shared/references/patterns-service.md) — Service with Events, State with Read-Only Interface, MonoBehaviour View
+ [patterns-async-state.md](../../unity-shared/references/patterns-async-state.md) — Async/UniTask, State Machine, ScriptableObject Config, Cleanup & CTS
 
 ## Phase 3: Verify
 1. `lsp_diagnostics` on every changed file — zero errors
 2. `check_compile_errors` — Unity compilation succeeds
-3. All `unity-code-shared` rules followed
+3. All `unity-shared` rules followed
 4. XML docs on public API, `sealed` classes, `readonly` fields
 5. No dead code, magic numbers, or deep nesting
 Fix every violation immediately. Re-run diagnostics. Do NOT skip items or leave TODOs.

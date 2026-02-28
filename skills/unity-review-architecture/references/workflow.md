@@ -13,7 +13,7 @@ Filter to `.cs` files. If none found, APPROVE with note `No C# files to review f
 ### 2. Load Architecture Standards
 
 ```python
-use_skill("unity-code-shared")  # Load authoritative architecture patterns
+use_skill("unity-shared")  # Load authoritative architecture patterns
 ```
 
 ### 3. Deep Investigate (Parallel)
@@ -46,7 +46,7 @@ Do NOT include `commit_id` — `post_review.py` injects it automatically. Always
 ### 6. Submit
 
 ```bash
-./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-architecture.json
+./skills/unity-shared/scripts/review/post_review.py <pr_number> /tmp/review-architecture.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`.

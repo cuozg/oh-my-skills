@@ -47,12 +47,12 @@ documents/plans/{plan-name}/
 
 For the 10-step workflow (templates, investigation, requirements, generation, summary), see [references/workflow.md](references/workflow.md).
 For task patch requirements and cost-to-detail reference, see [references/task-patch-requirements.md](references/task-patch-requirements.md).
-For costing standards, see [../unity-plan-shared/references/costing-and-types.md](../unity-plan-shared/references/costing-and-types.md).
+For costing standards, see [../unity-shared/references/costing-and-types.md](../unity-shared/references/costing-and-types.md).
 
 ## Cross-Skill Integration
 
 Deep-dive alternative to `unity-plan-deep` — use for larger work requiring per-task patches with HTML viewer.
-For the full Prometheus pipeline context, see [../unity-plan-shared/references/prometheus-pipeline.md](../unity-plan-shared/references/prometheus-pipeline.md).
+For the full Prometheus pipeline context, see [../unity-shared/references/prometheus-pipeline.md](../unity-shared/references/prometheus-pipeline.md).
 
 ## Output Checklist
 

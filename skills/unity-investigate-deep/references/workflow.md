@@ -3,7 +3,7 @@
 ## Steps
 
 1. **Scope** — identify investigation type (logic/data/resources/animation/VFX/audio/physics/UI/networking/performance), primary subject, entry points, boundaries
-2. **Discover** — run `../../unity-investigate-shared/scripts/trace_logic.py [Target]`, use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`), grep/glob for assets, `ast_grep_search` for patterns
+2. **Discover** — run `../../unity-shared/scripts/investigate/trace_logic.py [Target]`, use LSP tools (`lsp_find_references`, `lsp_goto_definition`, `lsp_symbols`), grep/glob for assets, `ast_grep_search` for patterns
 3. **Analyze** — read `references/analysis-rules.md`, apply rules for relevant type(s)
 4. **Report** — read `assets/templates/INVESTIGATION_REPORT.md` template, fill type field, populate sections, delete unused §8.x sections, include Mermaid diagrams, save
 5. **Summary** — present key findings, highlight risks/debt/improvements
@@ -12,7 +12,7 @@
 
 | Need | Tool |
 | --- | --- |
-| Broad code search | `../../unity-investigate-shared/scripts/trace_logic.py [Target] [--assets] [--deep] [--root PATH]` |
+| Broad code search | `../../unity-shared/scripts/investigate/trace_logic.py [Target] [--assets] [--deep] [--root PATH]` |
 | Definition jump | `lsp_goto_definition` |
 | All usages | `lsp_find_references` |
 | File outline | `lsp_symbols` (scope=document) |

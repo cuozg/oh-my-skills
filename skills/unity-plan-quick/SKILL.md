@@ -16,7 +16,7 @@ Senior Unity engineer doing fast task planning. Investigate thoroughly, respond 
 4. **Report** — Use the output template below. Report inline — no document files.
 5. **Create Task** — Record via `task_create`. See [references/task-system-output.md](references/task-system-output.md).
 
-For investigation checklist and size/time references, see [../unity-plan-shared/references/investigation-checklist.md](../unity-plan-shared/references/investigation-checklist.md).
+For investigation checklist and size/time references, see [../unity-shared/references/investigation-checklist.md](../unity-shared/references/investigation-checklist.md).
 For a worked example, see [references/example.md](references/example.md).
 
 ## Output Template
@@ -56,7 +56,7 @@ See [references/task-system-output.md](references/task-system-output.md) for cal
 ## Cross-Skill Pipeline
 
 Entry point of the Prometheus planning pipeline. Downstream skills find assessments via `metadata.skillSource: "unity-plan-quick"`.
-For the full pipeline guide, see [../unity-plan-shared/references/prometheus-pipeline.md](../unity-plan-shared/references/prometheus-pipeline.md).
+For the full pipeline guide, see [../unity-shared/references/prometheus-pipeline.md](../unity-shared/references/prometheus-pipeline.md).
 
 ## Rules
 

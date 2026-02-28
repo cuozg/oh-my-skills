@@ -46,7 +46,7 @@ Read [workflow.md](references/workflow.md) before starting any review.
 
 - Only review `.cs` files for architecture concerns. Read full files, not just diffs.
 - One issue = one comment. Every comment needs severity + evidence + suggestion.
-- Always load `unity-code-shared` for authoritative architecture patterns.
+ Always load `unity-shared` for authoritative architecture patterns.
 - Pre-existing issues: only flag if the PR makes them worse.
 - Batch pattern: full explanation on first occurrence, short reference on subsequent. Submit even if PR is merged.
 - Never hardcode `commit_id` or modify source files.

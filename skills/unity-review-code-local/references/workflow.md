@@ -3,12 +3,12 @@
 Always load the output format reference:
 - [INLINE_COMMENT_FORMAT.md](INLINE_COMMENT_FORMAT.md) — comment format, severity tokens, delegation markers
 
-Load shared review engine and common rules from `unity-review-code-shared`:
+Load shared review engine and common rules from `unity-shared`:
 
 ```python
-read_skill_file("unity-review-code-shared", "references/review-engine.md")
-read_skill_file("unity-review-code-shared", "references/common-rules.md")
-read_skill_file("unity-review-code-shared", "references/tool-usage.md")
+read_skill_file("unity-shared", "references/review-engine.md")
+read_skill_file("unity-shared", "references/common-rules.md")
+read_skill_file("unity-shared", "references/tool-usage.md")
 ```
 
 ## Workflow

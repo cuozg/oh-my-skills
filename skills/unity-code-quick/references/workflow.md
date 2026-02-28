@@ -10,21 +10,21 @@ Read only what's needed to write correct code:
 
 ### 2. Generate Code
 
-Load and follow `unity-code-shared` for all rules. Apply the matching pattern:
+Load and follow `unity-shared` for all rules. Apply the matching pattern:
 
 | Need | Pattern Reference |
 |------|-------------------|
-| New service/class | [template.md](../../unity-code-shared/references/template.md) — Plain C# Service |
-| New MonoBehaviour | [template.md](../../unity-code-shared/references/template.md) — MonoBehaviour |
-| Service + events | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — Service with Events |
-| State container | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — State with Read-Only Interface |
-| View/UI component | [patterns-service.md](../../unity-code-shared/references/patterns-service.md) — MonoBehaviour View |
-| Async operations | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — UniTask |
-| State machine | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — State Machine |
-| SO config | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — ScriptableObject Config |
-| Lifecycle cleanup | [patterns-async-state.md](../../unity-code-shared/references/patterns-async-state.md) — Cleanup & CTS |
+| New service/class | [template.md](../../unity-shared/references/template.md) — Plain C# Service |
+| New MonoBehaviour | [template.md](../../unity-shared/references/template.md) — MonoBehaviour |
+| Service + events | [patterns-service.md](../../unity-shared/references/patterns-service.md) — Service with Events |
+| State container | [patterns-service.md](../../unity-shared/references/patterns-service.md) — State with Read-Only Interface |
+| View/UI component | [patterns-service.md](../../unity-shared/references/patterns-service.md) — MonoBehaviour View |
+| Async operations | [patterns-async-state.md](../../unity-shared/references/patterns-async-state.md) — UniTask |
+| State machine | [patterns-async-state.md](../../unity-shared/references/patterns-async-state.md) — State Machine |
+| SO config | [patterns-async-state.md](../../unity-shared/references/patterns-async-state.md) — ScriptableObject Config |
+| Lifecycle cleanup | [patterns-async-state.md](../../unity-shared/references/patterns-async-state.md) — Cleanup & CTS |
 
-**Quick rules** (from `unity-code-shared` priorities):
+**Quick rules** (from `unity-shared` priorities):
 - `sealed` classes, `readonly` fields, file-scoped namespaces
 - Constructor injection for services, `Initialize()` for MonoBehaviours
 - `event Action<T>` for cross-system communication

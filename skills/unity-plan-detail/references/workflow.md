@@ -4,7 +4,7 @@
 Read all templates in `assets/templates/` (PLAN_OVERVIEW, PLAN_TASKS, PLAN_PATCH, PLAN_PATCH_TEMPLATE).
 
 ## Step 2: Deep-Dive Investigation
-Run `../../unity-plan-shared/scripts/investigate_feature.py --init <plan-name> <keywords>` to create output folder and discover existing code.
+Run `../../unity-shared/scripts/plan/investigate_feature.py --init <plan-name> <keywords>` to create output folder and discover existing code.
 Also use `read`, `glob`, `grep`, LSP tools to understand current behavior before planning.
 
 ## Step 3: Analyze Requirements

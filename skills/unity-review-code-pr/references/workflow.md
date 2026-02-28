@@ -1,11 +1,11 @@
 # Load References
 
-Load shared review engine and common rules from `unity-review-code-shared`:
+Load shared review engine and common rules from `unity-shared`:
 
 ```python
-read_skill_file("unity-review-code-shared", "references/review-engine.md")
-read_skill_file("unity-review-code-shared", "references/common-rules.md")
-read_skill_file("unity-review-code-shared", "references/tool-usage.md")
+read_skill_file("unity-shared", "references/review-engine.md")
+read_skill_file("unity-shared", "references/common-rules.md")
+read_skill_file("unity-shared", "references/tool-usage.md")
 ```
 
 ## Workflow
@@ -44,7 +44,7 @@ Always set `"event": "COMMENT"`. Do NOT include `commit_id` — `post_review.py`
 ### 6. Submit
 
 ```bash
-./skills/unity-review-shared/scripts/post_review.py <pr_number> /tmp/review-code-pr.json
+./skills/unity-shared/scripts/review/post_review.py <pr_number> /tmp/review-code-pr.json
 ```
 
 Fallback (merged/closed): handled automatically by `post_review.py`. See [review-troubleshooting.md](review-troubleshooting.md).

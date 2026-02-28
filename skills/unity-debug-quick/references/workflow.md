@@ -8,4 +8,4 @@
 6. **Output** — deliver the tree + interactive prompt (see `response-template.md`)
 7. **Fix Loop** — see `fix-loop.md` for delegation and iteration workflow
 
-For common Unity errors (NullRef, MissingRef, IndexOutOfRange, race conditions), check `../../unity-debug-shared/references/common-fixes.md` for known fix patterns before deep investigation.
+For common Unity errors (NullRef, MissingRef, IndexOutOfRange, race conditions), check `../../unity-shared/references/common-fixes.md` for known fix patterns before deep investigation.

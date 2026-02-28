@@ -1,6 +1,6 @@
 # Architecture Review Patterns
 
-Cross-cutting architecture review. Always load alongside `unity-code-shared` skill.
+Cross-cutting architecture review. Always load alongside `unity-shared` skill.
 
 ## 🔴 Critical
 

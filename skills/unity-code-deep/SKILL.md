@@ -5,7 +5,7 @@ description: "Expert Unity Developer implementation. Write clean, commented, per
 
 # unity-code-deep — Expert Unity C# Implementation
 
-Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles. Follow `unity-code-shared` for all coding rules.
+Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles. Follow `unity-shared` for all coding rules.
 
 **Input**: Feature description, implementation task, or TDD/system doc reference
 **Output**: C# scripts following project conventions, zero compile errors.
@@ -17,6 +17,6 @@ Read [workflow.md](references/workflow.md) before starting any task.
 
 ## Reference Files
 - [workflow.md](references/workflow.md) — Phase 0-3 implementation workflow
- [template.md](../unity-code-shared/references/template.md) — Starting template for every new script
- [patterns-service.md](../unity-code-shared/references/patterns-service.md) — Service, State, MonoBehaviour patterns
- [patterns-async-state.md](../unity-code-shared/references/patterns-async-state.md) — Async, StateMachine, SO Config, Cleanup
+ [template.md](../unity-shared/references/template.md) — Starting template for every new script
+ [patterns-service.md](../unity-shared/references/patterns-service.md) — Service, State, MonoBehaviour patterns
+ [patterns-async-state.md](../unity-shared/references/patterns-async-state.md) — Async, StateMachine, SO Config, Cleanup

@@ -9,10 +9,10 @@ Review `.cs` file changes in GitHub PRs. Push review comments to GitHub via API.
 
 ## Shared References
 
-Load shared review resources from `unity-review-code-shared`:
-- [tool-usage.md](../unity-review-code-shared/references/tool-usage.md) — Input-to-command mapping + severity
-- [review-engine.md](../unity-review-code-shared/references/review-engine.md) — Review logic references to load
-- [common-rules.md](../unity-review-code-shared/references/common-rules.md) — Shared review rules
+Load shared review resources from `unity-shared`:
+ [tool-usage.md](../unity-shared/references/tool-usage.md) — Input-to-command mapping + severity
+ [review-engine.md](../unity-shared/references/review-engine.md) — Review logic references to load
+ [common-rules.md](../unity-shared/references/common-rules.md) — Shared review rules
 
 ## Output
 
