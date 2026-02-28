@@ -1,4 +1,3 @@
-````skill
 ---
 name: unity-debug-fix
 description: "Analyze Unity errors and apply targeted fixes. Parse error messages, stack traces, or issue descriptions — investigate root cause, determine the minimal fix, apply the change, and verify with diagnostics. Loops until all issues are resolved. This skill should be used when: (1) user provides an error and wants it fixed, (2) compiler errors need resolution, (3) runtime exceptions need fixing, (4) 'fix this error', (5) 'resolve this issue', (6) 'fix and verify'."
@@ -33,4 +32,3 @@ Follow the workflow in `references/workflow.md`:
 ## Reference Files
 - workflow.md — Step-by-step fix workflow with tool selection and verification
 - common-fixes.md — Known fix patterns for frequent Unity errors (from unity-shared)
-````
