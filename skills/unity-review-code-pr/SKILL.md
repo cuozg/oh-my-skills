@@ -17,9 +17,7 @@ read_skill_file("unity-shared", "references/review-deep-workflow.md")
 read_skill_file("unity-shared", "references/review-gates.md")
 read_skill_file("unity-shared", "references/review-logic-data.md")
 read_skill_file("unity-shared", "references/review-csharp.md")
-read_skill_file("unity-shared", "references/review-perf.md")
 read_skill_file("unity-shared", "references/review-unity.md")
-read_skill_file("unity-shared", "references/review-architecture-patterns.md")
 read_skill_file("unity-shared", "references/review-troubleshooting.md")
 ```
 ## Output
@@ -39,3 +37,4 @@ Load references, then follow the 6-step workflow: Fetch PR → Read → Investig
 - `line` MUST be within a diff hunk. Verify against `gh pr diff` output before adding comment.
 - Suggestion content = exact full-line replacement with correct indentation. Never suggest partial lines.
 - Submit even if PR is merged — `post_review.py` handles fallback.
+- **Scope**: Code logic ONLY — correctness, edge cases, state/data flow, concurrency, Unity lifecycle, serialization. Architecture patterns, performance optimization, and general quality are handled by sibling review skills.
