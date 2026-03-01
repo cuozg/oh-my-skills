@@ -28,219 +28,247 @@ gh auth login
 
 ## Skills (61)
 
-### Unity — Code
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-code-deep` | **Complex C#** implementation | **Write production C#**, MonoBehaviours, SO | **Skip** simple boilerplate | **Production-ready** `.cs` files | **Unity 6** features supported |
-| `unity-code-shared` | **Code quality** gates | **Enforce 4-priority gates**, hygiene, perf | **Auto-fix** code | **Quality assessment** | **Review** guidelines only |
-| `unity-code-quick` | **Fast C#** generation | **Generate production C#**, verify diagnostics | **Write** untested code | **Production-ready** `.cs` files | **Delegated** by other skills |
-| `unity-refactor` | **Safe code** transformation | **Extract, rename, decouple**, remove dead code | **Break** existing logic | **Refactored** `.cs` files | **Orchestrates** verification |
+# ▲ Oh My Unity — Skill Spec
 
-### Unity — Debug
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-debug-quick` | **Interactive bug** investigation + **error fixing** | **Diagnose errors, propose solutions**, apply user choice | **Stop** after one try | **Fixed** bug | **Loops** until done |
-| `unity-debug-deep` | **Exhaustive multi-angle** analysis | **Analyze lifecycle, state**, edge cases | **Modify** code | **Structured** document | **Team review** artifact |
-| `unity-debug-fix` | **Error/stack trace** analysis | **Suggest ranked** fix options | **Modify** code | **Ranked** solutions | **Presents** trade-offs |
-| `unity-debug-log` | **Tracing execution** flow | **Generate targeted logs**, color-coded | **Modify** project code | **Log** snippets | **Wrapped** in `#if UNITY_EDITOR` |
+> **38 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
 
-### Unity — Plan
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-plan-quick` | **Quick** costing | **Estimate size, time**, risks, blast radius | **Write** long documents | **Inline report**, tasks | **XS/S** tasks |
-| `unity-plan-deep` | **Big feature** planning | **Investigate codebase**, breakdown work | **Write** verbose plans | **Short markdown**, tasks | **M/L** tasks |
-| `unity-plan-detail` | **XL** planning | **Generate per-task patches**, full detail | **Create** tasks automatically | **3 HTML files**, `.patch` | **User registers** tasks |
-| `unity-plan-shared` | **Shared plan** pipeline refs | **Provide investigation script**, costing standards | **Activate** directly | **Shared** references | **Used by** other plan skills |
-| `unity-plan-executor` | **Execute HTML** plans | **Apply exact code changes**, zero interpretation | **Interpret** or guess | **Modified** project files | **100%** accuracy |
+---
 
-### Unity — Review
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-review-code-local` | **Local logic** review | **Check correctness, edge cases**, data flow | **Push** to GitHub | **Inline** comments | **Delegates** fixes |
-| `unity-review-code-pr` | **PR C#** review | **Validate C# behavior**, lifecycle risks | **Modify** code | **GitHub API** comments | **Accepts** PR links |
-| `unity-review-architecture` | **PR architecture** review | **Check dependencies, events**, coupling | **Modify** code | **GitHub API** comments | **Accepts** PR links |
-| `unity-review-asset` | **PR asset** review | **Check shaders, textures**, models, animations | **Modify** assets | **GitHub API** comments | **Accepts** PR links |
-| `unity-review-prefab` | **PR prefab/scene** review | **Check missing scripts**, broken variants | **Modify** prefabs | **GitHub API** comments | **Accepts** PR links |
-| `unity-review-general` | **PR general** quality | **Check security, testing**, docs, correctness | **Modify** code | **GitHub API** comments | **Tech-agnostic** checks |
-| `unity-review-quality` | **Full project** audit | **Review architecture, perf**, technical debt | **Modify** project files | **HTML report** document | **Read-only** |
+## 🔷 unity-code
 
-### Unity — Investigate
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-investigate-quick` | **Quick** Q&A | **Summarize system**, provide 1-3 details | **Write** long reports | **Direct conversational** answer | **Speed** over ceremony |
-| `unity-investigate-deep` | **Full** report | **Trace execution flows**, assess risks | **Skip** architecture diagrams | **Markdown** document | **For team** review |
+Write Unity C# code — standards, architecture, security, performance.
 
-### Unity — Test
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-test-unit` | **Test Framework** automation | **Create Edit/Play tests**, mock dependencies | **Ignore** coverage | **Test** suites | **Maximizes** coverage |
-| `unity-test-case` | **QA test case** documents | **Deep investigate features**, generate test cases | **Miss** edge cases | **HTML** document | **For game** mechanics |
+```
+├── unity-code-quick        ⚡ Fast single-file C#
+│   ├─ What: MonoBehaviours, SOs, interfaces, data models, boilerplate
+│   ├─ Flow: Receive → match conventions → write → lsp_diagnostics
+│   └─ Out:  Single .cs, zero errors
+│
+├── unity-code-deep         🏗️ Complex multi-file C#
+│   ├─ What: Cross-system features, TDD, refactors
+│   ├─ Flow: Understand → Plan → Implement → Verify (tests + diagnostics)
+│   ├─ Refs: ALL 13 unity-shared code refs
+│   └─ Out:  Multiple .cs files, tests passing
+│
+└── unity-code-editor       🛠️ Editor tooling
+    ├─ What: EditorWindows, Inspectors, PropertyDrawers, Gizmos, Handles
+    ├─ Flow: Identify need → select template (IMGUI vs UI Toolkit) → implement → verify
+    └─ Out:  Production Editor scripts under Editor/
+```
 
-### Unity — Document & Write
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-document-system` | **System architecture** docs | **Document data flows**, extension guides | **Modify** code | **Comprehensive** document | **For** onboarding |
-| `unity-document-tdd` | **TDD from real** code | **Document architecture decisions**, implementation | **Guess** implementation | **Technical Design** Document | **Dependency** analysis |
-| `unity-write-tdd` | **Feature** specs | **Define game systems**, API specs, schemas | **Ignore** multiplayer/backend | **Technical Design** Document | **Formalizes** plans |
-| `unity-write-docs` | **Project** documentation | **Write README, API refs**, code comments | **Ignore** XML docs | **Markdown/XML** docs | **Prefab/Scene** setups |
+---
 
-### Unity — Design
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-game-designer` | **Game design** brainstorming | **Generate GDD, core loops**, economy models | **Write** code | **Game Design** Document | **Compares** design patterns |
-| `unity-ux-design` | **UX screen** specs | **Document UI layouts**, navigation flows | **Write** code | **Spec documents**, prefabs | **Mobile game** UI |
-| `unity-ui` | **Implement UX** designs | **Translate HTML to prefabs**, map design specs | **Lose** design fidelity | **Unity UI** prefabs | **100%** fidelity |
+## 🔍 unity-review
 
-### Unity — Systems & Editor
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-event-system` | **Event-driven** architecture | **Design communication**, decouple systems | **Skip** pattern selection | **Event** implementation | **C# events**, UnityEvent, SO |
-| `unity-serialization` | **Data** persistence | **Build save/load**, serialize complex data | **Handle** encryption | **Serialization** implementation | **JSON, binary**, PlayerPrefs |
-| `unity-object-pooling` | **Object pooling** patterns | **Reduce GC**, manage pool lifecycles | **Handle** non-poolable objects | **Pool** implementation | **Generic, UI**, particles |
-| `unity-singleton-auditor` | **Audit singleton** usage | **Detect init order risks**, circular deps | **Modify** code | **Audit** report | **Finds** anti-patterns |
-| `unity-editor-tools` | **Custom Editor** extensions | **Build Editor Windows**, inspectors, utilities | **Handle** runtime logic | **Editor** scripts | **UXML/USS**, Gizmos |
+Review code, architecture, assets, prefabs, and project quality.
 
-### Unity — Performance & Build
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-optimize-performance` | **Fix perf** issues | **Profile CPU/GPU**, optimize memory, FPS | **Restructure** architecture | **Optimized** project | **Audits** assets |
-| `unity-build-pipeline` | **Build** automation | **Configure Addressables**, CI/CD, asset bundles | **Handle** runtime logic | **Build** scripts/configs | **Platform-specific** |
+```
+├── unity-review-code-local     📝 Local logic review
+│   ├─ Focus: Logic correctness, edge cases, state, data flow, concurrency
+│   ├─ Flow:  Fetch changes → Read → Investigate → Review → Add comments
+│   ├─ Out:   Inline // ── REVIEW comments + background fix tasks
+│   └─ Note:  No GitHub. No commit. User reviews the diff.
+│
+├── unity-review-code-pr        🔗 GitHub PR logic review
+│   ├─ Focus: Same as local + Unity lifecycle/serialization risks
+│   ├─ Flow:  Fetch PR → Read → Investigate → Review → Build JSON → Submit
+│   └─ Out:   Comments pushed to GitHub PR via API
+│
+├── unity-review-architecture   🏛️ PR architecture review
+│   ├─ Focus: DI, events, assemblies, coupling, patterns
+│   └─ Out:   Architecture comments pushed to GitHub PR
+│
+├── unity-review-asset          🎨 PR asset review
+│   ├─ Focus: .mat .shader .meta .controller .anim .fbx .asset
+│   ├─ Check: Shader issues, texture memory, animation config, import settings
+│   └─ Out:   Asset comments pushed to GitHub PR
+│
+├── unity-review-prefab         🧩 PR prefab/scene review
+│   ├─ Focus: Missing scripts, broken variants, raycasts, hierarchy
+│   ├─ Mode:  Parallel — one subagent per file
+│   └─ Out:   Prefab/scene comments pushed to GitHub PR
+│
+├── unity-review-general        ✅ PR quality gate
+│   ├─ Focus: Security, correctness, testing, performance, docs
+│   ├─ Role:  Sole approval authority — APPROVE or REQUEST_CHANGES
+│   └─ Out:   Final decision pushed to GitHub PR
+│
+└── unity-review-quality        📊 Full project audit (read-only)
+    ├─ Focus: Architecture, performance, best practices, tech debt
+    ├─ Grade: A–F severity scoring, evidence-based
+    └─ Out:   Comprehensive HTML report
+```
 
-### Unity — Deploy
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-mobile-deploy` | **iOS/Android** development | **Optimize battery, memory**, handle touch/IAP | **Handle** gameplay logic | **Mobile** builds/configs | **Device** testing |
-| `unity-web-deploy` | **WebGL** deployment | **Configure JS interop**, PWA, compression | **Handle** native plugins | **WebGL** builds/configs | **Hosting** setup |
+---
 
-### Unity — Art & 2D
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-tech-art` | **Bridge art** and code | **Optimize shaders, VFX**, procedural gen | **Handle** gameplay logic | **Shaders, tools**, assets | **HLSL**, Shader Graph |
-| `unity-sprite-gen` | **AI-generated 2D** sprites | **Create game-ready sprites**, transparent BG | **Create** 3D models | **Sprite/icon** assets | **Auto-configures** import |
-| `unity-2d` | **2D game** development | **Setup sprites, tilemaps**, 2D physics | **Handle** 3D systems | **2D** implementation | **Sprite Atlas**, 2D lighting |
+## 🔬 unity-investigate
 
-### Unity — Other
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `unity-log-analyzer` | **Parse console** logs | **Classify errors, group duplicates**, suggest fixes | **Fix** the errors | **Error summary** report | **Maps errors** to files |
-| `unity-fix-errors` | **Console errors** and **build failures** | **Diagnose and fix** compiler/runtime errors | **Ignore** root cause | **Fixed** project | **Assembly**, package errors |
+Analyze codebases, understand systems, trace data flows.
 
-### UI Toolkit
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `ui-toolkit-master` | **Starting** UI Toolkit | **Explain architecture**, UXML/USS/C# triad | **Cover** legacy uGUI | **Project structure** guide | **Unity 6+** |
-| `ui-toolkit-architecture` | **Component-based** architecture | **Design UI hierarchies**, MVC/MVP patterns | **Write** runtime logic | **Custom controls** guide | **Scalable** structure |
-| `ui-toolkit-databinding` | **Unity 6 runtime** binding | **Bind data models**, reactive UI updates | **Handle** legacy binding | **Data binding** setup | **Type** converters |
-| `ui-toolkit-debugging` | **UI** troubleshooting | **Investigate draw calls**, memory leaks | **Fix** code directly | **Debugging** insights | **UI Toolkit** Debugger |
-| `ui-toolkit-mobile` | **Mobile UI** optimization | **Handle touch, safe areas**, orientation | **Handle** gameplay input | **Mobile-friendly** UI | **Virtual** keyboard |
-| `ui-toolkit-patterns` | **Common UI** patterns | **Implement tabs, grids**, modals, scroll snap | **Design** custom patterns | **UXML/USS/C#** examples | **Reusable** patterns |
-| `ui-toolkit-performance` | **UI perf** optimization | **Optimize draw calls**, element pooling | **Restructure** architecture | **Optimized** UI | **Virtualization**, GC-free |
-| `ui-toolkit-responsive` | **Responsive** design | **Implement flexbox**, safe area, breakpoints | **Handle** content logic | **Adaptive** UI | **Phone/tablet/desktop** |
-| `ui-toolkit-theming` | **Theme** systems | **Build design tokens**, dark/light modes | **Handle** runtime logic | **TSS/USS** setup | **Runtime theme** switching |
+```
+├── unity-investigate-quick     💬 Quick Q&A
+│   ├─ What: How does X work? What calls Y? Trace the flow.
+│   ├─ Flow: Parse → Find (lsp, grep, trace) → Reply
+│   ├─ Rule: Speed over ceremony — stop when you can answer
+│   └─ Out:  Summary + 1-3 detail blocks, tree format
+│
+└── unity-investigate-deep      📋 Full investigation report
+    ├─ What: Architecture diagrams, execution flows, risk tables
+    ├─ Flow: Scope → Discover → Analyze → Write → Summarize
+    ├─ Rule: Cite file:line for every claim
+    └─ Out:  Documents/Investigations/*.md with Mermaid diagrams
+```
 
-### Git
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `git-commit` | **Clean commit** messages | **Generate concise bullets** from staged changes | **Include** AI metadata | **Local** commit | **No tool** attribution |
-| `git-comment` | **Amend last** commit | **Generate short bullet-point message** | **Push** to remote | **Amended local** commit | **Reads** latest diff |
-| `git-description` | **PR** descriptions | **Deep investigate changes**, structured template | **Ignore** architecture impact | **Edited GitHub** PR | **Uses** `gh pr edit` |
-| `git-squash` | **Squash** commits | **Consolidate messy history**, organize commits | **Lose** commit context | **Clean commit** history | **Pre-merge** cleanup |
+---
 
-### Bash
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `bash-check` | **Validate** scripts | **Check syntax, formatting**, runtime issues | **Auto-fix** problems | **Validation** report | **Shell version** aware |
-| `bash-optimize` | **Optimize** scripts | **Improve readability, performance**, modern syntax | **Change** functionality | **Refactored** script | **Best practices** applied |
-| `bash-install` | **Install** software | **Auto-retry, fallback strategies**, verify | **Skip** verification | **Installed** packages | **CLI tools/dependencies** |
+## 🐛 unity-debug
 
-### Skill
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `skill-creator` | **Create/update** skills | **Guide skill creation**, scripts, references | **Auto-deploy** skills | **New/updated** skill | **Extends** capabilities |
-| `skill-router` | **Find best skill** match | **Scan, score relevance**, return ranked list | **Execute** the skill | **Ranked** list | **Explains** choices |
+Diagnose, trace, and fix Unity issues.
 
-### Other
-| Skill | Use When | Do | Don't | Result | Notes |
-|---|---|---|---|---|---|
-| `mermaid` | **Create** diagrams | **Document logic flows**, architecture, state | **Execute** diagrams | **Mermaid** code | **Flowcharts**, sequence, state |
-| `flatbuffers-coder` | **FlatBuffers** for Unity | **Create schemas, generate C#**, JSON-to-binary | **Handle** runtime logic | **`.fbs` and C#** files | **Binary** data pipeline |
-| `beads` | **Git-backed issue** tracking | **Plan work, track tasks**, manage dependencies | **Write** code | **`bd` CLI** commands | **Multi-agent** coordination |
-| `prompt-improver` | **Rewrite vague** prompts | **Score on 5 dimensions**, structure output | **Execute** the task | **Optimized** prompt | **Maximizes** agent success |
+```
+├── unity-debug-quick       🩺 Interactive diagnosis
+│   ├─ What: Propose ≥2 solutions → user picks → delegate fix → loop
+│   ├─ Flow: Parse → Investigate → Analyze → Propose → User picks → Fix → Loop
+│   └─ Out:  Diagnostic tree + interactive choice. Loops until done.
+│
+├── unity-debug-deep        🔎 Exhaustive analysis (read-only)
+│   ├─ What: Multi-angle: lifecycle, threading, state, data flow, edge cases
+│   ├─ Flow: 9-step deep investigation → structured document
+│   ├─ Rule: ≥3 angles. 2-4 solutions as WHAT/WHERE. Cite file:line. Never modifies code.
+│   └─ Out:  Documents/Debug/ANALYSIS_*.md
+│
+├── unity-debug-fix         🔧 Auto-fix loop
+│   ├─ What: Parse error → root cause → minimal fix → verify → loop
+│   ├─ Rule: Minimal changes only. Always lsp_diagnostics after.
+│   └─ Out:  Fixed code, zero errors, minimal diff
+│
+└── unity-debug-log         📋 Debug.Log generator (read-only)
+    ├─ What: Color-coded, #if UNITY_EDITOR wrapped log snippets
+    ├─ Format: [DBG] prefix, <color=X> tags, $"..." interpolation
+    └─ Out:   Text output only — never written to project files
+```
 
-## Tools (11)
+---
 
-Custom MCP tools for Unity project analysis and skill management.
+## 📐 unity-plan
 
-| Tool | Description |
-|---|---|
-| `blueprint-inspector` | Inspect Unity Blueprint data files (JSON) — schema, record count, validation |
-| `change-summarizer` | Summarize uncommitted git changes — files changed, systems affected, risk level |
-| `codebase-health` | Analyze Unity codebase health metrics — file counts, TODOs, Singletons, line distribution |
-| `impact-analyzer` | Analyze blast radius of a C# class/file — traces references, reports risk level |
-| `prefab-ref-finder` | Find prefab/scene/asset files that reference a C# script by GUID |
-| `skill-deps` | Analyze skill dependencies — build dependency graph, detect missing references |
-| `skill-finder` | Find the best matching skill for a task description — ranks by relevance |
-| `skill-scaffold-generator` | Generate domain-aware skill scaffolds — tailored SKILL.md templates |
-| `skill-scaffold` | Smart skill scaffolding — type-aware templates for unity/bash/git/other |
-| `skill-validator` | Deep structural validation of a skill folder — frontmatter, body, references |
-| `unity-log-analyzer` | Analyze Unity Editor console logs — classify errors, group duplicates, suggest fixes |
+Plan Unity features with codebase-aware task breakdowns.
 
-## Commands (30)
+```
+├── unity-plan-quick        ⚡ Small tasks (XS/S)
+│   ├─ What: Inline assessment + task_create. Effort & feasibility.
+│   ├─ Flow: Parse → Investigate → Cost/risk → Report → Create tasks
+│   └─ Out:  ▲ header + cost·hours·risk + ┌ Tasks tree
+│
+├── unity-plan-deep         🏗️ Complex features (M/L)
+│   ├─ What: SHORT plan doc + task_create
+│   ├─ Flow: Read → Scope → Investigate → Plan → Doc → Tasks → Validate
+│   └─ Out:  Documents/Plans/PLAN_*.md + task hierarchy
+│
+└── unity-plan-detail       📦 Very large features (XL)
+    ├─ What: 3 HTML files + per-task .patch files. No auto task_create.
+    ├─ Flow: 10-step: Read → Scope → Investigate → Plan → Patches → HTML × 3 → Save
+    ├─ Rule: No JavaScript in HTML. User decides when to register tasks.
+    └─ Out:  Documents/Plans/{name}/ — overview.html, tasks.html, patch.html + .patch files
+```
 
-Slash commands for common workflows.
+---
 
-| Command | Description |
-|---|---|
-| `/git comment` | Generate and apply concise commit messages for the last commit |
-| `/git description` | Generate structured PR descriptions from GitHub pull request links |
-| `/git review` | Review a pull request on GitHub |
-| `/git squash` | Squash and organize commits into clean, well-documented history |
-| `/omo plan` | Delegation to @prometheus to plan |
-| `/omo prompt` | Improve user's prompt |
-| `/omo quick` | Delegation to @sisyphus-junior |
-| `/omo ulw` | Delegation to @sisyphus (ultrawork) |
-| `/skill deep` | Create or update a skill (ultrawork) |
-| `/skill quick` | Create or update a skill (quick) |
-| `/unity debug deep` | Deep investigation of complex Unity issues |
-| `/unity debug fix` | Analyze errors and suggest fix solutions |
-| `/unity debug log` | Generate targeted Debug.Log statements |
-| `/unity debug quick` | Explain Unity issues, flows, or logic |
-| `/unity document system` | Create a system architecture document |
-| `/unity document tdd` | Create a Technical Design Document |
-| `/unity investigate deep` | Deep investigation with full report output |
-| `/unity investigate quick` | Quick investigation of how systems work |
-| `/unity plan deep` | Create an implementation plan document |
-| `/unity plan detail` | Create a detailed plan with patch generation |
-| `/unity plan quick` | Quick costing and impact assessment |
-| `/unity review architecture` | Review Unity project architecture in PRs |
-| `/unity review asset` | Review Unity asset files in PRs |
-| `/unity review code-pr` | Review C# code logic in GitHub PRs |
-| `/unity review general` | Review PR against general quality checklists |
-| `/unity review local` | Review local code changes with deep logic analysis |
-| `/unity review prefab` | Review .prefab and .unity files in PRs |
-| `/unity review quality` | Full project quality audit and review |
-| `/unity test case` | Create QA test cases plan for a Unity feature |
-| `/unity test unit` | Create unit tests for a Unity feature |
+## 📖 unity-document
 
-## Agents (4)
+Generate technical documentation from real code state.
 
-| Agent | Mode | Description |
-|---|---|---|
-| `omo` | Primary | Prompt-optimizing agent — rewrites vague prompts into structured, actionable format |
-| `sisyphus-raw-proxy` | Primary | Zero-modification proxy — forwards exact user prompt to Sisyphus unchanged |
-| `unity-code-reviewer` | Subagent | Expert Unity code reviewer for C# scripts, prefabs, scenes, materials, shaders |
-| `unity-debugger` | Subagent | Investigate complex system issues, analyze performance bottlenecks, debug pipelines |
+```
+├── unity-document-system   📘 System documentation
+│   ├─ What: Architecture, data flows, usage guides, extension guides
+│   ├─ Rule: Cite file:line. Mandatory Mermaid. Bullets > prose.
+│   └─ Out:  Documents/Systems/{Name}.md
+│
+└── unity-document-tdd      📐 Technical Design Document
+    ├─ What: Architecture decisions, implementation strategy, dependency analysis
+    ├─ Rule: No TODO/TBD. Investigate actual codebase first.
+    └─ Out:  Documents/TDDs/TDD_{Name}.md
+```
 
-## Rules (3)
+---
 
-Shared rules applied across all agents.
+## 🧪 unity-test
 
-| Rule | Purpose |
-|---|---|
-| `agent-behavior` | Core agent behavior guidelines and interaction patterns |
-| `unity-asset-rules` | Unity asset handling conventions and best practices |
-| `unity-csharp-conventions` | C# coding standards specific to Unity projects |
+Testing automation for Unity projects.
 
-## License
+```
+├── unity-test-unit         🔬 Unit tests
+│   ├─ What: Edit/Play Mode tests, mocking, coverage maximization
+│   ├─ Target: 10+ test cases per class, Arrange-Act-Assert
+│   └─ Out:   Test scripts with [Test] / [UnityTest] attributes
+│
+└── unity-test-case         📋 QA test cases
+    ├─ What: Happy paths, edge cases, boundary values, negative tests
+    └─ Out:  Documents/TestCases/{Name}_TestCases.html
+```
 
-MIT
+---
+
+## 🔀 git
+
+Git workflow automation.
+
+```
+├── git-commit              💾 Commit with clean message
+│   ├─ Rule: No AI metadata. Imperative mood. Bullet points.
+│   └─ Out:  Local commit. Never pushes.
+│
+├── git-comment             ✏️ Amend last commit message
+│   ├─ Rule: Never amend if pushed. Never push.
+│   └─ Out:  Amended local commit with bullet points
+│
+├── git-squash              📦 Squash commits for PR
+│   ├─ Flow: Analyze → Group → Plan → User approval → Execute
+│   └─ Out:  Squash plan → user approves → executed
+│
+└── git-description         📝 Generate PR description
+    ├─ What: Deep investigate ALL PR changes → structured description
+    └─ Out:  Applied to GitHub PR via gh pr edit
+```
+
+---
+
+## 🐚 bash
+
+Shell script tooling.
+
+```
+├── bash-check              ✅ Validate scripts
+│   ├─ Check: bash -n syntax + ShellCheck lint + manual review
+│   └─ Out:   Validation report
+│
+├── bash-optimize           ⚡ Refactor scripts
+│   ├─ What: Clarity, performance, maintainability. No behavior change.
+│   └─ Out:  Optimized script + report
+│
+└── bash-install            📥 Install software
+    ├─ What: Auto-retry with fallback. Always verify after install.
+    └─ Out:  Installation report
+```
+
+---
+
+## 📦 Other Skills
+
+```
+├── flatbuffers-coder       🗂️ FlatBuffers pipeline
+│   ├─ What: .fbs schemas → C# generation → JSON-to-binary
+│   └─ Out:  .fbs + generated C# + binary data
+│
+├── mermaid                 📊 Diagram creation
+│   ├─ What: Flowcharts, sequence diagrams, state machines, architecture
+│   └─ Out:  ```mermaid code blocks
+│
+├── skill-creator           🧰 Skill authoring guide
+│   ├─ Rule: SKILL.md < 100L. Refs < 100L. Progressive disclosure.
+│   └─ Out:  Skill directory: SKILL.md + references/ + scripts/ + assets/
+│
+└── unity-shared            📚 Shared references (not activated directly)
+    ├─ What: Code Standards (13), Review (11), Quality (6), Plan (7), Debug (3), Test (5), Other (3)
+    └─ Use:  Other skills load specific refs via read_skill_file
+```
