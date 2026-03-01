@@ -26,8 +26,15 @@ Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REP
 2. Apply optimization patterns — performance, clarity, modern bash, error handling
 3. Report findings — categorize by Performance / Clarity / Safety / Style
 
-**Optimization patterns:** [patterns.md](../unity-shared/references/bash-patterns.md)
+**Optimization patterns:** see bash-patterns.md (loaded below)
+
+## Shared References
+
+Load shared bash resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/bash-patterns.md")
+```
 
 ## Reference Files
-- [patterns.md](../unity-shared/references/bash-patterns.md) — Performance, clarity, modern bash, and error handling patterns
 - workflow.md — Step-by-step optimization workflow

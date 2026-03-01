@@ -20,6 +20,7 @@ read_skill_file("unity-shared", "references/review-csharp.md")
 read_skill_file("unity-shared", "references/review-perf.md")
 read_skill_file("unity-shared", "references/review-unity.md")
 read_skill_file("unity-shared", "references/review-architecture-patterns.md")
+read_skill_file("unity-shared", "references/review-troubleshooting.md")
 ```
 ## Output
 
@@ -30,7 +31,6 @@ Review comments pushed to GitHub PR via API per [output-template.md](references/
 Load references, then follow the 6-step workflow: Fetch PR → Read → Investigate → Review → Build JSON → Submit.
 ## Reference Files
 - [output-template.md](references/output-template.md) — GitHub API review comment format
-- [review-troubleshooting.md](../unity-shared/references/review-troubleshooting.md) — Merged/closed PR fallback handling
 - workflow.md — 6-step PR code review workflow
 
 ## Rules (PR-Specific)

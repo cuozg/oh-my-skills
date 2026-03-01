@@ -21,17 +21,20 @@ Comprehensive HTML quality report. Read-only — never modifies project files.
 
 ## Severity Classification & Grading
 
-See [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) for severity levels (Critical/High/Medium/Low), grading criteria (A–F), and approval gates.
+See review-approval-criteria.md (loaded above) for severity levels (Critical/High/Medium/Low), grading criteria (A–F), and approval gates.
 
-## Load References (ALL — full audit)
+## Shared References
 
-Load ALL reference checklists before starting:
-- [quality-architecture-checklist.md](../unity-shared/references/quality-architecture-checklist.md) — architecture, design patterns, SOLID, coupling
-- [quality-performance-checklist.md](../unity-shared/references/quality-performance-checklist.md) — CPU, GPU, memory, GC, assets
-- [quality-code-checklist.md](../unity-shared/references/quality-code-checklist.md) — code quality, conventions, anti-patterns, testing
-- [quality-unity-best-practices.md](../unity-shared/references/quality-unity-best-practices.md) — lifecycle, serialization, scenes, prefabs, assets
-- [quality-project-health-checklist.md](../unity-shared/references/quality-project-health-checklist.md) — project structure, settings, packages, build config, security
+Load shared review resources from `unity-shared`:
 
+```python
+read_skill_file("unity-shared", "references/review-approval-criteria.md")
+read_skill_file("unity-shared", "references/quality-architecture-checklist.md")
+read_skill_file("unity-shared", "references/quality-performance-checklist.md")
+read_skill_file("unity-shared", "references/quality-code-checklist.md")
+read_skill_file("unity-shared", "references/quality-unity-best-practices.md")
+read_skill_file("unity-shared", "references/quality-project-health-checklist.md")
+```
 ## Reference Files
 - workflow.md — 7-step quality audit workflow
 

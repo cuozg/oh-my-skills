@@ -116,6 +116,10 @@ def validate_skill(skill_path: Path) -> Tuple[bool, List[ValidationError]]:
     word_count = len(body.split())
     if word_count > 2000:
         errors.append(ValidationError('WARNING', f"Body is long ({word_count} words). Consider splitting into SKILL.md + references/"))
+
+    # Validate shared references (read_skill_file usage)
+    ref_errors = validate_shared_references(skill_path, body)
+    errors.extend(ref_errors)
     
     # Check for safety constraints if skill name suggests destructive operations
     name_lower = frontmatter.get('name', '').lower()
@@ -127,6 +131,44 @@ def validate_skill(skill_path: Path) -> Tuple[bool, List[ValidationError]]:
     # Success if no ERROR level issues
     has_errors = any(e.level == 'ERROR' for e in errors)
     return not has_errors, errors
+
+def validate_shared_references(skill_path: Path, body: str) -> List[ValidationError]:
+    """Validate read_skill_file() usage and detect broken markdown links to unity-shared."""
+    errors = []
+    skills_root = skill_path.parent.parent  # skills/ directory
+    shared_refs_dir = skills_root / 'unity-shared' / 'references'
+
+    # Pattern: broken markdown links to ../unity-shared/references/
+    md_link_pattern = re.compile(r'\.\.[\/]unity-shared[\/]references[\/]([\w.-]+\.md)')
+    # Pattern: read_skill_file("unity-shared", "references/X.md")
+    rsf_pattern = re.compile(r'read_skill_file\(["\']unity-shared["\'],\s*["\']references[\/]([\w.-]+\.md)["\']\)')
+
+    md_link_files = set(md_link_pattern.findall(body))
+    rsf_files = set(rsf_pattern.findall(body))
+
+    # Check 1: markdown links WITHOUT corresponding read_skill_file() calls
+    orphan_links = md_link_files - rsf_files
+    for filename in sorted(orphan_links):
+        errors.append(ValidationError('WARNING',
+            f"Broken markdown link to ../unity-shared/references/{filename} — "
+            f"use read_skill_file(\"unity-shared\", \"references/{filename}\") instead"))
+
+    # Check 2: read_skill_file() targets must exist on disk
+    for filename in sorted(rsf_files):
+        target_file = shared_refs_dir / filename
+        if not target_file.exists():
+            errors.append(ValidationError('ERROR',
+                f"read_skill_file target missing: unity-shared/references/{filename}"))
+
+    # Check 3: detect ../unity-shared/ markdown links to non-reference paths (e.g. SKILL.md)
+    broad_link_pattern = re.compile(r'\.\.[\/]unity-shared[\/](?!references[\/])([\w./-]+\.md)')
+    broad_links = broad_link_pattern.findall(body)
+    for link_target in sorted(set(broad_links)):
+        errors.append(ValidationError('WARNING',
+            f"Broken markdown link to ../unity-shared/{link_target} — "
+            f"content will NOT load at runtime"))
+
+    return errors
 
 def validate_directory(skills_dir: Path) -> dict:
     """Validate all SKILL.md files in a directory tree."""

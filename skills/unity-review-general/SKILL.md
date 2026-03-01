@@ -27,7 +27,7 @@ Final review comment pushed to GitHub PR with approval decision. Aggregates prio
 | CLEAN | — | No issues from any reviewer | `APPROVE` |
 
 
-Full decision tree and severity classification: [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md).
+Full decision tree and severity classification: see review-approval-criteria.md (loaded below).
 
 ## Workflow
 
@@ -42,10 +42,16 @@ Follow the 5-step workflow: Collect Prior Reviews → Fetch PR → Apply Checkli
 - Correctness check: verify PR logic matches stated intent from PR title/body.
 - Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id` or modify source files.
-- Refer to [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) for the complete checklist catalog.
+- Refer to review-general-checklists.md (loaded below) for the complete checklist catalog.
+
+## Shared References
+
+Load shared review resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/review-approval-criteria.md")
+read_skill_file("unity-shared", "references/review-general-checklists.md")
+```
 
 ## Reference Files
-- [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
-- [review-approval-criteria.md](../unity-shared/references/review-approval-criteria.md) — Decision tree and severity classification
-- [review-general-checklists.md](../unity-shared/references/review-general-checklists.md) — Complete checklist catalog
 - workflow.md — 5-step general quality review workflow

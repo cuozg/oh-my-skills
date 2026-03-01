@@ -14,14 +14,19 @@ Comprehensive test case document in HTML format covering all test scenarios for 
 
 1. **Investigate** — read relevant C# scripts, map state machines/logic flows, identify entry points/triggers
 2. **Analyze** — list configurable params, integration points, server/persistence dependencies
-3. **Design** — test cases using `../unity-shared/references/test-case-patterns.md` + edge case heuristics from `../unity-shared/references/qa-methodology.md`
+3. **Design** — test cases using test-case-patterns.md + edge case heuristics from qa-methodology.md (loaded below)
 4. **Generate** — HTML from `assets/test-case-template.html`, replace `{{PLACEHOLDER}}` values, calculate summary stats
 5. **Save** to `Documents/TestCases/{FeatureName}_TestCases.html`
 
-## References
+## Shared References
 
-- `../unity-shared/references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP
-- `../unity-shared/references/qa-methodology.md` — edge case heuristics, CRUCSPIC-STMP
-- `../unity-shared/references/test-case-patterns.md` — ID conventions, writing style
+Load shared QA resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/qa-methodology.md")
+read_skill_file("unity-shared", "references/test-case-patterns.md")
+```
+
+## Reference Files
 - `assets/test-case-template.html` — dark-themed responsive template
 - workflow.md — Test case generation workflow

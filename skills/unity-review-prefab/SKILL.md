@@ -38,11 +38,17 @@ Follow the 4-step workflow: Fetch PR & Filter → Parallel Review → Collect & 
 - If a subagent fails, log the error and continue with remaining results.
 - Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id` or modify source files.
-- Refer to [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) for the complete pattern catalog.
-- Refer to [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) for delegation details.
+- Refer to review-prefab-patterns.md (loaded below) for the complete pattern catalog.
+- Refer to review-parallel-workflow.md (loaded below) for delegation details.
+
+## Shared References
+
+Load shared review resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/review-prefab-patterns.md")
+read_skill_file("unity-shared", "references/review-parallel-workflow.md")
+```
 
 ## Reference Files
-- [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
-- [review-prefab-patterns.md](../unity-shared/references/review-prefab-patterns.md) — Complete pattern catalog for prefab/scene review
-- [review-parallel-workflow.md](../unity-shared/references/review-parallel-workflow.md) — Subagent delegation details
 - workflow.md — 4-step prefab review workflow

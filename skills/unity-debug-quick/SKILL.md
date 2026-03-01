@@ -15,7 +15,7 @@ Use the Vercel-themed tree template from `references/output-template.md` for eve
 
 
 
-Use [../unity-shared/references/debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) for tool choices and fix delegation workflow. Chain tools to build evidence. Stop once root cause is clear.
+Use debug-fix-loop.md (loaded below) for tool choices and fix delegation workflow. Chain tools to build evidence. Stop once root cause is clear.
 ## Rules
 
 - **Investigation is READ-ONLY**: Never edit project files during investigation phase.
@@ -32,8 +32,15 @@ Use [../unity-shared/references/debug-fix-loop.md](../unity-shared/references/de
 - When user picks a solution, delegate via `task()` with appropriate category and `load_skills=["unity-code-quick"]`. Never apply fixes directly.
 - After fix delegation completes, verify with `lsp_diagnostics` then ask if there are more issues. Loop until user stops.
 
+## Shared References
+
+Load shared debug resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/debug-fix-loop.md")
+read_skill_file("unity-shared", "references/common-fixes.md")
+```
+
 ## Reference Files
 - [output-template.md](references/output-template.md) — Vercel-themed tree output template
-- [debug-fix-loop.md](../unity-shared/references/debug-fix-loop.md) — Tool selection + delegation workflow
- [common-fixes.md](../unity-shared/references/common-fixes.md) — Known fix patterns for common Unity errors
 - workflow.md — 7-step debug workflow

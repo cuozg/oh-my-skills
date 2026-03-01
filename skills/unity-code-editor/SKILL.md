@@ -15,7 +15,7 @@ Production-ready Unity Editor C# scripts following the Templates below.
 
 - [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md)
 - [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- [editor-patterns.md](../unity-shared/references/editor-patterns.md) — Editor scripting patterns + UI Toolkit guide
+- Editor scripting patterns + UI Toolkit guide (loaded below)
 
 Read the relevant template first, then populate all sections.
 
@@ -28,6 +28,13 @@ Read the relevant template first, then populate all sections.
 | AssetPostprocessor | Import automation |
 | MenuItem/Shortcut | Quick actions |
 
+## Shared References
+
+Load shared editor resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/editor-patterns.md")
+```
+
 ## Reference Files
 - workflow.md — 4-step editor code workflow
-

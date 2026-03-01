@@ -10,9 +10,14 @@ Generate production-ready Unity C# code fast. No lengthy investigation — recei
 **Input**: Code request with context (what to create, where it goes, dependencies)
 **Output**: C# code following `unity-shared`, zero compile errors
 
-## References
+## Shared References
 
-| File | Purpose |
-|------|---------|
-| [unity-shared](../unity-shared/SKILL.md) | Coding standards and quality gates (loaded during generation) |
-| workflow.md | Step-by-step code generation workflow |
+Load shared coding standards from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/template.md")
+read_skill_file("unity-shared", "references/common-rules.md")
+```
+
+## Reference Files
+- workflow.md — Step-by-step code generation workflow

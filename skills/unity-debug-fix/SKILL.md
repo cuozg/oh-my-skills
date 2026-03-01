@@ -26,9 +26,16 @@ Follow the workflow in `references/workflow.md`:
 - **Minimal changes** — smallest possible edit to resolve the error
 - **Always verify** — `lsp_diagnostics` on every changed file after fix
 - **No commits** — fix and verify only, user decides when to commit
-- **Common errors first** — check `common-fixes.md` for known patterns before deep investigation
+- **Common errors first** — check common-fixes.md (loaded below) for known patterns before deep investigation
 - **Delegate complex fixes** — for architectural fixes, delegate to `unity-code-deep`
+
+## Shared References
+
+Load shared debug resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/common-fixes.md")
+```
 
 ## Reference Files
 - workflow.md — Step-by-step fix workflow with tool selection and verification
-- common-fixes.md — Known fix patterns for frequent Unity errors (from unity-shared)

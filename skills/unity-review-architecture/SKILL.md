@@ -44,12 +44,18 @@ Follow the 6-step workflow: Fetch PR → Load Standards → Investigate → Revi
 
 - Only review `.cs` files for architecture concerns. Read full files, not just diffs.
 - One issue = one comment. Every comment needs severity + evidence + suggestion.
- Always load `unity-shared` for authoritative architecture patterns.
+ - Always load shared references (below) for authoritative architecture patterns.
 - Pre-existing issues: only flag if the PR makes them worse.
 - Batch pattern: full explanation on first occurrence, short reference on subsequent. Submit even if PR is merged.
 - Never hardcode `commit_id` or modify source files.
 
+## Shared References
+
+Load shared review resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/review-architecture-patterns.md")
+```
+
 ## Reference Files
-- [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog
-- [review-architecture-patterns.md](../unity-shared/references/review-architecture-patterns.md) — Complete architecture pattern catalog
 - workflow.md — 6-step architecture review workflow

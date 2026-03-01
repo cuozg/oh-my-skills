@@ -14,10 +14,10 @@ Senior Unity engineer doing fast task planning. Investigate thoroughly, respond 
 2. **Investigate** — Search codebase for scope. Use `grep`, `read`, `glob`, `lsp_symbols`, `lsp_find_references`, `impact-analyzer`. Read actual code, trace dependencies.
 3. **Assess** — Evaluate size, time, risk, downstream impact.
 4. **Report** — Use the output template below. Report inline — no document files.
-5. **Create Task** — Record via `task_create`. See [../unity-shared/references/task-system-output.md](../unity-shared/references/task-system-output.md).
+5. **Create Task** — Record via `task_create`. See task-system-output.md (loaded below).
 
-For investigation checklist and size/time references, see [../unity-shared/references/investigation-checklist.md](../unity-shared/references/investigation-checklist.md).
-For a worked example, see [../unity-shared/references/plan-quick-example.md](../unity-shared/references/plan-quick-example.md).
+For investigation checklist and size/time references, see investigation-checklist.md (loaded below).
+For a worked example, see plan-quick-example.md (loaded below).
 
 ## Output Template
 
@@ -51,12 +51,12 @@ After reporting, record in the Task System:
 2. Set `metadata`: `{cost, costHours, risk, skillSource: "unity-plan-quick"}`.
 3. **Child tasks** per `┌ Tasks` entry — subject, description, `parentID` → parent, `metadata.skill` = recommended skill.
 
-See [../unity-shared/references/task-system-output.md](../unity-shared/references/task-system-output.md) for call patterns and metadata schema.
+See task-system-output.md (loaded below) for call patterns and metadata schema.
 
 ## Cross-Skill Pipeline
 
 Entry point of the Prometheus planning pipeline. Downstream skills find assessments via `metadata.skillSource: "unity-plan-quick"`.
-For the full pipeline guide, see [../unity-shared/references/prometheus-pipeline.md](../unity-shared/references/prometheus-pipeline.md).
+For the full pipeline guide, see prometheus-pipeline.md (loaded below).
 
 ## Rules
 
@@ -70,6 +70,17 @@ For the full pipeline guide, see [../unity-shared/references/prometheus-pipeline
 
 - **OWNS**: Investigation, assessment, cost/risk/impact evaluation, task creation.
 - **Does NOT**: Create implementation plans, write code, generate documents, modify project files.
+
+## Shared References
+
+Load shared planning resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/task-system-output.md")
+read_skill_file("unity-shared", "references/investigation-checklist.md")
+read_skill_file("unity-shared", "references/plan-quick-example.md")
+read_skill_file("unity-shared", "references/prometheus-pipeline.md")
+```
 
 ## Reference Files
 - workflow.md — 5-step quick planning workflow

@@ -45,14 +45,13 @@ documents/plans/{plan-name}/
 
 ## Workflow Details
 
-For task patch requirements and cost-to-detail reference, see [../unity-shared/references/task-patch-requirements.md](../unity-shared/references/task-patch-requirements.md).
-For task patch requirements and cost-to-detail reference, see [../unity-shared/references/task-patch-requirements.md](../unity-shared/references/task-patch-requirements.md).
-For costing standards, see [../unity-shared/references/costing-and-types.md](../unity-shared/references/costing-and-types.md).
+For task patch requirements and cost-to-detail reference, see task-patch-requirements.md (loaded below).
+For costing standards, see costing-and-types.md (loaded below).
 
 ## Cross-Skill Integration
 
 Deep-dive alternative to `unity-plan-deep` — use for larger work requiring per-task patches with HTML viewer.
-For the full Prometheus pipeline context, see [../unity-shared/references/prometheus-pipeline.md](../unity-shared/references/prometheus-pipeline.md).
+For the full Prometheus pipeline context, see prometheus-pipeline.md (loaded below).
 
 ## Output Checklist
 
@@ -69,6 +68,16 @@ For the full Prometheus pipeline context, see [../unity-shared/references/promet
 
 - **OWNS**: Investigation, requirement analysis, epic/task breakdown, estimation, risk, patches
 - **Does NOT**: Create tasks in Task System, execute plans, modify source code
+
+## Shared References
+
+Load shared planning resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/task-patch-requirements.md")
+read_skill_file("unity-shared", "references/costing-and-types.md")
+read_skill_file("unity-shared", "references/prometheus-pipeline.md")
+```
 
 ## Reference Files
 - workflow.md — 10-step detail planning workflow

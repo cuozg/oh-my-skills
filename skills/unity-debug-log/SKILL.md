@@ -9,7 +9,7 @@ Generate debug log snippets. Output the template. Nothing else.
 
 ## Output Format
 
-Use the response template from `../unity-shared/references/debug-log-reference.md` for every response. No prose, no preamble — just the template.
+Use the response template from debug-log-reference.md (loaded below) for every response. No prose, no preamble — just the template.
 
 ## Hard Constraints
 
@@ -17,7 +17,7 @@ Use the response template from `../unity-shared/references/debug-log-reference.m
 - **No commits**: No git operations.
 - **#if UNITY_EDITOR**: Every Debug.Log MUST be wrapped in `#if UNITY_EDITOR` / `#endif`.
 - **[DBG] prefix**: Every log message starts with `[DBG]` for easy filtering.
-- **Color-coded**: Every log uses `<color=X>` tags per `../unity-shared/references/debug-log-reference.md`.
+- **Color-coded**: Every log uses `<color=X>` tags per debug-log-reference.md (loaded below).
 
 ## Workflow
 
@@ -31,6 +31,13 @@ Use the response template from `../unity-shared/references/debug-log-reference.m
 - Include exact file path and line number for each insertion point. Group by file, order by execution flow.
 - Keep log messages concise — show the value, not a novel.
 
+## Shared References
+
+Load shared debug resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/debug-log-reference.md")
+```
+
 ## Reference Files
-- [debug-log-reference.md](../unity-shared/references/debug-log-reference.md) — Color guide, format rules, response template
 - workflow.md — Log generation workflow

@@ -49,7 +49,13 @@ Follow the 4-step workflow: Fetch PR → Read & Apply Patterns → Build JSON �
 - Submit even if PR is merged — `post_review.py` handles fallback.
 - Never hardcode `commit_id` or modify source files.
 
+## Shared References
+
+Load shared review resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/review-asset-patterns.md")
+```
+
 ## Reference Files
-- [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog
-- [review-asset-patterns.md](../unity-shared/references/review-asset-patterns.md) — Complete asset pattern catalog
 - workflow.md — 4-step asset review workflow

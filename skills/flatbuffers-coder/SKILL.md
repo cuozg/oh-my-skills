@@ -13,9 +13,16 @@ Schema requirements (table name, fields, types, key). Optional: JSON data, exist
 
 ## Key Rules
 
-See [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) for schema design rules and best practices.
+See flatbuffers-schema-pattern.md (loaded below) for schema design rules and best practices.
+
+## Shared References
+
+Load shared FlatBuffers resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/flatbuffers-schema-pattern.md")
+```
 
 ## Reference Files
-- [schema-pattern.md](../unity-shared/references/flatbuffers-schema-pattern.md) — Schema pattern + best practices
 - [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md) — Schema template
 - workflow.md — FlatBuffers pipeline workflow

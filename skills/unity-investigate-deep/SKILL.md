@@ -15,7 +15,14 @@ Comprehensive investigation report (markdown) with architecture diagrams, execut
 
 Follow the 5-step workflow: Scope → Discover → Analyze → Report → Summary.
 
+## Shared References
+
+Load shared investigation resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/investigation-analysis-rules.md")
+```
+
 ## Reference Files
 - [output-template.md](references/output-template.md) — Investigation report template
-- [investigation-analysis-rules.md](../unity-shared/references/investigation-analysis-rules.md) — Type-specific analysis rules
 - workflow.md — 5-step investigation workflow

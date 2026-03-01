@@ -45,18 +45,18 @@ Each epic has ONE all-in-one table. Every row must include all 8 columns:
 - **Acceptance Criteria**: `✅ {observable outcome}`, use `<br>` for multiple
 - **Costing**: XS(1-2h), S(2-4h), M(4-8h), L(8-16h), XL(16-32h)
 
-For costing standards and types, see [../unity-shared/references/costing-and-types.md](../unity-shared/references/costing-and-types.md).
+For costing standards and types, see costing-and-types.md (loaded below).
 
 ## Task System Integration
 
 Register ALL plan elements after generating the document. Create parent → epic → sub-task hierarchy via `task_create`. Set `blockedBy` from dependency graph. Include metadata on every sub-task.
 
-See [../unity-shared/references/task-system-integration.md](../unity-shared/references/task-system-integration.md) for exact `task_create` patterns.
+See task-system-integration.md (loaded below) for exact `task_create` patterns.
 
 ## Cross-Skill Pipeline
 
 Middle stage of the Prometheus planning pipeline. If assessment task ID provided, store in `metadata.assessmentTaskId`.
-For full pipeline details, see [../unity-shared/references/prometheus-pipeline.md](../unity-shared/references/prometheus-pipeline.md).
+For full pipeline details, see prometheus-pipeline.md (loaded below).
 
 ## Rules
 
@@ -71,6 +71,16 @@ For full pipeline details, see [../unity-shared/references/prometheus-pipeline.m
 
 - **OWNS**: Investigation, planning, plan document, patches, task registration
 - **Does NOT**: Write gameplay code, modify scenes/prefabs, generate HTML, execute tasks
+
+## Shared References
+
+Load shared planning resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/costing-and-types.md")
+read_skill_file("unity-shared", "references/task-system-integration.md")
+read_skill_file("unity-shared", "references/prometheus-pipeline.md")
+```
 
 ## Reference Files
 - workflow.md — 7-step planning workflow

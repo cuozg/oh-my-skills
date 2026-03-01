@@ -15,10 +15,15 @@ Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensiv
 2. **Investigate**: Read target code, map public API, identify dependencies (singletons, MonoBehaviour refs, SOs), classify testability (pure logic → Edit Mode, lifecycle → Play Mode)
 3. **Generate**: Create test scripts per feature — cover all categories, target 10+ test cases per class
 
-## References
+## Shared References
 
-- [Test Patterns &amp; Organization](../unity-shared/references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
-- [Test Patterns &amp; Organization](../unity-shared/references/test-patterns.md) — folder structure, naming, AAA, assertions, anti-patterns, best practices
-- [Assembly Definition Setup](../unity-shared/../unity-shared/references/test-assembly-setup.md) — `.asmdef` templates, compilation errors, test discovery
-- [test-examples.md](../unity-shared/references/test-examples.md) — comprehensive examples: Edit/Play Mode, mocking, parameterized, event testing
+Load shared test resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/test-patterns.md")
+read_skill_file("unity-shared", "references/test-assembly-setup.md")
+read_skill_file("unity-shared", "references/test-examples.md")
+```
+
+## Reference Files
 - workflow.md — Test generation workflow

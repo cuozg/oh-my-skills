@@ -15,7 +15,14 @@ Mermaid diagram(s) in ` ```mermaid ` blocks following [DIAGRAM_OUTPUT.md](assets
 
 Follow the diagram workflow: Analyze → Choose type → Author → Validate → Embed.
 
+## Shared References
+
+Load shared diagram resources from `unity-shared`:
+
+```python
+read_skill_file("unity-shared", "references/mermaid-patterns.md")
+```
+
 ## Reference Files
-- [mermaid-patterns.md](../unity-shared/references/mermaid-patterns.md) — Chart patterns for all diagram types
 - [DIAGRAM_OUTPUT.md](assets/templates/DIAGRAM_OUTPUT.md) — Output template
 - workflow.md — Diagram creation workflow
