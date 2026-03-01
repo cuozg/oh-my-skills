@@ -33,7 +33,7 @@ Read the relevant template first, then populate all sections.
 Load shared editor resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/editor-patterns.md")
+read_skill_file("unity-shared", "references/code/editor-patterns.md")
 ```
 
 ## Reference Files

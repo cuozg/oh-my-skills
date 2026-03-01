@@ -54,7 +54,7 @@ Follow the 6-step workflow: Fetch PR → Load Standards → Investigate → Revi
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/review-architecture-patterns.md")
+read_skill_file("unity-shared", "references/review/review-architecture-patterns.md")
 ```
 
 ## Reference Files

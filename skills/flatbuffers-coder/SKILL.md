@@ -20,7 +20,7 @@ See flatbuffers-schema-pattern.md (loaded below) for schema design rules and bes
 Load shared FlatBuffers resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/flatbuffers-schema-pattern.md")
+read_skill_file("unity-shared", "references/other/flatbuffers-schema-pattern.md")
 ```
 
 ## Reference Files

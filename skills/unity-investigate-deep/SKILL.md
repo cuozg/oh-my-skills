@@ -20,7 +20,7 @@ Follow the 5-step workflow: Scope → Discover → Analyze → Report → Summar
 Load shared investigation resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/investigation-analysis-rules.md")
+read_skill_file("unity-shared", "references/planning/investigation-analysis-rules.md")
 ```
 
 ## Reference Files

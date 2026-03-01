@@ -1,11 +1,11 @@
 ---
 name: unity-code-deep
-description: "Expert Unity Developer implementation. Write clean, commented, performant C# code following best practices. Use when: creating MonoBehaviours, ScriptableObjects, implementing gameplay features, refactoring for performance or architecture, using Unity 6 features."
+description: "Complex, multi-file Unity C# implementation. Loads ALL unity-shared references, follows code standards and TDD strictly. Investigates before coding, verifies references to preserve existing logic, reviews carefully, runs tests after writing. Use when: (1) Multi-system feature requiring cross-file changes, (2) Refactoring for performance or architecture, (3) Implementing from a TDD or system document, (4) Tasks requiring verification and testing before delivery. Triggers: 'implement feature', 'complex code', 'refactor system', 'implement TDD', 'deep code'."
 ---
 
 # unity-code-deep — Expert Unity C# Implementation
 
-Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles. Follow `unity-shared` for all coding rules.
+Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles.
 
 **Input**: Feature description, implementation task, or TDD/system doc reference
 **Output**: C# scripts following project conventions, zero compile errors.
@@ -16,12 +16,22 @@ Follow the 4-phase workflow: Understand → Plan → Implement → Verify.
 
 ## Shared References
 
-Load shared coding resources from `unity-shared`:
+Load **ALL** shared coding references from `unity-shared` before writing any code. This is mandatory — no exceptions.
 
 ```python
-read_skill_file("unity-shared", "references/template.md")
-read_skill_file("unity-shared", "references/patterns-service.md")
-read_skill_file("unity-shared", "references/patterns-async-state.md")
+read_skill_file("unity-shared", "references/code/coding-standards.md")
+read_skill_file("unity-shared", "references/code/csharp-hygiene.md")
+read_skill_file("unity-shared", "references/code/csharp-modern.md")
+read_skill_file("unity-shared", "references/code/csharp-linq.md")
+read_skill_file("unity-shared", "references/code/csharp-perf.md")
+read_skill_file("unity-shared", "references/code/unity-lifecycle.md")
+read_skill_file("unity-shared", "references/code/unitask.md")
+read_skill_file("unity-shared", "references/code/template.md")
+read_skill_file("unity-shared", "references/code/patterns-service.md")
+read_skill_file("unity-shared", "references/code/patterns-async-state.md")
+read_skill_file("unity-shared", "references/code/editor-patterns.md")
+read_skill_file("unity-shared", "references/code/security.md")
+read_skill_file("unity-shared", "references/code/architecture.md")
 ```
 
 ## Reference Files

@@ -33,7 +33,7 @@ Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REP
 Load shared bash resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/bash-patterns.md")
+read_skill_file("unity-shared", "references/other/bash-patterns.md")
 ```
 
 ## Reference Files

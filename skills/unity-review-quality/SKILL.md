@@ -28,12 +28,12 @@ See review-approval-criteria.md (loaded above) for severity levels (Critical/Hig
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/review-approval-criteria.md")
-read_skill_file("unity-shared", "references/quality-architecture-checklist.md")
-read_skill_file("unity-shared", "references/quality-performance-checklist.md")
-read_skill_file("unity-shared", "references/quality-code-checklist.md")
-read_skill_file("unity-shared", "references/quality-unity-best-practices.md")
-read_skill_file("unity-shared", "references/quality-project-health-checklist.md")
+read_skill_file("unity-shared", "references/review/review-approval-criteria.md")
+read_skill_file("unity-shared", "references/quality/quality-architecture-checklist.md")
+read_skill_file("unity-shared", "references/quality/quality-performance-checklist.md")
+read_skill_file("unity-shared", "references/quality/quality-code-checklist.md")
+read_skill_file("unity-shared", "references/quality/quality-unity-best-practices.md")
+read_skill_file("unity-shared", "references/quality/quality-project-health-checklist.md")
 ```
 ## Reference Files
 - workflow.md — 7-step quality audit workflow

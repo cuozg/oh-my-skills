@@ -46,8 +46,8 @@ Follow the 4-step workflow: Fetch PR & Filter → Parallel Review → Collect & 
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/review-prefab-patterns.md")
-read_skill_file("unity-shared", "references/review-parallel-workflow.md")
+read_skill_file("unity-shared", "references/review/review-prefab-patterns.md")
+read_skill_file("unity-shared", "references/review/review-parallel-workflow.md")
 ```
 
 ## Reference Files

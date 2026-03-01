@@ -37,8 +37,8 @@ Use debug-fix-loop.md (loaded below) for tool choices and fix delegation workflo
 Load shared debug resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/debug-fix-loop.md")
-read_skill_file("unity-shared", "references/common-fixes.md")
+read_skill_file("unity-shared", "references/debug/debug-fix-loop.md")
+read_skill_file("unity-shared", "references/debug/common-fixes.md")
 ```
 
 ## Reference Files

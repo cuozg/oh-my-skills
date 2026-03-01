@@ -12,13 +12,13 @@ Review `.cs` file changes in GitHub PRs. Push review comments to GitHub via API.
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/common-rules.md")
-read_skill_file("unity-shared", "references/review-deep-workflow.md")
-read_skill_file("unity-shared", "references/review-gates.md")
-read_skill_file("unity-shared", "references/review-logic-data.md")
-read_skill_file("unity-shared", "references/review-csharp.md")
-read_skill_file("unity-shared", "references/review-unity.md")
-read_skill_file("unity-shared", "references/review-troubleshooting.md")
+read_skill_file("unity-shared", "references/review/common-rules.md")
+read_skill_file("unity-shared", "references/review/review-deep-workflow.md")
+read_skill_file("unity-shared", "references/review/review-gates.md")
+read_skill_file("unity-shared", "references/review/review-logic-data.md")
+read_skill_file("unity-shared", "references/review/review-csharp.md")
+read_skill_file("unity-shared", "references/quality/quality-unity-best-practices.md")
+read_skill_file("unity-shared", "references/review/review-troubleshooting.md")
 ```
 ## Output
 

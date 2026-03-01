@@ -20,7 +20,7 @@ Follow the diagram workflow: Analyze → Choose type → Author → Validate →
 Load shared diagram resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/mermaid-patterns.md")
+read_skill_file("unity-shared", "references/other/mermaid-patterns.md")
 ```
 
 ## Reference Files

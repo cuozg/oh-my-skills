@@ -74,9 +74,9 @@ For the full Prometheus pipeline context, see prometheus-pipeline.md (loaded bel
 Load shared planning resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/task-patch-requirements.md")
-read_skill_file("unity-shared", "references/costing-and-types.md")
-read_skill_file("unity-shared", "references/prometheus-pipeline.md")
+read_skill_file("unity-shared", "references/planning/task-patch-requirements.md")
+read_skill_file("unity-shared", "references/planning/costing-and-types.md")
+read_skill_file("unity-shared", "references/planning/prometheus-pipeline.md")
 ```
 
 ## Reference Files

@@ -34,7 +34,7 @@ Follow the workflow in `references/workflow.md`:
 Load shared debug resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/common-fixes.md")
+read_skill_file("unity-shared", "references/debug/common-fixes.md")
 ```
 
 ## Reference Files

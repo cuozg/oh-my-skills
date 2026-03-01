@@ -49,8 +49,8 @@ Follow the 5-step workflow: Collect Prior Reviews → Fetch PR → Apply Checkli
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/review-approval-criteria.md")
-read_skill_file("unity-shared", "references/review-general-checklists.md")
+read_skill_file("unity-shared", "references/review/review-approval-criteria.md")
+read_skill_file("unity-shared", "references/review/review-general-checklists.md")
 ```
 
 ## Reference Files

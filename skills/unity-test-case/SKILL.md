@@ -23,8 +23,8 @@ Comprehensive test case document in HTML format covering all test scenarios for 
 Load shared QA resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/qa-methodology.md")
-read_skill_file("unity-shared", "references/test-case-patterns.md")
+read_skill_file("unity-shared", "references/testing/qa-methodology.md")
+read_skill_file("unity-shared", "references/testing/test-case-patterns.md")
 ```
 
 ## Reference Files

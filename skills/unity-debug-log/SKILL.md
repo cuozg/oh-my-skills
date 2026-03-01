@@ -36,7 +36,7 @@ Use the response template from debug-log-reference.md (loaded below) for every r
 Load shared debug resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/debug-log-reference.md")
+read_skill_file("unity-shared", "references/debug/debug-log-reference.md")
 ```
 
 ## Reference Files

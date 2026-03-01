@@ -51,7 +51,7 @@ For costing standards and types, see costing-and-types.md (loaded below).
 
 Register ALL plan elements after generating the document. Create parent → epic → sub-task hierarchy via `task_create`. Set `blockedBy` from dependency graph. Include metadata on every sub-task.
 
-See task-system-integration.md (loaded below) for exact `task_create` patterns.
+See task-system.md (loaded below) for exact `task_create` patterns.
 
 ## Cross-Skill Pipeline
 
@@ -77,9 +77,9 @@ For full pipeline details, see prometheus-pipeline.md (loaded below).
 Load shared planning resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/costing-and-types.md")
-read_skill_file("unity-shared", "references/task-system-integration.md")
-read_skill_file("unity-shared", "references/prometheus-pipeline.md")
+read_skill_file("unity-shared", "references/planning/costing-and-types.md")
+read_skill_file("unity-shared", "references/planning/task-system.md")
+read_skill_file("unity-shared", "references/planning/prometheus-pipeline.md")
 ```
 
 ## Reference Files

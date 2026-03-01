@@ -20,9 +20,9 @@ Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensiv
 Load shared test resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/test-patterns.md")
-read_skill_file("unity-shared", "references/test-assembly-setup.md")
-read_skill_file("unity-shared", "references/test-examples.md")
+read_skill_file("unity-shared", "references/testing/test-patterns.md")
+read_skill_file("unity-shared", "references/testing/test-assembly-setup.md")
+read_skill_file("unity-shared", "references/testing/test-examples.md")
 ```
 
 ## Reference Files

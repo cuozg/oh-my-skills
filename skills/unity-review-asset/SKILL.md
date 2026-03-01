@@ -54,7 +54,7 @@ Follow the 4-step workflow: Fetch PR → Read & Apply Patterns → Build JSON �
 Load shared review resources from `unity-shared`:
 
 ```python
-read_skill_file("unity-shared", "references/review-asset-patterns.md")
+read_skill_file("unity-shared", "references/review/review-asset-patterns.md")
 ```
 
 ## Reference Files
