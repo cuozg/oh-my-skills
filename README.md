@@ -41,18 +41,17 @@ Write Unity C# code — standards, architecture, security, performance.
 ```
 ├── unity-code-quick        ⚡ Fast single-file C#
 │   ├─ What: MonoBehaviours, SOs, interfaces, data models, boilerplate
-│   ├─ Flow: Receive → match conventions → write → lsp_diagnostics
-│   └─ Out:  Single .cs, zero errors
+│   ├─ Flow: Receive → match conventions → write
+│   └─ Out:  Single .cs, Function
 │
 ├── unity-code-deep         🏗️ Complex multi-file C#
-│   ├─ What: Cross-system features, TDD, refactors
-│   ├─ Flow: Understand → Plan → Implement → Verify (tests + diagnostics)
-│   ├─ Refs: ALL 13 unity-shared code refs
-│   └─ Out:  Multiple .cs files, tests passing
+│   ├─ What: Cross-system features, refactors
+│   ├─ Flow: Understand → Plan → Implement
+│   └─ Out:  Multiple .cs files, Functions
 │
 └── unity-code-editor       🛠️ Editor tooling
     ├─ What: EditorWindows, Inspectors, PropertyDrawers, Gizmos, Handles
-    ├─ Flow: Identify need → select template (IMGUI vs UI Toolkit) → implement → verify
+    ├─ Flow: Identify need → implement
     └─ Out:  Production Editor scripts under Editor/
 ```
 
