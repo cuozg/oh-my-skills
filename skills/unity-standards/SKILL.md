@@ -45,7 +45,7 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `code-standards/unity-attributes.md` — RequireComponent, Inspector, serialization, debug attributes
 - `code-standards/object-pooling.md` — Unity 2021+ ObjectPool, IPoolable, generic pool, pre-2021 fallback
 
-### Review (11)
+### Review (12)
 
 - `review/logic-checklist.md` — correctness, edge cases, state, data flow
 - `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
@@ -58,6 +58,7 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `review/prefab-checklist.md` — missing scripts, variants, nested prefabs
 - `review/comment-format.md` — inline review comment syntax and severity
 - `review/pr-submission.md` — gh api format, comment batching, approval flow
+- `review/parallel-review-criteria.md` — subagent delegation, criteria table, prompt template, aggregation
 
 ### Quality (6)
 
