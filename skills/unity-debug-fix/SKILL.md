@@ -1,41 +1,40 @@
 ---
 name: unity-debug-fix
-description: "Analyze Unity errors and apply targeted fixes. Parse error messages, stack traces, or issue descriptions — investigate root cause, determine the minimal fix, apply the change, and verify with diagnostics. Loops until all issues are resolved. This skill should be used when: (1) user provides an error and wants it fixed, (2) compiler errors need resolution, (3) runtime exceptions need fixing, (4) 'fix this error', (5) 'resolve this issue', (6) 'fix and verify'."
+description: Auto-fix loop for Unity compile and runtime errors — parse error, locate root cause, apply minimal fix, verify with lsp_diagnostics, loop until zero errors. Triggers — 'fix this error', 'auto fix', 'compile error', 'fix loop', 'resolve errors'.
 ---
+# unity-debug-fix
 
-# Unity Debug Fix
+Automated fix loop: parse error → locate root cause → minimal fix → verify → repeat until zero diagnostics.
 
-Analyze errors, apply targeted fixes, verify with diagnostics. Loop until resolved.
+## When to Use
 
-**Input**: Error message, stack trace, issue description, or file path with error.
-**Output**: Fixed code with zero compile errors. No report — fixes applied directly.
+- Compiler errors after a merge, refactor, or package update
+- Runtime exceptions with a clear stack trace
+- Cascading errors from a renamed or deleted symbol
+- Rapid error-clearing before switching to feature work
 
 ## Workflow
 
-Follow the workflow in `references/workflow.md`:
-
-1. **Parse** — Extract error type, file, line, stack trace
-2. **Investigate** — Read target code, trace root cause
-3. **Fix** — Apply minimal, targeted change
-4. **Verify** — Run `lsp_diagnostics`, confirm zero errors
-5. **Loop** — Ask user if more issues exist
+1. **Parse** — extract error type, message, file, and line from the error output or user message
+2. **Locate** — read the file at the reported line; trace to the actual root cause (not just symptom)
+3. **Fix** — apply the minimal change that resolves the root cause
+4. **Verify** — run lsp_diagnostics on every changed file; check for new errors introduced
+5. **Loop** — if errors remain, return to step 1 with updated context; continue until zero errors
 
 ## Rules
 
-- **Fix ONLY the reported issue** — no refactoring, no scope creep
-- **Minimal changes** — smallest possible edit to resolve the error
-- **Always verify** — `lsp_diagnostics` on every changed file after fix
-- **No commits** — fix and verify only, user decides when to commit
-- **Common errors first** — check common-fixes.md (loaded below) for known patterns before deep investigation
-- **Delegate complex fixes** — for architectural fixes, delegate to `unity-code-deep`
+- Apply minimal changes only — never refactor while fixing
+- Fix root causes, not symptoms (e.g., fix the missing method, not callers that fail because of it)
+- Read the full file before editing — never edit blind
+- Run lsp_diagnostics after every individual file change
+- Never suppress errors with pragmas or empty catch blocks
+- If a fix introduces new errors, revert and try a different approach
+- Resolve errors in dependency order — fix base classes before derived classes
+- Never change public API (method signatures, field names) without checking all callers first
+- Ask for confirmation before deleting or renaming symbols
+- Stop the loop and report if more than 5 iterations pass without progress
+- Always verify the final state shows zero errors before declaring done
 
-## Shared References
+## Output Format
 
-Load shared debug resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/debug/common-fixes.md")
-```
-
-## Reference Files
-- workflow.md — Step-by-step fix workflow with tool selection and verification
+Fixed code with zero lsp_diagnostics errors. Brief summary: files changed, root causes resolved, error count before/after.

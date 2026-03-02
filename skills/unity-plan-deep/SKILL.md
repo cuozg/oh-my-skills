@@ -1,86 +1,42 @@
 ---
 name: unity-plan-deep
-description: "Plan big/complex Unity features. Investigates codebase, produces a SHORT markdown plan document (request, impact, task list) at Documents/Plans/, registers tasks in Task System via task_create. Use when: (1) Planning a complex feature with multiple systems, (2) Need implementation plan with task breakdown, (3) Full work breakdown with cost estimates, (4) Architecture-aware planning with patch generation. Triggers: 'create plan', 'plan feature', 'implementation plan', 'plan this', 'work breakdown', 'plan big task'."
+description: SHORT plan document and task hierarchy for M/L Unity features. Triggers — 'plan feature', 'deep plan', 'feature plan', 'complex plan', 'plan this feature'.
 ---
-# Deep Task Plan
+# unity-plan-deep
 
-Senior Unity developer (15+ years): practical, architecture-aware, delivery-focused.
+Produce a concise plan document and register a full task hierarchy for a medium-to-large feature.
 
-## Input
+## When to Use
 
-- Feature request to plan
-- Optional: System Document and/or TDD Document paths
-- Optional: constraints (deadline, platform, tech limits)
-- Optional: assessment task ID from `unity-plan-quick` (e.g., `T-abc123`)
-
-## Output
-
-- **Short** plan document at `Documents/Plans/PLAN_{FeatureName}.md` — focus on request, impact, task list
-- One `.patch` file per task at `Documents/Plans/patches/TASK-{#}.patch`
-- Follow template from `assets/templates/PLAN_DOCUMENT_TEMPLATE_SECTION1.md` and `SECTION2.md`
-- Tasks registered in Task System via `task_create` (parent → epics → sub-tasks with dependencies)
-- Planning only — no implementation, no Unity project mutation
+- Feature spans 2+ systems or files (M: 1-3 days, L: 3-10 days)
+- Dependencies between tasks require explicit ordering
+- Team needs a brief written record before implementation starts
 
 ## Workflow
 
-
-1. **Read** context documents (mandatory first step)
-2. **Scope** in/out boundaries, assumptions, prerequisites
-3. **Investigate** real codebase via `../unity-shared/scripts/plan/investigate_feature.py`, LSP, grep
-4. **Plan** epics and tasks with 8-column tables
-5. **Generate** SHORT markdown plan + `.patch` files — no verbose prose, tables and bullets only
-6. **Register** all tasks in Task System
-7. **Validate** document + tasks
-
-## Task Table Format
-
-Each epic has ONE all-in-one table. Every row must include all 8 columns:
-
-| # | Task Name | Type | Description | Goal | Code Changes | Acceptance Criteria | Costing |
-|---|-----------|------|-------------|------|--------------|---------------------|---------|
-
-- **#**: `{epic}.{task}` (e.g., 1.1, 1.2, 2.1)
-- **Type**: New Feature / Enhancement / Bug Fix / Refactor / Configuration / Testing / Documentation
-- **Code Changes**: `📎 patches/TASK-{#}.patch`
-- **Acceptance Criteria**: `✅ {observable outcome}`, use `<br>` for multiple
-- **Costing**: XS(1-2h), S(2-4h), M(4-8h), L(8-16h), XL(16-32h)
-
-For costing standards and types, see costing-and-types.md (loaded below).
-
-## Task System Integration
-
-Register ALL plan elements after generating the document. Create parent → epic → sub-task hierarchy via `task_create`. Set `blockedBy` from dependency graph. Include metadata on every sub-task.
-
-See task-system.md (loaded below) for exact `task_create` patterns.
-
-## Cross-Skill Pipeline
-
-Middle stage of the Prometheus planning pipeline. If assessment task ID provided, store in `metadata.assessmentTaskId`.
-For full pipeline details, see prometheus-pipeline.md (loaded below).
+1. **Read** — Scan entry points and relevant modules with `glob`, `lsp_goto_definition`
+2. **Scope** — Define what is in/out of scope; list affected files
+3. **Investigate** — Trace key dependencies; flag integration risks
+4. **Plan** — Break into ordered tasks; assign sizes and skills
+5. **Write** — Save SHORT plan to `Documents/Plans/PLAN_{Name}.md`
+6. **Create tasks** — Call `task_create` for parent then children; wire `blockedBy`
+7. **Validate** — Confirm all blockers reference real task IDs
 
 ## Rules
 
-1. Read attached System/TDD documents before investigation
-2. Investigate real codebase state — never hallucinate files or classes
-3. Use 8-column task tables — no separate per-task detail sections
-4. **Keep plan document SHORT** — request, impact, task list. No verbose prose.
-5. Generate one `.patch` per task in unified diff format
-6. Register every plan element via `task_create` with full metadata
+- Keep the plan document SHORT: request, impact, ordered task list only — no padding
+- Set `blockedBy` accurately to enable maximum parallel execution
+- Investigate before estimating — no guesswork
+- One `task_create` per parallelizable unit of work
 
-## Boundaries
+## Output Format
 
-- **OWNS**: Investigation, planning, plan document, patches, task registration
-- **Does NOT**: Write gameplay code, modify scenes/prefabs, generate HTML, execute tasks
-
-## Shared References
-
-Load shared planning resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/planning/costing-and-types.md")
-read_skill_file("unity-shared", "references/planning/task-system.md")
-read_skill_file("unity-shared", "references/planning/prometheus-pipeline.md")
-```
+`Documents/Plans/PLAN_{Name}.md` (request, impact, task list) + task hierarchy in task system.
+Print task IDs and subjects to chat after creation.
 
 ## Reference Files
-- workflow.md — 7-step planning workflow
+
+- `references/plan-workflow.md` — Planning methodology and scoping checklist
+- `references/task-system-integration.md` — task_create usage patterns and blockedBy wiring
+
+Load references on demand via `read_skill_file("unity-plan-deep", "references/plan-workflow.md")`.

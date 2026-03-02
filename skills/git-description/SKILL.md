@@ -1,18 +1,40 @@
 ---
 name: git-description
-description: "Generate and apply GitHub PR descriptions from pull request links. Deep investigate all PR changes — logic, architecture impact, behavioral changes — produce a structured PR description following the project template, and edit the PR on GitHub directly via `gh pr edit`. Input is a PR link or number. This skill should be used when: (1) generating PR descriptions, (2) user says 'describe this PR', (3) 'generate PR description', (4) 'PR comment', (5) 'PR description', (6) GitHub PR links are provided."
+description: Generate and apply a structured PR description by investigating all changed files — use for 'PR description', 'write PR description', 'generate PR description', 'describe this PR'
 ---
+# git-description
 
-# Git Description
+Deep-investigate all files changed in a PR, then generate and apply a structured description via `gh pr edit`.
 
-## Input
+## When to Use
 
-GitHub pull request URL (e.g., `https://github.com/org/repo/pull/123`) or PR number.
+- Opening a new PR that needs a clear description
+- Updating a stale or missing PR description before review
+- Generating documentation-quality PR context for reviewers
+- Automating PR description from a feature branch
 
-## Output
+## Workflow
 
-PR description per [output-template.md](references/output-template.md), applied directly to GitHub via `gh pr edit`.
+1. **Fetch** — Run `gh pr diff` or `git diff base...HEAD` to get the full PR diff
+2. **Read** — Read every changed file to understand the actual implementation
+3. **Investigate** — Trace cross-file dependencies, identify the root change vs cascading effects
+4. **Draft** — Write structured description using the template in `references/pr-description-template.md`
+5. **Apply** — Run `gh pr edit --body "..."` to push the description to GitHub
+
+## Rules
+
+- Read all changed files — do not summarize from diff hunks alone
+- Separate what changed from why it changed in the description
+- Include testing instructions that a reviewer can actually follow
+- Never fabricate behavior — only describe what the code does
+- Apply via `gh pr edit` — do not just print the description
+
+## Output Format
+
+Description applied to the GitHub PR via `gh pr edit --body`. Structured sections: Summary, Changes, Testing.
 
 ## Reference Files
-- [output-template.md](references/output-template.md) — PR description template
-- [workflow.md](references/workflow.md) — PR description generation workflow
+
+- `references/pr-description-template.md` — PR description structure with summary, changes, and testing sections
+
+Load references on demand via `read_skill_file("git-description", "references/{file}")`.

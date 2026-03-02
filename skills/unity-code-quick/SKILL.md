@@ -1,14 +1,48 @@
 ---
 name: unity-code-quick
-description: "Fast single-file Unity C# code generation. Loads relevant unity-shared references, follows code standards, writes production-ready code quickly. No testing or validation required — focus on fast delivery. Other skills delegate simple code tasks here. Use when: (1) Single-file MonoBehaviour, ScriptableObject, or plain C# class, (2) Implementing one method, interface, or data model, (3) Writing boilerplate code (events, state, services), (4) Quick code changes delegated from planning/debug/refactor skills. Triggers: 'write code', 'generate class', 'create script', 'implement method', 'add feature', 'quick code', 'code this'."
+description: Write single-file Unity C# fast — MonoBehaviours, ScriptableObjects, interfaces, data models, utility functions. Use for any small coding task that fits one file. Triggers — 'write a script', 'create a component', 'add a function', 'make a SO', 'quick script', 'single file', 'boilerplate'.
 ---
 
-# unity-code-quick — Fast Unity C# Code Generation
+# unity-code-quick
 
-Generate production-ready Unity C# code fast. No lengthy investigation — receive request, match codebase conventions, write code, verify.
+Fast single-file C# delivery for Unity. Receive request → match project conventions → write code → done.
 
-**Input**: Code request with context (what to create, where it goes, dependencies)
-**Output**: C# code following `unity-shared`, zero compile errors
+## When to Use
+
+- Single MonoBehaviour, ScriptableObject, interface, enum, struct, or static utility
+- Adding/modifying a single function or method
+- Boilerplate generation (data models, event channels, simple managers)
+- Any coding task completable in one .cs file
+
+## Workflow
+
+1. **Parse** — Extract: what type? what behavior? any constraints?
+2. **Discover** — Check existing codebase for naming, namespace, folder conventions (grep/glob, max 2 searches)
+3. **Write** — Produce the .cs file matching project style
+4. **Verify** — Run `coplay-mcp_check_compile_errors` to confirm zero errors
+
+## Rules
+
+- Match existing project conventions (namespaces, folders, naming). If none found, use PascalCase + company namespace.
+- Always include `using` directives — never assume implicit usings.
+- Prefer `[SerializeField] private` over `public` fields.
+- Use `#region` only if file exceeds 80 lines.
+- Add `[Header("Section")]` to group inspector fields (3+ fields).
+- Add `[Tooltip("...")]` when field purpose isn't obvious from name.
+- No empty Unity lifecycle methods (remove unused `Start`/`Update`).
+- Mark classes `sealed` unless inheritance is explicitly needed.
+- Use `TryGetComponent` over `GetComponent` where null is possible.
+- Return early to reduce nesting.
+- Never add `// TODO` — deliver complete code or state limitations.
+- Inline XML docs `/// <summary>` on public API only. No noise comments.
+
+## Output Format
+
+Write the file directly using edit/write tools. No markdown code blocks as final output — actual files only.
 
 ## Reference Files
-- workflow.md — Step-by-step code generation workflow with pattern selection and shared reference loading
+
+- `references/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
+
+Load code patterns via `read_skill_file("unity-code-quick", "references/code-patterns.md")`.
+For naming, null-safety, serialization, collections, async, events, lifecycle standards → `read_skill_file("unity-standards", "references/code-standards/<file>")`.

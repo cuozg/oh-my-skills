@@ -1,40 +1,35 @@
 ---
 name: bash-optimize
-description: "Optimize and refactor bash shell scripts for clarity, performance, and maintainability. Use this skill when: (1) Improving script readability and logic flow, (2) Reducing script execution time, (3) Refactoring complex conditionals or loops, (4) Applying bash best practices and modern syntax."
+description: Refactor shell scripts for clarity, performance, and maintainability without changing behavior — use for 'optimize script', 'refactor bash', 'improve shell script', 'clean up script'
 ---
+# bash-optimize
 
-# Bash Optimize
+Refactor an existing shell script to improve readability, reduce complexity, and apply best practices — behavior must not change.
 
-## Input
+## When to Use
 
-Path to `.sh` file. Optional: focus — `performance`, `clarity`, `safety`, or `all` (default).
-
-## Output
-
-Structured report per [OPTIMIZATION_REPORT.md](assets/templates/OPTIMIZATION_REPORT.md). Read template first, populate all sections, output directly to user.
-
-## Examples
-
-| Trigger | Input |
-|---------|-------|
-| "Optimize this build script" | `scripts/build.sh` |
-| "Speed up this script" | `ci/test-runner.sh`, focus=performance |
+- A working script has grown hard to read or maintain
+- Performance bottlenecks exist (e.g., unnecessary subshells, repeated calls)
+- Script lacks `set -euo pipefail` or proper quoting
+- Preparing a script for team ownership or long-term maintenance
 
 ## Workflow
 
-1. Analyze current script — purpose, functions, dependencies, complex patterns
-2. Apply optimization patterns — performance, clarity, modern bash, error handling
-3. Report findings — categorize by Performance / Clarity / Safety / Style
+1. **Read** — Read the full script and understand its intended behavior
+2. **Identify** — List specific issues: quoting gaps, useless forks, repeated code, poor naming, missing guards
+3. **Refactor** — Apply improvements: extract functions, fix quoting, add `set -euo pipefail`, replace anti-patterns
+4. **Verify** — Confirm the refactored script produces identical behavior for all identified execution paths
+5. **Report** — List every change made with before/after examples
 
-**Optimization patterns:** see bash-patterns.md (loaded below)
+## Rules
 
-## Shared References
+- Never change observable behavior — refactor only
+- Apply `set -euo pipefail` at the top unless the script explicitly requires lenient error handling
+- Quote all variable expansions unless word-splitting is intentional
+- Replace `$(cat file)` with `< file` redirection where appropriate
+- Extract repeated logic into named functions
+- Prefer `[[ ]]` over `[ ]` for conditionals in bash scripts
 
-Load shared bash resources from `unity-shared`:
+## Output Format
 
-```python
-read_skill_file("unity-shared", "references/other/bash-patterns.md")
-```
-
-## Reference Files
-- workflow.md — Step-by-step optimization workflow
+Optimized script (inline replacement) plus a report listing each change, the problem it solved, and the pattern applied.

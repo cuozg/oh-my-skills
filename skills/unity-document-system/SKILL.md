@@ -1,25 +1,42 @@
 ---
 name: unity-document-system
-description: "Documentation-only deep investigation skill. Produces comprehensive system documents covering architecture, data flows, usage, and extension guides. Use when: (1) Documenting a Unity system's architecture and data flow, (2) Creating onboarding docs for a complex system, (3) Generating extension/implementation guides for a system, (4) Producing integration and dependency maps. Triggers: 'document system', 'explain system', 'system overview', 'system document', 'architecture document'."
+description: Write system documentation with architecture diagrams, data flows, and usage guides for Unity systems. Triggers — 'document system', 'system documentation', 'write system docs', 'architecture docs'.
 ---
+# unity-document-system
 
-# Unity System Documenter
+Produce cited, diagram-backed documentation for a Unity system or subsystem.
 
-Read-only. Investigate and document — never modify project code.
+## When to Use
 
-**Input**: System/feature/class to document + optional scope boundaries.
-**Output**: System document saved to `Documents/Systems/{SystemName}.md`.
+- A system lacks any written documentation
+- Onboarding new contributors to a non-trivial subsystem
+- Post-refactor documentation update
+- Architecture review preparation
 
+## Workflow
+
+1. **Identify** — Locate all files in the system via `glob` and `lsp_find_references`
+2. **Trace** — Follow initialization, runtime, and teardown paths
+3. **Map** — Identify public API surface, events emitted/consumed, and dependencies
+4. **Diagram** — Draw Mermaid class diagram and sequence/flow diagram
+5. **Write** — Populate template from `references/system-doc-template.md`
+6. **Review** — Verify every claim has a cited `file:line`
 
 ## Rules
 
-- Every claim backed by code evidence (`File.cs:L##`)
-- Mermaid diagrams mandatory for init flow + execution flow + system context
-- Fill every template section; use "N/A — {reason}" only when truly not applicable
-- Explain **why + how**, not just what exists
-- Extension guides must be step-by-step and copy-paste ready
-- Bullet points over prose walls
+- Cite `file:line` for every factual claim
+- Include at least one Mermaid diagram
+- Bullets over prose; avoid padding sentences
+- Document the public API first, internals second
+- No TODO/TBD in the output
+
+## Output Format
+
+Save to `Documents/Systems/{SystemName}.md`.
+Sections: Overview, Architecture (Mermaid), Public API, Data Flow, Extension Guide, Dependencies.
 
 ## Reference Files
-- workflow.md — 5-step documentation workflow
-- output-template.md — System document output template
+
+- `references/system-doc-template.md` — Markdown template with all required sections
+
+Load references on demand via `read_skill_file("unity-document-system", "references/system-doc-template.md")`.

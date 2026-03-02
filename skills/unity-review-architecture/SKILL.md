@@ -1,61 +1,48 @@
 ---
 name: unity-review-architecture
-description: "Review Unity project architecture in GitHub PRs — dependency management, event systems, assembly structure, cross-system coupling, and architectural pattern compliance. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing architecture in PRs, validating dependency/coupling changes before merge. Triggers: 'review architecture', 'architecture review', 'DI review', 'coupling review', 'PR architecture review', 'review PR architecture'."
+description: PR architecture review — DI, events, assemblies, coupling, SOLID. Triggers — 'architecture review', 'review architecture', 'check architecture', 'DI review', 'coupling review'.
 ---
+# unity-review-architecture
 
-# Architecture PR Reviewer
+Review a GitHub PR for architectural concerns: dependency injection, event systems, assembly boundaries, coupling, and SOLID principle violations — then post comments to the PR.
 
-Review architecture patterns across PR changes in `.cs` files. Push review comments directly to GitHub via the API.
+## When to Use
 
-## Output
-Review comments pushed to GitHub PR via API. Covers dependency management, event systems, assembly structure, cross-system coupling.
-
-## Input → Command
-
-| Input | Command |
-|:------|:--------|
-| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
-
-## Severity Labels
-
-| Severity | Emoji | Meaning |
-|:---------|:------|:--------|
-| CRITICAL | 🔴 | Breaks functionality, data loss, crashes |
-| HIGH | 🟡 | Performance, UX, or logic issues |
-| MEDIUM | 🔵 | Style, maintainability, minor UX |
-| LOW | 🟢 | Naming, conventions, suggestions |
-
-Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
-
-## Key Concern Areas
-
-| Area | What to Check |
-|:-----|:-------------|
-| Dependency Management | Proper DI, no service locators, no `FindObjectOfType` for service resolution |
-| Event Architecture | Subscribe/unsubscribe pairing, no direct coupling via events |
-| Assembly Structure | No circular dependencies, correct `.asmdef` references |
-| Cross-system Coupling | Services don't reference MonoBehaviours directly, proper abstractions |
-| Data Flow | Interface-based data access, no direct field mutation across systems |
+- A PR introduces new systems, services, or manager classes
+- Changes touch assembly definitions, dependency injection setup, or event buses
+- Suspecting tight coupling, circular dependencies, or God-object growth
 
 ## Workflow
 
-Follow the 6-step workflow: Fetch PR → Load Standards → Investigate → Review → Build JSON → Submit.
+1. **Fetch PR** — list changed files via `gh api repos/{owner}/{repo}/pulls/{pr}/files`
+2. **Identify architecture files** — filter for `.cs`, `.asmdef`, `.asset`, dependency containers
+3. **Read changed files** — load full content; trace public API surface changes
+4. **Check DI** — verify dependencies injected via constructor or interface, not `GetComponent` chains
+5. **Check events** — confirm event channels are typed ScriptableObjects or C# events; no static bus overuse
+6. **Check assemblies** — `.asmdef` boundaries respected; no back-references from Runtime → Editor
+7. **Check coupling** — measure fan-out; flag classes with 6+ direct dependencies
+8. **Check SOLID** — single responsibility, open/closed, interface segregation violations
+9. **Post comments** — build payload and submit via `gh api` (see `references/architecture-checklist.md`)
+
 ## Rules
 
-- Only review `.cs` files for architecture concerns. Read full files, not just diffs.
-- One issue = one comment. Every comment needs severity + evidence + suggestion.
- - Always load shared references (below) for authoritative architecture patterns.
-- Pre-existing issues: only flag if the PR makes them worse.
-- Batch pattern: full explanation on first occurrence, short reference on subsequent. Submit even if PR is merged.
-- Never hardcode `commit_id` or modify source files.
+- Flag `FindObjectOfType` or `GameObject.Find` in production code as CRITICAL
+- Flag concrete class injection (not interface) as WARNING
+- Flag assemblies with bidirectional references as CRITICAL
+- Flag static singleton access from non-manager classes as WARNING
+- Flag classes over 300 lines without clear single responsibility as NOTE
+- Flag event systems without unsubscription as WARNING
+- Never suggest rewriting entire systems — scope comments to the PR changes
+- Use severity prefix: `[CRITICAL]`, `[WARNING]`, `[NOTE]` in every comment body
+- Do not duplicate issues already flagged by unity-review-code-pr
+- Post comments only; do not approve or request-changes
 
-## Shared References
+## Output Format
 
-Load shared review resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/review/review-architecture-patterns.md")
-```
+Architecture comments posted to the GitHub PR. Print a local summary with coupling metrics and any CRITICAL violations.
 
 ## Reference Files
-- workflow.md — 6-step architecture review workflow
+
+- `references/architecture-checklist.md` — DI, events, assemblies, coupling, SOLID checklist
+
+Load references on demand via `read_skill_file("unity-review-architecture", "references/architecture-checklist")`.

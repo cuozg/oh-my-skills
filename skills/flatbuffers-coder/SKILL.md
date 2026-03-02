@@ -1,28 +1,43 @@
 ---
 name: flatbuffers-coder
-description: "FlatBuffers for Unity. Use when: (1) Creating/updating .fbs schemas, (2) Generating C# classes, (3) Converting JSON to binary, (4) Managing FlatBuffers pipeline. Triggers: 'schema', 'binary data', 'serialize', 'fbs file', 'flatbuffers'."
+description: FlatBuffers pipeline — define .fbs schema, generate C# via flatc, serialize/deserialize binary data. Triggers — 'flatbuffers', 'fbs schema', 'flatbuffer', 'binary serialization', 'flatc'.
 ---
+# flatbuffers-coder
 
-# FlatBuffers Specialist
+Define FlatBuffers schemas, generate C# code, and implement binary serialization roundtrips.
 
-## Input
-Schema requirements (table name, fields, types, key). Optional: JSON data, existing `.fbs` for updates.
+## When to Use
 
-## Output
-`.fbs` schema + generated C# + binary data. Follow [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md).
+- Adding FlatBuffers-based serialization to a Unity project
+- Defining or modifying `.fbs` schema files for game data
+- Generating C# classes from `.fbs` using `flatc`
+- Implementing read/write helpers for FlatBuffers binary data
+- Debugging serialization mismatches between schema and runtime code
 
-## Key Rules
+## Workflow
 
-See flatbuffers-schema-pattern.md (loaded below) for schema design rules and best practices.
+1. **Define** — Write `.fbs` schema: tables, structs, enums, unions, root_type
+2. **Generate** — Run `flatc --csharp` to produce C# builder/accessor files
+3. **Implement** — Write serialization helpers using the generated `FlatBufferBuilder`
+4. **Deserialize** — Implement `GetRootAs*` accessors for reading binary buffers
+5. **Test** — Roundtrip: serialize → write bytes → read bytes → assert field values match
 
-## Shared References
+## Rules
 
-Load shared FlatBuffers resources from `unity-shared`:
+- Keep schemas backward-compatible — only add fields, never reorder or remove
+- Always set `root_type` in every `.fbs` file used as a top-level buffer
+- Namespace C# output with `--gen-namespace` to avoid collisions
+- Regenerate C# after every `.fbs` change — never hand-edit generated files
+- Use `flatc --json` to inspect binary files during debugging
 
-```python
-read_skill_file("unity-shared", "references/other/flatbuffers-schema-pattern.md")
-```
+## Output Format
+
+`.fbs` schema file(s) + generated C# accessor/builder file(s) + serialization helper class.
+Binary test file included when a roundtrip test is requested.
 
 ## Reference Files
-- [FBS_TEMPLATE.md](assets/templates/FBS_TEMPLATE.md) — Schema template
-- workflow.md — FlatBuffers pipeline workflow
+
+- `references/fbs-schema-patterns.md` — FlatBuffers schema syntax, tables, structs, enums, vectors, unions
+- `references/flatc-workflow.md` — flatc install, C# generation commands, JSON-to-binary conversion, Unity integration steps
+
+Load references on demand via `read_skill_file("flatbuffers-coder", "references/{file}")`.

@@ -1,32 +1,44 @@
 ---
 name: unity-document-tdd
-description: "Deep-investigate a Unity codebase and produce a Technical Design Document focused on technical approach, architecture, and implementation strategy. Use when: (1) creating a TDD from real code state, (2) documenting architecture decisions based on existing systems, (3) writing implementation strategy for a Unity feature with dependency analysis. Triggers: 'write TDD', 'technical design document', 'TDD document', 'architecture design', 'technical approach', 'design spec', 'technical specification'."
+description: Write a Technical Design Document — architecture decisions, implementation strategy, dependency analysis. Triggers — 'write TDD', 'technical design document', 'design doc', 'architecture decision'.
 ---
+# unity-document-tdd
 
-# Unity Document TDD
+Produce an evidence-based Technical Design Document grounded in the actual codebase.
 
-Senior Unity developer (15y exp). Produce TDDs only. Never modify code/assets.
-Deep investigation FIRST, then document. Do NOT draft from requirements alone.
+## When to Use
 
-## Input
-- User request describing feature/system
-- Optional: target folders, classes, previous docs, constraints
+- Planning a new system that needs architecture sign-off
+- Documenting a key architecture decision after implementation
+- Cross-team alignment before a major feature starts
+- Recording trade-offs for future maintainers
 
-## Output
-- File: `Documents/TDDs/TDD_{FeatureName}.md`
-- Structure: Exact template from split parts `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION1.md` through `assets/templates/TDD_DOCUMENT_TEMPLATE_SECTION4.md`
-- **MANDATORY Sections**: Technical Design, Architecture Overview, Technical Approach, Risks, Implementation.
+## Workflow
 
+1. **Investigate** — Read existing related systems; understand current patterns
+2. **Define** — State the problem, goals, and non-goals precisely
+3. **Design** — Propose architecture; define components, interfaces, and data flow
+4. **Alternatives** — Document at least 2 rejected alternatives with rationale
+5. **Dependencies** — Map all affected systems with file:line evidence
+6. **Risks** — List risks with mitigation strategies
+7. **Write** — Fill `references/tdd-template.md` with all findings
+8. **Save** — Write to `Documents/TDDs/TDD_{Name}.md`
 
-## Core Difference
-Unlike `unity-write-tdd` (drafts from specs), this skill **investigates the actual codebase first** to ensure the TDD reflects reality, dependencies, and constraints.
+## Rules
 
-## Quality Bar
-- **Architecture-First**: Based on actual code, not just theory. Include Mermaid diagrams.
-- **Explicit Risks**: "Low/Med/High" with concrete mitigation steps. MUST cover Unity specifics (serialization, prefabs).
-- **Concrete Implementation**: Code patterns, specific class names, file paths.
-- **Verifiable**: Testing strategy includes unit/integration/manual cases.
-- **Complete**: No "TODO" or "TBD" sections; all 14 sections filled.
+- Investigate the actual codebase before writing — no speculation
+- No TODO/TBD in the output document
+- Cite `file:line` for every dependency or architectural claim
+- Alternatives section is mandatory — never skip it
+- Keep language imperative; avoid "we should" or "you could"
+
+## Output Format
+
+Save to `Documents/TDDs/TDD_{Name}.md`.
+Sections: Problem, Goals, Non-Goals, Design, Alternatives, Dependencies, Risks, Open Questions.
 
 ## Reference Files
-- workflow.md — 5-step TDD workflow
+
+- `references/tdd-template.md` — Markdown template with all required TDD sections
+
+Load references on demand via `read_skill_file("unity-document-tdd", "references/tdd-template.md")`.

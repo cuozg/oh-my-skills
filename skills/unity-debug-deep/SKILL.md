@@ -1,39 +1,49 @@
 ---
 name: unity-debug-deep
-description: "Deep investigation of Unity issues with exhaustive multi-angle analysis. Investigates the issue from multiple angles — lifecycle, threading, state, data flow, edge cases — then produces a structured analysis document with overview, impact assessment, root cause analysis, multiple proposed solutions, workarounds, verification steps, and prevention guidance. Never modifies code. Use when: (1) Complex bug that defies simple explanation, (2) Need to understand a deeply intertwined system, (3) Race conditions or timing-dependent issues, (4) Multi-system interactions causing unexpected behavior, (5) Need thorough written analysis for team review, (6) Issue has been investigated before without resolution. Triggers: 'deep debug', 'deep explain', 'analyze this thoroughly', 'investigate deeply', 'why does this really happen', 'exhaustive analysis', 'debug deep dive', 'root cause analysis', 'complex bug investigation', 'multi-system debug'."
+description: Exhaustive multi-angle Unity bug analysis — read-only investigation across lifecycle, threading, state, data flow, and edge cases. Produces a structured report. Triggers — 'deep debug', 'analyze this bug', 'exhaustive analysis', 'debug report', 'root cause analysis'.
 ---
+# unity-debug-deep
 
-# Unity Debug Deep
+Exhaustive, read-only investigation that produces a structured analysis document covering all likely root causes across multiple angles.
 
-**Input**: Complex question, bug, or system behavior that requires exhaustive investigation
+## When to Use
 
-## Hard Constraints
-
-- **READ-ONLY**: Never edit, add, or modify any project file. Analysis only.
-- **Never commit**: No git operations.
-- **ALWAYS output document**: Save analysis to `Documents/Debug/` directory.
-- **ALWAYS use template**: Follow `references/output-template.md` exactly.
-- **Multi-angle**: Investigate from at least 3 different angles before concluding.
-- **Multiple solutions**: ALWAYS propose at least 2 solutions, maximum 4. Let the user choose.
+- A bug is intermittent, race-condition-like, or has resisted quick fixes
+- Team needs documented evidence before touching production code
+- Multiple systems are potentially involved
+- unity-debug-quick looped 3+ times without resolution
 
 ## Workflow
 
-
-## Output
-
-Save to `Documents/Debug/ANALYSIS_{SubjectName}_{YYYYMMDD}.md` using the template in `references/output-template.md`.
+1. **Scope** — define the affected system, symptom, and reproduction steps
+2. **Trace lifecycle** — map Awake/OnEnable/Start/OnDisable/OnDestroy order for involved objects
+3. **Trace data flow** — follow the value from source to point of failure; grep for all writers/readers
+4. **Check threading** — identify coroutines, async calls, Jobs, or main-thread-only API misuse
+5. **Check state** — find every place the relevant state variable is read and written; map transitions
+6. **Check edge cases** — null refs, empty collections, zero-division, order-of-operations
+7. **Cross-reference** — use lsp_find_references for every symbol in the call path
+8. **Rank causes** — sort candidates by likelihood; label each HIGH/MED/LOW confidence
+9. **Document** — write the structured report using the analysis template
 
 ## Rules
 
-- Investigate thoroughly. This is NOT the quick skill — take time to be certain.
-- Minimum 3 cross-cut angles explored.
-- Every claim must cite `File.cs:L##`.
-- Solutions describe WHAT to do and WHERE — they do NOT include implementation code. If the user needs exact code changes, suggest using `unity-debug-fix` or `unity-debug-quick` instead.
-- Never speculate without labeling it as such. Use "likely" or "unverified" for uncertain claims.
-- If the investigation reveals the issue is simple, still fill the template — the user asked for deep analysis.
- If the root cause cannot be determined with certainty, state this and explain what additional information would help.
-- Output the document. Do NOT just explain in conversation.
+- Never modify project code during deep debug — read only
+- Investigate ≥3 angles (lifecycle, data flow, plus one more relevant angle)
+- Cite file:line for every cause candidate
+- Provide 2–4 solutions per cause with WHAT and WHERE
+- Never speculate without file evidence — mark as [UNCONFIRMED] if needed
+- Use grep/lsp_find_references before concluding "no other writers"
+- Save output to `Documents/Debug/ANALYSIS_{TOPIC}_{YYYYMMDD}.md`
+- Load the analysis template before writing the report
+- Label causes HIGH/MED/LOW confidence based on evidence strength
+- Do not include fix code in the report — describe WHAT and WHERE only
+
+## Output Format
+
+`Documents/Debug/ANALYSIS_*.md` — sections: Summary, Reproduction, Root Causes (ranked), Solutions (WHAT/WHERE), Recommended Next Step. All causes cite file:line.
 
 ## Reference Files
-- [output-template.md](references/output-template.md) — Output template for analysis documents
-- workflow.md — 9-step deep investigation workflow
+
+- `references/analysis-template.md` — markdown template for the structured analysis output document
+
+Load references on demand via `read_skill_file("unity-debug-deep", "references/{file}")`.

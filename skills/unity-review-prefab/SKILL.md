@@ -1,54 +1,45 @@
 ---
 name: unity-review-prefab
-description: "Review .prefab and .unity files in GitHub PRs for missing scripts, broken variant links, raycast issues, hierarchy problems, and Unity-specific YAML patterns. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing prefab/scene files in PRs, validating prefab integrity before merge. Triggers: 'review prefab', 'prefab review', 'scene review', 'prefab changes', 'PR prefab review', 'review PR prefabs'."
+description: PR prefab and scene review — missing scripts, broken variants, raycasts, hierarchy. Triggers — 'review prefabs', 'prefab review', 'scene review', 'check prefabs'.
 ---
+# unity-review-prefab
 
-# Prefab & Scene PR Reviewer
+Review `.prefab` and `.unity` scene files changed in a GitHub PR for missing scripts, broken variants, raycast blockers, and hierarchy issues — using parallel subagents per file.
 
-Review `.prefab` and `.unity` file changes in GitHub PRs. Delegate each file to a parallel subagent, gather results, merge into one review, and push to GitHub.
+## When to Use
 
-## Output
-Review comments pushed to GitHub PR via API. Covers missing scripts, broken variants, raycast issues, hierarchy problems.
-
-## Input → Command
-
-| Input | Command |
-|:------|:--------|
-| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
-
-## Severity Labels
-
-| Severity | Emoji | Meaning |
-|:---------|:------|:--------|
-| CRITICAL | 🔴 | Breaks functionality, data loss, crashes |
-| HIGH | 🟡 | Performance, UX, or logic issues |
-| MEDIUM | 🔵 | Style, maintainability, minor UX |
-| LOW | 🟢 | Naming, conventions, suggestions |
-
-Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
+- A PR adds or modifies prefabs or scene files
+- Checking for missing MonoBehaviour references after a rename or delete
+- Auditing UI canvas hierarchy for raycast-blocker leaks
 
 ## Workflow
 
-Follow the 4-step workflow: Fetch PR & Filter → Parallel Review → Collect & Merge → Submit.
+1. **Fetch PR** — list changed files via `gh api repos/{owner}/{repo}/pulls/{pr}/files`
+2. **Filter prefab/scene files** — select `.prefab` and `.unity` files
+3. **Spawn subagents** — one `task` per file (parallel); each subagent receives the file path and checklist
+4. **Per-file checks** — each subagent reads raw YAML; checks for missing scripts, broken variant bases, orphaned transforms, raycast blockers, and hierarchy depth
+5. **Collect results** — aggregate findings from all subagents
+6. **Post comments** — build payload and submit via `gh api` for each finding
+
 ## Rules
 
-- Only review `.prefab` and `.unity` files. Read full files, not just diffs.
-- One subagent per file. Each subagent loads `unity-review-prefab` to access patterns.
-- One issue = one comment. Every comment needs severity + evidence + suggestion.
-- If a subagent fails, log the error and continue with remaining results.
-- Submit even if PR is merged — `post_review.py` handles fallback.
-- Never hardcode `commit_id` or modify source files.
-- Refer to review-prefab-patterns.md (loaded below) for the complete pattern catalog.
-- Refer to review-parallel-workflow.md (loaded below) for delegation details.
+- Spawn one subagent per `.prefab` / `.unity` file — do not process sequentially
+- Flag `m_Script: {fileID: 0}` as CRITICAL (missing MonoBehaviour)
+- Flag prefab variant with missing base prefab GUID as CRITICAL
+- Flag UI `Image` or `Panel` with `raycastTarget: 1` and no interactable component as WARNING
+- Flag hierarchy depth > 8 levels as NOTE
+- Flag transforms with non-uniform scale on rigidbody objects as WARNING
+- Flag `activeSelf: 0` on root prefab GameObjects as NOTE (likely unintentional)
+- Flag duplicate component types on the same GameObject (except colliders) as WARNING
+- Aggregate per file before posting — one review comment block per file, not per finding
+- Use severity prefix: `[CRITICAL]`, `[WARNING]`, `[NOTE]` in every comment
 
-## Shared References
+## Output Format
 
-Load shared review resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/review/review-prefab-patterns.md")
-read_skill_file("unity-shared", "references/review/review-parallel-workflow.md")
-```
+Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local summary of subagent results and CRITICAL count.
 
 ## Reference Files
-- workflow.md — 4-step prefab review workflow
+
+- `references/prefab-review-checklist.md` — missing scripts, broken variants, raycast, hierarchy checklist
+
+Load references on demand via `read_skill_file("unity-review-prefab", "references/prefab-review-checklist")`.

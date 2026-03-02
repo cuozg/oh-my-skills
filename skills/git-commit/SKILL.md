@@ -1,22 +1,34 @@
 ---
 name: git-commit
-description: "Generate clean, meaningful git commit messages based on code changes or user request. Commits to current branch with no AI metadata (no co-author, committer info, or tool attribution). Messages are short, concise, use bullet points for multiple changes. Triggers: 'commit changes', 'generate and commit', 'commit with message', 'commit this', 'stage and commit'."
+description: Commit staged or unstaged changes with a clean imperative message — use for 'commit', 'git commit', 'commit changes', 'save changes'
 ---
+# git-commit
 
-# Git Commit
+Stage and commit changes with a clean, imperative-mood commit message. Never pushes to remote.
 
-Generate clean commit messages from staged changes. Local only — never pushes.
+## When to Use
 
-**Input**: File changes (via `git diff`) or explicit user description. Optional: commit scope, branch name.
-**Output**: A git commit on current branch with structured message.
+- Saving completed work as a logical commit
+- Committing a set of related changes with a meaningful message
+- Finalizing a bug fix, feature, or refactor into version history
 
-## Restrictions
+## Workflow
 
-- **NEVER** add co-author, committer, or AI tool metadata
-- **NEVER** push to remote — only commit locally
-- **NEVER** include code snippets in message
-- **DO** use imperative mood, bullet points, verify branch first
+1. **Inspect** — Run `git status` and `git diff` to understand what has changed
+2. **Stage** — Run `git add` for relevant files (or `git add -A` if all changes belong together)
+3. **Draft** — Write an imperative-mood summary line (max 72 chars); add bullet points for multi-change commits
+4. **Commit** — Run `git commit -m "{message}"` with the drafted message
+5. **Confirm** — Run `git status` to verify the working tree is clean
 
-## Reference Files
-- workflow.md — Step-by-step commit workflow
+## Rules
 
+- Use imperative mood: "Add", "Fix", "Refactor" — not "Added" or "Adding"
+- Keep summary line under 72 characters
+- Use bullet points in the body when multiple distinct changes are present
+- Include no AI-generated metadata, co-author tags, or tool signatures
+- Never run `git push` — local commit only
+- Never amend a commit that has already been pushed
+
+## Output Format
+
+A single local commit with a clean message. No remote changes. `git status` shows a clean working tree.

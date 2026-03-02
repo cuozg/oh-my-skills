@@ -1,40 +1,50 @@
 ---
 name: unity-code-editor
-description: "(opencode-project - Skill) Write Unity Editor C# code — custom EditorWindows, Inspectors, PropertyDrawers, ScriptableWizards, editor automation scripts, asset/scene validation tools, and batch processors. Covers both UI Toolkit (UXML/USS) and IMGUI approaches, Gizmos, Handles, MenuItem/Shortcut registration, SerializedObject/Property workflows, and AssetPostprocessor pipelines. Triggers: 'editor window', 'custom inspector', 'PropertyDrawer', 'EditorWindow', 'ScriptableWizard', 'menu item', 'MenuItem', 'asset validation', 'scene validation', 'batch processor', 'editor utility', 'IMGUI', 'editor UI Toolkit', 'SerializedProperty', 'SerializedObject', 'OnInspectorGUI', 'CreateAssetMenu', 'editor automation', 'editor tool', 'custom tool', 'editor script', 'Gizmos', 'Handles', 'editor extension', 'toolbar button', 'write editor code', 'create editor tool'."
+description: Write Unity Editor tooling — EditorWindows, CustomEditor inspectors, PropertyDrawers, Gizmos, Handles, MenuItem. Use for any editor extension task. Triggers — 'editor window', 'custom inspector', 'property drawer', 'gizmo', 'editor tool', 'menu item'.
 ---
+# unity-code-editor
 
-# Unity Editor Code Writer
+Write production-quality Unity Editor scripts — custom inspectors, editor windows, property drawers, and scene-view tools.
 
-**Input**: Description of Editor tool or automation needed. Optional: target component/asset types, UI framework preference (UI Toolkit vs IMGUI).
+## When to Use
 
-## Output
+- Building a custom Inspector or window for a component or SO
+- Adding Gizmos/Handles for scene-view visualization
+- Creating [MenuItem] tools, context menus, or editor utilities
+- Writing PropertyDrawers for serialized field rendering
+- Automating editor workflows via EditorWindow
 
-Production-ready Unity Editor C# scripts following the Templates below.
+## Workflow
 
-## Templates (MANDATORY)
+1. **Identify** — determine the editor extension type needed (window, inspector, drawer, gizmo)
+2. **Locate** — find the target MonoBehaviour/SO/struct; read it fully before writing
+3. **Implement** — write the editor script using the correct base class and API
+4. **Place** — always save to an `Editor/` folder (any depth); never in Runtime
+5. **Verify** — run lsp_diagnostics on new file; fix all errors before declaring done
 
-- [EDITOR_WINDOW_TEMPLATE.md](assets/templates/EDITOR_WINDOW_TEMPLATE.md)
-- [CUSTOM_INSPECTOR_TEMPLATE.md](assets/templates/CUSTOM_INSPECTOR_TEMPLATE.md)
-- Editor scripting patterns + UI Toolkit guide (loaded below)
+## Rules
 
-Read the relevant template first, then populate all sections.
+- Always save editor scripts under an `Editor/` folder (compile-guard)
+- Never add `using UnityEditor` to runtime scripts
+- Use `[CustomEditor(typeof(X))]` on the class, not in a method
+- Call `base.OnInspectorGUI()` before custom GUI unless fully replacing it
+- Wrap Handles/Gizmos in `#if UNITY_EDITOR` when referenced from runtime code
+- Use `serializedObject.Update()` / `ApplyModifiedProperties()` around SerializedProperty edits
+- Use `EditorGUILayout` for window/inspector GUI; `EditorGUI` for fixed-rect drawing
+- Register EditorWindow via `GetWindow<T>()` inside a `[MenuItem]` static method
+- Prefer `SerializedProperty` over direct field access to support Undo/Prefab overrides
+- Use `GUILayout.BeginHorizontal/Vertical` for layout; avoid magic pixel offsets
+- Add `[InitializeOnLoad]` only when truly needed (slows editor startup)
+- Add null-guards on `target` casts in OnInspectorGUI
+- Handle Undo with `Undo.RecordObject(target, "action name")` before mutations
 
-## Tool Types
+## Output Format
 
-| Type | Use Case |
-|------|----------|
-| EditorWindow | Global utility tools |
-| CustomEditor | Component-specific inspectors |
-| AssetPostprocessor | Import automation |
-| MenuItem/Shortcut | Quick actions |
-
-## Shared References
-
-Load shared editor resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/code/editor-patterns.md")
-```
+Production Editor scripts placed under the appropriate `Editor/` folder, zero compiler errors, Undo-safe.
 
 ## Reference Files
-- workflow.md — 4-step editor code workflow
+
+- `references/editor-patterns.md` — EditorWindow, CustomEditor, PropertyDrawer patterns with minimal boilerplate
+- `references/gizmos-handles.md` — Gizmos, Handles, SceneView patterns and OnDrawGizmos examples
+
+Load references on demand via `read_skill_file("unity-code-editor", "references/{file}")`.

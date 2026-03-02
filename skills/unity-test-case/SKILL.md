@@ -1,32 +1,40 @@
 ---
 name: unity-test-case
-description: "Expert QA professional for Unity game projects. Deep investigate game features, understand game logic and systems, and generate comprehensive test case documents in HTML format. Use when: (1) Creating test cases for a game feature or system, (2) Analyzing a feature for QA coverage, (3) Generating test case documentation, (4) Reviewing test completeness for game mechanics, (5) Creating QA plans for Unity gameplay systems. Triggers: 'test cases', 'QA', 'test plan', 'test coverage', 'create test cases for', 'generate test cases', 'quality assurance', 'test document', 'test case document'."
+description: Generate QA test cases as HTML — use for 'test cases', 'QA test cases', 'generate test cases', 'test plan', 'manual test cases'
 ---
+# unity-test-case
 
-# Unity Test Case Generator
+Generate structured QA test cases covering happy paths, edge cases, boundary values, and negative tests, saved as an HTML document.
 
-**Input**: Game feature/system to test + optional feature spec, existing test cases, priority areas
+## When to Use
 
-## Output
-Comprehensive test case document in HTML format covering all test scenarios for the feature.
+- Creating a QA test plan for a new feature or system
+- Documenting manual test cases before a release
+- Generating test coverage for a bug fix or change set
+- Producing shareable test documentation for a team or stakeholder
 
 ## Workflow
 
-1. **Investigate** — read relevant C# scripts, map state machines/logic flows, identify entry points/triggers
-2. **Analyze** — list configurable params, integration points, server/persistence dependencies
-3. **Design** — test cases using test-case-patterns.md + edge case heuristics from qa-methodology.md (loaded below)
-4. **Generate** — HTML from `assets/test-case-template.html`, replace `{{PLACEHOLDER}}` values, calculate summary stats
-5. **Save** to `Documents/TestCases/{FeatureName}_TestCases.html`
+1. **Understand** — Read the feature spec, related scripts, or user description to identify testable behaviors
+2. **Categorize** — Group cases by: Happy Path, Edge Cases, Boundary Values, Negative Tests, Performance/Load
+3. **Write** — For each case: ID, title, preconditions, steps, expected result, priority (P1/P2/P3)
+4. **Generate** — Render all cases into the HTML template from `references/test-case-template.md`
+5. **Save** — Write to `Documents/TestCases/{FeatureName}_TestCases.html`
 
-## Shared References
+## Rules
 
-Load shared QA resources from `unity-shared`:
+- Cover all four categories: happy path, edge, boundary, negative
+- Minimum 5 test cases per category when the feature warrants it
+- Assign priority: P1 = critical path, P2 = important, P3 = nice-to-have
+- Keep steps atomic — one action per step
+- Expected results must be observable and unambiguous
 
-```python
-read_skill_file("unity-shared", "references/testing/qa-methodology.md")
-read_skill_file("unity-shared", "references/testing/test-case-patterns.md")
-```
+## Output Format
+
+`Documents/TestCases/{FeatureName}_TestCases.html` — styled HTML file with test case table, status column, and priority indicators.
 
 ## Reference Files
-- `assets/test-case-template.html` — dark-themed responsive template
-- workflow.md — Test case generation workflow
+
+- `references/test-case-template.md` — HTML template for test case documents
+
+Load references on demand via `read_skill_file("unity-test-case", "references/{file}")`.

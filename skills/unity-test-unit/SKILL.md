@@ -1,29 +1,43 @@
 ---
 name: unity-test-unit
-description: "Unity Test Framework automation. Use when: (1) Creating Edit/Play Mode tests, (2) Generating comprehensive test suites for features, (3) Mocking dependencies, (4) Maximizing test coverage for Unity C# code. Triggers: 'write tests', 'test this class', 'add unit tests', 'test coverage', 'play mode test', 'edit mode test'."
+description: Write Edit/Play Mode unit tests for Unity C# — use for 'write tests', 'unit test', 'test this class', 'add tests', 'create test'
 ---
-# Unity Test Generation
+# unity-test-unit
 
-**Input**: Class, method, or feature to test. Optional: test assembly, mode preference (Edit/Play), coverage target.
+Write Unity unit tests using Edit Mode and Play Mode with Arrange-Act-Assert pattern, minimum 10 test cases per class.
 
-## Output
-Unity Test Framework test scripts (Edit Mode and/or Play Mode) with comprehensive coverage.
+## When to Use
+
+- Adding test coverage to an existing MonoBehaviour, ScriptableObject, or utility class
+- Writing tests for a new system before or after implementation
+- Increasing test coverage on a specific file or method
+- Verifying edge cases, boundary values, and error paths in game logic
 
 ## Workflow
 
-1. **Analyze**: Identify feature under test, list expected behaviors (happy path, edge cases, errors), define scope
-2. **Investigate**: Read target code, map public API, identify dependencies (singletons, MonoBehaviour refs, SOs), classify testability (pure logic → Edit Mode, lifecycle → Play Mode)
-3. **Generate**: Create test scripts per feature — cover all categories, target 10+ test cases per class
+1. **Read** — Read the target class(es) to understand public API, dependencies, and state
+2. **Identify** — List 10+ test cases: happy paths, edge cases, boundary values, null/invalid inputs
+3. **Classify** — Decide Edit Mode vs Play Mode per test (Play Mode only for coroutines/physics/lifecycle)
+4. **Write** — Implement tests using AAA pattern with `[Test]` or `[UnityTest]` attributes
+5. **Verify** — Check compilation; fix any missing assembly references or namespace issues
 
-## Shared References
+## Rules
 
-Load shared test resources from `unity-shared`:
+- Use Arrange-Act-Assert in every test body
+- Minimum 10 test cases per class under test
+- Prefer Edit Mode tests; use Play Mode only when coroutines or Unity lifecycle are required
+- Name tests: `MethodName_Condition_ExpectedResult`
+- Place test files in `Assets/Tests/EditMode/` or `Assets/Tests/PlayMode/`
+- Add `[SetUp]` / `[TearDown]` to avoid state leaking between tests
+- Never call `Debug.Log` in tests — use `Assert` only
 
-```python
-read_skill_file("unity-shared", "references/testing/test-patterns.md")
-read_skill_file("unity-shared", "references/testing/test-assembly-setup.md")
-read_skill_file("unity-shared", "references/testing/test-examples.md")
-```
+## Output Format
+
+Test scripts with `[Test]` / `[UnityTest]` attributes, placed in the correct test assembly folder, compiling without errors.
 
 ## Reference Files
-- workflow.md — Test generation workflow
+
+- `references/test-patterns.md` — AAA pattern, mocking, common assertions
+- `references/unity-test-attributes.md` — [Test], [UnityTest], [SetUp], [TearDown], Edit vs Play mode
+
+Load references on demand via `read_skill_file("unity-test-unit", "references/{file}")`.

@@ -1,43 +1,43 @@
 ---
 name: unity-debug-log
-description: "Generate targeted Debug.Log statements wrapped in #if UNITY_EDITOR to help understand code flow, logic, and state. Produces color-coded, structured log snippets — never modifies or adds code to the project. Use when: (1) Need to trace execution flow through methods, (2) Want to inspect variable state at runtime, (3) Debugging null references or unexpected values, (4) Understanding Unity lifecycle ordering, (5) Tracking event subscriptions and callbacks, (6) Monitoring state machine transitions. Triggers: 'add debug logs', 'trace this flow', 'log this method', 'debug log', 'add logging', 'trace execution', 'monitor state', 'log variables', 'show me the flow', 'instrument this code'."
+description: Generate copy-paste Debug.Log snippets — [DBG] prefix, color tags, string interpolation, wrapped in UNITY_EDITOR guard. Read-only, never writes to project files. Triggers — 'debug log', 'add logging', 'trace log', 'log snippet', 'debug output'.
 ---
+# unity-debug-log
 
-# Unity Debug Log Generator
+Generate formatted Debug.Log snippets ready for manual copy-paste — never modifies project files directly.
 
-Generate debug log snippets. Output the template. Nothing else.
+## When to Use
 
-## Output Format
-
-Use the response template from debug-log-reference.md (loaded below) for every response. No prose, no preamble — just the template.
-
-## Hard Constraints
-
-- **READ-ONLY**: Never edit, add, or modify any project file. Output log snippets as text only.
-- **No commits**: No git operations.
-- **#if UNITY_EDITOR**: Every Debug.Log MUST be wrapped in `#if UNITY_EDITOR` / `#endif`.
-- **[DBG] prefix**: Every log message starts with `[DBG]` for easy filtering.
-- **Color-coded**: Every log uses `<color=X>` tags per debug-log-reference.md (loaded below).
+- Need a quick log statement to trace a value at a specific point
+- Want color-coded, prefixed logs to stand out in the Console
+- Generating log wrappers for methods, coroutines, or event handlers
+- Adding temporary instrumentation without modifying file structure
 
 ## Workflow
 
+1. **Identify** — determine what value/event/method to trace and in which class/method
+2. **Format** — apply [DBG] prefix, color tag, string interpolation, and UNITY_EDITOR guard
+3. **Output** — print the snippet as a code block (do not write to any project file)
 
 ## Rules
 
-- Output log snippets only. NEVER edit files.
-- Each log must have: `#if UNITY_EDITOR` wrapper, `<color=X>` tag, `[DBG]` prefix, `ClassName.MethodName` context.
-- Use string interpolation `$"..."` always. Never `string.Format` or concatenation.
-- For null-safe inspection: use `(x != null ? x.name : "NULL")` or `x?.ToString() ?? "NULL"`.
-- Include exact file path and line number for each insertion point. Group by file, order by execution flow.
-- Keep log messages concise — show the value, not a novel.
+- Never write snippets to project files — output only as text
+- Always prefix with `[DBG]` followed by class and method name
+- Always wrap in `#if UNITY_EDITOR` / `#endif` unless user requests permanent logs
+- Use `$"..."` string interpolation, not string concatenation
+- Apply `<color=X>` tag to the prefix; keep message body uncolored for readability
+- Use `Debug.LogWarning` for unexpected-but-handled states, `Debug.LogError` for failures
+- Include the calling context (`this.name`, index, or key) when logging inside loops
+- Keep each snippet self-contained — no helper methods unless requested
+- Do not suggest permanent logging infrastructure (that belongs in unity-code-quick)
+- Load format examples if color codes or compound formats are needed
 
-## Shared References
+## Output Format
 
-Load shared debug resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/debug/debug-log-reference.md")
-```
+Formatted code block(s) — copy-paste ready. Text output only.
 
 ## Reference Files
-- workflow.md — Log generation workflow
+
+- `references/log-format-examples.md` — color codes, format patterns, coroutine and loop examples
+
+Load references on demand via `read_skill_file("unity-debug-log", "references/{file}")`.

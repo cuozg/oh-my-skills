@@ -1,19 +1,35 @@
 ---
 name: unity-investigate-quick
-description: "Quick investigation of Unity projects. Answers questions about how systems work with a short focused summary and 1-3 detailed explanations. No report document — direct conversational answers. Use when: (1) Quick question about how a feature works, (2) Understanding a class or method's purpose, (3) Tracing a call chain or data flow, (4) Finding where something is defined or used, (5) Understanding system dependencies, (6) Answering 'what does X do' or 'how does X work'. Triggers: 'how does X work', 'what does X do', 'explain this code', 'what calls this', 'investigate', 'where is X defined', 'how is X used', 'what triggers X', 'trace the flow', 'analyze this system'."
+description: Quick Q&A about Unity codebase — how systems work, call chains, flow traces. Triggers — 'how does X work', 'what calls this', 'trace the flow', 'explain this system', 'quick investigate'.
 ---
-# Unity Quick Investigator
+# unity-investigate-quick
 
-Answer the question. Nothing else.
+Answer a focused Unity codebase question in the fewest tool calls possible.
 
-## Output Format
+## When to Use
 
-Use the Vercel-themed tree template from `references/output-template.md` for every response. Tree connectors (`├──`, `└──`) for flow. Inline code (`cyan`) for all code identifiers, file refs, and values. **Bold** for labels. Emoji indicators for risk. No prose, no preamble — just the formatted tree.
+- "How does X work?" or "What calls Y?"
+- "Trace the flow from event to handler"
+- "Explain this system briefly"
+- Quick sanity checks before making a change
 
 ## Workflow
 
-Follow the 3-step workflow: Parse → Find → Reply.
+1. **Parse** — Extract the exact symbol, file, or concept from the question
+2. **Find** — Use `lsp_goto_definition` on the target symbol to locate its declaration
+3. **Trace** — Use `lsp_find_references` or `grep` to follow call chains one level deep
+4. **Stop** — Halt the moment the question can be answered; skip unused steps
+5. **Reply** — Format as summary + 1-3 typed detail blocks
 
-## Reference Files
-- [output-template.md](references/output-template.md) — Vercel-themed tree output format
-- workflow.md — 3-step quick investigation workflow
+## Rules
+
+- Stop the moment the question can be answered — speed over ceremony
+- Never read an entire file to answer a line-level question
+- Prefer `lsp_goto_definition` over `grep` when a symbol name is known
+- Inline code snippets only when they directly clarify the answer
+- No headers, no preamble — answer starts immediately
+
+## Output Format
+
+Single summary sentence followed by 1-3 detail blocks in tree format:
+`## {Target} [{type: class|method|event|system}]` → summary → details as inline bullets.

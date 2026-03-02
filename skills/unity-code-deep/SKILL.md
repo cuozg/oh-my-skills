@@ -1,38 +1,54 @@
 ---
 name: unity-code-deep
-description: "Complex, multi-file Unity C# implementation. Loads ALL unity-shared references, follows code standards and TDD strictly. Investigates before coding, verifies references to preserve existing logic, reviews carefully, runs tests after writing. Use when: (1) Multi-system feature requiring cross-file changes, (2) Refactoring for performance or architecture, (3) Implementing from a TDD or system document, (4) Tasks requiring verification and testing before delivery. Triggers: 'implement feature', 'complex code', 'refactor system', 'implement TDD', 'deep code'."
+description: Implement multi-file Unity C# features — cross-system architecture, refactors, patterns spanning 2+ files. Use when a task touches multiple classes, introduces new systems, or restructures existing code. Triggers — 'build a system', 'implement feature', 'refactor', 'multi-file', 'architecture', 'cross-system', 'add a system'.
 ---
 
-# unity-code-deep — Expert Unity C# Implementation
+# unity-code-deep
 
-Write clean, commented, performant C# code. Investigate before coding, ask when unclear, verify everything compiles.
+Multi-file C# implementation for Unity. Understand scope → plan file structure → implement → verify compilation.
 
-**Input**: Feature description, implementation task, or TDD/system doc reference
-**Output**: C# scripts following project conventions, zero compile errors.
+## When to Use
+
+- Feature spanning 2+ .cs files (e.g., manager + data + UI + events)
+- Introducing architectural patterns (state machine, event bus, service locator)
+- Refactoring: extract class, introduce interface, decompose god class
+- Cross-system integration (new system wiring into existing ones)
+- Any task where file dependencies and creation order matter
 
 ## Workflow
 
-Follow the 4-phase workflow: Understand → Plan → Implement → Verify.
+1. **Parse** — Extract: what system? which files affected? what patterns needed?
+2. **Scope** — Map affected files, namespaces, assemblies. Identify creation order and dependencies.
+3. **Discover** — Check codebase for existing patterns, conventions, related systems (grep/glob/lsp, max 5 searches)
+4. **Plan** — Define file list with responsibilities. Interfaces first, then implementations, then wiring.
+5. **Implement** — Write files in dependency order. Match project conventions per file.
+6. **Verify** — Run `coplay-mcp_check_compile_errors`. Fix until zero errors across all new/modified files.
 
-## Shared References
+## Rules
 
-Load **ALL** shared coding references from `unity-shared` before writing any code. This is mandatory — no exceptions.
+- Map all affected files BEFORE writing any code. No ad-hoc file creation mid-implementation.
+- Write interfaces and base types first, implementations second, wiring/registration last.
+- One class per file. File name = class name. Match existing namespace conventions.
+- Respect assembly definition boundaries — never add cross-asmdef references without checking.
+- All rules from `unity-code-quick` apply per-file (SerializeField, sealed, no empty lifecycle, etc.).
+- Load `unity-standards` references for per-file coding standards: `read_skill_file("unity-standards", "references/code-standards/<file>")`.
+- Prefer composition over inheritance. Extract interfaces for testability.
+- Use ScriptableObject event channels for cross-system communication (avoid direct coupling).
+- Never introduce a new dependency pattern that conflicts with existing project conventions.
+- If refactoring, preserve public API signatures unless explicitly asked to change them.
+- Run `coplay-mcp_check_compile_errors` after every 2-3 files written, not just at the end.
+- Never add `// TODO` — deliver complete code or state limitations.
 
-```python
-read_skill_file("unity-shared", "references/code/coding-standards.md")
-read_skill_file("unity-shared", "references/code/csharp-hygiene.md")
-read_skill_file("unity-shared", "references/code/csharp-modern.md")
-read_skill_file("unity-shared", "references/code/csharp-linq.md")
-read_skill_file("unity-shared", "references/code/csharp-perf.md")
-read_skill_file("unity-shared", "references/code/unity-lifecycle.md")
-read_skill_file("unity-shared", "references/code/unitask.md")
-read_skill_file("unity-shared", "references/code/template.md")
-read_skill_file("unity-shared", "references/code/patterns-service.md")
-read_skill_file("unity-shared", "references/code/patterns-async-state.md")
-read_skill_file("unity-shared", "references/code/editor-patterns.md")
-read_skill_file("unity-shared", "references/code/security.md")
-read_skill_file("unity-shared", "references/code/architecture.md")
-```
+## Output Format
+
+Write all files directly using edit/write tools. No markdown code blocks as final output — actual files only.
+Report: file count, file list with paths, and compilation status.
 
 ## Reference Files
-- workflow.md — 4-phase implementation workflow
+
+- `references/architecture-patterns.md` — State machine, MVC/MVP, command pattern (DI/events → unity-standards)
+- `references/multi-file-workflow.md` — Dependency ordering, namespace strategy, asmdef awareness
+- `references/refactoring-patterns.md` — Safe refactoring: extract class, introduce interface, decompose, migrate
+
+Load references on demand via `read_skill_file("unity-code-deep", "references/<file>")` when pattern guidance is needed.
+For per-file coding standards, load from `unity-standards`: `read_skill_file("unity-standards", "references/code-standards/<file>")`.

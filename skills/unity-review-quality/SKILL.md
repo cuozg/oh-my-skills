@@ -1,40 +1,48 @@
 ---
 name: unity-review-quality
-description: "Senior Unity Developer quality review. Deep-dives into a Unity project, reviews everything against best practices, and produces a comprehensive HTML report document. Read-only — never modifies any project files. Covers: architecture, code quality, performance, Unity best practices, project health, security, testing, asset management, and technical debt. Use when: (1) Full project quality audit, (2) Pre-release readiness check, (3) Technical debt assessment, (4) Onboarding review to understand project health, (5) Periodic quality gate evaluation, (6) Post-mortem quality analysis. Triggers: 'review quality', 'quality audit', 'project review', 'quality check', 'project health', 'best practices review', 'code audit', 'technical debt review', 'quality report', 'full review', 'project audit'."
+description: Full Unity project audit — A-F graded HTML report covering architecture, performance, best practices, tech debt. Triggers — 'project audit', 'quality audit', 'project review', 'code quality report', 'tech debt audit'.
 ---
+# unity-review-quality
 
-# Unity Quality Reviewer
+Scan a Unity project read-only, grade architecture, performance, best practices, and tech debt on an A–F scale with evidence, and generate a comprehensive HTML report.
 
-**Persona**: Senior Unity Developer with 15 years experience. Reviews the entire project with zero tolerance for anti-patterns, performance traps, and architectural debt. Produces a comprehensive report. **Never modifies any project file.**
+## When to Use
 
-**Input**: Unity project path (or current working directory)
+- Onboarding to an unfamiliar Unity codebase
+- Pre-release quality gate for a shipped title
+- Quarterly tech debt audit for a live game
 
-## Output
-Comprehensive HTML quality report. Read-only — never modifies project files.
+## Workflow
 
-## Absolute Rules
+1. **Scope project** — list all `.cs`, `.prefab`, `.unity`, `.asmdef`, `.asset` files; record counts
+2. **Analyze architecture** — check DI patterns, assembly structure, coupling, event systems, singleton count
+3. **Analyze performance** — scan for hot-path allocations, `FindObjectOfType`, per-frame `GetComponent`, excessive coroutines
+4. **Evaluate best practices** — null handling, serialization safety, test coverage presence, naming conventions
+5. **Measure tech debt** — TODO/FIXME count, dead code, magic numbers, file length outliers
+6. **Grade each category** — apply A–F rubric from `references/quality-grading-rubric.md`
+7. **Generate HTML report** — use structure from `references/html-report-template.md`; embed evidence snippets
 
-- **READ-ONLY**: Never edit, create, or delete any project file. Only create the report document.
-- **EVIDENCE-BASED**: Every finding must cite file:line. No speculative findings.
-- **SEVERITY-DRIVEN**: Classify every finding. Critical issues first.
-- **ACTIONABLE**: Every finding must include a concrete fix recommendation.
+## Rules
 
-## Severity Classification & Grading
+- Read files only — never modify source code or assets
+- Assign one grade per category: Architecture, Performance, Best Practices, Tech Debt
+- Every grade must cite at least one evidence file path + line number
+- F grade requires 3+ CRITICAL violations in that category
+- A grade requires zero violations and positive evidence
+- Include a "Top 5 Priority Fixes" section ranked by severity × frequency
+- Do not average grades into an overall score — list each separately
+- Flag `FindObjectOfType` calls as performance violations (not architectural)
+- Flag missing `.asmdef` files in a project > 50 scripts as Architecture WARNING
+- Flag test coverage below 10% (by file count) as Best Practices WARNING
+- Save report to `Documents/QualityAudit_{date}.html` unless path overridden
 
-See review-approval-criteria.md (loaded above) for severity levels (Critical/High/Medium/Low), grading criteria (A–F), and approval gates.
+## Output Format
 
-## Shared References
+HTML report file at `Documents/QualityAudit_{date}.html` with A-F grades per category, evidence table, and prioritized fix list.
 
-Load shared review resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/review/review-approval-criteria.md")
-read_skill_file("unity-shared", "references/quality/quality-architecture-checklist.md")
-read_skill_file("unity-shared", "references/quality/quality-performance-checklist.md")
-read_skill_file("unity-shared", "references/quality/quality-code-checklist.md")
-read_skill_file("unity-shared", "references/quality/quality-unity-best-practices.md")
-read_skill_file("unity-shared", "references/quality/quality-project-health-checklist.md")
-```
 ## Reference Files
-- workflow.md — 7-step quality audit workflow
 
+- `references/quality-grading-rubric.md` — A-F grading criteria per category
+- `references/html-report-template.md` — HTML report structure and section layout
+
+Load references on demand via `read_skill_file("unity-review-quality", "references/{file}")`.

@@ -1,61 +1,47 @@
 ---
 name: unity-review-asset
-description: "Review Unity asset files (.mat, .shader, .meta, .controller, .anim, .fbx, .asset) in GitHub PRs for shader issues, texture memory problems, animation misconfigurations, and model import settings. After review, pushes comments directly to GitHub via the API. Accepts PR number/URL as input. Use when: reviewing asset files in PRs, validating material/texture/model settings before merge. Triggers: 'review assets', 'asset review', 'material review', 'texture review', 'shader review', 'PR asset review', 'review PR assets'."
+description: PR asset review — shaders, textures, animations, import settings. Triggers — 'review assets', 'asset review', 'check assets', 'shader review', 'texture review'.
 ---
+# unity-review-asset
 
-# Asset PR Reviewer
+Review Unity asset files changed in a GitHub PR — `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` — for shader issues, texture memory, animation config, and import settings.
 
-Review `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` file changes in GitHub PRs. Push review comments directly to GitHub via the API.
+## When to Use
 
-## Output
-Review comments pushed to GitHub PR via API. Covers shader refs, texture memory, animation config, model import settings.
-
-## Input → Command
-
-| Input | Command |
-|:------|:--------|
-| PR number/URL | `gh pr diff <N>` + `gh pr view <N> --json title,body,files,number` |
-
-## Severity Labels
-
-| Severity | Emoji | Meaning |
-|:---------|:------|:--------|
-| CRITICAL | 🔴 | Will break at runtime or cause data loss |
-| HIGH | 🟡 | Performance, memory, or correctness issue |
-| MEDIUM | 🔵 | Best practice violation, maintainability risk |
-| LOW | 🟢 | Style, naming, minor optimization |
-
-Severity labels are for categorization only. This skill always posts as `COMMENT`. Approval decisions are made exclusively by `unity-review-general`.
-
-## File Type Coverage
-
-| Extension | Review Focus |
-|:----------|:-------------|
-| `.mat` | Shader refs, material properties, render queue |
-| `.shader` | Variants, platform compatibility, keywords |
-| `.meta` | Texture import settings, compression, read/write |
-| `.controller` | Animator config, culling, write defaults |
-| `.anim` | Animation clips, curves, root motion |
-| `.fbx` | Model import, mesh compression, rig type |
-| `.asset` | ScriptableObject refs, data integrity |
+- A PR adds or modifies materials, shaders, textures, animations, or FBX models
+- Suspecting texture memory bloat, missing mip maps, or incorrect import settings
+- Checking that animation controllers and blend trees are correctly configured
 
 ## Workflow
 
-Follow the 4-step workflow: Fetch PR → Read & Apply Patterns → Build JSON → Submit.
+1. **Fetch PR** — list changed files via `gh api repos/{owner}/{repo}/pulls/{pr}/files`
+2. **Filter asset files** — select `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset`
+3. **Read asset files** — load raw YAML/text content; parse relevant fields
+4. **Check shaders** — verify no fixed-function shaders; check for missing `_ALPHATEST_ON` guards; flag unlit shaders on opaque materials
+5. **Check textures** — verify `maxTextureSize` ≤ 2048 for UI; mip maps enabled for 3D; compression format matches platform
+6. **Check animations** — verify loop settings, root motion config, blend tree thresholds are non-zero
+7. **Check import settings** — FBX read/write disabled unless needed; mesh compression set; animation type correct
+8. **Post comments** — build payload and submit via `gh api`
+
 ## Rules
 
-- Only review asset file types listed above. One issue = one comment.
-- Every comment needs severity + evidence + suggestion.
-- Submit even if PR is merged — `post_review.py` handles fallback.
-- Never hardcode `commit_id` or modify source files.
+- Flag textures > 2048px on mobile platforms as WARNING
+- Flag `Read/Write Enabled` on meshes as WARNING (doubles memory)
+- Flag missing mip maps on world-space textures as NOTE
+- Flag animation clips with `loop = false` on locomotion states as WARNING
+- Flag uncompressed audio in `.meta` as WARNING
+- Flag shaders referencing removed or renamed properties as CRITICAL
+- Flag materials with null shader references as CRITICAL
+- Flag `.anim` files with sub-1% blend tree thresholds as NOTE
+- Never modify asset files — post comments only
+- Use severity prefix: `[CRITICAL]`, `[WARNING]`, `[NOTE]` in every comment
 
-## Shared References
+## Output Format
 
-Load shared review resources from `unity-shared`:
-
-```python
-read_skill_file("unity-shared", "references/review/review-asset-patterns.md")
-```
+Asset comments posted to the GitHub PR. Print a local summary listing flagged files and their severity.
 
 ## Reference Files
-- workflow.md — 4-step asset review workflow
+
+- `references/asset-review-checklist.md` — shader, texture, animation, import settings checklist
+
+Load references on demand via `read_skill_file("unity-review-asset", "references/asset-review-checklist")`.

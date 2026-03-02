@@ -1,28 +1,42 @@
 ---
 name: unity-investigate-deep
-description: "Deep investigation of Unity projects with full report output. Produces comprehensive markdown investigation documents with architecture diagrams, execution flows, risk tables, and improvement recommendations. Use when: (1) Need a thorough written report of how a system works, (2) Documenting complex system behavior for team review, (3) Deep-diving into architecture with Mermaid diagrams, (4) Producing investigation artifacts for future reference, (5) Tracing complete execution flows with side effects, (6) Auditing system health with risk assessment. Triggers: 'deep investigate', 'investigation report', 'document how X works', 'full analysis', 'write investigation', 'deep dive report', 'system analysis report', 'trace and document'."
+description: Full investigation report with architecture diagrams, execution flows, and risk tables. Triggers — 'deep investigate', 'investigation report', 'full analysis', 'system investigation', 'architecture analysis'.
 ---
+# unity-investigate-deep
 
-# Unity Deep Investigator
+Produce a comprehensive investigation report with Mermaid diagrams, cited evidence, and risk assessment.
 
-**Input**: Question or system to investigate + optional starting file/class
+## When to Use
 
-## Output
-
-Comprehensive investigation report (markdown) with architecture diagrams, execution flows, and risk tables. Save to `Documents/Investigations/`.
+- Team needs documented understanding of an unfamiliar system
+- Pre-refactor audit of a complex subsystem
+- Onboarding material for a non-trivial feature
+- Architecture analysis before a major change
 
 ## Workflow
 
-Follow the 5-step workflow: Scope → Discover → Analyze → Report → Summary.
+1. **Scope** — Define system boundaries: entry points, exit points, key actors
+2. **Discover** — Map all files/classes involved via `lsp_goto_definition`, `lsp_find_references`, `glob`
+3. **Analyze** — Trace execution paths; record dependencies, data flows, and state mutations
+4. **Diagram** — Draw Mermaid flowchart (execution) + class diagram (structure)
+5. **Assess** — Identify coupling hotspots, hidden dependencies, and risk areas
+6. **Write** — Produce full markdown report using `references/investigation-template.md`
+7. **Summarize** — Add one-paragraph executive summary at the top
 
-## Shared References
+## Rules
 
-Load shared investigation resources from `unity-shared`:
+- Cite `file:line` for every factual claim
+- Include at least one Mermaid diagram (flowchart or sequenceDiagram)
+- Bullets over prose in all sections
+- No speculation — investigate first, then state conclusions
 
-```python
-read_skill_file("unity-shared", "references/planning/investigation-analysis-rules.md")
-```
+## Output Format
+
+Save to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`.
+Sections: Summary, System Map, Execution Flow (Mermaid), Data Flow, Risks, References.
 
 ## Reference Files
-- [output-template.md](references/output-template.md) — Investigation report template
-- workflow.md — 5-step investigation workflow
+
+- `references/investigation-template.md` — Markdown template for investigation reports
+
+Load references on demand via `read_skill_file("unity-investigate-deep", "references/investigation-template.md")`.
