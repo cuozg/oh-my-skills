@@ -1,0 +1,48 @@
+---
+name: unity-review-architecture
+description: PR architecture review — DI, events, assemblies, coupling, SOLID. Triggers — 'architecture review', 'review architecture', 'check architecture', 'DI review', 'coupling review'.
+---
+# unity-review-architecture
+
+Review a GitHub PR for architectural concerns: dependency injection, event systems, assembly boundaries, coupling, and SOLID principle violations — then post comments to the PR.
+
+## When to Use
+
+- A PR introduces new systems, services, or manager classes
+- Changes touch assembly definitions, dependency injection setup, or event buses
+- Suspecting tight coupling, circular dependencies, or God-object growth
+
+## Workflow
+
+1. **Fetch PR** — list changed files via `gh api repos/{owner}/{repo}/pulls/{pr}/files`
+2. **Identify architecture files** — filter for `.cs`, `.asmdef`, `.asset`, dependency containers
+3. **Read changed files** — load full content; trace public API surface changes
+4. **Check DI** — verify dependencies injected via constructor or interface, not `GetComponent` chains
+5. **Check events** — confirm event channels are typed ScriptableObjects or C# events; no static bus overuse
+6. **Check assemblies** — `.asmdef` boundaries respected; no back-references from Runtime → Editor
+7. **Check coupling** — measure fan-out; flag classes with 6+ direct dependencies
+8. **Check SOLID** — single responsibility, open/closed, interface segregation violations
+9. **Post comments** — build payload and submit via `gh api` (see `references/architecture-checklist.md`)
+
+## Rules
+
+- Flag `FindObjectOfType` or `GameObject.Find` in production code as CRITICAL
+- Flag concrete class injection (not interface) as WARNING
+- Flag assemblies with bidirectional references as CRITICAL
+- Flag static singleton access from non-manager classes as WARNING
+- Flag classes over 300 lines without clear single responsibility as NOTE
+- Flag event systems without unsubscription as WARNING
+- Never suggest rewriting entire systems — scope comments to the PR changes
+- Use severity prefix: `[CRITICAL]`, `[WARNING]`, `[NOTE]` in every comment body
+- Do not duplicate issues already flagged by unity-review-code-pr
+- Post comments only; do not approve or request-changes
+
+## Output Format
+
+Architecture comments posted to the GitHub PR. Print a local summary with coupling metrics and any CRITICAL violations.
+
+## Reference Files
+
+- `references/architecture-checklist.md` — DI, events, assemblies, coupling, SOLID checklist
+
+Load references on demand via `read_skill_file("unity-review-architecture", "references/architecture-checklist")`.

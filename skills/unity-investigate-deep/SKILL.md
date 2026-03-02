@@ -1,0 +1,42 @@
+---
+name: unity-investigate-deep
+description: Full investigation report with architecture diagrams, execution flows, and risk tables. Triggers — 'deep investigate', 'investigation report', 'full analysis', 'system investigation', 'architecture analysis'.
+---
+# unity-investigate-deep
+
+Produce a comprehensive investigation report with Mermaid diagrams, cited evidence, and risk assessment.
+
+## When to Use
+
+- Team needs documented understanding of an unfamiliar system
+- Pre-refactor audit of a complex subsystem
+- Onboarding material for a non-trivial feature
+- Architecture analysis before a major change
+
+## Workflow
+
+1. **Scope** — Define system boundaries: entry points, exit points, key actors
+2. **Discover** — Map all files/classes involved via `lsp_goto_definition`, `lsp_find_references`, `glob`
+3. **Analyze** — Trace execution paths; record dependencies, data flows, and state mutations
+4. **Diagram** — Draw Mermaid flowchart (execution) + class diagram (structure)
+5. **Assess** — Identify coupling hotspots, hidden dependencies, and risk areas
+6. **Write** — Produce full markdown report using `references/investigation-template.md`
+7. **Summarize** — Add one-paragraph executive summary at the top
+
+## Rules
+
+- Cite `file:line` for every factual claim
+- Include at least one Mermaid diagram (flowchart or sequenceDiagram)
+- Bullets over prose in all sections
+- No speculation — investigate first, then state conclusions
+
+## Output Format
+
+Save to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`.
+Sections: Summary, System Map, Execution Flow (Mermaid), Data Flow, Risks, References.
+
+## Reference Files
+
+- `references/investigation-template.md` — Markdown template for investigation reports
+
+Load references on demand via `read_skill_file("unity-investigate-deep", "references/investigation-template.md")`.
