@@ -1,6 +1,6 @@
 # Oh My Unity
 
-A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 61+ specialized skills, 11 custom tools, 30 slash commands, and 4 agent personas — all tuned for Unity C# development.
+A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 33 specialized skills and 38 slash commands — all tuned for Unity C# development.
 
 ## Installation
 
@@ -26,11 +26,9 @@ gh auth login
 
 > For other platforms, see the [official install docs](https://github.com/cli/cli#installation).
 
-## Skills (61)
+## Skills (33)
 
-# ▲ Oh My Unity — Skill Spec
-
-> **38 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
+> **33 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
 
 ---
 
@@ -252,7 +250,7 @@ Shell script tooling.
 
 ---
 
-## 📦 Other Skills
+## 📦 Other
 
 ```
 ├── flatbuffers-coder       🗂️ FlatBuffers pipeline
@@ -263,11 +261,29 @@ Shell script tooling.
 │   ├─ What: Flowcharts, sequence diagrams, state machines, architecture
 │   └─ Out:  ```mermaid code blocks
 │
-├── skill-creator           🧰 Skill authoring guide
-│   ├─ Rule: SKILL.md < 100L. Refs < 100L. Progressive disclosure.
-│   └─ Out:  Skill directory: SKILL.md + references/ + scripts/ + assets/
-│
 └── unity-standards          📚 Unity development standards
     ├─ What: Code Standards (13), Review (11), Quality (6), Plan (7), Debug (3), Test (5), Other (3)
     └─ Use:  Other skills load specific refs via read_skill_file
+```
+
+---
+
+## ⚡ Commands (38)
+
+Slash commands for quick access to skills and workflows.
+
+```
+bash/           check · install · optimize
+flatbuffers/    coder
+git/            comment · commit · description · squash
+mermaid/        create
+omo/            atlas · prometheus · sisyphus · sisyphus-junior
+skill/          deep · quick
+unity/code/     deep · editor · quick
+unity/debug/    deep · fix · log · quick
+unity/document/ system · tdd
+unity/investigate/ deep · quick
+unity/plan/     deep · detail · quick
+unity/review/   architecture · asset · code-pr · general · local · prefab · quality
+unity/test/     case · unit
 ```
