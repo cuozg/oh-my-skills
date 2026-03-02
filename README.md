@@ -26,6 +26,49 @@ gh auth login
 
 > For other platforms, see the [official install docs](https://github.com/cli/cli#installation).
 
+## Skills Design System
+
+Skills follow a **3-tier progressive disclosure** architecture to minimize token usage while maximizing guidance quality:
+
+```
+Level 1 — Metadata (always in context)      name + description (~100 words)
+Level 2 — SKILL.md (loaded on trigger)       workflow + tool list (<100 lines)
+Level 3 — References (loaded on demand)      detailed standards, checklists, templates
+```
+
+### `unity-standards` — Shared Reference Hub
+
+`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **48 reference files** across 7 categories:
+
+| Category | Count | Covers |
+| --- | --- | --- |
+| Code Standards | 13 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ |
+| Review | 11 | Logic, lifecycle risks, performance, security, concurrency, architecture, assets, prefabs |
+| Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits |
+| Plan | 7 | Sizing, risk, task structure, investigation workflow, dependency mapping |
+| Debug | 3 | Diagnosis workflow, common Unity errors, log format |
+| Test | 5 | Edit/Play mode patterns, test case format, coverage strategy, naming |
+| Other | 3 | Mermaid syntax, FlatBuffers guide, skill authoring |
+
+Other skills pull specific references on demand:
+
+```python
+read_skill_file("unity-standards", "references/code-standards/naming.md")
+read_skill_file("unity-standards", "references/review/logic-checklist.md")
+```
+
+### Mandatory Skill Loading Rule
+
+> **When writing, reviewing, or refactoring Unity C# code, implementing features, setting up dependency injection, working with events, or reviewing code changes — always load `unity-standards`.**
+
+For delegated tasks, pass it via `load_skills`:
+
+```python
+task(category="quick", load_skills=["unity-standards"], prompt="...")
+task(category="deep", load_skills=["unity-code-deep", "unity-standards"], prompt="...")
+```
+
+
 ## Skills (33)
 
 > **33 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
