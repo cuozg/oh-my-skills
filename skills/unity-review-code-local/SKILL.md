@@ -47,3 +47,15 @@ A summary list of remaining unfixed issues (with created fix tasks) is printed a
 - `references/review-comment-format.md` — skill-specific severity subset + categories (loads `unity-standards/references/review/comment-format.md` for full format)
 
 Load references on demand via `read_skill_file("unity-review-code-local", "references/review-comment-format.md")` and `read_skill_file("unity-standards", "references/review/comment-format.md")`.
+
+## Standards
+
+Load `unity-standards` for review criteria. Key references:
+
+- `review/logic-checklist.md` — correctness, edge cases, state, data flow
+- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
+- `review/serialization-risks.md` — missing fields, type changes, prefab overrides
+- `review/performance-checklist.md` — allocations, Update, physics, rendering
+- `review/comment-format.md` — inline review comment syntax and severity
+
+Load via `read_skill_file("unity-standards", "references/review/<file>")`.

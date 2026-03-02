@@ -45,3 +45,12 @@ Asset comments posted to the GitHub PR. Print a local summary listing flagged fi
 - `references/asset-review-checklist.md` — cross-ref to `unity-standards/references/review/asset-checklist.md` (full checklist with tables)
 
 Load the canonical checklist via `read_skill_file("unity-standards", "references/review/asset-checklist.md")`.
+
+## Standards
+
+Load `unity-standards` for asset review criteria. Key references:
+
+- `review/asset-checklist.md` — texture, shader, animation, import settings
+- `review/performance-checklist.md` — allocations, Update, physics, rendering
+
+Load via `read_skill_file("unity-standards", "references/review/<file>")`.

@@ -4,7 +4,7 @@ description: GitHub PR C# logic review — posts inline comments via gh api. Tri
 ---
 # unity-review-code-pr
 
-Fetch a GitHub PR diff, review changed C# files for logic and Unity-specific risks, post inline comments via GitHub API.
+Fetch a GitHub PR diff, review changed C# files for logic and Unity-specific risks, post inline comments via GitHub API. **NEVER stop until the review is confirmed on GitHub.**
 
 ## When to Use
 
@@ -12,15 +12,17 @@ Fetch a GitHub PR diff, review changed C# files for logic and Unity-specific ris
 - Running automated review on a PR before merge
 - Need review feedback attached directly to PR lines on GitHub
 
+## Mandatory Rule
+
+**NEVER stop until the review appears on GitHub.** After posting, verify via `gh api …/pulls/{pr}/reviews`.
+If the review ID is absent or the call fails — fix the error and retry. Loop until confirmed.
+
+See `references/pr-review-workflow.md` §7 for the exact verify command.
+
 ## Workflow
 
-1. **Fetch PR diff** — `gh api repos/{owner}/{repo}/pulls/{pr}/files`
-2. **Fetch raw diff** — `gh api repos/{owner}/{repo}/pulls/{pr}` with `Accept: application/vnd.github.v3.diff`
-3. **Read changed files** — fetch raw content for each `.cs` file
-4. **Investigate context** — `lsp_goto_definition` / `lsp_find_references` for callers and state owners
-5. **Review** — evaluate logic, lifecycle, serialization, null paths, event leaks, allocations
-6. **Build payload** — construct JSON per `references/gh-api-comments.md`
-7. **Post review** — submit via `gh api repos/{owner}/{repo}/pulls/{pr}/reviews`
+Follow `references/pr-review-workflow.md` (7 steps: resolve owner/repo → fetch files → fetch diff → fetch content → map lines → build + submit → verify).
+Build the review JSON per `references/gh-api-comments.md`.
 
 ## Review Body Format
 
@@ -42,23 +44,22 @@ Each item: **what** (1-line summary) → **why** (1-3 lines, evidence) → **how
 **🔴 Issue Title**: One-line problem summary
 - **Why**: root cause or risk
 - **Fix**: concrete solution
-\`\`\`suggestion
+```suggestion
 [Fixed code — exact full-line replacement, preserving indentation]
-\`\`\`
+```
 ```
 
 **🔵 Medium / 🟢 Low** — compact: `**🔵 Issue**: Problem → fix.` + suggestion block.
 
-Suggestion replaces the WHOLE line(s), not a substring — include full line content.
-
 ## Rules
 
+- **MANDATORY**: Never stop until GitHub confirms the review is posted — always verify after submit
+- If submit fails (network, auth, rate limit) — fix the issue and retry; never exit without confirmation
 - Always fetch full file content, not just diff hunks
-- Map comments to `line` number (right side of diff) — not `position`
 - Use severity icons: 🔴 Critical, 🟡 High, 🔵 Medium, 🟢 Low
 - Cover: null guards, lifecycle order, event leaks, serialization, hot-path allocations
 - Do not post duplicate comments for the same line
-- Batch all comments into one review call
+- See `references/gh-api-comments.md` for `line`/`side`/batching rules
 
 ## Reference Files
 
@@ -66,3 +67,15 @@ Suggestion replaces the WHOLE line(s), not a substring — include full line con
 - `references/gh-api-comments.md` — JSON payload format + CLI shortcuts
 
 Load on demand via `read_skill_file("unity-review-code-pr", "references/{file}")`.
+
+## Standards
+
+Load `unity-standards` for review criteria. Key references:
+
+- `review/logic-checklist.md` — correctness, edge cases, state, data flow
+- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
+- `review/serialization-risks.md` — missing fields, type changes, prefab overrides
+- `review/performance-checklist.md` — allocations, Update, physics, rendering
+- `review/pr-submission.md` — gh api format, comment batching, approval flow
+
+Load via `read_skill_file("unity-standards", "references/review/<file>")`.

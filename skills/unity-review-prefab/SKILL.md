@@ -43,3 +43,12 @@ Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local su
 - `references/prefab-review-checklist.md` — cross-ref to `unity-standards/references/review/prefab-checklist.md` (full checklist with validation script)
 
 Load the canonical checklist via `read_skill_file("unity-standards", "references/review/prefab-checklist.md")`.
+
+## Standards
+
+Load `unity-standards` for prefab review criteria. Key references:
+
+- `review/prefab-checklist.md` — missing scripts, variants, nested prefabs
+- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
+
+Load via `read_skill_file("unity-standards", "references/review/<file>")`.

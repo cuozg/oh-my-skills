@@ -1,6 +1,6 @@
 ---
 name: unity-standards
-description: Unity development standards. Triggers when writing, reviewing, or refactoring Unity C# code, implementing features, setting up dependency injection, working with events, or reviewing code changes.
+description: Unity development standards — MUST be included in load_skills for all Unity task delegations. Triggers when writing, reviewing, debugging, testing, or planning Unity C# code.
 ---
 
 # unity-standards
@@ -18,7 +18,8 @@ Unity C# development standards — naming, formatting, lifecycle, events, DI, se
 
 ## Usage
 
-Load references on demand via `read_skill_file("unity-standards", "references/<file>")` when pattern guidance is needed.
+**Delegation rule**: Always include `unity-standards` in `load_skills` when delegating any Unity task.
+Load references on demand via `read_skill_file("unity-standards", "references/<file>")`.
 
 ## Reference Catalog
 

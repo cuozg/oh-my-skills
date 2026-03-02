@@ -45,6 +45,15 @@ gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
   --method POST --input review.json
 ```
 
+## 7. Verify + Retry Until Confirmed
+
+**Mandatory step — never skip:**
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
+  --jq '.[-1] | {id, state, submitted_at}'
+```
+If `id` is absent or command errors — fix the root cause and re-run step 6. Loop until confirmed.
+
 ## Notes
 
 - Always fetch full file content — diff hunks lack context for lifecycle analysis

@@ -41,3 +41,12 @@ Formatted code block(s) — copy-paste ready. Text output only.
 - `references/log-format-examples.md` — cross-ref to `unity-standards/references/debug/log-format.md` (canonical format with Dbg helper)
 
 Load the canonical format via `read_skill_file("unity-standards", "references/debug/log-format.md")`.
+
+## Standards
+
+Load `unity-standards` for logging guidance. Key references:
+
+- `debug/log-format.md` — [DBG] prefix, color tags, UNITY_EDITOR guard
+- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
+
+Load via `read_skill_file("unity-standards", "references/debug/<file>")`.

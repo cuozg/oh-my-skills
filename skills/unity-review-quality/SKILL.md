@@ -46,3 +46,15 @@ HTML report file at `Documents/QualityAudit_{date}.html` with A-F grades per cat
 - `references/html-report-template.md` — HTML report structure and section layout
 
 Load references on demand via `read_skill_file("unity-review-quality", "references/{file}")` and `read_skill_file("unity-standards", "references/quality/grading-criteria.md")`.
+
+## Standards
+
+Load `unity-standards` for audit criteria. Key references:
+
+- `quality/grading-criteria.md` — A-F scale definitions, evidence requirements
+- `quality/architecture-audit.md` — coupling, layering, assembly structure
+- `quality/performance-audit.md` — profiler markers, memory, frame budget
+- `quality/best-practices-audit.md` — Unity API usage, deprecated calls
+- `quality/tech-debt-audit.md` — TODO density, code duplication, complexity
+
+Load via `read_skill_file("unity-standards", "references/quality/<file>")`.

@@ -41,3 +41,14 @@ Test scripts with `[Test]` / `[UnityTest]` attributes, placed in the correct tes
 - `references/unity-test-attributes.md` — [Test], [UnityTest], [SetUp], [TearDown], Edit vs Play mode
 
 Load references on demand via `read_skill_file("unity-test-unit", "references/{file}")` and `read_skill_file("unity-standards", "references/test/edit-mode-patterns.md")`.
+
+## Standards
+
+Load `unity-standards` for test conventions. Key references:
+
+- `test/edit-mode-patterns.md` — [Test], Assert, mocking, setup/teardown
+- `test/play-mode-patterns.md` — [UnityTest], yield, scene loading
+- `test/naming-conventions.md` — MethodName_Scenario_Expected format
+- `test/coverage-strategy.md` — what to test, boundary values, edge cases
+
+Load via `read_skill_file("unity-standards", "references/test/<file>")`.

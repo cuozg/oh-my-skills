@@ -46,3 +46,14 @@ Architecture comments posted to the GitHub PR. Print a local summary with coupli
 - `references/architecture-checklist.md` — cross-ref to `unity-standards/references/review/architecture-checklist.md` (full checklist with code examples)
 
 Load the canonical checklist via `read_skill_file("unity-standards", "references/review/architecture-checklist.md")`.
+
+## Standards
+
+Load `unity-standards` for architecture criteria. Key references:
+
+- `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
+- `code-standards/dependencies.md` — DI, service locator, constructor injection
+- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.
