@@ -4,7 +4,7 @@ description: Local C# logic review — adds inline REVIEW comments to changed fi
 ---
 # unity-review-code-local
 
-Add inline `// ── REVIEW` comments to locally changed C# files, covering logic correctness, edge cases, state, data flow, and concurrency.
+Add inline `// ── REVIEW` comments with icon + label + tag to locally changed C# files. Apply code fixes inline when safe. Covers logic, edge cases, state, data flow, concurrency.
 
 ## When to Use
 
@@ -18,27 +18,29 @@ Add inline `// ── REVIEW` comments to locally changed C# files, covering log
 2. **Read changed files** — load full file content for each `.cs` file in the diff
 3. **Investigate context** — use `lsp_goto_definition` / `lsp_find_references` to trace callers, state owners, lifecycle interactions
 4. **Review** — evaluate logic correctness, null paths, race conditions, event lifecycle, serialization, allocation
-5. **Annotate** — insert `// ── REVIEW` comments directly into the code at the relevant lines
-6. **Queue fixes** — create background `task_create` entries for each non-trivial issue found
+5. **Annotate** — insert `// ── REVIEW 🔴 CRITICAL #category` comments with `What:` / `Why:` lines above the issue
+6. **Apply fixes** — rewrite the problem line directly when fix is safe (single-line, no cross-file deps); leave unchanged otherwise
+7. **Queue fixes** — create `task_create` entries for issues that could not be applied inline
 
 ## Rules
 
 - Insert comments at the exact line of concern, not at the top of the file
 - Use format from `references/review-comment-format.md` for every comment
-- Flag severity: CRITICAL, WARNING, or NOTE on every comment
+- Use icon + label + tag: `🔴 CRITICAL`, `🟠 HIGH`, `🟡 MEDIUM`, `🔵 LOW`, `⚪ STYLE`
 - Cover at minimum: null guards, Unity lifecycle order, event subscription leaks, state mutation, serialization
-- Never modify logic — annotations only
+- Apply safe single-line fixes directly (null checks, caching, unsubscribes); leave complex/design fixes as comments only
 - Never commit changes — leave diff for user inspection
 - Always read the full file, not just the diff hunk
 - Use `lsp_find_references` before flagging a method as unused or dead code
 - Check `[SerializeField]` usage — warn if private fields are mutated from multiple systems
 - Flag `Update()` allocations (LINQ, string concat, closures) as WARNING or higher
 - Flag missing `OnDestroy` unsubscription when `OnEnable` subscribes to events
-- Create one `task_create` per distinct issue for background fix tracking
+- Create `task_create` only for issues NOT fixed inline
 
 ## Output Format
 
-Inline `// ── REVIEW` comments inserted into the source files. A summary list of created fix tasks is printed after annotation.
+Inline `// ── REVIEW` comments with icons inserted into source files. Safe fixes applied directly to code.
+A summary list of remaining unfixed issues (with created fix tasks) is printed after annotation.
 
 ## Reference Files
 

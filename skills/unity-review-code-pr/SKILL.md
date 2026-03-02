@@ -37,6 +37,7 @@ Each item: **what** (1-line summary) → **why** (1-3 lines, evidence) → **how
 ## Inline Comment Format
 
 **🔴 Critical / 🟡 High** — full block:
+
 ```
 **🔴 Issue Title**: One-line problem summary
 - **Why**: root cause or risk
@@ -56,7 +57,6 @@ Suggestion replaces the WHOLE line(s), not a substring — include full line con
 - Map comments to `line` number (right side of diff) — not `position`
 - Use severity icons: 🔴 Critical, 🟡 High, 🔵 Medium, 🟢 Low
 - Cover: null guards, lifecycle order, event leaks, serialization, hot-path allocations
-- Never approve or request-changes — `"event": "COMMENT"` only; decision is unity-review-general's job
 - Do not post duplicate comments for the same line
 - Batch all comments into one review call
 
