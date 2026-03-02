@@ -42,8 +42,7 @@ Write the file directly using edit/write tools. No markdown code blocks as final
 
 ## Reference Files
 
-- `references/code-patterns.md` — Common Unity C# patterns (MonoBehaviour, SO, events)
-- `references/naming-conventions.md` — Unity C# naming and folder standards
-- `references/csharp-tips.md` — Performance and safety micro-patterns
+- `references/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
 
-Load references on demand via `read_skill_file("unity-code-quick", "references/<file>")` when pattern guidance is needed.
+Load code patterns via `read_skill_file("unity-code-quick", "references/code-patterns.md")`.
+For naming, null-safety, serialization, collections, async, events, lifecycle standards → `read_skill_file("unity-standards", "references/code-standards/<file>")`.

@@ -267,7 +267,7 @@ Shell script tooling.
 │   ├─ Rule: SKILL.md < 100L. Refs < 100L. Progressive disclosure.
 │   └─ Out:  Skill directory: SKILL.md + references/ + scripts/ + assets/
 │
-└── unity-shared            📚 Shared references (not activated directly)
+└── unity-standards          📚 Unity development standards
     ├─ What: Code Standards (13), Review (11), Quality (6), Plan (7), Debug (3), Test (5), Other (3)
     └─ Use:  Other skills load specific refs via read_skill_file
 ```

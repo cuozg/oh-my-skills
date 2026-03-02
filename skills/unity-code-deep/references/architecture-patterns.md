@@ -1,43 +1,7 @@
 # Architecture Patterns — Multi-File Unity C#
 
-## Service Locator (lightweight DI alternative)
-
-```csharp
-// ServiceLocator.cs
-public static class ServiceLocator
-{
-    private static readonly Dictionary<Type, object> _services = new();
-    public static void Register<T>(T service) => _services[typeof(T)] = service;
-    public static T Get<T>() => (T)_services[typeof(T)];
-    public static bool TryGet<T>(out T service)
-    {
-        if (_services.TryGetValue(typeof(T), out var obj)) { service = (T)obj; return true; }
-        service = default; return false;
-    }
-    public static void Clear() => _services.Clear();
-}
-```
-
-Register in bootstrap MonoBehaviour `Awake()`. Consumers call `ServiceLocator.Get<IAudioService>()`.
-
-## ScriptableObject Event Bus (decoupled cross-system messaging)
-
-```csharp
-// GameEvent.cs — base channel
-public abstract class GameEvent<T> : ScriptableObject
-{
-    private readonly List<System.Action<T>> _listeners = new();
-    public void Raise(T value) { for (int i = _listeners.Count - 1; i >= 0; i--) _listeners[i](value); }
-    public void Register(System.Action<T> cb) => _listeners.Add(cb);
-    public void Unregister(System.Action<T> cb) => _listeners.Remove(cb);
-}
-
-// IntEvent.cs — typed channel
-[CreateAssetMenu(menuName = "Events/Int Event")]
-public sealed class IntEvent : GameEvent<int> { }
-```
-
-Register in `OnEnable`, unregister in `OnDisable`. Use `event Action<T>` for code-only; `UnityEvent<T>` for inspector wiring.
+For Service Locator / DI patterns → `read_skill_file("unity-standards", "references/code-standards/dependencies.md")`
+For SO event channels → `read_skill_file("unity-standards", "references/code-standards/events.md")`
 
 ## State Machine (enum + handler classes)
 

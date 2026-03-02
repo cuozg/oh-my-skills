@@ -25,7 +25,7 @@ namespace Project.Feature
 }
 ```
 
-## ScriptableObject — Data + Event Channel
+## ScriptableObject — Data Container
 
 ```csharp
 [CreateAssetMenu(fileName = "New Item", menuName = "Game/Item Data")]
@@ -35,16 +35,9 @@ public sealed class ItemData : ScriptableObject
     [field: SerializeField] public int Cost { get; private set; }
     [field: SerializeField] public Sprite Icon { get; private set; }
 }
-
-[CreateAssetMenu(menuName = "Events/Void Event")]
-public sealed class VoidEventChannel : ScriptableObject
-{
-    private System.Action _listeners;
-    public void Raise() => _listeners?.Invoke();
-    public void Register(System.Action cb) => _listeners += cb;
-    public void Unregister(System.Action cb) => _listeners -= cb;
-}
 ```
+
+For SO event channels → `read_skill_file("unity-standards", "references/code-standards/events.md")`
 
 ## Interface
 
@@ -56,38 +49,8 @@ public interface IDamageable
 }
 ```
 
-## Singleton (scene-safe)
-
-```csharp
-public class AudioManager : MonoBehaviour
-{
-    public static AudioManager Instance { get; private set; }
-    private void Awake()
-    {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-    private void OnDestroy() { if (Instance == this) Instance = null; }
-}
-```
-
-## Coroutine
-
-```csharp
-private IEnumerator FadeOut(CanvasGroup group, float duration)
-{
-    float elapsed = 0f;
-    float start = group.alpha;
-    while (elapsed < duration)
-    {
-        elapsed += Time.deltaTime;
-        group.alpha = Mathf.Lerp(start, 0f, elapsed / duration);
-        yield return null;
-    }
-    group.alpha = 0f;
-}
-```
+For singleton patterns → `read_skill_file("unity-standards", "references/code-standards/dependencies.md")`
+For coroutines → `read_skill_file("unity-standards", "references/code-standards/lifecycle.md")`
 
 ## UnityEvent
 

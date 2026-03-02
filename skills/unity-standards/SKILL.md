@@ -1,18 +1,24 @@
 ---
-name: unity-shared
-description: Shared Unity C# reference library — code standards, review checklists, quality criteria, planning guides, debug patterns, test conventions. Not activated directly. Other skills load refs via read_skill_file.
+name: unity-standards
+description: Unity development standards. Triggers when writing, reviewing, or refactoring Unity C# code, implementing features, setting up dependency injection, working with events, or reviewing code changes.
 ---
 
-# unity-shared
+# unity-standards
 
-Centralized reference files for Unity AI skills. Never triggered directly — consumer skills load specific files on demand.
+Unity C# development standards — naming, formatting, lifecycle, events, DI, serialization, null-safety, async, and more.
+
+## When This Skill Triggers
+
+- Writing or refactoring Unity C# code
+- Implementing Unity features
+- Working with events and signals
+- Accessing or modifying game data
+- Reviewing code changes or pull requests
+- Setting up project architecture
 
 ## Usage
 
-```
-read_skill_file("unity-shared", "references/code-standards/naming.md")
-read_skill_file("unity-shared", "references/review/logic-checklist.md")
-```
+Load references on demand via `read_skill_file("unity-standards", "references/<file>")` when pattern guidance is needed.
 
 ## Reference Catalog
 

@@ -31,7 +31,7 @@ Multi-file C# implementation for Unity. Understand scope → plan file structure
 - One class per file. File name = class name. Match existing namespace conventions.
 - Respect assembly definition boundaries — never add cross-asmdef references without checking.
 - All rules from `unity-code-quick` apply per-file (SerializeField, sealed, no empty lifecycle, etc.).
-- Load `unity-code-quick` references for per-file coding standards: `read_skill_file("unity-code-quick", "references/<file>")`.
+- Load `unity-standards` references for per-file coding standards: `read_skill_file("unity-standards", "references/code-standards/<file>")`.
 - Prefer composition over inheritance. Extract interfaces for testability.
 - Use ScriptableObject event channels for cross-system communication (avoid direct coupling).
 - Never introduce a new dependency pattern that conflicts with existing project conventions.
@@ -46,9 +46,9 @@ Report: file count, file list with paths, and compilation status.
 
 ## Reference Files
 
-- `references/architecture-patterns.md` — Multi-file Unity patterns (service locator, event bus, state machine, MVC)
+- `references/architecture-patterns.md` — State machine, MVC/MVP, command pattern (DI/events → unity-standards)
 - `references/multi-file-workflow.md` — Dependency ordering, namespace strategy, asmdef awareness
 - `references/refactoring-patterns.md` — Safe refactoring: extract class, introduce interface, decompose, migrate
 
 Load references on demand via `read_skill_file("unity-code-deep", "references/<file>")` when pattern guidance is needed.
-For per-file coding standards, load from `unity-code-quick`: `read_skill_file("unity-code-quick", "references/<file>")`.
+For per-file coding standards, load from `unity-standards`: `read_skill_file("unity-standards", "references/code-standards/<file>")`.
