@@ -70,6 +70,6 @@ Debug.LogError("Missing ref", gameObject);   // selects parent GO
 
 ```csharp
 Dbg.Log("Inventory", $"Added {item.name} x{count}", this);
-Dbg.Warn("Pool", $"%.Pool %.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.%.expanded to {_pool.Count}", this);
+Dbg.Warn("Pool", $"Pool expanded to {_pool.Count}", this);
 Dbg.Err("Net", $"Packet lost: seq={seq}", this);
 ```

@@ -1,6 +1,6 @@
 # Oh My Unity
 
-A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 33 specialized skills and 38 slash commands — all tuned for Unity C# development.
+A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 34 specialized skills and 38 slash commands — all tuned for Unity C# development.
 
 ## Installation
 
@@ -69,9 +69,9 @@ task(category="deep", load_skills=["unity-code-deep", "unity-standards"], prompt
 ```
 
 
-## Skills (33)
+## Skills (34)
 
-> **33 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
+> **34 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
 
 ---
 
@@ -89,6 +89,11 @@ Write Unity C# code — standards, architecture, security, performance.
 │   ├─ What: Cross-system features, refactors
 │   ├─ Flow: Understand → Plan → Implement
 │   └─ Out:  Multiple .cs files, Functions
+│
+├── unity-code-optimize     ⚡ Simplify & optimize existing C#
+│   ├─ What: Clarity, consistency, performance. No behavior change.
+│   ├─ Flow: Scope → Discover conventions → Analyze → Simplify → Verify → Report
+│   └─ Out:  Inline modifications + change summary
 │
 └── unity-code-editor       🛠️ Editor tooling
     ├─ What: EditorWindows, Inspectors, PropertyDrawers, Gizmos, Handles

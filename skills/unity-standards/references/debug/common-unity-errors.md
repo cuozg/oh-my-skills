@@ -14,6 +14,10 @@
 | `ArgumentException` | Layer/tag not found | Add layer/tag in Project Settings before use |
 | `MissingComponentException` | `GetComponent<T>()` returns null | Add `[RequireComponent(typeof(T))]` to class |
 | `UnassignedReferenceException` | Serialized field left empty | Use `OnValidate()` to warn in editor |
+| `ExecutionEngineException` | IL2CPP stripped needed code | Add to `link.xml` or `[Preserve]` attribute |
+| `TypeLoadException` | Missing assembly reference | Check asmdef references, ensure assembly is included |
+| `PlatformNotSupportedException` | API not available on target | Guard with `#if UNITY_[PLATFORM]` or runtime check |
+| `EntryPointNotFoundException` | Native plugin missing function | Verify plugin architecture (x86/ARM) matches target |
 
 ## Quick Diagnostic Patterns
 
@@ -59,3 +63,18 @@ Use `== null` for Unity objects. Use `is null` only for pure C# objects.
 | `Dictionary<K,V>` | No | Use `ISerializationCallbackReceiver` |
 | `interface` field | No | Use abstract `ScriptableObject` base |
 | `static` field | No | Not supported — use instance field |
+
+## IL2CPP Stripping Issues
+
+```csharp
+// Types accessed via reflection get stripped by IL2CPP
+// Fix 1: [Preserve] attribute
+[UnityEngine.Scripting.Preserve]
+public class SaveData { public int score; public string name; }
+
+// Fix 2: link.xml in Assets/
+// <linker><assembly fullname="Assembly-CSharp"><type fullname="SaveData" preserve="all"/></assembly></linker>
+
+// Common symptom: JsonUtility.FromJson<T>() returns default values in IL2CPP builds
+// but works fine in Editor (Mono)
+```

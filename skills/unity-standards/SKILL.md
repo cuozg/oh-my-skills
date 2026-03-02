@@ -23,7 +23,7 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 
 ## Reference Catalog
 
-### Code Standards (17)
+### Code Standards (19)
 
 - `code-standards/naming.md` — casing, prefixes, namespace, file naming
 - `code-standards/formatting.md` — braces, spacing, line length, regions
@@ -42,6 +42,8 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
 - `code-standards/multi-file-workflow.md` — dependency ordering, namespace strategy, asmdef awareness
 - `code-standards/refactoring-patterns.md` — extract class, introduce interface, decompose, migrate
+- `code-standards/unity-attributes.md` — RequireComponent, Inspector, serialization, debug attributes
+- `code-standards/object-pooling.md` — Unity 2021+ ObjectPool, IPoolable, generic pool, pre-2021 fallback
 
 ### Review (11)
 

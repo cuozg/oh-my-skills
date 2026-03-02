@@ -92,3 +92,21 @@ void Update()
 }
 public void RunOnMainThread(Action action) => mainThreadQueue.Enqueue(action);
 ```
+
+## Awaitable (Unity 6+)
+
+- [ ] `Awaitable` used instead of UniTask for Unity 6+ projects
+- [ ] `Awaitable.BackgroundThreadAsync()` / `MainThreadAsync()` for thread switching
+- [ ] `Awaitable.NextFrameAsync()` instead of `yield return null`
+- [ ] Cancellation via `destroyCancellationToken` on MonoBehaviour methods
+
+```csharp
+// Unity 6 thread switching — no external package needed
+async Awaitable ProcessDataAsync()
+{
+    await Awaitable.BackgroundThreadAsync();
+    var result = ExpensiveComputation(); // runs on thread pool
+    await Awaitable.MainThreadAsync();
+    transform.position = result; // safe — back on main thread
+}
+```
