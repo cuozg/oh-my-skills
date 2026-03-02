@@ -26,15 +26,24 @@ Build the review JSON per `unity-standards/references/review/pr-submission.md` (
 
 ## Review Body Format
 
-Short PR summary (2-3 sentences), then categorized findings:
+Post as the `body` field. Structure:
 
-```
-### Breaking Changes ([N])
-### Potential Issues ([N])
-### Unity-Specific Concerns ([N])
-```
+````
+## 📋 Code Review — PR #{number}
 
-Each item: **what** (1-line summary) → **why** (1-3 lines, evidence) → **how** (code fix with line ref).
+{1-2 sentence verdict: scope of changes + key risk area}
+
+| | Category | Findings | Top Severity |
+|---|---|:---:|---|
+| 💥 | Breaking / Crash Risk | {n} | 🔴 `CRITICAL` |
+| ⚠️ | Bugs / Incorrect Behavior | {n} | 🟠 `HIGH` |
+| 🎮 | Unity-Specific Risks | {n} | 🟡 `MEDIUM` |
+| 💡 | Improvements | {n} | 🔵 `LOW` / ⚪ `STYLE` |
+
+**Decision**: ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT
+````
+
+Omit rows with 0 findings. Note dead-code or unchanged-line issues below table (no inline comment possible).
 
 ## Inline Comment Format
 
