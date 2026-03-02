@@ -15,33 +15,38 @@ Produce an evidence-based Technical Design Document grounded in the actual codeb
 
 ## Workflow
 
-1. **Investigate** — Read existing related systems; understand current patterns
-2. **Define** — State the problem, goals, and non-goals precisely
-3. **Design** — Propose architecture; define components, interfaces, and data flow
-4. **Alternatives** — Document at least 2 rejected alternatives with rationale
-5. **Dependencies** — Map all affected systems with file:line evidence
-6. **Risks** — List risks with mitigation strategies
-7. **Write** — Fill `references/tdd-template.md` with all findings
-8. **Save** — Write to `Documents/TDDs/TDD_{Name}.md`
+1. **Load template** — `read_skill_file("unity-document-tdd", "references/tdd-template.md")`; use it as the exact output skeleton
+2. **Investigate** — Read existing related systems; understand current patterns
+3. **Define** — State the problem, goals, and non-goals precisely
+4. **Design** — Propose architecture; define components, interfaces, and data flow
+5. **Alternatives** — Document at least 2 rejected alternatives with rationale
+6. **Dependencies** — Map all affected systems with file:line evidence
+7. **Risks** — List risks with mitigation strategies
+8. **Write** — Fill every section of the template; no placeholder text allowed
+9. **Save** — Write to `Documents/TDDs/TDD_{Name}.md`
 
 ## Rules
 
+- **Template is mandatory** — output must follow `references/tdd-template.md` exactly: same headers, same table schemas, same Mermaid block in Data Flow
 - Investigate the actual codebase before writing — no speculation
-- No TODO/TBD in the output document
+- No TODO/TBD in the output document; resolve all placeholders
 - Cite `file:line` for every dependency or architectural claim
 - Alternatives section is mandatory — never skip it
 - Keep language imperative; avoid "we should" or "you could"
+- All 8 template sections must appear in the final document
 
 ## Output Format
 
 Save to `Documents/TDDs/TDD_{Name}.md`.
-Sections: Problem, Goals, Non-Goals, Design, Alternatives, Dependencies, Risks, Open Questions.
+
+Required sections (from template — all mandatory):
+`Problem` · `Goals` · `Non-Goals` · `Design` (Components table + Interfaces + Data Flow mermaid) · `Alternatives Considered` (table) · `Dependencies` (table) · `Risks` (table) · `Open Questions`
 
 ## Reference Files
 
-- `references/tdd-template.md` — Markdown template with all required TDD sections
+- `references/tdd-template.md` — Mandatory output template; load at step 1
 
-Load references on demand via `read_skill_file("unity-document-tdd", "references/tdd-template.md")`.
+Load via `read_skill_file("unity-document-tdd", "references/tdd-template.md")`.
 
 ## Standards
 

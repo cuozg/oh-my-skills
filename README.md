@@ -141,7 +141,7 @@ Review code, architecture, assets, prefabs, and project quality.
 └── unity-review-quality        📊 Full project audit (read-only)
     ├─ Focus: Architecture, performance, best practices, tech debt
     ├─ Grade: A–F severity scoring, evidence-based
-    └─ Out:   Comprehensive HTML report
+    └─ Out:   Comprehensive md report
 ```
 
 ---

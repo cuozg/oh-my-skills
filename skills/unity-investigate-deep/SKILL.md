@@ -20,20 +20,24 @@ Produce a comprehensive investigation report with Mermaid diagrams, cited eviden
 3. **Analyze** — Trace execution paths; record dependencies, data flows, and state mutations
 4. **Diagram** — Draw Mermaid flowchart (execution) + class diagram (structure)
 5. **Assess** — Identify coupling hotspots, hidden dependencies, and risk areas
-6. **Write** — Produce full markdown report using `references/investigation-template.md`
-7. **Summarize** — Add one-paragraph executive summary at the top
+6. **Load template** — `read_skill_file("unity-investigate-deep", "references/investigation-template.md")` — **MANDATORY, do this before writing**
+7. **Write** — Fill every section of the template exactly; do not omit or reorder sections
+8. **Summarize** — Add one-paragraph executive summary at the top
 
 ## Rules
 
+- **Output MUST follow `references/investigation-template.md` exactly — non-negotiable**
+- All sections required: Executive Summary, System Map, Execution Flow, Data Flow, Risks, References
 - Cite `file:line` for every factual claim
 - Include at least one Mermaid diagram (flowchart or sequenceDiagram)
 - Bullets over prose in all sections
 - No speculation — investigate first, then state conclusions
+- Never skip or rename template sections
 
 ## Output Format
 
-Save to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`.
-Sections: Summary, System Map, Execution Flow (Mermaid), Data Flow, Risks, References.
+Save to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`.  
+Structure is dictated entirely by `references/investigation-template.md` — no deviations.
 
 ## Reference Files
 
