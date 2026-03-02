@@ -43,6 +43,6 @@ Architecture comments posted to the GitHub PR. Print a local summary with coupli
 
 ## Reference Files
 
-- `references/architecture-checklist.md` — DI, events, assemblies, coupling, SOLID checklist
+- `references/architecture-checklist.md` — cross-ref to `unity-standards/references/review/architecture-checklist.md` (full checklist with code examples)
 
-Load references on demand via `read_skill_file("unity-review-architecture", "references/architecture-checklist")`.
+Load the canonical checklist via `read_skill_file("unity-standards", "references/review/architecture-checklist.md")`.

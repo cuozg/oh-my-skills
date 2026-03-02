@@ -1,4 +1,19 @@
-# Review Comment Format
+# Review Comment Format — Skill Extensions
+
+> **Canonical reference**: `unity-standards/references/review/comment-format.md`
+> Load via: `read_skill_file("unity-standards", "references/review/comment-format.md")`
+
+## Severity Levels (skill-specific subset)
+
+This skill uses 3 severities (standards defines 5):
+
+- `CRITICAL` — data loss, crash, security, broken contract
+- `WARNING`  — logic error, leak, allocation in hot path
+- `NOTE`     — style, readability, minor improvement
+
+## Categories (pick one)
+
+`null-safety` `lifecycle` `state` `concurrency` `allocation` `serialization` `event-leak` `logic`
 
 ## Inline Comment Anatomy
 
@@ -6,36 +21,6 @@
 // ── REVIEW [SEVERITY] {category}: {message}
 //    Evidence: {what you observed}
 //    Fix:      {imperative fix description}
-```
-
-**Severity levels** (required):
-- `CRITICAL` — data loss, crash, security, broken contract
-- `WARNING`  — logic error, leak, allocation in hot path
-- `NOTE`     — style, readability, minor improvement
-
-**Categories** (pick one):
-- `null-safety` `lifecycle` `state` `concurrency` `allocation` `serialization` `event-leak` `logic`
-
-## Examples
-
-```csharp
-// ── REVIEW [CRITICAL] null-safety: 'result' can be null when pool is exhausted.
-//    Evidence: Pool.Get() returns null on empty; caller dereferences immediately.
-//    Fix:      Guard with `if (result == null) return;` before use.
-void Spawn() {
-    var result = _pool.Get(); // ← comment goes here
-```
-
-```csharp
-// ── REVIEW [WARNING] event-leak: OnEnable subscribes but OnDestroy does not unsubscribe.
-//    Evidence: GameEvents.OnRoundEnd += HandleRoundEnd in OnEnable; no -= found.
-//    Fix:      Add `GameEvents.OnRoundEnd -= HandleRoundEnd;` in OnDestroy.
-```
-
-```csharp
-// ── REVIEW [WARNING] allocation: LINQ in Update allocates per frame.
-//    Evidence: `_enemies.Where(e => e.IsAlive).ToList()` called every frame.
-//    Fix:      Cache filtered list or use index-based loop.
 ```
 
 ## Rules

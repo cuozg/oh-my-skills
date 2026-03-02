@@ -42,6 +42,6 @@ Inline `// ── REVIEW` comments inserted into the source files. A summary lis
 
 ## Reference Files
 
-- `references/review-comment-format.md` — format spec for `// ── REVIEW` inline comments
+- `references/review-comment-format.md` — skill-specific severity subset + categories (loads `unity-standards/references/review/comment-format.md` for full format)
 
-Load references on demand via `read_skill_file("unity-review-code-local", "references/review-comment-format")`.
+Load references on demand via `read_skill_file("unity-review-code-local", "references/review-comment-format.md")` and `read_skill_file("unity-standards", "references/review/comment-format.md")`.

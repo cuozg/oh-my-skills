@@ -35,6 +35,6 @@ Generate structured QA test cases covering happy paths, edge cases, boundary val
 
 ## Reference Files
 
-- `references/test-case-template.md` — HTML template for test case documents
+- `references/test-case-template.md` — cross-ref to `unity-standards/references/test/test-case-format.md` (canonical HTML template)
 
-Load references on demand via `read_skill_file("unity-test-case", "references/{file}")`.
+Load the canonical template via `read_skill_file("unity-standards", "references/test/test-case-format.md")`.

@@ -38,3 +38,13 @@ Automated fix loop: parse error → locate root cause → minimal fix → verify
 ## Output Format
 
 Fixed code with zero lsp_diagnostics errors. Brief summary: files changed, root causes resolved, error count before/after.
+
+## Standards
+
+Load `unity-standards` for error context. Key references:
+
+- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+- `code-standards/null-safety.md` — null checks, TryGet, nullable patterns
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

@@ -28,27 +28,27 @@ Multi-file C# implementation for Unity. Understand scope → plan file structure
 
 - Map all affected files BEFORE writing any code. No ad-hoc file creation mid-implementation.
 - Write interfaces and base types first, implementations second, wiring/registration last.
-- One class per file. File name = class name. Match existing namespace conventions.
+- One class per file. File name = class name.
 - Respect assembly definition boundaries — never add cross-asmdef references without checking.
-- All rules from `unity-code-quick` apply per-file (SerializeField, sealed, no empty lifecycle, etc.).
-- Load `unity-standards` references for per-file coding standards: `read_skill_file("unity-standards", "references/code-standards/<file>")`.
-- Prefer composition over inheritance. Extract interfaces for testability.
-- Use ScriptableObject event channels for cross-system communication (avoid direct coupling).
-- Never introduce a new dependency pattern that conflicts with existing project conventions.
 - If refactoring, preserve public API signatures unless explicitly asked to change them.
 - Run `coplay-mcp_check_compile_errors` after every 2-3 files written, not just at the end.
 - Never add `// TODO` — deliver complete code or state limitations.
+- For all per-file coding standards — follow `unity-standards`.
 
 ## Output Format
 
 Write all files directly using edit/write tools. No markdown code blocks as final output — actual files only.
 Report: file count, file list with paths, and compilation status.
 
-## Reference Files
+## Standards
 
-- `references/architecture-patterns.md` — State machine, MVC/MVP, command pattern (DI/events → unity-standards)
-- `references/multi-file-workflow.md` — Dependency ordering, namespace strategy, asmdef awareness
-- `references/refactoring-patterns.md` — Safe refactoring: extract class, introduce interface, decompose, migrate
+Load `unity-standards` for all coding conventions and patterns. Key references:
 
-Load references on demand via `read_skill_file("unity-code-deep", "references/<file>")` when pattern guidance is needed.
-For per-file coding standards, load from `unity-standards`: `read_skill_file("unity-standards", "references/code-standards/<file>")`.
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+- `code-standards/multi-file-workflow.md` — dependency ordering, namespace strategy, asmdef awareness
+- `code-standards/refactoring-patterns.md` — extract class, introduce interface, decompose, migrate
+- `code-standards/code-patterns.md` — MonoBehaviour, SO, interface templates
+- `code-standards/dependencies.md` — DI, service locator, constructor injection
+- `code-standards/events.md` — C# events, UnityEvent, SO channels
+
+Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.

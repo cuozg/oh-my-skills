@@ -1,5 +1,9 @@
 # FlatBuffers Schema Patterns
 
+> **Shared basics**: `unity-standards/references/other/flatbuffers-guide.md`
+> Load via: `read_skill_file("unity-standards", "references/other/flatbuffers-guide.md")`
+> Covers: schema syntax, table vs struct, backward compat rules, C# generation, Unity integration.
+
 ## File Structure
 
 ```fbs
@@ -30,17 +34,6 @@ table ItemList {
 root_type ItemList;
 ```
 
-## Table vs Struct
-
-| Feature | table | struct |
-|---------|-------|--------|
-| Optional fields | ✅ | ❌ |
-| Default values | ✅ | ❌ |
-| Forward compat | ✅ | ❌ |
-| Inline memory | ❌ | ✅ (fixed-size) |
-
-Use `struct` only for small, fixed, always-present data (Vec3, Color, Bounds).
-
 ## Common Field Patterns
 
 ```fbs
@@ -64,12 +57,6 @@ table Message {
   payload: Payload;
 }
 ```
-
-## Backward Compatibility Rules
-
-- **Add** fields at the end of a table — safe
-- **Never** remove, reorder, or change field types
-- Use `deprecated` attribute to mark unused fields:  `old_field: int (deprecated);`
 
 ## Namespacing
 

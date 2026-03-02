@@ -40,3 +40,14 @@ Print task IDs and subjects to chat after creation.
 - `references/task-system-integration.md` — task_create usage patterns and blockedBy wiring
 
 Load references on demand via `read_skill_file("unity-plan-deep", "references/plan-workflow.md")`.
+
+## Standards
+
+Load `unity-standards` for planning methodology. Key references:
+
+- `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
+- `plan/risk-assessment.md` — risk levels, mitigation strategies
+- `plan/dependency-mapping.md` — blockedBy, parallel vs sequential
+- `plan/task-structure.md` — subject/description format, skill routing
+
+Load via `read_skill_file("unity-standards", "references/plan/<file>")`.

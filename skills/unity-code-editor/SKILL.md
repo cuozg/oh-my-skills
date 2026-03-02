@@ -42,6 +42,18 @@ Write production-quality Unity Editor scripts — custom inspectors, editor wind
 
 Production Editor scripts placed under the appropriate `Editor/` folder, zero compiler errors, Undo-safe.
 
+## Standards
+
+Load `unity-standards` for coding conventions when writing editor scripts. Key references:
+
+- `code-standards/naming.md` — casing, prefixes, namespace, file naming
+- `code-standards/formatting.md` — braces, spacing, line length, regions
+- `code-standards/serialization.md` — SerializeField, field:, JsonUtility, SO data
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+- `code-standards/null-safety.md` — null checks, TryGet, nullable patterns
+
+Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.
+
 ## Reference Files
 
 - `references/editor-patterns.md` — EditorWindow, CustomEditor, PropertyDrawer patterns with minimal boilerplate

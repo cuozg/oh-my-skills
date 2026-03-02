@@ -4,7 +4,7 @@ description: GitHub PR C# logic review — posts inline comments via gh api. Tri
 ---
 # unity-review-code-pr
 
-Fetch a GitHub PR diff, review changed C# files for logic correctness and Unity-specific risks, then post inline comments via the GitHub API.
+Fetch a GitHub PR diff, review changed C# files for logic and Unity-specific risks, post inline comments via GitHub API.
 
 ## When to Use
 
@@ -14,34 +14,55 @@ Fetch a GitHub PR diff, review changed C# files for logic correctness and Unity-
 
 ## Workflow
 
-1. **Fetch PR diff** — `gh api repos/{owner}/{repo}/pulls/{pr}/files` to list changed files
+1. **Fetch PR diff** — `gh api repos/{owner}/{repo}/pulls/{pr}/files`
 2. **Fetch raw diff** — `gh api repos/{owner}/{repo}/pulls/{pr}` with `Accept: application/vnd.github.v3.diff`
-3. **Read changed files** — checkout or fetch raw content for each `.cs` file
-4. **Investigate context** — use `lsp_goto_definition` / `lsp_find_references` for callers and state owners
-5. **Review** — evaluate logic correctness, Unity lifecycle/serialization risks, null paths, event leaks, allocations
-6. **Build comment payload** — construct JSON per `references/gh-api-comments.md`
-7. **Post comments** — submit via `gh api repos/{owner}/{repo}/pulls/{pr}/reviews`
+3. **Read changed files** — fetch raw content for each `.cs` file
+4. **Investigate context** — `lsp_goto_definition` / `lsp_find_references` for callers and state owners
+5. **Review** — evaluate logic, lifecycle, serialization, null paths, event leaks, allocations
+6. **Build payload** — construct JSON per `references/gh-api-comments.md`
+7. **Post review** — submit via `gh api repos/{owner}/{repo}/pulls/{pr}/reviews`
+
+## Review Body Format
+
+Short PR summary (2-3 sentences), then categorized findings:
+
+```
+### Breaking Changes ([N])
+### Potential Issues ([N])
+### Unity-Specific Concerns ([N])
+```
+
+Each item: **what** (1-line summary) → **why** (1-3 lines, evidence) → **how** (code fix with line ref).
+
+## Inline Comment Format
+
+**🔴 Critical / 🟡 High** — full block:
+```
+**🔴 Issue Title**: One-line problem summary
+- **Why**: root cause or risk
+- **Fix**: concrete solution
+\`\`\`suggestion
+[Fixed code — exact full-line replacement, preserving indentation]
+\`\`\`
+```
+
+**🔵 Medium / 🟢 Low** — compact: `**🔵 Issue**: Problem → fix.` + suggestion block.
+
+Suggestion replaces the WHOLE line(s), not a substring — include full line content.
 
 ## Rules
 
-- Always fetch the full file content, not just diff hunks
-- Map every comment to the exact `position` in the diff (not line number)
-- Use severity prefix: `[CRITICAL]`, `[WARNING]`, `[NOTE]` in every comment body
-- Cover at minimum: null guards, lifecycle order, event subscription leaks, serialization, allocation in hot paths
-- Never approve or request-changes — post comments only; leave the decision to unity-review-general
-- Flag `[SerializeField]` mutation from multiple systems as WARNING
-- Flag missing `OnDestroy` unsubscription when `OnEnable` subscribes to events
-- Flag `Update()` LINQ/string-concat/closure allocations as WARNING or higher
+- Always fetch full file content, not just diff hunks
+- Map comments to `line` number (right side of diff) — not `position`
+- Use severity icons: 🔴 Critical, 🟡 High, 🔵 Medium, 🟢 Low
+- Cover: null guards, lifecycle order, event leaks, serialization, hot-path allocations
+- Never approve or request-changes — `"event": "COMMENT"` only; decision is unity-review-general's job
 - Do not post duplicate comments for the same line
-- Follow exact API payload format from `references/gh-api-comments.md`
-
-## Output Format
-
-Inline comments posted to the GitHub PR. Print a local summary of comment count and any CRITICAL findings.
+- Batch all comments into one review call
 
 ## Reference Files
 
 - `references/pr-review-workflow.md` — step-by-step PR fetch and review process
-- `references/gh-api-comments.md` — gh api command format for posting PR comments
+- `references/gh-api-comments.md` — JSON payload format + CLI shortcuts
 
-Load references on demand via `read_skill_file("unity-review-code-pr", "references/{file}")`.
+Load on demand via `read_skill_file("unity-review-code-pr", "references/{file}")`.

@@ -1,33 +1,10 @@
-# test-patterns.md
+# Test Patterns — Skill Extensions
 
-## Arrange-Act-Assert (AAA)
+> **Canonical reference**: `unity-standards/references/test/edit-mode-patterns.md`
+> Load via: `read_skill_file("unity-standards", "references/test/edit-mode-patterns.md")`
 
-```csharp
-[Test]
-public void MethodName_Condition_ExpectedResult()
-{
-    // Arrange
-    var sut = new MyClass();
-    int input = 5;
-
-    // Act
-    int result = sut.Double(input);
-
-    // Assert
-    Assert.AreEqual(10, result);
-}
-```
-
-## Common Assertions
-
-| Assertion | Use |
-|---|---|
-| `Assert.AreEqual(expected, actual)` | Value equality |
-| `Assert.IsTrue(condition)` | Boolean check |
-| `Assert.IsNull(obj)` / `Assert.IsNotNull(obj)` | Null check |
-| `Assert.Throws<T>(() => ...)` | Exception expected |
-| `Assert.That(collection, Has.Count.EqualTo(n))` | Collection size |
-| `Assert.That(value, Is.InRange(min, max))` | Range check |
+Standards covers AAA pattern, assertions, SetUp/TearDown, ScriptableObject testing,
+exception testing, and manual mocking. Below are extensions unique to this skill.
 
 ## Mocking with NSubstitute
 
@@ -49,13 +26,3 @@ mockRepo.Received(1).Save(Arg.Any<Entity>());
 - **Edge** — null inputs, empty strings, max int
 - **Negative** — invalid state, exception paths
 - **State** — before/after mutation checks
-
-## SetUp / TearDown Pattern
-
-```csharp
-[SetUp]
-public void SetUp() { _sut = new MyClass(); }
-
-[TearDown]
-public void TearDown() { _sut = null; }
-```

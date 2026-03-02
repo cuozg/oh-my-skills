@@ -37,3 +37,13 @@ then `┌ Tasks` tree with `├─` / `└─` branches per task (subject + `→
 - `references/task-output-format.md` — Full format spec with examples for the ▲ header and task tree
 
 Load references on demand via `read_skill_file("unity-plan-quick", "references/task-output-format.md")`.
+
+## Standards
+
+Load `unity-standards` for sizing and risk calibration. Key references:
+
+- `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
+- `plan/risk-assessment.md` — risk levels, mitigation strategies
+- `plan/task-structure.md` — subject/description format, skill routing
+
+Load via `read_skill_file("unity-standards", "references/plan/<file>")`.

@@ -37,7 +37,7 @@ Binary test file included when a roundtrip test is requested.
 
 ## Reference Files
 
-- `references/fbs-schema-patterns.md` — FlatBuffers schema syntax, tables, structs, enums, vectors, unions
-- `references/flatc-workflow.md` — flatc install, C# generation commands, JSON-to-binary conversion, Unity integration steps
+- `references/fbs-schema-patterns.md` — unions, attributes, field patterns (loads `unity-standards/references/other/flatbuffers-guide.md` for basics)
+- `references/flatc-workflow.md` — install, generation flags, serialize examples (loads `unity-standards/references/other/flatbuffers-guide.md` for basics)
 
-Load references on demand via `read_skill_file("flatbuffers-coder", "references/{file}")`.
+Load references on demand via `read_skill_file("flatbuffers-coder", "references/{file}")` and `read_skill_file("unity-standards", "references/other/flatbuffers-guide.md")`.

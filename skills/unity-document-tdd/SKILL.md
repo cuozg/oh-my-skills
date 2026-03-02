@@ -42,3 +42,14 @@ Sections: Problem, Goals, Non-Goals, Design, Alternatives, Dependencies, Risks, 
 - `references/tdd-template.md` — Markdown template with all required TDD sections
 
 Load references on demand via `read_skill_file("unity-document-tdd", "references/tdd-template.md")`.
+
+## Standards
+
+Load `unity-standards` for architecture and design context. Key references:
+
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+- `code-standards/dependencies.md` — DI, service locator, constructor injection
+- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+- `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

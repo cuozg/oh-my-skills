@@ -22,7 +22,7 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 
 ## Reference Catalog
 
-### Code Standards (13)
+### Code Standards (17)
 
 - `code-standards/naming.md` — casing, prefixes, namespace, file naming
 - `code-standards/formatting.md` — braces, spacing, line length, regions
@@ -37,6 +37,10 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `code-standards/async.md` — UniTask, async/await, cancellation tokens
 - `code-standards/linq.md` — when to use, allocation warnings, hot path rules
 - `code-standards/dependencies.md` — DI, service locator, constructor injection
+- `code-standards/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+- `code-standards/multi-file-workflow.md` — dependency ordering, namespace strategy, asmdef awareness
+- `code-standards/refactoring-patterns.md` — extract class, introduce interface, decompose, migrate
 
 ### Review (11)
 

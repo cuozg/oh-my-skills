@@ -40,3 +40,13 @@ Sections: Summary, System Map, Execution Flow (Mermaid), Data Flow, Risks, Refer
 - `references/investigation-template.md` — Markdown template for investigation reports
 
 Load references on demand via `read_skill_file("unity-investigate-deep", "references/investigation-template.md")`.
+
+## Standards
+
+Load `unity-standards` for architecture and risk assessment. Key references:
+
+- `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

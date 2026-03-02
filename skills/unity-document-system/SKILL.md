@@ -40,3 +40,13 @@ Sections: Overview, Architecture (Mermaid), Public API, Data Flow, Extension Gui
 - `references/system-doc-template.md` — Markdown template with all required sections
 
 Load references on demand via `read_skill_file("unity-document-system", "references/system-doc-template.md")`.
+
+## Standards
+
+Load `unity-standards` for architecture and pattern context. Key references:
+
+- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
+- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+- `code-standards/dependencies.md` — DI, service locator, constructor injection
+
+Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.

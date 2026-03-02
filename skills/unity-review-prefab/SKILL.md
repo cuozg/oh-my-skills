@@ -40,6 +40,6 @@ Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local su
 
 ## Reference Files
 
-- `references/prefab-review-checklist.md` — missing scripts, broken variants, raycast, hierarchy checklist
+- `references/prefab-review-checklist.md` — cross-ref to `unity-standards/references/review/prefab-checklist.md` (full checklist with validation script)
 
-Load references on demand via `read_skill_file("unity-review-prefab", "references/prefab-review-checklist")`.
+Load the canonical checklist via `read_skill_file("unity-standards", "references/review/prefab-checklist.md")`.

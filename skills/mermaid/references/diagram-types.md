@@ -1,5 +1,9 @@
 # Mermaid Diagram Types
 
+> **Shared syntax reference**: `unity-standards/references/other/mermaid-syntax.md`
+> Load via: `read_skill_file("unity-standards", "references/other/mermaid-syntax.md")`
+> Covers: flowchart, sequence, state, class diagrams with detailed syntax and styling.
+
 ## Flowchart
 
 ```mermaid

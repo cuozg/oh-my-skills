@@ -47,3 +47,14 @@ Exhaustive, read-only investigation that produces a structured analysis document
 - `references/analysis-template.md` — markdown template for the structured analysis output document
 
 Load references on demand via `read_skill_file("unity-debug-deep", "references/{file}")`.
+
+## Standards
+
+Load `unity-standards` for analysis checklists. Key references:
+
+- `debug/diagnosis-workflow.md` — symptom parsing, multi-angle analysis
+- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
+- `review/concurrency-checklist.md` — threading, race conditions, main thread
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

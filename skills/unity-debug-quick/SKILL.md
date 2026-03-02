@@ -39,3 +39,13 @@ Interactive bug-diagnosis loop: surface root causes, offer choices, fix the chos
 ## Output Format
 
 Numbered solution list (cause + fix + effort) followed by the applied fix. Loop continues until zero symptoms remain.
+
+## Standards
+
+Load `unity-standards` for diagnosis guidance. Key references:
+
+- `debug/diagnosis-workflow.md` — symptom parsing, multi-angle analysis
+- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

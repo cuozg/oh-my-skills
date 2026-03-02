@@ -1,5 +1,9 @@
 # flatc Workflow
 
+> **Shared basics**: `unity-standards/references/other/flatbuffers-guide.md`
+> Load via: `read_skill_file("unity-standards", "references/other/flatbuffers-guide.md")`
+> Covers: schema syntax, C# generation, serialize/deserialize, Unity integration.
+
 ## Install
 
 ```bash

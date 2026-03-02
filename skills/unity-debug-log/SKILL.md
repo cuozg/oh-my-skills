@@ -38,6 +38,6 @@ Formatted code block(s) — copy-paste ready. Text output only.
 
 ## Reference Files
 
-- `references/log-format-examples.md` — color codes, format patterns, coroutine and loop examples
+- `references/log-format-examples.md` — cross-ref to `unity-standards/references/debug/log-format.md` (canonical format with Dbg helper)
 
-Load references on demand via `read_skill_file("unity-debug-log", "references/{file}")`.
+Load the canonical format via `read_skill_file("unity-standards", "references/debug/log-format.md")`.

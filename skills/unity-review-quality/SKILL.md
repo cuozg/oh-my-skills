@@ -42,7 +42,7 @@ HTML report file at `Documents/QualityAudit_{date}.html` with A-F grades per cat
 
 ## Reference Files
 
-- `references/quality-grading-rubric.md` — A-F grading criteria per category
+- `references/quality-grading-rubric.md` — per-category A-F descriptions (loads `unity-standards/references/quality/grading-criteria.md` for scale + formula)
 - `references/html-report-template.md` — HTML report structure and section layout
 
-Load references on demand via `read_skill_file("unity-review-quality", "references/{file}")`.
+Load references on demand via `read_skill_file("unity-review-quality", "references/{file}")` and `read_skill_file("unity-standards", "references/quality/grading-criteria.md")`.

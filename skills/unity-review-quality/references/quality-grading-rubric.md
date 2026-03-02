@@ -1,16 +1,10 @@
-# Quality Grading Rubric (A–F)
+# Quality Grading Rubric — Skill Extensions
 
-## Grading Scale
+> **Canonical reference**: `unity-standards/references/quality/grading-criteria.md`
+> Load via: `read_skill_file("unity-standards", "references/quality/grading-criteria.md")`
 
-| Grade | Meaning |
-|-------|---------|
-| A | No violations; positive evidence of best practice |
-| B | 1–2 minor violations (NOTE level); no WARNINGs |
-| C | 1–3 WARNINGs; no CRITICALs |
-| D | 1–2 CRITICALs or 4+ WARNINGs |
-| F | 3+ CRITICALs in this category |
-
-Every grade must cite at least one `file:line` evidence reference.
+Standards defines A-F scale, weighted calculation formula, evidence requirements,
+and override rules. Below are per-category grade descriptions unique to this skill.
 
 ## Category: Architecture
 

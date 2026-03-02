@@ -33,3 +33,13 @@ Answer a focused Unity codebase question in the fewest tool calls possible.
 
 Single summary sentence followed by 1-3 detail blocks in tree format:
 `## {Target} [{type: class|method|event|system}]` → summary → details as inline bullets.
+
+## Standards
+
+Load `unity-standards` when answers require convention context. Key references:
+
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+- `code-standards/dependencies.md` — DI, service locator, constructor injection
+
+Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.

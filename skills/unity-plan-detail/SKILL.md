@@ -41,3 +41,14 @@ Generate a full HTML plan package with patch files for very large features requi
 - `references/html-generation-guide.md` — HTML output rules, no-JS constraint, inline CSS patterns
 
 Load references on demand via `read_skill_file("unity-plan-detail", "references/detail-workflow.md")`.
+
+## Standards
+
+Load `unity-standards` for planning and output standards. Key references:
+
+- `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
+- `plan/risk-assessment.md` — risk levels, mitigation strategies
+- `plan/output-detail.md` — HTML plan structure for detail plans
+- `quality/html-report-format.md` — report structure, CSS, no JavaScript
+
+Load via `read_skill_file("unity-standards", "references/<path>")`.

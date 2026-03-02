@@ -37,7 +37,7 @@ Test scripts with `[Test]` / `[UnityTest]` attributes, placed in the correct tes
 
 ## Reference Files
 
-- `references/test-patterns.md` — AAA pattern, mocking, common assertions
+- `references/test-patterns.md` — NSubstitute mocking + test case categories (loads `unity-standards/references/test/edit-mode-patterns.md` for AAA, assertions, SetUp/TearDown)
 - `references/unity-test-attributes.md` — [Test], [UnityTest], [SetUp], [TearDown], Edit vs Play mode
 
-Load references on demand via `read_skill_file("unity-test-unit", "references/{file}")`.
+Load references on demand via `read_skill_file("unity-test-unit", "references/{file}")` and `read_skill_file("unity-standards", "references/test/edit-mode-patterns.md")`.

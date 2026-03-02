@@ -23,26 +23,22 @@ Fast single-file C# delivery for Unity. Receive request → match project conven
 
 ## Rules
 
-- Match existing project conventions (namespaces, folders, naming). If none found, use PascalCase + company namespace.
+- Match existing project conventions first. If none found, follow `unity-standards`.
 - Always include `using` directives — never assume implicit usings.
-- Prefer `[SerializeField] private` over `public` fields.
-- Use `#region` only if file exceeds 80 lines.
-- Add `[Header("Section")]` to group inspector fields (3+ fields).
-- Add `[Tooltip("...")]` when field purpose isn't obvious from name.
-- No empty Unity lifecycle methods (remove unused `Start`/`Update`).
-- Mark classes `sealed` unless inheritance is explicitly needed.
-- Use `TryGetComponent` over `GetComponent` where null is possible.
-- Return early to reduce nesting.
 - Never add `// TODO` — deliver complete code or state limitations.
 - Inline XML docs `/// <summary>` on public API only. No noise comments.
+- For all coding standards (naming, access modifiers, serialization, lifecycle, formatting) — follow `unity-standards`.
 
 ## Output Format
 
 Write the file directly using edit/write tools. No markdown code blocks as final output — actual files only.
 
-## Reference Files
+## Standards
 
-- `references/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
+Load `unity-standards` for all coding conventions. Key references:
 
-Load code patterns via `read_skill_file("unity-code-quick", "references/code-patterns.md")`.
-For naming, null-safety, serialization, collections, async, events, lifecycle standards → `read_skill_file("unity-standards", "references/code-standards/<file>")`.
+- `code-standards/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
+- `code-standards/naming.md`, `formatting.md`, `serialization.md` — per-file conventions
+- `code-standards/lifecycle.md`, `null-safety.md`, `events.md` — Unity-specific patterns
+
+Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.

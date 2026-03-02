@@ -1,61 +1,55 @@
-# gh API — PR Comment Commands
+# gh API — PR Review Payload
 
-## Post a Review with Inline Comments
-
-```bash
-gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
-  --method POST \
-  --field commit_id="{head_sha}" \
-  --field body="{review_summary}" \
-  --field event="COMMENT" \
-  --field "comments[][path]"="{file_path}" \
-  --field "comments[][position]"={diff_position} \
-  --field "comments[][body]"="{comment_body}"
-```
-
-## Minimal JSON Payload (via --input)
+## JSON Payload Format
 
 ```json
 {
-  "commit_id": "abc123",
-  "body": "Review summary here.",
+  "body": "[SUMMARY with ### Breaking Changes / ### Potential Issues / ### Unity-Specific Concerns]",
   "event": "COMMENT",
   "comments": [
     {
-      "path": "Assets/Scripts/PlayerController.cs",
-      "position": 12,
-      "body": "[WARNING] allocation: LINQ in Update allocates per frame.\nFix: Use cached list."
+      "path": "Assets/Scripts/Example.cs",
+      "line": 42,
+      "side": "RIGHT",
+      "body": "**🔴 Issue Title**: One-line summary\n- **Why**: root cause\n- **Fix**: solution\n```suggestion\nexactReplacementCode();\n```"
     }
   ]
 }
 ```
 
+## Field Reference
+
+| Field | Value | Notes |
+|-------|-------|-------|
+| `body` | Review summary | Categorized: Breaking Changes, Potential Issues, Unity Concerns |
+| `event` | `COMMENT` | Always COMMENT — approval is unity-review-general's job |
+| `comments[].path` | File path | Relative to repo root |
+| `comments[].line` | Line number | Right-side line number in the changed file |
+| `comments[].side` | `RIGHT` | Always RIGHT (comment on new code) |
+| `comments[].body` | Comment body | Severity icon + suggestion block (see SKILL.md) |
+
+## gh CLI — Submit
+
 ```bash
-echo '{...}' | gh api repos/{owner}/{repo}/pulls/{pr}/reviews --method POST --input -
+gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
+  --method POST --input review.json
 ```
 
-## Get Head SHA
+## gh CLI — Get Head SHA
 
 ```bash
-gh api repos/{owner}/{repo}/pulls/{pr_number} --jq '.head.sha'
+gh api repos/{owner}/{repo}/pulls/{pr} --jq '.head.sha'
 ```
 
-## List Existing Review Comments
+## gh CLI — List Existing Comments
 
 ```bash
-gh api repos/{owner}/{repo}/pulls/{pr_number}/comments --jq '.[].body'
+gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '.[].body'
 ```
-
-## event Values
-
-| Value | Effect |
-|-------|--------|
-| `COMMENT` | Post comments, no decision |
-| `APPROVE` | Approve the PR |
-| `REQUEST_CHANGES` | Block merge |
 
 ## Notes
 
-- `position` is diff-relative (see `pr-review-workflow.md` step 4)
-- Batch all comments into one review call — avoid multiple review submissions
+- Batch all comments into one review call — never submit multiple reviews
+- `line` = file line number on right side of diff (not diff position)
+- Suggestion replaces whole line(s) — include full line content
 - Max 32 KB per comment body

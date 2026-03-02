@@ -36,6 +36,6 @@ One or more ```mermaid code blocks, each preceded by a one-sentence description 
 
 ## Reference Files
 
-- `references/diagram-types.md` — syntax reference for flowchart, sequence, state, class, and ER diagrams with minimal examples
+- `references/diagram-types.md` — ER diagram + common pitfalls (loads `unity-standards/references/other/mermaid-syntax.md` for full syntax)
 
-Load references on demand via `read_skill_file("mermaid", "references/{file}")`.
+Load references on demand via `read_skill_file("mermaid", "references/{file}")` and `read_skill_file("unity-standards", "references/other/mermaid-syntax.md")`.
