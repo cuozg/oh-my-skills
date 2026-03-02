@@ -40,11 +40,7 @@ Review Unity asset files changed in a GitHub PR — `.mat`, `.shader`, `.meta`, 
 
 Asset comments posted to the GitHub PR. Print a local summary listing flagged files and their severity.
 
-## Reference Files
-
-- `references/asset-review-checklist.md` — cross-ref to `unity-standards/references/review/asset-checklist.md` (full checklist with tables)
-
-Load the canonical checklist via `read_skill_file("unity-standards", "references/review/asset-checklist.md")`.
+## Standards
 
 ## Standards
 

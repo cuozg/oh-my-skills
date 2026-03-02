@@ -38,11 +38,7 @@ Review `.prefab` and `.unity` scene files changed in a GitHub PR for missing scr
 
 Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local summary of subagent results and CRITICAL count.
 
-## Reference Files
-
-- `references/prefab-review-checklist.md` — cross-ref to `unity-standards/references/review/prefab-checklist.md` (full checklist with validation script)
-
-Load the canonical checklist via `read_skill_file("unity-standards", "references/review/prefab-checklist.md")`.
+## Standards
 
 ## Standards
 

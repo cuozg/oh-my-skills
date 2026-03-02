@@ -34,12 +34,7 @@ Produce a concise plan document and register a full task hierarchy for a medium-
 `Documents/Plans/PLAN_{Name}.md` (request, impact, task list) + task hierarchy in task system.
 Print task IDs and subjects to chat after creation.
 
-## Reference Files
-
-- `references/plan-workflow.md` — Planning methodology and scoping checklist
-- `references/task-system-integration.md` — task_create usage patterns and blockedBy wiring
-
-Load references on demand via `read_skill_file("unity-plan-deep", "references/plan-workflow.md")`.
+## Standards
 
 ## Standards
 

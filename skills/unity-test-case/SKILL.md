@@ -18,7 +18,7 @@ Generate structured QA test cases covering happy paths, edge cases, boundary val
 1. **Understand** — Read the feature spec, related scripts, or user description to identify testable behaviors
 2. **Categorize** — Group cases by: Happy Path, Edge Cases, Boundary Values, Negative Tests, Performance/Load
 3. **Write** — For each case: ID, title, preconditions, steps, expected result, priority (P1/P2/P3)
-4. **Generate** — Render all cases into the HTML template from `references/test-case-template.md`
+4. **Generate** — Render all cases into the HTML template from `unity-standards/references/test/test-case-format.md`
 5. **Save** — Write to `Documents/TestCases/{FeatureName}_TestCases.html`
 
 ## Rules
@@ -33,11 +33,7 @@ Generate structured QA test cases covering happy paths, edge cases, boundary val
 
 `Documents/TestCases/{FeatureName}_TestCases.html` — styled HTML file with test case table, status column, and priority indicators.
 
-## Reference Files
-
-- `references/test-case-template.md` — cross-ref to `unity-standards/references/test/test-case-format.md` (canonical HTML template)
-
-Load the canonical template via `read_skill_file("unity-standards", "references/test/test-case-format.md")`.
+## Standards
 
 ## Standards
 

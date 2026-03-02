@@ -32,11 +32,7 @@ Assess a small Unity task inline and register it in the task system immediately.
 `▲ {title}` header, single metadata line `{cost} · {hours} · {risk} risk`, one-sentence summary,
 then `┌ Tasks` tree with `├─` / `└─` branches per task (subject + `→ skill:{name}`).
 
-## Reference Files
-
-- `references/task-output-format.md` — Full format spec with examples for the ▲ header and task tree
-
-Load references on demand via `read_skill_file("unity-plan-quick", "references/task-output-format.md")`.
+## Standards
 
 ## Standards
 

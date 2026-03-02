@@ -20,7 +20,7 @@ Scan a Unity project read-only, grade architecture, performance, best practices,
 4. **Evaluate best practices** — null handling, serialization safety, test coverage presence, naming conventions
 5. **Measure tech debt** — TODO/FIXME count, dead code, magic numbers, file length outliers
 6. **Grade each category** — apply A–F rubric from `references/quality-grading-rubric.md`
-7. **Generate HTML report** — use structure from `references/html-report-template.md`; embed evidence snippets
+7. **Generate HTML report** — use structure from `unity-standards/references/quality/html-report-format.md`; embed evidence snippets
 
 ## Rules
 
@@ -43,7 +43,6 @@ HTML report file at `Documents/QualityAudit_{date}.html` with A-F grades per cat
 ## Reference Files
 
 - `references/quality-grading-rubric.md` — per-category A-F descriptions (loads `unity-standards/references/quality/grading-criteria.md` for scale + formula)
-- `references/html-report-template.md` — HTML report structure and section layout
 
 Load references on demand via `read_skill_file("unity-review-quality", "references/{file}")` and `read_skill_file("unity-standards", "references/quality/grading-criteria.md")`.
 

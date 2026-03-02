@@ -25,7 +25,7 @@ Add inline `// ── REVIEW` comments with icon + label + tag to locally change
 ## Rules
 
 - Insert comments at the exact line of concern, not at the top of the file
-- Use format from `references/review-comment-format.md` for every comment
+- Use format from `unity-standards/references/review/comment-format.md` for every comment
 - Use icon + label + tag: `🔴 CRITICAL`, `🟠 HIGH`, `🟡 MEDIUM`, `🔵 LOW`, `⚪ STYLE`
 - Cover at minimum: null guards, Unity lifecycle order, event subscription leaks, state mutation, serialization
 - Apply safe single-line fixes directly (null checks, caching, unsubscribes); leave complex/design fixes as comments only
@@ -41,12 +41,6 @@ Add inline `// ── REVIEW` comments with icon + label + tag to locally change
 
 Inline `// ── REVIEW` comments with icons inserted into source files. Safe fixes applied directly to code.
 A summary list of remaining unfixed issues (with created fix tasks) is printed after annotation.
-
-## Reference Files
-
-- `references/review-comment-format.md` — skill-specific severity subset + categories (loads `unity-standards/references/review/comment-format.md` for full format)
-
-Load references on demand via `read_skill_file("unity-review-code-local", "references/review-comment-format.md")` and `read_skill_file("unity-standards", "references/review/comment-format.md")`.
 
 ## Standards
 

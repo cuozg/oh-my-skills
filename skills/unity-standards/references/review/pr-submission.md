@@ -16,6 +16,7 @@ POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
     {
       "path": "Assets/Scripts/Player.cs",
       "line": 42,
+      "side": "RIGHT",
       "body": "// ── REVIEW [HIGH]: {message}\n```suggestion\n{fix}\n```"
     }
   ]
@@ -35,6 +36,9 @@ POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
 - Submit ALL comments in ONE API call (single review)
 - Never submit multiple reviews per PR
 - Group findings by file in the comments array
+- `line` = file line number on right side of diff (not diff position)
+- `side` = always `RIGHT` (comment on new code)
+- Max 32 KB per comment body
 
 ## gh CLI Command
 
@@ -42,6 +46,18 @@ POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
 gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
   --method POST \
   --input review.json
+```
+
+## gh CLI — Get Head SHA
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr} --jq '.head.sha'
+```
+
+## gh CLI — List Existing Comments
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '.[].body'
 ```
 
 ## Inline vs General Comments

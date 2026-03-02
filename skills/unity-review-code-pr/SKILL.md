@@ -22,7 +22,7 @@ See `references/pr-review-workflow.md` §7 for the exact verify command.
 ## Workflow
 
 Follow `references/pr-review-workflow.md` (7 steps: resolve owner/repo → fetch files → fetch diff → fetch content → map lines → build + submit → verify).
-Build the review JSON per `references/gh-api-comments.md`.
+Build the review JSON per `unity-standards/references/review/pr-submission.md` (line/side/batching rules).
 
 ## Review Body Format
 
@@ -59,12 +59,11 @@ Each item: **what** (1-line summary) → **why** (1-3 lines, evidence) → **how
 - Use severity icons: 🔴 Critical, 🟡 High, 🔵 Medium, 🟢 Low
 - Cover: null guards, lifecycle order, event leaks, serialization, hot-path allocations
 - Do not post duplicate comments for the same line
-- See `references/gh-api-comments.md` for `line`/`side`/batching rules
+- See `unity-standards/references/review/pr-submission.md` for `line`/`side`/batching rules
 
 ## Reference Files
 
 - `references/pr-review-workflow.md` — step-by-step PR fetch and review process
-- `references/gh-api-comments.md` — JSON payload format + CLI shortcuts
 
 Load on demand via `read_skill_file("unity-review-code-pr", "references/{file}")`.
 

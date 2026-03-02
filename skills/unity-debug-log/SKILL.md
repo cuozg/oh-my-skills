@@ -36,11 +36,7 @@ Generate formatted Debug.Log snippets ready for manual copy-paste — never modi
 
 Formatted code block(s) — copy-paste ready. Text output only.
 
-## Reference Files
-
-- `references/log-format-examples.md` — cross-ref to `unity-standards/references/debug/log-format.md` (canonical format with Dbg helper)
-
-Load the canonical format via `read_skill_file("unity-standards", "references/debug/log-format.md")`.
+## Standards
 
 ## Standards
 

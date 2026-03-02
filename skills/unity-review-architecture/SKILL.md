@@ -22,7 +22,7 @@ Review a GitHub PR for architectural concerns: dependency injection, event syste
 6. **Check assemblies** — `.asmdef` boundaries respected; no back-references from Runtime → Editor
 7. **Check coupling** — measure fan-out; flag classes with 6+ direct dependencies
 8. **Check SOLID** — single responsibility, open/closed, interface segregation violations
-9. **Post comments** — build payload and submit via `gh api` (see `references/architecture-checklist.md`)
+9. **Post comments** — build payload and submit via `gh api` (see `unity-standards/references/review/architecture-checklist.md`)
 
 ## Rules
 
@@ -41,11 +41,7 @@ Review a GitHub PR for architectural concerns: dependency injection, event syste
 
 Architecture comments posted to the GitHub PR. Print a local summary with coupling metrics and any CRITICAL violations.
 
-## Reference Files
-
-- `references/architecture-checklist.md` — cross-ref to `unity-standards/references/review/architecture-checklist.md` (full checklist with code examples)
-
-Load the canonical checklist via `read_skill_file("unity-standards", "references/review/architecture-checklist.md")`.
+## Standards
 
 ## Standards
 

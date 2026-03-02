@@ -35,12 +35,7 @@ Generate a full HTML plan package with patch files for very large features requi
 
 `Documents/Plans/{Name}/` containing `overview.html`, `tasks.html`, `patch.html`, and `*.patch` files.
 
-## Reference Files
-
-- `references/detail-workflow.md` — 10-step workflow with phase definitions
-- `references/html-generation-guide.md` — HTML output rules, no-JS constraint, inline CSS patterns
-
-Load references on demand via `read_skill_file("unity-plan-detail", "references/detail-workflow.md")`.
+## Standards
 
 ## Standards
 

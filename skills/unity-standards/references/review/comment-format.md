@@ -18,6 +18,10 @@
 | 🔵   | LOW      | `#low`       | Minor improvement, readability   | Consider fixing       |
 | ⚪   | STYLE    | `#style`     | Naming, formatting, convention   | Optional              |
 
+## Categories
+
+`null-safety` `lifecycle` `state` `concurrency` `allocation` `serialization` `event-leak` `logic`
+
 ## Examples
 
 ```csharp
@@ -52,6 +56,29 @@ private Camera _cam;
 void Awake() => _cam = Camera.main;  // ← applied fix
 ```
 
+## Fix Application
+
+Apply the fix directly below the comment when safe:
+
+```csharp
+// ── REVIEW 🟠 HIGH #null-safety
+// What: GetComponent result used without null check
+// Why:  Returns null if component missing → NullReferenceException at runtime.
+//       Called from Start() with no prior AddComponent guarantee.
+var rb = GetComponent<Rigidbody>();
+if (rb != null) rb.isKinematic = true;  // ← applied fix
+```
+
+When fix is not possible (too risky, needs design decision, or cross-file):
+
+```csharp
+// ── REVIEW 🟡 MEDIUM #allocation
+// What: String concat in Update() allocates every frame
+// Why:  GC pressure in hot path — 60 allocs/sec.
+//       Use StringBuilder or cache the result.
+debugText.text = "HP: " + health + " / " + maxHealth;  // ← unchanged
+```
+
 ## Rules
 
 - One comment per issue — no multi-issue comments
@@ -59,5 +86,5 @@ void Awake() => _cam = Camera.main;  // ← applied fix
 - Always include icon + label + tag on the header line
 - `What:` = 1 line, plain summary of the issue
 - `Why:` = 1-3 lines, explain impact with evidence (variable names, call sites)
-- Apply code fix inline when safe; leave `// Why` only when fix needs design decision
-- CRITICAL/HIGH block merge — MEDIUM/LOW/STYLE do not
+- Apply code fix inline when safe; leave code unchanged when fix needs design decision or touches other files
+- Never commit review changes — leave diff for user inspection
