@@ -1,10 +1,10 @@
 ---
 name: unity-plan-costing
-description: Detailed Markdown plan with deep investigation and full epic/task tree for XL Unity features. Parallel subagent execution for investigation. No auto task_create. Triggers — 'detailed plan', 'XL plan', 'full breakdown', 'costing plan'.
+description: Detailed HTML plan with deep investigation and full epic/task tree for XL Unity features. Parallel subagent execution for investigation. No auto task_create. Triggers — 'detailed plan', 'XL plan', 'full breakdown', 'costing plan'.
 ---
 # unity-plan-costing
 
-Produce a comprehensive Markdown plan for very large features — deep codebase investigation,
+Produce a comprehensive HTML plan for very large features — deep codebase investigation,
 architecture analysis, full epic/task tree with dependencies, waves, and risk assessment.
 
 ## When to Use
@@ -20,8 +20,8 @@ Read `references/workflow.md` for the full step-by-step process with parallel ex
 Summary:
 1. **Investigate** — Parallel subagent exploration of affected modules, dependencies, patterns
 2. **Scope** — Define phases, epics, boundaries, and out-of-scope items
-3. **Plan** — Decompose into epics → tasks with cost/type/wave per node using tree format
-4. **Generate** — Write `PLAN.md`
+3. **Plan** — Decompose into epics → tasks with cost/type/wave per node
+4. **Generate** — Write `PLAN.html` using the HTML template
 5. **Save** — Write to `Documents/Plans/{Name}/`
 6. **Summary** — Report effort, risks, critical path, and output folder
 
@@ -34,26 +34,28 @@ Summary:
 - Every epic must have 2+ tasks; every task must have type, cost, and affected files
 - **Tasks Breakdown table is the primary deliverable** — invest most effort here
 - Keep text minimal — tables over prose, bullets over paragraphs
+- No JavaScript in HTML output — CSS-only, self-contained
 
 ## Output
 
 `Documents/Plans/{Name}/` containing:
-- `PLAN.md` — summary, architecture, tasks breakdown, risks, compatibility, acceptance
+- `PLAN.html` — Vercel-themed HTML with summary, architecture, tasks, risks, acceptance
 
-### PLAN.md Sections (9)
+### PLAN.html Sections (8)
 
 1. **Summary** — 1-5 bullet points (what, why, scope)
-2. **Architecture Overview** — current vs proposed, what changes
-3. **Technical Approach** — high-level steps to achieve the goal
+2. **Architecture Overview** — current vs proposed side-by-side, what changes
+3. **Technical Approach** — numbered steps with code references
 4. **Epics** — table: name + 1-line purpose
-5. **Tasks Breakdown** — table: ID, Epic, Title, Description (1 bullet per action), Type, Cost, Files
-6. **Risks** — severity table with impact and mitigation
-7. **Backward Compatibility** — breaking changes and migration steps
-8. **Acceptance Criteria** — checkbox list
+5. **Tasks Breakdown** — table: ID, Epic, Title, Description, Type (badge), Cost (badge), Files
+6. **Risks** — table: risk, severity badge (HIGH/MED/LOW), impact, mitigation
+7. **Backward Compatibility** — table: area, impact, migration steps
+8. **Acceptance Criteria** — styled checkbox list by category
 
 ## Template
 
-Read `references/output-template.md` before generating. Replace `[PLACEHOLDER]` tokens.
+Read `references/output-template.html` before generating. Replace `[PLACEHOLDER]` tokens.
+Use badge CSS classes for types (`badge-logic`, `badge-ui`, etc.) and costs (`badge-cost-s`, etc.).
 
 ## Standards
 

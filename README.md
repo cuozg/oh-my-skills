@@ -211,10 +211,10 @@ Plan Unity features with codebase-aware task breakdowns.
 │   └─ Out:  Documents/Plans/PLAN_*.md + task hierarchy
 │
 └── unity-plan-costing       📦 Very large features (XL)
-    ├─ What: 3 HTML files + per-task .patch files. No auto task_create.
-    ├─ Flow: 10-step: Read → Scope → Investigate → Plan → Patches → HTML × 3 → Save
+    ├─ What: Vercel-themed HTML plan. No auto task_create.
+    ├─ Flow: Read → Scope → Investigate → Plan → Generate HTML → Save
     ├─ Rule: No JavaScript in HTML. User decides when to register tasks.
-    └─ Out:  Documents/Plans/{name}/ — overview.html, tasks.html, patch.html + .patch files
+    └─ Out:  Documents/Plans/{name}/PLAN.html
 ```
 
 ---

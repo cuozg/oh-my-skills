@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>[FEATURE_NAME] - Plan</title>
+        <style>
+            :root {
+                --bg-color: #000000;
+                --card-bg: #111111;
+                --border-color: #333333;
+                --border-hover: #444444;
+                --text-primary: #ededed;
+                --text-secondary: #888888;
+                --text-muted: #666666;
+
+                --accent: #0070f3;
+                --success: #50e3c2;
+                --warning: #f5a623;
+                --error: #ee0000;
+
+                --type-logic: #0070f3;
+                --type-ui: #7928ca;
+                --type-data: #50e3c2;
+                --type-api: #f5a623;
+                --type-asset: #ff0080;
+                --type-test: #32cd32;
+                --type-config: #888888;
+
+                --cost-s: #32cd32;
+                --cost-m: #f5a623;
+                --cost-l: #ff9900;
+                --cost-xl: #ee0000;
+
+                --font-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                --font-mono: 'Geist Mono', 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: var(--bg-color);
+                color: var(--text-primary);
+                font-family: var(--font-sans);
+                line-height: 1.6;
+                margin: 0;
+                padding: 0;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            a {
+                color: var(--accent);
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+            a:hover {
+                color: #3291ff;
+            }
+
+            code {
+                font-family: var(--font-mono);
+                font-size: 0.85em;
+                background: #1a1a1a;
+                color: rgb(87, 184, 104);
+                padding: 0.2em 0.4em;
+                border-radius: 4px;
+            }
+
+            .container {
+                margin: 0 auto;
+                padding: 0 1.5rem 6rem;
+            }
+
+            /* Sticky Nav */
+            .nav {
+                position: sticky;
+                top: 0;
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border-color);
+                z-index: 100;
+                padding: 1rem 0;
+                margin-bottom: 3rem;
+            }
+
+            .nav-inner {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 0 1.5rem;
+                display: flex;
+                gap: 1.5rem;
+                overflow-x: auto;
+                white-space: nowrap;
+                scrollbar-width: none;
+            }
+            .nav-inner::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-link {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+            .nav-link:hover {
+                color: var(--text-primary);
+                text-decoration: none;
+            }
+
+            /* Header */
+            header {
+                margin-bottom: 4rem;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                letter-spacing: -0.05em;
+                margin: 0 0 0.5rem;
+                color: rgb(87, 184, 104);
+                line-height: 1.2;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                letter-spacing: -0.03em;
+                margin: 0 0 1.5rem;
+                display: flex;
+                align-items: center;
+                color: rgb(183, 111, 238);
+
+                gap: 0.75rem;
+            }
+
+            h2 .num {
+                color: var(--text-muted);
+                font-family: var(--font-mono);
+                font-weight: 400;
+                font-size: 1rem;
+                background: #1a1a1a;
+                padding: 0.2rem 0.5rem;
+                color: rgb(0, 242, 255);
+
+                border-radius: 4px;
+            }
+
+            h3 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: rgb(246, 75, 133);
+
+                margin: 2rem 0 1rem;
+            }
+
+            /* Cards */
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 2rem;
+                margin-bottom: 2rem;
+                transition: border-color 0.2s;
+            }
+            .card:hover {
+                border-color: var(--border-hover);
+            }
+
+            ul,
+            ol {
+                margin: 0;
+                padding-left: 1.5rem;
+            }
+
+            li {
+                margin-bottom: 0.5rem;
+            }
+
+            /* Architecture Comparison */
+            .arch-compare {
+                display: flex;
+                gap: 1.5rem;
+                align-items: center;
+                margin-bottom: 2rem;
+            }
+
+            .arch-box {
+                flex: 1;
+                background: var(--bg-color);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 1.5rem;
+                font-family: var(--font-mono);
+                font-size: 0.875rem;
+                white-space: pre-wrap;
+                min-height: 150px;
+                color: #a0a0a0;
+            }
+
+            .arch-box-title {
+                font-family: var(--font-sans);
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin-bottom: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                font-size: 0.75rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .arch-box-title::before {
+                content: '';
+                display: block;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+            }
+
+            .arch-box:first-child .arch-box-title::before {
+                background: var(--text-secondary);
+            }
+            .arch-box:last-child .arch-box-title::before {
+                background: var(--accent);
+            }
+
+            .arch-arrow {
+                color: var(--text-muted);
+                font-size: 1.5rem;
+            }
+
+            @media (max-width: 768px) {
+                .arch-compare {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 1rem;
+                }
+                .arch-arrow {
+                    text-align: center;
+                    transform: rotate(90deg);
+                    margin: -0.5rem 0;
+                }
+                .card {
+                    padding: 1.5rem;
+                }
+            }
+
+            /* Tables */
+            .table-wrapper {
+                overflow-x: auto;
+                margin: 0 -0.5rem;
+                padding: 0 0.5rem;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.875rem;
+            }
+
+            th,
+            td {
+                padding: 0.875rem 1rem;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            th {
+                color: var(--text-secondary);
+                color: rgb(246, 75, 133);
+
+                font-weight: 500;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            tbody tr:nth-child(odd) {
+                background: rgba(255, 255, 255, 0.01);
+            }
+
+            tbody tr:hover {
+                background: rgba(255, 255, 255, 0.03);
+            }
+
+            .total-row {
+                font-weight: 600;
+                background: transparent !important;
+            }
+
+            .total-row td {
+                border-bottom: none;
+                border-top: 1px solid #444;
+                padding-top: 1.5rem;
+            }
+
+            /* Badges */
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.125rem 0.5rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                font-weight: 500;
+                font-family: var(--font-sans);
+                border: 1px solid transparent;
+                white-space: nowrap;
+            }
+
+            /* Types */
+            .badge-logic {
+                background: rgba(0, 112, 243, 0.15);
+                color: #52a8ff;
+                border-color: rgba(0, 112, 243, 0.3);
+            }
+            .badge-ui {
+                background: rgba(121, 40, 202, 0.15);
+                color: #a37ee6;
+                border-color: rgba(121, 40, 202, 0.3);
+            }
+            .badge-data {
+                background: rgba(80, 227, 194, 0.15);
+                color: #79ffe1;
+                border-color: rgba(80, 227, 194, 0.3);
+            }
+            .badge-api {
+                background: rgba(245, 166, 35, 0.15);
+                color: #ffb84d;
+                border-color: rgba(245, 166, 35, 0.3);
+            }
+            .badge-asset {
+                background: rgba(255, 0, 128, 0.15);
+                color: #ff4d9e;
+                border-color: rgba(255, 0, 128, 0.3);
+            }
+            .badge-test {
+                background: rgba(50, 205, 50, 0.15);
+                color: #5ce65c;
+                border-color: rgba(50, 205, 50, 0.3);
+            }
+            .badge-config {
+                background: rgba(136, 136, 136, 0.15);
+                color: #b3b3b3;
+                border-color: rgba(136, 136, 136, 0.3);
+            }
+
+            /* Cost (Sizes) */
+            .badge-cost-s {
+                background: transparent;
+                border-color: var(--cost-s);
+                color: var(--cost-s);
+            }
+            .badge-cost-m {
+                background: transparent;
+                border-color: var(--cost-m);
+                color: var(--cost-m);
+            }
+            .badge-cost-l {
+                background: transparent;
+                border-color: var(--cost-l);
+                color: var(--cost-l);
+            }
+            .badge-cost-xl {
+                background: transparent;
+                border-color: var(--cost-xl);
+                color: var(--cost-xl);
+            }
+
+            /* Severity */
+            .badge-sev-high {
+                background: var(--error);
+                color: #fff;
+                border: none;
+            }
+            .badge-sev-med {
+                background: var(--warning);
+                color: #000;
+                border: none;
+            }
+            .badge-sev-low {
+                background: #444;
+                color: #fff;
+                border: none;
+            }
+
+            /* Checkboxes */
+            .checkbox-list {
+                list-style: none;
+                padding: 0;
+                margin-bottom: 2rem;
+            }
+            .checkbox-item {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 0.875rem;
+                padding: 0.5rem;
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+            .checkbox-item:hover {
+                background: rgba(255, 255, 255, 0.02);
+            }
+            .checkbox-icon {
+                flex-shrink: 0;
+                width: 18px;
+                height: 18px;
+                border: 1px solid var(--text-secondary);
+                border-radius: 4px;
+                margin-right: 1rem;
+                margin-top: 0.15rem;
+                background: var(--bg-color);
+            }
+            .checkbox-category {
+                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.75rem;
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 0.5rem;
+            }
+
+            /* Footer */
+            footer {
+                border-top: 1px solid var(--border-color);
+                padding-top: 2rem;
+                color: var(--text-muted);
+                font-size: 0.875rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            footer .logo {
+                margin: 0;
+                width: 14px;
+                height: 14px;
+                background: var(--text-muted);
+            }
+
+            /* Print Styles */
+            @media print {
+                body {
+                    background: white;
+                    color: black;
+                    font-size: 10pt;
+                }
+                .nav {
+                    display: none;
+                }
+                .container {
+                    padding: 0;
+                    max-width: 100%;
+                }
+                .card {
+                    border: none !important;
+                    padding: 0;
+                    margin-bottom: 2rem;
+                    background: transparent;
+                    break-inside: avoid;
+                }
+                .arch-box {
+                    background: white;
+                    border: 1px solid #ccc;
+                    color: black;
+                }
+                code {
+                    border: 1px solid #ddd;
+                    background: #f5f5f5;
+                    color: black;
+                }
+                table {
+                    break-inside: avoid;
+                }
+                th {
+                    color: black;
+                    border-bottom: 2px solid #000;
+                }
+                td,
+                th {
+                    border-color: #eee;
+                    padding: 0.5rem;
+                }
+                tr:nth-child(odd) {
+                    background: transparent;
+                }
+                .total-row td {
+                    border-top: 2px solid #000;
+                }
+                h2 {
+                    page-break-after: avoid;
+                }
+                h2 .num {
+                    color: #666;
+                    background: transparent;
+                    border: 1px solid #ccc;
+                }
+                .logo {
+                    background: black !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+
+                /* Force background colors for badges when printing */
+                .badge {
+                    border: 1px solid #999 !important;
+                    color: #000 !important;
+                    background: transparent !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+                .badge-sev-high {
+                    background: #ee0000 !important;
+                    color: white !important;
+                }
+                .badge-sev-med {
+                    background: #f5a623 !important;
+                    color: black !important;
+                }
+                .checkbox-icon {
+                    border-color: #000;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="nav">
+            <div class="nav-inner">
+                <a href="#summary" class="nav-link">Summary</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#approach" class="nav-link">Approach</a>
+                <a href="#epics" class="nav-link">Epics</a>
+                <a href="#tasks" class="nav-link">Tasks Breakdown</a>
+                <a href="#risks" class="nav-link">Risks</a>
+                <a href="#compatibility" class="nav-link">Compatibility</a>
+                <a href="#acceptance" class="nav-link">Acceptance</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <header>
+                <div class="logo"></div>
+                <h1>[FEATURE_NAME]</h1>
+            </header>
+
+            <div class="card" id="summary">
+                <h2><span class="num">01</span> Summary</h2>
+                <ul>
+                    <li>[WHAT_THE_FEATURE_DOES_BULLET_1]</li>
+                    <li>[WHY_ITS_NEEDED_BULLET_2]</li>
+                    <li>[KEY_CONSTRAINT_OR_SCOPE_BULLET_3]</li>
+                </ul>
+            </div>
+
+            <div class="card" id="architecture">
+                <h2><span class="num">02</span> Architecture Overview</h2>
+
+                <div class="arch-compare">
+                    <div class="arch-box">
+                        <div class="arch-box-title">Current</div>
+                        [OLD_ARCHITECTURE_DIAGRAM]
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-box">
+                        <div class="arch-box-title">Proposed</div>
+                        [NEW_ARCHITECTURE_DIAGRAM]
+                    </div>
+                </div>
+
+                <h3>What Changes</h3>
+                <ul>
+                    <li>[COMPONENT] - Detail the specific component change</li>
+                </ul>
+            </div>
+
+            <div class="card" id="approach">
+                <h2><span class="num">03</span> Technical Approach</h2>
+                <ol>
+                    <li><strong>[STEP_NAME]</strong>: Description referring to <code>[CodeReference]</code></li>
+                </ol>
+            </div>
+
+            <div class="card" id="epics">
+                <h2><span class="num">04</span> Epics</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="30%">Epic Name</th>
+                                <th width="65%">Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>[EPIC_1_NAME]</strong></td>
+                                <td>Strategic goal or feature slice</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>[EPIC_2_NAME]</strong></td>
+                                <td>Strategic goal or feature slice</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>[EPIC_3_NAME]</strong></td>
+                                <td>Strategic goal or feature slice</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" id="tasks">
+                <h2><span class="num">05</span> Tasks Breakdown</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="8%">ID</th>
+                                <th width="15%">Epic</th>
+                                <th width="20%">Title</th>
+                                <th width="27%">Description</th>
+                                <th width="8%">Type</th>
+                                <th width="7%">Cost</th>
+                                <th width="15%">Files</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>T-1</td>
+                                <td>[EPIC_1]</td>
+                                <td><strong>[SHORT_TITLE]</strong></td>
+                                <td>Clear, actionable implementation step</td>
+                                <td><span class="badge badge-logic">Logic</span></td>
+                                <td><span class="badge badge-cost-m">M</span></td>
+                                <td><code>File.cs</code></td>
+                            </tr>
+                            <tr>
+                                <td>T-2</td>
+                                <td>[EPIC_2]</td>
+                                <td><strong>[SHORT_TITLE]</strong></td>
+                                <td>Clear, actionable implementation step</td>
+                                <td><span class="badge badge-ui">UI</span></td>
+                                <td><span class="badge badge-cost-s">S</span></td>
+                                <td><code>View.uxml</code></td>
+                            </tr>
+                            <tr>
+                                <td>T-3</td>
+                                <td>[EPIC_3]</td>
+                                <td><strong>[SHORT_TITLE]</strong></td>
+                                <td>Clear, actionable implementation step</td>
+                                <td><span class="badge badge-data">Data</span></td>
+                                <td><span class="badge badge-cost-l">L</span></td>
+                                <td><code>Data.cs</code></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="5" style="text-align: right; padding-right: 2rem">Total Estimated Effort:</td>
+                                <td colspan="2">[TOTAL_HOURS]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" id="risks">
+                <h2><span class="num">06</span> Risks</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="25%">Risk</th>
+                                <th width="10%">Severity</th>
+                                <th width="30%">Impact</th>
+                                <th width="35%">Mitigation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>[RISK_TITLE_1]</strong></td>
+                                <td><span class="badge badge-sev-high">HIGH</span></td>
+                                <td>Potential consequence</td>
+                                <td>How to prevent or address</td>
+                            </tr>
+                            <tr>
+                                <td><strong>[RISK_TITLE_2]</strong></td>
+                                <td><span class="badge badge-sev-med">MED</span></td>
+                                <td>Potential consequence</td>
+                                <td>How to prevent or address</td>
+                            </tr>
+                            <tr>
+                                <td><strong>[RISK_TITLE_3]</strong></td>
+                                <td><span class="badge badge-sev-low">LOW</span></td>
+                                <td>Potential consequence</td>
+                                <td>How to prevent or address</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" id="compatibility">
+                <h2><span class="num">07</span> Backward Compatibility</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="25%">Area</th>
+                                <th width="20%">Impact</th>
+                                <th width="55%">Migration Steps</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Data Schema</strong></td>
+                                <td>Breaking / Non-breaking</td>
+                                <td>Steps required to migrate existing data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" id="acceptance">
+                <h2><span class="num">08</span> Acceptance Criteria</h2>
+
+                <div class="checkbox-category">Functional</div>
+                <ul class="checkbox-list">
+                    <li class="checkbox-item">
+                        <div class="checkbox-icon"></div>
+                        <div>[CRITERION]</div>
+                    </li>
+                </ul>
+
+                <div class="checkbox-category">Performance</div>
+                <ul class="checkbox-list">
+                    <li class="checkbox-item">
+                        <div class="checkbox-icon"></div>
+                        <div>[CRITERION]</div>
+                    </li>
+                </ul>
+
+                <div class="checkbox-category">Compatibility</div>
+                <ul class="checkbox-list">
+                    <li class="checkbox-item">
+                        <div class="checkbox-icon"></div>
+                        <div>[CRITERION]</div>
+                    </li>
+                </ul>
+
+                <div class="checkbox-category">Edge Cases</div>
+                <ul class="checkbox-list">
+                    <li class="checkbox-item">
+                        <div class="checkbox-icon"></div>
+                        <div>[CRITERION]</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>
