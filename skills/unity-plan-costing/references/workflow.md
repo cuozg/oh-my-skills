@@ -2,17 +2,16 @@
 
 ## Deliverables
 
-1 Markdown file + JSON.
+1 Markdown file.
 
 ```
 Documents/Plans/{Name}/
-├── PLAN.md     — Architecture, epics/tasks tree, risks, acceptance criteria
-└── tasks.json  — Machine-readable task list
+└── PLAN.md     — Summary, architecture, tasks breakdown, risks, compatibility, acceptance
 ```
 
 ## Step 1: Read Template
 
-Read `assets/templates/PLAN.md` before generating. Replace `[PLACEHOLDER]` tokens exactly.
+Read `references/output-template.md` before generating. Replace `[PLACEHOLDER]` tokens exactly.
 
 ## Step 2: Parallel Deep Investigation
 
@@ -36,50 +35,38 @@ out-of-scope items. Ask user if anything is unclear.
 
 ## Step 4: Scope Epics and Tasks
 
-```
-Feature
-├── Epic 1 ── T-001 [Subject]  S · W1 · Logic
-├── Epic 1 ── T-002 [Subject]  M · W1 · Data
-├── Epic 2 ── T-003 [Subject]  L · W2 · UI   ⛓ T-002
-└── Epic 3 ── T-004 [Subject]  M · W3 · Test  ⛓ T-003
-```
-
 - **Types**: `Logic`, `UI`, `Data`, `API`, `Asset`, `Test`, `Config`
-- **Costs**: S (<2h), M (2-4h), L (4-8h), XL (1-2d)
-- **Waves**: parallel tasks share a wave. Every task needs cost, type, wave, blockedBy
+- **Costs**: `S` (<2h), `M` (2-4h), `L` (4-8h), `XL` (1-2d)
+- Every task needs: ID, epic, title, description (1 bullet per action — short, meaningful), type, cost, affected files
 
 ## Step 5: Generate PLAN.md
 
 Fill template sections in order:
-1. Header — feature name + summary stats (duration, tasks, epics, risk, complexity)
-2. Architecture Overview — current vs proposed diagrams + key benefits
-3. Technical Approach — numbered steps with `code` refs
-4. **Epics & Tasks** (main focus) — epic summary table + task tree per epic + dependency graph + task details
-5. Risks — severity table with 🔴🟡🟢 markers, cite `file:line`
-6. Acceptance Criteria — checkbox list grouped by category
+1. **Header** — feature name + summary stats (duration, tasks, epics, risk)
+2. **Summary** — 1-5 bullet points: what, why, key constraints
+3. **Architecture Overview** — current vs proposed diagrams + what changes
+4. **Technical Approach** — numbered steps with `code` refs
+5. **Epics** — table: #, epic name, 1-line purpose
+6. **Tasks Breakdown** — table: ID, Epic, Title (short), Description (1 bullet per action), Type, Cost, Files
+7. **Risks** — severity table: HIGH/MED/LOW, impact, mitigation, cite `file:line`
+8. **Backward Compatibility** — table: area, impact (breaking/non-breaking), migration steps
+9. **Acceptance Criteria** — checkbox list grouped by category
 
-## Step 6: Generate tasks.json
-
-```json
-[{"id":"T-001","epic":"Name","subject":"...","type":"Logic","cost":"M","wave":1,"blockedBy":[],"blocks":["T-003"],"files":["Assets/Scripts/Foo.cs"]}]
-```
-
-## Step 7: Create Output + Summary
+## Step 6: Create Output + Summary
 
 ```bash
 mkdir -p Documents/Plans/{Name}
 ```
 
-Write all files. Report: location, total effort, top risks, critical path, wave count.
+Write PLAN.md. Report: location, total effort, top risks, critical path.
 
 ## Style
 
-- Use `▲` Vercel header. Tree chars: `├── ─ └── │`
-- Severity: 🔴 HIGH · 🟡 MEDIUM · 🟢 LOW
+- Use `▲` Vercel header. Bold **important** items.
+- Severity: **HIGH** · **MED** · **LOW**
 - Cost in backtick badges: `S` `M` `L` `XL`
-- Keep text minimal — trees and tables over prose
-- Use `<details>` for task walkthrough cards
-- Mermaid optional — ASCII dependency graphs preferred
+- Keep text minimal — tables over prose, bullets over paragraphs
+- Tasks use table format with bullet-per-action description (not tree or `<details>`)
 
 ## No task_create
 

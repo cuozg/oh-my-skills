@@ -21,8 +21,8 @@ Summary:
 1. **Investigate** — Parallel subagent exploration of affected modules, dependencies, patterns
 2. **Scope** — Define phases, epics, boundaries, and out-of-scope items
 3. **Plan** — Decompose into epics → tasks with cost/type/wave per node using tree format
-4. **Generate** — Write `PLAN.md` + `tasks.json`
-5. **Save** — Write all files to `Documents/Plans/{Name}/`
+4. **Generate** — Write `PLAN.md`
+5. **Save** — Write to `Documents/Plans/{Name}/`
 6. **Summary** — Report effort, risks, critical path, and output folder
 
 ## Rules
@@ -31,15 +31,25 @@ Summary:
 - Cite `file:line` for every risk, dependency, or architectural claim
 - All estimates must be evidence-based from investigation — no guesswork
 - Use parallel subagents (`run_in_background=true`) for investigation phase
-- Every epic must have 2+ tasks; every task must have cost, type, wave, and dependencies
-- **Epics & Tasks section is the primary deliverable** — invest most effort here
-- Keep text minimal — trees and tables over prose
+- Every epic must have 2+ tasks; every task must have type, cost, and affected files
+- **Tasks Breakdown table is the primary deliverable** — invest most effort here
+- Keep text minimal — tables over prose, bullets over paragraphs
 
 ## Output
 
 `Documents/Plans/{Name}/` containing:
-- `PLAN.md` — architecture, epic/task tree, risks, acceptance criteria
-- `tasks.json` — machine-readable task list
+- `PLAN.md` — summary, architecture, tasks breakdown, risks, compatibility, acceptance
+
+### PLAN.md Sections (9)
+
+1. **Summary** — 1-5 bullet points (what, why, scope)
+2. **Architecture Overview** — current vs proposed, what changes
+3. **Technical Approach** — high-level steps to achieve the goal
+4. **Epics** — table: name + 1-line purpose
+5. **Tasks Breakdown** — table: ID, Epic, Title, Description (1 bullet per action), Type, Cost, Files
+6. **Risks** — severity table with impact and mitigation
+7. **Backward Compatibility** — breaking changes and migration steps
+8. **Acceptance Criteria** — checkbox list
 
 ## Template
 

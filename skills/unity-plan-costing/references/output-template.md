@@ -1,122 +1,89 @@
 # ▲ [FEATURE_NAME]
 
-> **[TOTAL_DURATION]** · **[TASK_COUNT] tasks** · **[EPIC_COUNT] epics** · **[RISK_LEVEL] risk** · **[COMPLEXITY_LEVEL] complexity**
+> **[TOTAL_DURATION]** · **[TASK_COUNT] tasks** · **[EPIC_COUNT] epics** · **[RISK_LEVEL] risk**
+
+---
+
+## Summary
+
+- [WHAT_THE_FEATURE_DOES_BULLET_1]
+- [WHY_ITS_NEEDED_BULLET_2]
+- [KEY_CONSTRAINT_OR_SCOPE_BULLET_3]
 
 ---
 
 ## Architecture Overview
 
-> Current → Proposed — highlight what changes and why.
+> Current → Proposed — **highlight what changes**.
 
 ```
 ┌─────────────────────────────┐     ┌─────────────────────────────┐
-│  ❌ CURRENT                 │     │  ✅ PROPOSED                │
+│  CURRENT                    │     │  PROPOSED                   │
 │                             │     │                             │
-│  [OLD_ARCHITECTURE_DIAGRAM] │     │  [NEW_ARCHITECTURE_DIAGRAM] │
+│  [OLD_ARCHITECTURE_DIAGRAM] │  →  │  [NEW_ARCHITECTURE_DIAGRAM] │
 │                             │     │                             │
 └─────────────────────────────┘     └─────────────────────────────┘
 ```
 
-**Key Benefits**
-- [BENEFIT_1]
-- [BENEFIT_2]
-- [BENEFIT_3]
+**What Changes**
+- **[COMPONENT]** — [what changes and why]
+- **[COMPONENT]** — [what changes and why]
 
 ---
 
 ## Technical Approach
 
-1. [APPROACH_STEP_1] → `[CodeReference]`
-2. [APPROACH_STEP_2] → `[CodeReference]`
-3. [APPROACH_STEP_3] → `[CodeReference]`
+1. **[STEP_NAME]** — [how it works] → `[CodeReference]`
+2. **[STEP_NAME]** — [how it works] → `[CodeReference]`
+3. **[STEP_NAME]** — [how it works] → `[CodeReference]`
 
 ---
 
-## Epics & Tasks
+## Epics
 
-> **Primary deliverable** — full breakdown with dependencies, cost, and wave ordering.
+| # | Epic | Purpose |
+|---|------|---------|
+| 1 | **[EPIC_1_NAME]** | [1-line purpose of this epic] |
+| 2 | **[EPIC_2_NAME]** | [1-line purpose of this epic] |
+| 3 | **[EPIC_3_NAME]** | [1-line purpose of this epic] |
 
-### Epic Summary
+---
 
-| Epic | Tasks | Hours | Cost |
-|------|------:|------:|------|
-| [EPIC_1_NAME] | [COUNT] | [MIN]–[MAX]h | `S`×[N] `M`×[N] `L`×[N] |
-| [EPIC_2_NAME] | [COUNT] | [MIN]–[MAX]h | `S`×[N] `M`×[N] |
-| **Total** | **[TOTAL]** | **[MIN]–[MAX]h** | |
+## Tasks Breakdown
 
-### Task Tree
+| ID | Epic | Title | Description | Type | Cost | Files |
+|----|------|-------|-------------|------|------|-------|
+| T-001 | [EPIC_1] | **[SHORT_TITLE]** | ├ Create interface<br>├ Implement adapter<br>└ Register in DI | `Logic` | `S` | `file1.cs`, `file2.cs` |
+| T-002 | [EPIC_1] | **[SHORT_TITLE]** | ├ Define data model<br>└ Add serializer | `Data` | `M` | `file1.cs` |
+| T-003 | [EPIC_2] | **[SHORT_TITLE]** | ├ Build panel layout<br>├ Bind view model<br>└ Handle input events | `UI` | `L` | `file1.cs`, `file2.cs` |
+| T-004 | [EPIC_2] | **[SHORT_TITLE]** | ├ Add validation logic<br>└ Emit state change event | `Logic` | `M` | `file1.cs` |
+| T-005 | [EPIC_3] | **[SHORT_TITLE]** | ├ Write unit tests<br>└ Cover edge cases | `Test` | `S` | `file_test.cs` |
+| | | | | **Total** | **[TOTAL_HOURS]** | |
 
-<!-- Main focus — use tree format per epic. Repeat per epic. -->
-
-```
-[EPIC_1_NAME]
-├── T-001 [TASK_SUBJECT]                          S · W1 · Logic
-│   └─ [1-line description]
-│      Files: [file1.cs], [file2.cs]
-│
-├── T-002 [TASK_SUBJECT]                          M · W1 · Data
-│   └─ [1-line description]
-│      Files: [file1.cs]
-│
-└── T-003 [TASK_SUBJECT]                          L · W2 · UI
-    └─ [1-line description]
-       ⛓ blocked by: T-001, T-002
-       Files: [file1.cs], [file2.cs]
-```
-
-```
-[EPIC_2_NAME]
-├── T-004 [TASK_SUBJECT]                          M · W2 · Logic
-│   └─ [1-line description]
-│      Files: [file1.cs]
-│
-└── T-005 [TASK_SUBJECT]                          S · W3 · Test
-    └─ [1-line description]
-       ⛓ blocked by: T-003, T-004
-       Files: [file_test.cs]
-```
-
-### Dependency Graph
-
-```
-W1 ─── T-001 ──┬──── T-003 ─── W2
-       T-002 ──┘
-W2 ─── T-004 ──┬──── T-005 ─── W3
-       T-003 ──┘
-```
-
-### Task Detail
-
-<!-- Repeat per task — implementation steps, deps, files -->
-
-<details>
-<summary><code>T-001</code> [TASK_SUBJECT] — <code>S</code> · W1 · Logic</summary>
-
-**Steps**
-1. [IMPLEMENTATION_STEP_1]
-2. [IMPLEMENTATION_STEP_2]
-
-**Dependencies**
-- ⛓ Blocked by: —
-- 🔓 Blocks: `T-003`
-
-**Files**: `[file1.cs]`, `[file2.cs]`
-
-</details>
+> **Types**: `Logic` · `UI` · `Data` · `API` · `Asset` · `Test` · `Config`
+> **Costs**: `S` <2h · `M` 2-4h · `L` 4-8h · `XL` 1-2d
 
 ---
 
 ## Risks
 
-<!-- Use severity markers: 🔴 HIGH · 🟡 MEDIUM · 🟢 LOW -->
+| Risk | Severity | Impact | Mitigation |
+|------|----------|--------|------------|
+| [RISK_TITLE_1] | **HIGH** | [What breaks] | [How to prevent] — `file:line` |
+| [RISK_TITLE_2] | **MED** | [What breaks] | [How to prevent] — `file:line` |
+| [RISK_TITLE_3] | **LOW** | [What breaks] | [How to prevent] — `file:line` |
 
-| Risk | Severity | Mitigation |
-|------|----------|------------|
-| [RISK_TITLE_1] | 🔴 **HIGH** | [MITIGATION_STRATEGY] |
-| [RISK_TITLE_2] | 🟡 **MEDIUM** | [MITIGATION_STRATEGY] |
-| [RISK_TITLE_3] | 🟢 **LOW** | [MITIGATION_STRATEGY] |
+---
 
-> Cite `file:line` for every risk claim.
+## Backward Compatibility
+
+| Area | Impact | Migration |
+|------|--------|-----------|
+| **[API/Interface]** | [Breaking / Non-breaking] | [Migration steps or "None required"] |
+| **[Data/Schema]** | [Breaking / Non-breaking] | [Migration steps or "None required"] |
+| **[Config/Settings]** | [Breaking / Non-breaking] | [Migration steps or "None required"] |
+
+> If fully backward compatible, state: **No breaking changes.** All existing APIs and data formats preserved.
 
 ---
 
@@ -125,9 +92,9 @@ W2 ─── T-004 ──┬──── T-005 ─── W3
 - [ ] **Functional** — [CRITERION]
 - [ ] **Functional** — [CRITERION]
 - [ ] **Performance** — [CRITERION]
+- [ ] **Compatibility** — [CRITERION]
 - [ ] **Edge Case** — [CRITERION]
-- [ ] **Integration** — [CRITERION]
 
 ---
 
-> Generated by `unity-plan-costing` · [PLAN_DATE]
+> ▲ Generated by `unity-plan-costing` · [PLAN_DATE]
