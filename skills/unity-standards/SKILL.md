@@ -69,7 +69,7 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `quality/tech-debt-audit.md` — TODO density, code duplication, complexity
 - `quality/html-report-format.md` — report structure, CSS, no JavaScript
 
-### Plan (7)
+### Plan (6)
 
 - `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
 - `plan/risk-assessment.md` — risk levels, mitigation strategies
@@ -77,7 +77,6 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `plan/investigation-workflow.md` — codebase scan steps before planning
 - `plan/dependency-mapping.md` — blockedBy, parallel vs sequential
 - `plan/output-quick.md` — inline report format for quick plans
-- `plan/output-detail.md` — HTML plan structure for detail plans
 
 ### Debug (3)
 

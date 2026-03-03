@@ -210,7 +210,7 @@ Plan Unity features with codebase-aware task breakdowns.
 │   ├─ Flow: Read → Scope → Investigate → Plan → Doc → Tasks → Validate
 │   └─ Out:  Documents/Plans/PLAN_*.md + task hierarchy
 │
-└── unity-plan-detail       📦 Very large features (XL)
+└── unity-plan-costing       📦 Very large features (XL)
     ├─ What: 3 HTML files + per-task .patch files. No auto task_create.
     ├─ Flow: 10-step: Read → Scope → Investigate → Plan → Patches → HTML × 3 → Save
     ├─ Rule: No JavaScript in HTML. User decides when to register tasks.
@@ -331,7 +331,7 @@ unity/code/     deep · editor · quick
 unity/debug/    deep · fix · log · quick
 unity/document/ system · tdd
 unity/investigate/ deep · quick
-unity/plan/     deep · detail · quick
+unity/plan/     deep · costing · quick
 unity/review/   architecture · asset · code-pr · general · local · prefab · quality
 unity/test/     case · unit
 ```

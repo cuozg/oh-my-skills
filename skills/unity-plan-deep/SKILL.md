@@ -18,23 +18,23 @@ Produce a concise plan document and register a full task hierarchy for a medium-
 2. **Scope** — Define what is in/out of scope; list affected files
 3. **Investigate** — Trace key dependencies; flag integration risks
 4. **Plan** — Break into ordered tasks; assign sizes and skills
-5. **Write** — Save SHORT plan to `Documents/Plans/PLAN_{Name}.md`
+5. **Write** — Save plan to `Documents/Plans/PLAN_{Name}.md` using the output template
 6. **Create tasks** — Call `task_create` for parent then children; wire `blockedBy`
 7. **Validate** — Confirm all blockers reference real task IDs
 
 ## Rules
 
-- Keep the plan document SHORT: request, impact, ordered task list only — no padding
+- **MANDATORY**: Output MUST follow the template in `references/output-template.md` — no deviation
+- Keep the plan document SHORT: request, scope, impact, risks, ordered task list — no padding
 - Set `blockedBy` accurately to enable maximum parallel execution
 - Investigate before estimating — no guesswork
 - One `task_create` per parallelizable unit of work
+- Every claim in Impact/Risks must cite a real file path
 
-## Output Format
+## Output
 
-`Documents/Plans/PLAN_{Name}.md` (request, impact, task list) + task hierarchy in task system.
+Read `references/output-template.md` before writing. Save to `Documents/Plans/PLAN_{Name}.md`.
 Print task IDs and subjects to chat after creation.
-
-## Standards
 
 ## Standards
 
