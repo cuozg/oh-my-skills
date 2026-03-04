@@ -56,10 +56,6 @@ See `unity-standards/references/review/parallel-review-criteria.md` for subagent
 Inline `// ── REVIEW` comments with icons inserted into source files. Safe fixes applied directly to code.
 A summary list of remaining unfixed issues (with created fix tasks) is printed after annotation.
 
-## Reference Files
-
-Load on demand via `read_skill_file("unity-review-code-local", "references/{file}")`.
-
 ## Standards
 
 Load `unity-standards` for review criteria. Key references:
