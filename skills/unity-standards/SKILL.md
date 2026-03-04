@@ -97,3 +97,13 @@ Load references on demand via `read_skill_file("unity-standards", "references/<f
 - `other/mermaid-syntax.md` — flowchart, sequence, state, class diagrams
 - `other/flatbuffers-guide.md` — schema definition, codegen, serialization
 - `other/skill-authoring.md` — SKILL.md rules, ref limits, progressive disclosure
+
+### UI Toolkit (6)
+
+- `ui-toolkit/setup.md` — UIDocument, PanelSettings, scale modes, multi-panel, file org
+- `ui-toolkit/performance.md` — pooling, visibility cost, selectors, UsageHints, profiler markers
+- `ui-toolkit/uxml-patterns.md` — UXML structure, templates, BEM naming, reusable snippets
+- `ui-toolkit/uss-styling.md` — USS selectors, variables, responsive patterns, theming
+- `ui-toolkit/csharp-bindings.md` — UQuery, event callbacks, data binding, focus management
+- `ui-toolkit/custom-controls.md` — UxmlElement, UxmlAttribute, custom VisualElement creation
+

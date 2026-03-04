@@ -38,8 +38,6 @@ Formatted code block(s) — copy-paste ready. Text output only.
 
 ## Standards
 
-## Standards
-
 Load `unity-standards` for logging guidance. Key references:
 
 - `debug/log-format.md` — [DBG] prefix, color tags, UNITY_EDITOR guard

@@ -1,6 +1,6 @@
 # Oh My Unity
 
-A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 34 specialized skills and 38 slash commands — all tuned for Unity C# development.
+A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 37 specialized skills and 42 slash commands — all tuned for Unity C# development.
 
 ## Installation
 
@@ -38,16 +38,17 @@ Level 3 — References (loaded on demand)      detailed standards, checklists, t
 
 ### `unity-standards` — Shared Reference Hub
 
-`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **48 reference files** across 7 categories:
+`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **60 reference files** across 8 categories:
 
 | Category | Count | Covers |
 | --- | --- | --- |
-| Code Standards | 13 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ |
-| Review | 11 | Logic, lifecycle risks, performance, security, concurrency, architecture, assets, prefabs |
-| Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits |
-| Plan | 7 | Sizing, risk, task structure, investigation workflow, dependency mapping |
+| Code Standards | 19 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ, collections, error-handling, comments, access-modifiers, code-patterns, architecture-patterns, multi-file-workflow, refactoring-patterns, unity-attributes, object-pooling |
+| Review | 12 | Logic, lifecycle risks, serialization risks, performance, security, concurrency, architecture, assets, prefabs, comment format, PR submission, parallel review |
+| Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits, HTML report format |
+| Plan | 6 | Sizing, risk, task structure, investigation workflow, dependency mapping, quick output |
 | Debug | 3 | Diagnosis workflow, common Unity errors, log format |
 | Test | 5 | Edit/Play mode patterns, test case format, coverage strategy, naming |
+| UI Toolkit | 6 | Setup, performance, UXML patterns, USS styling, C# bindings, custom controls |
 | Other | 3 | Mermaid syntax, FlatBuffers guide, skill authoring |
 
 Other skills pull specific references on demand:
@@ -69,9 +70,9 @@ task(category="deep", load_skills=["unity-code-deep", "unity-standards"], prompt
 ```
 
 
-## Skills (34)
+## Skills (37)
 
-> **34 skills** across 9 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
+> **37 skills** across 11 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
 
 ---
 
@@ -187,10 +188,16 @@ Diagnose, trace, and fix Unity issues.
 │   ├─ Rule: Minimal changes only. Always lsp_diagnostics after.
 │   └─ Out:  Fixed code, zero errors, minimal diff
 │
-└── unity-debug-log         📋 Debug.Log generator (read-only)
-    ├─ What: Color-coded, #if UNITY_EDITOR wrapped log snippets
-    ├─ Format: [DBG] prefix, <color=X> tags, $"..." interpolation
-    └─ Out:   Text output only — never written to project files
+├── unity-debug-log         📋 Debug.Log generator (read-only)
+│   ├─ What: Color-coded, #if UNITY_EDITOR wrapped log snippets
+│   ├─ Format: [DBG] prefix, <color=X> tags, $"..." interpolation
+│   └─ Out:   Text output only — never written to project files
+│
+└── unity-profiler          📊 Profiler analysis
+    ├─ What: CPU spikes, GC pressure, rendering bottlenecks
+    ├─ Flow: Collect data → Scan codebase → Classify → Rank → Cross-reference → Report
+    ├─ Rule: Read-only. Max 10 findings. Cite profiler markers and file:line.
+    └─ Out:  Documents/Profiler/PERF_*.md
 ```
 
 ---
@@ -271,9 +278,14 @@ Git workflow automation.
 │   ├─ Flow: Analyze → Group → Plan → User approval → Execute
 │   └─ Out:  Squash plan → user approves → executed
 │
-└── git-description         📝 Generate PR description
-    ├─ What: Deep investigate ALL PR changes → structured description
-    └─ Out:  Applied to GitHub PR via gh pr edit
+├── git-description         📝 Generate PR description
+│   ├─ What: Deep investigate ALL PR changes → structured description
+│   └─ Out:  Applied to GitHub PR via gh pr edit
+│
+└── git-clear               🧹 Delete PR comments
+    ├─ What: Delete all issue + review comments from a GitHub PR
+    ├─ Flow: Identify → List → Confirm → Delete → Verify
+    └─ Out:  Zero comments remaining on PR
 ```
 
 ---
@@ -298,6 +310,19 @@ Shell script tooling.
 
 ---
 
+## 🖼️ unity-ui
+
+Build runtime UI with UI Toolkit.
+
+```
+└── unity-uitoolkit-create  🎨 UI Toolkit builder
+    ├─ What: UXML templates, USS styling, C# bindings, custom controls
+    ├─ Flow: Parse input → Clarify → Discover → Structure → Implement → Wire → Verify
+    └─ Out:  .uxml + .uss + .cs controller files
+```
+
+---
+
 ## 📦 Other
 
 ```
@@ -310,28 +335,29 @@ Shell script tooling.
 │   └─ Out:  ```mermaid code blocks
 │
 └── unity-standards          📚 Unity development standards
-    ├─ What: Code Standards (13), Review (11), Quality (6), Plan (7), Debug (3), Test (5), Other (3)
+    ├─ What: Code Standards (19), Review (12), Quality (6), Plan (6), Debug (3), Test (5), UI Toolkit (6), Other (3)
     └─ Use:  Other skills load specific refs via read_skill_file
 ```
 
 ---
 
-## ⚡ Commands (38)
+## ⚡ Commands (42)
 
 Slash commands for quick access to skills and workflows.
 
 ```
 bash/           check · install · optimize
 flatbuffers/    coder
-git/            comment · commit · description · squash
+git/            clear · comment · commit · description · squash
 mermaid/        create
 omo/            atlas · prometheus · sisyphus · sisyphus-junior
 skill/          deep · quick
-unity/code/     deep · editor · quick
-unity/debug/    deep · fix · log · quick
+unity/code/     deep · editor · optimize · quick
+unity/debug/    deep · fix · log · profiler · quick
 unity/document/ system · tdd
 unity/investigate/ deep · quick
 unity/plan/     deep · costing · quick
 unity/review/   architecture · asset · code-pr · general · local · prefab · quality
 unity/test/     case · unit
+unity/ui/       create
 ```

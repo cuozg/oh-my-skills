@@ -35,8 +35,6 @@ Generate structured QA test cases covering happy paths, edge cases, boundary val
 
 ## Standards
 
-## Standards
-
 Load `unity-standards` for test case conventions. Key references:
 
 - `test/test-case-format.md` — HTML output structure, severity, coverage
