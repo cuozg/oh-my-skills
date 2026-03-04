@@ -38,7 +38,7 @@ Use the right-side **file line number** (not diff position):
 
 ## 6. Build + Submit Review
 
-See `gh-api-comments.md` for payload format. Submit:
+See `unity-standards/references/review/pr-submission.md` for payload format. Submit:
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
