@@ -38,6 +38,8 @@ Scan a Unity project read-only, grade architecture, performance, best practices,
 
 ## Output Format
 
+**MANDATORY**: When posting findings to a PR, use `unity-standards/references/review/pr-submission.md` as the output template — JSON payload, event decision, batching rules, and gh CLI commands. All PR comments MUST be submitted in a single review `POST` call following that template exactly.
+
 HTML report file at `Documents/QualityAudit_{date}.html` with A-F grades per category, evidence table, and prioritized fix list.
 
 ## Reference Files
@@ -50,10 +52,11 @@ Load references on demand via `read_skill_file("unity-review-quality", "referenc
 
 Load `unity-standards` for audit criteria. Key references:
 
+- `review/pr-submission.md` — **MANDATORY** output template for PR submissions: JSON payload, event decision, batching, gh CLI
 - `quality/grading-criteria.md` — A-F scale definitions, evidence requirements
 - `quality/architecture-audit.md` — coupling, layering, assembly structure
 - `quality/performance-audit.md` — profiler markers, memory, frame budget
 - `quality/best-practices-audit.md` — Unity API usage, deprecated calls
 - `quality/tech-debt-audit.md` — TODO density, code duplication, complexity
 
-Load via `read_skill_file("unity-standards", "references/quality/<file>")`.
+Load via `read_skill_file("unity-standards", "references/quality/<file>")` and `read_skill_file("unity-standards", "references/review/pr-submission.md")`.

@@ -38,14 +38,15 @@ Review Unity asset files changed in a GitHub PR — `.mat`, `.shader`, `.meta`, 
 
 ## Output Format
 
-Asset comments posted to the GitHub PR. Print a local summary listing flagged files and their severity.
+**MANDATORY**: Use `unity-standards/references/review/pr-submission.md` as the output template — JSON payload, event decision, batching rules, and gh CLI commands. All comments MUST be submitted in a single review `POST` call following that template exactly.
 
-## Standards
+Asset comments posted to the GitHub PR. Print a local summary listing flagged files and their severity.
 
 ## Standards
 
 Load `unity-standards` for asset review criteria. Key references:
 
+- `review/pr-submission.md` — **MANDATORY** output template: JSON payload, event decision, batching, gh CLI
 - `review/asset-checklist.md` — texture, shader, animation, import settings
 - `review/performance-checklist.md` — allocations, Update, physics, rendering
 

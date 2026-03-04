@@ -28,7 +28,7 @@ Fetch a GitHub PR diff, **assess change size**, then review adaptively — quick
 4a. **Quick review** — review all changed files yourself in a single pass; load `unity-standards` checklists, check all 6 criteria inline; produce findings as `[{path, line, severity, title, body}]`
 4b. **Deep review** — spawn 6 parallel subagents per `unity-standards/references/review/parallel-review-criteria.md`; collect via `background_output`; aggregate (deduplicate by path+line, keep highest severity, sort file→line)
 5. **Map lines** — use right-side file line numbers (step 5 from pr-review-workflow.md)
-6. **Build + Submit** — build review JSON per `unity-standards/references/review/pr-submission.md`, submit via `gh api`
+6. **Build + Submit** — **MANDATORY**: build review JSON per `unity-standards/references/review/pr-submission.md` (JSON payload, event decision, batching rules, gh CLI), submit via `gh api`
 7. **Verify** — confirm review posted (step 7 from pr-review-workflow.md), retry on failure
 
 ## Review Body Format
@@ -78,7 +78,7 @@ Load `unity-standards` for review criteria:
 - `review/performance-checklist.md` — allocations, Update, physics, rendering
 - `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries, event coupling
 - `review/concurrency-checklist.md` — threading, race conditions, async/await, main thread rule
-- `review/pr-submission.md` — gh api format, comment batching, approval flow
+- `review/pr-submission.md` — **MANDATORY** output template: JSON payload, event decision, batching, gh CLI
 - `review/parallel-review-criteria.md` — subagent delegation, criteria table, prompt template
 
 Load via `read_skill_file("unity-standards", "references/review/<file>")`.

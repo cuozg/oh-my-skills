@@ -39,14 +39,15 @@ Review a GitHub PR for architectural concerns: dependency injection, event syste
 
 ## Output Format
 
-Architecture comments posted to the GitHub PR. Print a local summary with coupling metrics and any CRITICAL violations.
+**MANDATORY**: Use `unity-standards/references/review/pr-submission.md` as the output template — JSON payload, event decision, batching rules, and gh CLI commands. All comments MUST be submitted in a single review `POST` call following that template exactly.
 
-## Standards
+Architecture comments posted to the GitHub PR. Print a local summary with coupling metrics and any CRITICAL violations.
 
 ## Standards
 
 Load `unity-standards` for architecture criteria. Key references:
 
+- `review/pr-submission.md` — **MANDATORY** output template: JSON payload, event decision, batching, gh CLI
 - `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
 - `code-standards/dependencies.md` — DI, service locator, constructor injection
 - `code-standards/events.md` — C# events, UnityEvent, SO channels, Action

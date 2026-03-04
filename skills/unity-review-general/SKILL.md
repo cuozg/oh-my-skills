@@ -40,15 +40,17 @@ Act as the sole approval authority for a GitHub PR — evaluate security, correc
 
 ## Output Format
 
+**MANDATORY**: Use `unity-standards/references/review/pr-submission.md` as the output template — JSON payload, event decision, batching rules, and gh CLI commands. All comments MUST be submitted in a single review `POST` call following that template exactly.
+
 A single GitHub PR review posted with APPROVE or REQUEST_CHANGES decision, containing a structured summary of all quality criteria evaluated.
 
 ## Standards
 
 Load `unity-standards` for review criteria. Key references:
 
+- `review/pr-submission.md` — **MANDATORY** output template: JSON payload, event decision, batching, gh CLI
 - `review/security-checklist.md` — input validation, injection, data exposure
 - `review/performance-checklist.md` — allocations, Update, physics, rendering
 - `review/logic-checklist.md` — correctness, edge cases, state, data flow
-- `review/pr-submission.md` — gh api format, comment batching, approval flow
 
 Load via `read_skill_file("unity-standards", "references/review/<file>")`.

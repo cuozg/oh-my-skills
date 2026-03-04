@@ -36,14 +36,15 @@ Review `.prefab` and `.unity` scene files changed in a GitHub PR for missing scr
 
 ## Output Format
 
-Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local summary of subagent results and CRITICAL count.
+**MANDATORY**: Use `unity-standards/references/review/pr-submission.md` as the output template — JSON payload, event decision, batching rules, and gh CLI commands. All comments MUST be submitted in a single review `POST` call following that template exactly.
 
-## Standards
+Prefab/scene comments posted to the GitHub PR, grouped by file. Print a local summary of subagent results and CRITICAL count.
 
 ## Standards
 
 Load `unity-standards` for prefab review criteria. Key references:
 
+- `review/pr-submission.md` — **MANDATORY** output template: JSON payload, event decision, batching, gh CLI
 - `review/prefab-checklist.md` — missing scripts, variants, nested prefabs
 - `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
 
