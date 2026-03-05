@@ -13,8 +13,6 @@ Always write files in dependency order to catch errors early:
 6. Wiring / registration            (GameBootstrap, SceneSetup)
 ```
 
-Run `coplay-mcp_check_compile_errors` after each tier completes.
-
 ## Namespace Strategy
 
 ```

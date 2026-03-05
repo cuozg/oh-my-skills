@@ -22,7 +22,6 @@ Multi-file C# implementation for Unity. Understand scope → plan file structure
 3. **Discover** — Check codebase for existing patterns, conventions, related systems (grep/glob/lsp, max 5 searches)
 4. **Plan** — Define file list with responsibilities. Interfaces first, then implementations, then wiring.
 5. **Implement** — Write files in dependency order. Match project conventions per file.
-6. **Verify** — Run `coplay-mcp_check_compile_errors`. Fix until zero errors across all new/modified files.
 
 ## Rules
 
@@ -31,7 +30,6 @@ Multi-file C# implementation for Unity. Understand scope → plan file structure
 - One class per file. File name = class name.
 - Respect assembly definition boundaries — never add cross-asmdef references without checking.
 - If refactoring, preserve public API signatures unless explicitly asked to change them.
-- Run `coplay-mcp_check_compile_errors` after every 2-3 files written, not just at the end.
 - Never add `// TODO` — deliver complete code or state limitations.
 - For all per-file coding standards — follow `unity-standards`.
 

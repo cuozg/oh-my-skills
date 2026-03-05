@@ -91,6 +91,5 @@ onDamageDealt.Raise(amount);
 - [ ] Identify ALL callers before changing signatures (lsp_find_references)
 - [ ] Preserve public API unless explicitly changing it
 - [ ] One refactoring type per pass — don't extract + rename + restructure simultaneously
-- [ ] Run `coplay-mcp_check_compile_errors` after each file change
 - [ ] If 5+ files affected, create a file change plan before starting
 - [ ] Check for serialized field references that may break in Unity Inspector

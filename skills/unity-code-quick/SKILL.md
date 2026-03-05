@@ -19,7 +19,6 @@ Fast single-file C# delivery for Unity. Receive request → match project conven
 1. **Parse** — Extract: what type? what behavior? any constraints?
 2. **Discover** — Check existing codebase for naming, namespace, folder conventions (grep/glob, max 2 searches)
 3. **Write** — Produce the .cs file matching project style
-4. **Verify** — Run `coplay-mcp_check_compile_errors` to confirm zero errors
 
 ## Rules
 

@@ -23,7 +23,6 @@ Build production runtime UI using UI Toolkit. Parse design input (document, imag
 4. **Structure** — Plan file list: UXML templates, USS sheets, C# controllers. Define hierarchy and reusable components.
 5. **Implement** — Write files in order: USS variables/theme → UXML templates → C# controllers
 6. **Wire** — Set up UIDocument, PanelSettings, event bindings, data sources
-7. **Verify** — Run `coplay-mcp_check_compile_errors`. Confirm zero errors.
 
 ## Rules
 
