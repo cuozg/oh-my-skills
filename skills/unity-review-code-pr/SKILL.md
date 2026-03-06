@@ -14,42 +14,51 @@ Fetch a GitHub PR diff, **assess change size**, then review adaptively — quick
    - **Minor** → step 4a (quick review)
    - **Large** → step 4b (deep review)
 4a. **Quick review** — review all changed files yourself in a single pass; load `unity-standards` checklists, check all 6 criteria inline; produce findings as `[{path, line, severity, title, body}]`
-4b. **Deep review** — spawn 6 parallel subagents per `unity-standards/references/review/parallel-review-criteria.md`; collect via `background_output`; aggregate (deduplicate by path+line, keep highest severity, sort file→line)
-5. **Map lines** — use right-side file line numbers (step 5 from `references/pr-review-workflow.md`)
-6. **Build + Submit** — build review JSON per `unity-standards/references/review/pr-submission.md` (JSON payload, event decision, batching rules, gh CLI), submit via `gh api`
-7. **Verify** — confirm review posted (step 7 from `references/pr-review-workflow.md`), retry on failure until confirmed
+4b. **Deep review** — spawn 7 parallel subagents per `unity-standards/references/review/parallel-review-criteria.md`; collect via `background_output`; aggregate (deduplicate by path+line, keep highest severity, sort file→line)
+6. **Map lines** — use right-side file line numbers (step 5 from `references/pr-review-workflow.md`)
+7. **Build + Submit** — build review JSON per `unity-standards/references/review/pr-submission.md`, submit via `gh api`
+8. **Verify** — confirm review posted (step 7 from `references/pr-review-workflow.md`), retry on failure until confirmed
 
-## Review Body Format
-
-Post as the `body` field of the review:
-
-````
-## 📋 Code Review — PR #{number}
-{1-2 sentence verdict}
-| | Category | Findings | Top Severity |
-|---|---|:---:|---|
-| 💥 | Breaking / Crash Risk | {n} | 🔴 `CRITICAL` |
-| ⚠️ | Bugs / Incorrect Behavior | {n} | 🟠 `HIGH` |
-| 🎮 | Unity-Specific Risks | {n} | 🟡 `MEDIUM` |
-| 💡 | Improvements | {n} | 🔵 `LOW` / ⚪ `STYLE` |
-**Decision**: ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT
-````
-
-Omit rows with 0 findings.
 
 ## Inline Comment Format
 
-**Critical / High (🔴 🟠):** `**🔴 Issue Title**: summary` + `- **Why**: cause` + `- **Fix**: solution` + suggestion block.
+Every finding MUST use this template. The `suggestion` block is **required for MEDIUM severity and above** — show the corrected code, even if multi-line.
 
-**Medium / Low / Style (🟡 🔵 ⚪):** compact: `**🟡 Issue**: Problem → fix.` + suggestion block.
+**Template:**
+````
+**{🔴|🟠|🟡|🔵|⚪} Title** — `SEVERITY`
+
+{1-3 lines: what is wrong, why it matters}
+
+```suggestion
+{corrected code replacing the commented line(s)}
+```
+````
+
+**Critical/High (🔴🟠)** — include cause, impact, and `suggestion` block.
+**Medium (🟡)** — problem + `suggestion` block.
+**Low/Style (🔵⚪)** — compact; `suggestion` encouraged but optional.
 
 Severity scale: 🔴 CRITICAL → 🟠 HIGH → 🟡 MEDIUM → 🔵 LOW → ⚪ STYLE
 
+## Severity Calibration
+
+Minimum floors — do not rate below these:
+
+- `GetComponent`/`Find*` called every frame (Update/FixedUpdate/LateUpdate) → **MEDIUM**
+- Missing event unsubscription (`+=` without matching `-=` in OnDestroy/OnDisable) → **HIGH**
+- Coroutine not stopped on lifecycle exit (OnDisable/OnDestroy) → **HIGH**
+- `async void` on any method (swallows exceptions) → **MEDIUM**
+- Exposed internal collection (returning `List<T>` instead of `IReadOnlyList<T>`) → **MEDIUM**
+- `Resources.Load<T>()` called at runtime outside initialization (Awake/Start/constructor) → **MEDIUM**
+
 ## Rules
 
-- Always fetch full file content — diff hunks lack context especially for lifecycle analysis
+- Always fetch full file content — diff hunks lack context for lifecycle and event cleanup analysis
+- Prioritize finding coverage: identify all issues first, then format with suggestion blocks. Do not let formatting effort reduce the number of issues found.
+- Every finding at MEDIUM severity or above must include a `suggestion` code block
 - Do not post duplicate comments for the same line
-- See `unity-standards/references/review/pr-submission.md` for `line`/`side`/batching rules
+- See `unity-standards/references/review/pr-submission.md` for review body format, inline comment examples, and `line`/`side`/batching rules
 
 ## Reference Files
 
@@ -63,7 +72,7 @@ Load on demand via `read_skill_file("unity-review-code-pr", "references/{file}")
 Load `unity-standards` for all review criteria. Load on demand via `read_skill_file("unity-standards", "references/review/<file>")`:
 
 - `review/logic-checklist.md` — correctness, edge cases, state, data flow
-- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
+- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load, cleanup pairs
 - `review/serialization-risks.md` — missing fields, type changes, prefab overrides
 - `review/performance-checklist.md` — allocations, Update, physics, rendering
 - `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries, event coupling

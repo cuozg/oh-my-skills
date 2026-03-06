@@ -1,63 +1,91 @@
 # PR Review Submission
 
-## API Endpoint
+## API & Payload
 
+```bash
+# Submit review — ALL comments in single POST call
+gh api repos/{owner}/{repo}/pulls/{pr}/reviews --method POST --input review.json
+# Get head SHA
+gh api repos/{owner}/{repo}/pulls/{pr} --jq '.head.sha'
 ```
-POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews
-```
-
-## JSON Payload
 
 ```json
 {
   "event": "REQUEST_CHANGES",
   "body": "{summary — see Body Template below}",
   "comments": [
-    {
-      "path": "Assets/Scripts/Player.cs",
-      "line": 42,
-      "side": "RIGHT",
-      "body": "**🔴 Issue Title**: ...\n```suggestion\n{fix}\n```"
-    }
+    { "path": "Assets/Scripts/Player.cs", "line": 42, "side": "RIGHT",
+      "body": "**🔴 Issue Title** — `CRITICAL`\n...\n```suggestion\n{fix}\n```" }
   ]
 }
 ```
 
+`line` = right-side file line number (not diff position). `side` always `RIGHT`. Max 32 KB/comment. Group by file.
+
 ## Body Template
 
-Use the review body format from `unity-review-code-pr` SKILL.md.
-The `body` field = summary table; `comments[].body` = inline issues.
+Post as `body` field. Omit rows with 0 findings.
+````
+## 📋 Code Review — PR #{number}
+{1-2 sentence verdict}
+| | Category | Findings | Top Severity |
+|---|---|:---:|---|
+| 💥 | Breaking / Crash Risk | {n} | 🔴 `CRITICAL` |
+| ⚠️ | Bugs / Incorrect Behavior | {n} | 🟠 `HIGH` |
+| 🎮 | Unity-Specific Risks | {n} | 🟡 `MEDIUM` |
+| 💡 | Improvements | {n} | 🔵 `LOW` / ⚪ `STYLE` |
+**Decision**: ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT
+````
 
 ## Event Decision
 
-| Decision | Condition | Icon |
-|---|---|:---:|
-| `REQUEST_CHANGES` | Any 🔴 `CRITICAL` finding | ❌ |
-| `REQUEST_CHANGES` | ≥2 🟠 `HIGH` findings | ❌ |
-| `REQUEST_CHANGES` or `COMMENT` | 1 🟠 `HIGH` — reviewer judgment | ⚠️ |
-| `COMMENT` | Only 🟡/🔵/⚪ findings (no blockers) | 💬 |
-| `APPROVE` | Zero 🔴/🟠 + all issues addressed | ✅ |
-
-## Batching Rules
-
-| Rule | Detail |
+| Decision | Condition |
 |---|---|
-| One review per PR | ALL comments in single `POST` call |
-| `line` | Right-side file line number (not diff position) |
-| `side` | Always `RIGHT` |
-| Max body | 32 KB per comment |
-| Grouping | Group findings by file in `comments[]` |
+| `REQUEST_CHANGES` | Any 🔴 CRITICAL or ≥2 🟠 HIGH |
+| `REQUEST_CHANGES` or `COMMENT` | 1 🟠 HIGH — reviewer judgment |
+| `COMMENT` | Only 🟡/🔵/⚪ (no blockers) |
+| `APPROVE` | Zero 🔴/🟠 + all addressed |
 
-## gh CLI
+## Inline Comment Examples
 
-```bash
-# Submit review
-gh api repos/{owner}/{repo}/pulls/{pr}/reviews \
-  --method POST --input review.json
-
-# Get head SHA
-gh api repos/{owner}/{repo}/pulls/{pr} --jq '.head.sha'
-
-# List existing comments
-gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '.[].body'
+**CRITICAL** — cause, impact, suggestion required:
+````
+**🔴 Null reference crash in trigger handler** — `CRITICAL`
+`other.GetComponent<DamageDealer>().damageAmount` assumes every collider has a DamageDealer.
+```suggestion
+if (other.TryGetComponent<DamageDealer>(out var dealer))
+    TakeDamage(dealer.damageAmount);
 ```
+````
+
+**HIGH** — lifecycle cleanup gap:
+````
+**🟠 Public events not cleaned up on destroy** — `HIGH`
+External subscribers hold delegate references after `Destroy(gameObject)`, preventing GC.
+```suggestion
+private void OnDestroy()
+{
+    OnPlayerDied = null;
+    OnHealthChanged = null;
+}
+```
+````
+
+**MEDIUM** — problem + suggestion:
+````
+**🟡 GetComponent called every frame** — `MEDIUM`
+Per-frame `GetComponent<SpriteRenderer>()` in Update causes lookup overhead.
+```suggestion
+private SpriteRenderer _spriteRenderer;
+private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
+```
+````
+
+**LOW/STYLE** — compact, suggestion optional:
+````
+**🔵 Exposed mutable collection** — `LOW`
+`GetAllItems()` returns the internal list, allowing external mutation.
+```suggestion
+public IReadOnlyList<ItemData> GetAllItems() => items.AsReadOnly();
+```
+````
