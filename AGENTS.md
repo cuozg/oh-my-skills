@@ -34,7 +34,9 @@ skill-name/
 │   ├─ Each file < 100 lines — split if larger
 │   ├─ Practical instructions, not documentation
 │   ├─ Can cross-reference other refs/scripts
-│   └─ Sacrifice grammar for concision
+│   ├─ Sacrifice grammar for concision
+│   └─ ALWAYS check unity-standards first — if a ref fits there, add it
+│       there instead of the skill folder (unity-standards is the hub)
 │
 ├── Scripts
 │   ├─ Prefer Python/Node over Bash (cross-platform)
