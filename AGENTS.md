@@ -90,7 +90,8 @@ Token budget drives everything. Keep SKILL.md lean → push details to reference
 ├── Use bash when Python/Node works
 ├── Leave example/placeholder files from init
 ├── Create overlapping skills (combine related topics)
-└── Write "you should" — use imperative form
+├── Write "you should" — use imperative form
+└── Automatically commit or push without explicit user request
 ```
 ## Project Context
 
