@@ -68,3 +68,21 @@ enemy.MarkForDeath();
 | `OnEnable` | `OnDisable` | Preferred — symmetric pair |
 | `Awake` | `OnDestroy` | Only for permanent listeners |
 | `Start` | `OnDestroy` | Asymmetric — avoid |
+
+## Cleanup Pair Scan
+
+After initial review, explicitly scan every changed file for cleanup pairs. Lifecycle gaps are the most commonly missed Unity bugs — invisible in diff hunks; you need the full file to see that a `+=` has no matching `-=`.
+
+- [ ] For every `+=` on event/delegate, verify matching `-=` in `OnDestroy`/`OnDisable`
+- [ ] If class declares `public event` and can be destroyed at runtime, verify events nulled in `OnDestroy`
+- [ ] For every `StartCoroutine()`, verify stopped via `StopCoroutine()`/`StopAllCoroutines()` in `OnDisable`/`OnDestroy`
+- [ ] For every `InvokeRepeating()`, verify `CancelInvoke()` on lifecycle exit
+
+### Severity Floors
+
+| Pattern | Min Severity |
+|---------|-------------|
+| `+=` without matching `-=` in OnDestroy/OnDisable | HIGH |
+| `public event` field, no null in OnDestroy | HIGH |
+| `StartCoroutine()` not stopped on lifecycle exit | HIGH |
+| `InvokeRepeating()` without `CancelInvoke()` | HIGH |

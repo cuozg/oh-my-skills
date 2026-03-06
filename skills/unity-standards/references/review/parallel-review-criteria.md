@@ -10,7 +10,7 @@ Each subagent receives: file paths, file contents, diff hunks, and its assigned 
 | # | Criterion | Checklist Reference | Focus |
 |---|-----------|-------------------|-------|
 | 1 | Logic | `review/logic-checklist.md` | Null guards, boundaries, edge cases, state, data flow |
-| 2 | Lifecycle | `review/unity-lifecycle-risks.md` | Execution order, destroy timing, coroutines, subscribe symmetry |
+| 2 | Lifecycle | `review/unity-lifecycle-risks.md` | Execution order, destroy timing, coroutines, subscribe symmetry, cleanup pairs |
 | 3 | Serialization | `review/serialization-risks.md` | Field renames, type changes, SO risks, prefab overrides, enums |
 | 4 | Performance | `review/performance-checklist.md` | Hot-path allocations, component lookup, physics, rendering, memory |
 | 5 | Architecture | `review/architecture-checklist.md` | SRP, dependency direction, assembly defs, event coupling, interfaces |
