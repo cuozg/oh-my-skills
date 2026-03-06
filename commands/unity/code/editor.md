@@ -1,6 +1,6 @@
 ---
 description: Write Unity Editor C# code and tools
-agent: prometheus
+agent:sisyphus
 subtask: true
 ---
 Use skill unity-code-editor to implement $ARGUMENTS (ulw)
