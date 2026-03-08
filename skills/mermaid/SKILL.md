@@ -1,6 +1,9 @@
 ---
 name: mermaid
 description: Create Mermaid diagrams — flowcharts, sequence diagrams, state machines, class diagrams, architecture diagrams. Triggers — 'diagram', 'mermaid', 'flowchart', 'sequence diagram', 'state diagram', 'architecture diagram', 'visualize'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # mermaid
 

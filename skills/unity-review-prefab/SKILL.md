@@ -1,6 +1,9 @@
 ---
 name: unity-review-prefab
 description: PR prefab and scene review — missing scripts, broken variants, raycasts, hierarchy. Triggers — 'review prefabs', 'prefab review', 'scene review', 'check prefabs'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-prefab
 

@@ -1,6 +1,9 @@
 ---
 name: unity-review-architecture
 description: PR architecture review — DI, events, assemblies, coupling, SOLID. Triggers — 'architecture review', 'review architecture', 'check architecture', 'DI review', 'coupling review'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-architecture
 

@@ -1,6 +1,9 @@
 ---
 name: unity-document-system
 description: Write system documentation with architecture diagrams, data flows, and usage guides for Unity systems. Triggers — 'document system', 'system documentation', 'write system docs', 'architecture docs'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-document-system

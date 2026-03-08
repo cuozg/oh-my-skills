@@ -1,6 +1,9 @@
 ---
 name: unity-debug-deep
 description: Exhaustive multi-angle Unity bug analysis — read-only investigation across lifecycle, threading, state, data flow, and edge cases. Produces a structured report. Triggers — 'deep debug', 'analyze this bug', 'exhaustive analysis', 'debug report', 'root cause analysis'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-debug-deep
 

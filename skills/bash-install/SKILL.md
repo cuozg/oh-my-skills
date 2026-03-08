@@ -1,6 +1,9 @@
 ---
 name: bash-install
 description: Install software with auto-retry, fallback strategies, and post-install verification — use for 'install', 'set up', 'install software', 'install tool', 'install dependency'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # bash-install
 

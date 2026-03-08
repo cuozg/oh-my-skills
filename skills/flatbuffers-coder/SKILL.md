@@ -1,6 +1,9 @@
 ---
 name: flatbuffers-coder
 description: FlatBuffers pipeline — define .fbs schema, generate C# via flatc, serialize/deserialize binary data. Triggers — 'flatbuffers', 'fbs schema', 'flatbuffer', 'binary serialization', 'flatc'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # flatbuffers-coder
 

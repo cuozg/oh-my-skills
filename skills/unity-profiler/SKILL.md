@@ -1,6 +1,9 @@
 ---
 name: unity-profiler
 description: Analyze Unity Profiler data — identify CPU spikes, GC pressure, rendering bottlenecks, and generate a short highlight report with severity-ranked findings and actionable fixes. Triggers — 'profiler report', 'performance analysis', 'profiler review', 'analyze profiler', 'performance report'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-profiler
 

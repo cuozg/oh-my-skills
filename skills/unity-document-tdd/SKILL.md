@@ -1,6 +1,9 @@
 ---
 name: unity-document-tdd
 description: Write a Technical Design Document — architecture decisions, implementation strategy, dependency analysis. Triggers — 'write TDD', 'technical design document', 'design doc', 'architecture decision'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-document-tdd
 

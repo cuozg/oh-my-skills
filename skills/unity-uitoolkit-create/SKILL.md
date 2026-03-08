@@ -1,6 +1,9 @@
 ---
 name: unity-uitoolkit-create
 description: Build runtime UI with Unity UI Toolkit — UXML templates, USS styling, C# bindings, custom controls. Accepts design docs, images, or verbal descriptions. Asks clarifying questions for ambiguous input. Triggers — 'create UI', 'build UI', 'UI Toolkit', 'make a screen', 'UXML', 'USS', 'UI from design', 'UI from mockup'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-uitoolkit-create

@@ -1,6 +1,9 @@
 ---
 name: unity-review-code-pr
 description: GitHub PR C# logic review — posts inline comments via gh api. Use this skill whenever the user wants to review a PR, check a pull request, post review comments to GitHub, or run automated review before merge — even if they don't say "PR review" explicitly. Triggers — 'review PR', 'review pull request', 'PR review', 'check this PR', 'give feedback on this PR', 'review before merge'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-code-pr
 

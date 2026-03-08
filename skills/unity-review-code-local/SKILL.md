@@ -1,6 +1,9 @@
 ---
 name: unity-review-code-local
 description: Local C# logic review — adds inline REVIEW comments to changed files. Triggers — 'review my code', 'code review', 'review local', 'check my changes', 'review this file'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-code-local
 

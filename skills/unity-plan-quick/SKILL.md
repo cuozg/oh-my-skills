@@ -1,6 +1,9 @@
 ---
 name: unity-plan-quick
 description: Inline plan for XS/S tasks with cost, risk, and task_create. Triggers — 'plan this', 'quick plan', 'estimate this', 'small task plan', 'how long will this take'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-plan-quick
 

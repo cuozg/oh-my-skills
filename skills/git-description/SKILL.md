@@ -1,6 +1,9 @@
 ---
 name: git-description
 description: Generate and apply a structured PR description by investigating all changed files — use for 'PR description', 'write PR description', 'generate PR description', 'describe this PR'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # git-description
 

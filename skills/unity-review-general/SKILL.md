@@ -1,6 +1,9 @@
 ---
 name: unity-review-general
 description: PR quality gate — sole APPROVE or REQUEST_CHANGES authority. Triggers — 'approve PR', 'final review', 'quality gate', 'approve or reject'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-general
 

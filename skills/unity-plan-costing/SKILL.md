@@ -1,6 +1,9 @@
 ---
 name: unity-plan-costing
 description: Detailed HTML plan with deep investigation and full epic/task tree for XL Unity features. Parallel subagent execution for investigation. No auto task_create. Triggers — 'detailed plan', 'XL plan', 'full breakdown', 'costing plan'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-plan-costing
 

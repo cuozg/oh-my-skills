@@ -1,6 +1,9 @@
 ---
 name: unity-code-deep
 description: Implement multi-file Unity C# features — cross-system architecture, refactors, patterns spanning 2+ files. Use when a task touches multiple classes, introduces new systems, or restructures existing code. Triggers — 'build a system', 'implement feature', 'refactor', 'multi-file', 'architecture', 'cross-system', 'add a system'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-code-deep

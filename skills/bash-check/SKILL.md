@@ -1,6 +1,9 @@
 ---
 name: bash-check
 description: Validate shell scripts with syntax check and ShellCheck lint — use for 'check script', 'validate bash', 'lint shell', 'shellcheck', 'check shell script'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # bash-check
 

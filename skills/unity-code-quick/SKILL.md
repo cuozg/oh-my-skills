@@ -1,6 +1,9 @@
 ---
 name: unity-code-quick
 description: Write single-file Unity C# fast — MonoBehaviours, ScriptableObjects, interfaces, data models, utility functions. Use for any small coding task that fits one file. Triggers — 'write a script', 'create a component', 'add a function', 'make a SO', 'quick script', 'single file', 'boilerplate'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-code-quick

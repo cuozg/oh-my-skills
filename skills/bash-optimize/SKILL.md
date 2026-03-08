@@ -1,6 +1,9 @@
 ---
 name: bash-optimize
 description: Refactor shell scripts for clarity, performance, and maintainability without changing behavior — use for 'optimize script', 'refactor bash', 'improve shell script', 'clean up script'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # bash-optimize
 

@@ -1,6 +1,9 @@
 ---
 name: unity-investigate-deep
 description: Full investigation report with architecture diagrams, execution flows, and risk tables. Triggers — 'deep investigate', 'investigation report', 'full analysis', 'system investigation', 'architecture analysis'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-investigate-deep
 

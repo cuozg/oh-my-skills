@@ -1,6 +1,9 @@
 ---
 name: unity-debug-log
 description: Generate copy-paste Debug.Log snippets — [DBG] prefix, color tags, string interpolation, wrapped in UNITY_EDITOR guard. Read-only, never writes to project files. Triggers — 'debug log', 'add logging', 'trace log', 'log snippet', 'debug output'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-debug-log
 

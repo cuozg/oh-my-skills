@@ -1,6 +1,9 @@
 ---
 name: unity-code-optimize
 description: Simplify and optimize Unity C# code for clarity, consistency, and performance without changing behavior. Triggers — 'optimize code', 'simplify this', 'clean up code', 'improve readability', 'reduce allocations', 'code optimization'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-code-optimize

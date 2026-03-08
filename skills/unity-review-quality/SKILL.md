@@ -1,6 +1,9 @@
 ---
 name: unity-review-quality
 description: Full Unity project audit — A-F graded HTML report covering architecture, performance, best practices, tech debt. Triggers — 'project audit', 'quality audit', 'project review', 'code quality report', 'tech debt audit'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-quality
 

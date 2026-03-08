@@ -1,6 +1,9 @@
 ---
 name: unity-test-unit
 description: Write Edit/Play Mode unit tests for Unity C# — use for 'write tests', 'unit test', 'test this class', 'add tests', 'create test'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-test-unit
 

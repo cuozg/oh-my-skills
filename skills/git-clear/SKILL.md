@@ -1,6 +1,9 @@
 ---
 name: git-clear
 description: Delete all comments from a GitHub PR (issue comments + review comments) — use for 'clear PR comments', 'delete PR comments', 'remove PR comments', 'clean PR comments'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # git-clear
 

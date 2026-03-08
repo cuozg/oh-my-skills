@@ -1,6 +1,9 @@
 ---
 name: git-commit
 description: Commit staged or unstaged changes with a clean imperative message — use for 'commit', 'git commit', 'commit changes', 'save changes'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # git-commit
 

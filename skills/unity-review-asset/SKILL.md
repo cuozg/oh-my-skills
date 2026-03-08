@@ -1,6 +1,9 @@
 ---
 name: unity-review-asset
 description: PR asset review — shaders, textures, animations, import settings. Triggers — 'review assets', 'asset review', 'check assets', 'shader review', 'texture review'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-review-asset
 

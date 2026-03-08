@@ -1,6 +1,9 @@
 ---
 name: unity-standards
 description: Unity development standards — MUST be included in load_skills for all Unity task delegations. Triggers when writing, reviewing, debugging, testing, or planning Unity C# code.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 
 # unity-standards

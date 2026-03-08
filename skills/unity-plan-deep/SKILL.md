@@ -1,6 +1,9 @@
 ---
 name: unity-plan-deep
 description: SHORT plan document and task hierarchy for M/L Unity features. Triggers — 'plan feature', 'deep plan', 'feature plan', 'complex plan', 'plan this feature'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-plan-deep
 

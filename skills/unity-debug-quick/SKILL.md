@@ -1,6 +1,9 @@
 ---
 name: unity-debug-quick
 description: Interactively diagnose Unity bugs — parse symptom, investigate, propose 2+ solutions, user picks, fix, loop until resolved. Triggers — 'debug this', 'why is this broken', 'fix this bug', 'something is wrong', 'not working'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-debug-quick
 

@@ -1,6 +1,9 @@
 ---
 name: git-squash
 description: Squash commits for a PR — analyze, group, plan, get approval, execute — use for 'squash commits', 'squash for PR', 'clean up commits', 'combine commits'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # git-squash
 

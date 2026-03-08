@@ -1,6 +1,9 @@
 ---
 name: unity-debug-fix
 description: Auto-fix loop for Unity compile and runtime errors — parse error, locate root cause, apply minimal fix, verify with lsp_diagnostics, loop until zero errors. Triggers — 'fix this error', 'auto fix', 'compile error', 'fix loop', 'resolve errors'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-debug-fix
 

@@ -1,6 +1,9 @@
 ---
 name: unity-investigate-quick
 description: Quick Q&A about Unity codebase — how systems work, call chains, flow traces. Triggers — 'how does X work', 'what calls this', 'trace the flow', 'explain this system', 'quick investigate'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-investigate-quick
 

@@ -1,6 +1,9 @@
 ---
 name: unity-code-editor
 description: Write Unity Editor tooling — EditorWindows, CustomEditor inspectors, PropertyDrawers, Gizmos, Handles, MenuItem. Use for any editor extension task. Triggers — 'editor window', 'custom inspector', 'property drawer', 'gizmo', 'editor tool', 'menu item'.
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-code-editor
 

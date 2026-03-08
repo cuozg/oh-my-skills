@@ -1,6 +1,9 @@
 ---
 name: unity-test-case
 description: Generate QA test cases as HTML — use for 'test cases', 'QA test cases', 'generate test cases', 'test plan', 'manual test cases'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # unity-test-case
 

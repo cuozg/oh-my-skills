@@ -1,6 +1,9 @@
 ---
 name: git-comment
 description: Amend the last commit message to be clean and descriptive — use for 'amend commit', 'fix commit message', 'rewrite commit', 'change commit message'
+metadata:
+  author: kuozg
+  version: "1.0"
 ---
 # git-comment
 
