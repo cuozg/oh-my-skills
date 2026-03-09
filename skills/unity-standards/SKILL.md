@@ -3,110 +3,69 @@ name: unity-standards
 description: Unity development standards — MUST be included in load_skills for all Unity task delegations. Triggers when writing, reviewing, debugging, testing, or planning Unity C# code.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 
 # unity-standards
 
-Unity C# development standards — naming, formatting, lifecycle, events, DI, serialization, null-safety, async, and more.
+Unity C# shared reference hub for code, review, debug, testing, planning, and UI Toolkit work.
 
 ## When This Skill Triggers
 
 - Writing or refactoring Unity C# code
-- Implementing Unity features
-- Working with events and signals
-- Accessing or modifying game data
-- Reviewing code changes or pull requests
-- Setting up project architecture
+- Reviewing local changes or pull requests
+- Debugging Unity runtime or compile issues
+- Planning, testing, or documenting Unity systems
 
 ## Usage
 
-**Delegation rule**: Always include `unity-standards` in `load_skills` when delegating any Unity task.
-Load references on demand via `read_skill_file("unity-standards", "references/<file>")`.
+- Always include `unity-standards` in `load_skills` for delegated Unity work.
+- Load only the needed reference: `read_skill_file("unity-standards", "references/<path>")`.
 
 ## Reference Catalog
 
-### Code Standards (19)
+### Code Standards (20)
 
-- `code-standards/naming.md` — casing, prefixes, namespace, file naming
-- `code-standards/formatting.md` — braces, spacing, line length, regions
-- `code-standards/comments.md` — XML docs, inline comments, TODO format
-- `code-standards/access-modifiers.md` — visibility, sealed, readonly, const
-- `code-standards/null-safety.md` — null checks, TryGet, nullable patterns
-- `code-standards/serialization.md` — SerializeField, field:, JsonUtility, SO data
-- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
-- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
-- `code-standards/error-handling.md` — try/catch, Debug.LogException, assertions
-- `code-standards/collections.md` — List vs array, Dictionary, ReadOnlyCollection
-- `code-standards/async.md` — UniTask, async/await, cancellation tokens
-- `code-standards/linq.md` — when to use, allocation warnings, hot path rules
-- `code-standards/dependencies.md` — DI, service locator, constructor injection
-- `code-standards/code-patterns.md` — MonoBehaviour, SO data, interface, UnityEvent templates
-- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
-- `code-standards/multi-file-workflow.md` — dependency ordering, namespace strategy, asmdef awareness
-- `code-standards/refactoring-patterns.md` — extract class, introduce interface, decompose, migrate
-- `code-standards/unity-attributes.md` — RequireComponent, Inspector, serialization, debug attributes
-- `code-standards/object-pooling.md` — Unity 2021+ ObjectPool, IPoolable, generic pool, pre-2021 fallback
+- `code-standards/naming.md` — naming, casing, file and namespace rules
+- `code-standards/formatting.md` · `comments.md` · `access-modifiers.md`
+- `code-standards/null-safety.md` · `serialization.md` · `lifecycle.md`
+- `code-standards/events.md` · `error-handling.md` · `collections.md` · `linq.md`
+- `code-standards/async.md` · `dependencies.md` · `code-patterns.md`
+- `code-standards/architecture-patterns.md` · `refactoring-patterns.md`
+- `code-standards/multi-file-workflow.md` · `single-file-runtime-workflow.md`
+- `code-standards/unity-attributes.md` · `object-pooling.md`
 
 ### Review (12)
 
-- `review/logic-checklist.md` — correctness, edge cases, state, data flow
-- `review/unity-lifecycle-risks.md` — order-of-execution, null timing, scene load
-- `review/serialization-risks.md` — missing fields, type changes, prefab overrides
-- `review/performance-checklist.md` — allocations, Update, physics, rendering
-- `review/security-checklist.md` — input validation, injection, data exposure
-- `review/concurrency-checklist.md` — threading, race conditions, main thread
-- `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
-- `review/asset-checklist.md` — texture, shader, animation, import settings
-- `review/prefab-checklist.md` — missing scripts, variants, nested prefabs
-- `review/comment-format.md` — inline review comment syntax and severity
-- `review/pr-submission.md` — gh api format, comment batching, approval flow
-- `review/parallel-review-criteria.md` — subagent delegation, criteria table, prompt template, aggregation
+- `review/logic-checklist.md` · `unity-lifecycle-risks.md` · `serialization-risks.md`
+- `review/performance-checklist.md` · `security-checklist.md` · `concurrency-checklist.md`
+- `review/architecture-checklist.md` · `asset-checklist.md` · `prefab-checklist.md`
+- `review/comment-format.md` · `pr-submission.md` · `parallel-review-criteria.md`
 
 ### Quality (6)
 
-- `quality/grading-criteria.md` — A-F scale definitions, evidence requirements
-- `quality/architecture-audit.md` — coupling, layering, assembly structure
-- `quality/performance-audit.md` — profiler markers, memory, frame budget
-- `quality/best-practices-audit.md` — Unity API usage, deprecated calls
-- `quality/tech-debt-audit.md` — TODO density, code duplication, complexity
-- `quality/html-report-format.md` — report structure, CSS, no JavaScript
+- `quality/grading-criteria.md` · `architecture-audit.md` · `performance-audit.md`
+- `quality/best-practices-audit.md` · `tech-debt-audit.md` · `html-report-format.md`
 
 ### Plan (6)
 
-- `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
-- `plan/risk-assessment.md` — risk levels, mitigation strategies
-- `plan/task-structure.md` — subject/description format, skill routing
-- `plan/investigation-workflow.md` — codebase scan steps before planning
-- `plan/dependency-mapping.md` — blockedBy, parallel vs sequential
-- `plan/output-quick.md` — inline report format for quick plans
+- `plan/sizing-guide.md` · `risk-assessment.md` · `task-structure.md`
+- `plan/investigation-workflow.md` · `dependency-mapping.md` · `output-quick.md`
 
 ### Debug (3)
 
-- `debug/diagnosis-workflow.md` — symptom parsing, multi-angle analysis
-- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
-- `debug/log-format.md` — [DBG] prefix, color tags, UNITY_EDITOR guard
+- `debug/diagnosis-workflow.md` · `common-unity-errors.md` · `log-format.md`
 
 ### Test (5)
 
-- `test/edit-mode-patterns.md` — [Test], Assert, mocking, setup/teardown
-- `test/play-mode-patterns.md` — [UnityTest], yield, scene loading
-- `test/test-case-format.md` — HTML output structure, severity, coverage
-- `test/coverage-strategy.md` — what to test, boundary values, edge cases
-- `test/naming-conventions.md` — MethodName_Scenario_Expected format
+- `test/edit-mode-patterns.md` · `play-mode-patterns.md` · `test-case-format.md`
+- `test/coverage-strategy.md` · `naming-conventions.md`
 
 ### Other (3)
 
-- `other/mermaid-syntax.md` — flowchart, sequence, state, class diagrams
-- `other/flatbuffers-guide.md` — schema definition, codegen, serialization
-- `other/skill-authoring.md` — SKILL.md rules, ref limits, progressive disclosure
+- `other/mermaid-syntax.md` · `flatbuffers-guide.md` · `skill-authoring.md`
 
 ### UI Toolkit (6)
 
-- `ui-toolkit/setup.md` — UIDocument, PanelSettings, scale modes, multi-panel, file org
-- `ui-toolkit/performance.md` — pooling, visibility cost, selectors, UsageHints, profiler markers
-- `ui-toolkit/uxml-patterns.md` — UXML structure, templates, BEM naming, reusable snippets
-- `ui-toolkit/uss-styling.md` — USS selectors, variables, responsive patterns, theming
-- `ui-toolkit/csharp-bindings.md` — UQuery, event callbacks, data binding, focus management
-- `ui-toolkit/custom-controls.md` — UxmlElement, UxmlAttribute, custom VisualElement creation
-
+- `ui-toolkit/setup.md` · `performance.md` · `uxml-patterns.md`
+- `ui-toolkit/uss-styling.md` · `csharp-bindings.md` · `custom-controls.md`
