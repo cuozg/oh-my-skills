@@ -1,55 +1,64 @@
 ---
 name: unity-code-deep
-description: Implement multi-file Unity C# features — cross-system architecture, refactors, patterns spanning 2+ files. Use when a task touches multiple classes, introduces new systems, or restructures existing code. Triggers — 'build a system', 'implement feature', 'refactor', 'multi-file', 'architecture', 'cross-system', 'add a system'.
+description: Use this skill for Unity runtime work that needs multiple C# files or a safe refactor across classes: services, interfaces, ScriptableObject data, event channels, presenters, installer/bootstrap wiring, or breaking a large runtime class into smaller ones. Also use it when the user wants the implementation approach or file plan for that multi-file runtime work. Do not use it for editor tooling, UI Toolkit, tests, or one-file edits.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.2"
 ---
 
 # unity-code-deep
 
-Multi-file C# implementation for Unity. Understand scope → plan file structure → implement → verify compilation.
+Deliver multi-file Unity runtime C# changes, or the implementation plan for them, with an explicit file plan, dependency-aware implementation order, and concrete integration handoff.
 
 ## When to Use
 
-- Feature spanning 2+ .cs files (e.g., manager + data + UI + events)
-- Introducing architectural patterns (state machine, event bus, service locator)
-- Refactoring: extract class, introduce interface, decompose god class
-- Cross-system integration (new system wiring into existing ones)
-- Any task where file dependencies and creation order matter
+- Runtime feature spanning 2+ `.cs` files such as manager + data + events + presenter
+- New shared abstractions: interfaces, services, event channels, ScriptableObject data, bootstrapping
+- Refactors that split responsibilities across multiple runtime files while preserving behavior
+- Cross-system integration where file boundaries, asmdefs, or registration order matter
+- Requests for the implementation approach, file plan, or safe structure of multi-file runtime work
+
+## Do Not Use
+
+- One-file runtime work or narrow bug fixes → `unity-code-quick`
+- Editor tooling, inspectors, drawers, gizmos, menu items → `unity-code-editor`
+- UI Toolkit screens, UXML, USS, runtime UI composition → `unity-uitoolkit-create`
+- Unit or Play Mode tests → `unity-test-unit`
 
 ## Workflow
 
-1. **Parse** — Extract: what system? which files affected? what patterns needed?
-2. **Scope** — Map affected files, namespaces, assemblies. Identify creation order and dependencies.
-3. **Discover** — Check codebase for existing patterns, conventions, related systems (grep/glob/lsp, max 5 searches)
-4. **Plan** — Define file list with responsibilities. Interfaces first, then implementations, then wiring.
-5. **Implement** — Write files in dependency order. Match project conventions per file.
+1. **Qualify** — Confirm the request truly needs multiple runtime files. If it collapses to one file or another domain, switch skills.
+2. **Discover** — Read the affected files plus 2-3 nearby runtime files for namespaces, field patterns, asmdefs, registration style, and editor wiring conventions.
+3. **Plan** — List every file to modify or create, each file's responsibility, dependency order, and any assets or scene wiring the code relies on.
+4. **Implement** — Write shared abstractions first, data/config next, concrete logic after that, and bootstrap or registration last.
+5. **Verify** — Run diagnostics on every changed `.cs` file. For larger changes, verify after each dependency tier instead of waiting until the end.
+6. **Handoff** — Report exactly what was changed and any Unity Editor follow-up: drag-drop refs, ScriptableObject assets, bootstrap registration, scene or prefab wiring.
 
 ## Rules
 
-- Map all affected files BEFORE writing any code. No ad-hoc file creation mid-implementation.
-- Write interfaces and base types first, implementations second, wiring/registration last.
-- One class per file. File name = class name.
-- Respect assembly definition boundaries — never add cross-asmdef references without checking.
-- If refactoring, preserve public API signatures unless explicitly asked to change them.
-- Never add `// TODO` — deliver complete code or state limitations.
-- For all per-file coding standards — follow `unity-standards`.
+- Map all affected files before writing code. Do not drift into ad-hoc extra files mid-implementation.
+- Match local project patterns first; use `unity-standards` when the repo is silent or inconsistent.
+- Write interfaces and base types first, implementations second, wiring or registration last.
+- Keep one type per file and match file name to type name.
+- Respect asmdef boundaries. Do not add new asmdefs or cross-asmdef references unless the task explicitly requires it.
+- Preserve public API and serialized-field behavior during refactors unless the user asked to change them.
+- If the design needs ScriptableObject assets, inspector assignments, or installer registration, implement the code and state the required editor steps explicitly.
+- Never leave placeholder logic, `TODO`, or partially wired code.
 
 ## Output Format
 
-Write all files directly using edit/write tools. No markdown code blocks as final output — actual files only.
-Report: file count, file list with paths, and compilation status.
+Edit the real files. End with a short report covering changed paths, verification status, and required Unity Editor follow-up.
 
 ## Standards
 
 Load `unity-standards` for all coding conventions and patterns. Key references:
 
-- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
-- `code-standards/multi-file-workflow.md` — dependency ordering, namespace strategy, asmdef awareness
-- `code-standards/refactoring-patterns.md` — extract class, introduce interface, decompose, migrate
-- `code-standards/code-patterns.md` — MonoBehaviour, SO, interface templates
-- `code-standards/dependencies.md` — DI, service locator, constructor injection
-- `code-standards/events.md` — C# events, UnityEvent, SO channels
+- `references/code-standards/multi-file-workflow.md` — routing, dependency ordering, asmdef awareness, handoff checklist
+- `references/code-standards/architecture-patterns.md` — state machine, MVP, command, strategy
+- `references/code-standards/refactoring-patterns.md` — extract interface, decompose safely, preserve API
+- `references/code-standards/dependencies.md` — DI, installers, service locator fallback, asmdef boundaries
+- `references/code-standards/events.md` — C# events, UnityEvent, ScriptableObject channels
+- `references/code-standards/code-patterns.md` — MonoBehaviour, ScriptableObject, interface templates
+- `references/code-standards/naming.md` — namespaces, type names, field ordering
 
-Load via `read_skill_file("unity-standards", "references/code-standards/<file>")`.
+Load only the references the task needs via `read_skill_file("unity-standards", "references/<path>")`.

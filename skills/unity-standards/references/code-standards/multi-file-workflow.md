@@ -1,5 +1,12 @@
 # Multi-File Workflow — Dependency Ordering & Structure
 
+## Route Before Writing
+
+- One runtime file or narrow bug fix → `unity-code-quick`
+- Editor tooling or inspectors → `unity-code-editor`
+- UI Toolkit screens or styling → `unity-uitoolkit-create`
+- Tests → `unity-test-unit`
+
 ## File Creation Order
 
 Always write files in dependency order to catch errors early:
@@ -58,8 +65,14 @@ Before implementation, answer:
 | Files | Complexity | Approach |
 |-------|-----------|----------|
 | 2–3   | Low       | Write sequentially, verify at end |
-| 4–7   | Medium    | Plan file list, verify per tier |
+| 4–7   | Medium    | Plan file list, verify per dependency tier |
 | 8+    | High      | Consider unity-plan-quick first, then implement |
+
+## Verification Rhythm
+
+- 2–3 files: diagnostics at the end are usually enough
+- 4+ files: verify after shared abstractions, again after concrete implementations, and once more after wiring
+- Treat integration notes as part of the deliverable, not an afterthought
 
 ## Integration Points
 
@@ -69,4 +82,11 @@ When adding to existing systems, identify wiring method:
 - **Event channels** — Create SO asset, wire in OnEnable/OnDisable
 - **Static access** — Singleton.Instance (use sparingly)
 
-Document integration steps in the final report so the user knows what to wire in Unity Editor.
+## Final Handoff Checklist
+
+- [ ] Changed file list with responsibilities
+- [ ] Diagnostics status for changed `.cs` files
+- [ ] Required inspector assignments, assets, prefab or scene wiring
+- [ ] Required bootstrap, installer, or registration steps
+
+Document integration steps in the final report so the user knows what still needs Unity Editor work.
