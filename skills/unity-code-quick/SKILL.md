@@ -3,55 +3,65 @@ name: unity-code-quick
 description: Use whenever the user wants a small Unity runtime C# change that should stay inside one .cs file — a MonoBehaviour, ScriptableObject, interface, enum, struct, data model, static helper, or a narrow edit to an existing runtime script. Reach for it even when they ask for a quick script or one-file fix. Do not use it for editor tooling, UI Toolkit, tests, optimization-only passes, or anything that needs multiple files or architecture planning.
 metadata:
   author: kuozg
-  version: "1.2"
+  version: "2.0"
 ---
 
 # unity-code-quick
 
-Deliver small runtime Unity C# work that stays inside one file. Match local patterns first, keep the diff narrow, and finish with a compilable handoff.
+Deliver small runtime Unity C# work inside one file. Match local patterns, keep the diff narrow, finish with a compilable handoff.
 
-## When to Use
+## Scope
 
-- New runtime MonoBehaviour, ScriptableObject, interface, enum, struct, or utility class
-- Narrow change to one existing runtime `.cs` file
-- Boilerplate, data-model work, or a bug fix that stays correct without adding files, editor code, or tests
+**Use when:** New MonoBehaviour, ScriptableObject, interface, enum, struct, utility class — or a narrow edit to one existing runtime `.cs` file.
 
-## Do Not Use
-
-- Editor tooling, inspectors, drawers, gizmos, menu items → `unity-code-editor`
-- UI Toolkit screens or styling → `unity-uitoolkit-create`
-- Unit tests → `unity-test-unit`
-- Multi-file features, refactors, or cross-system wiring → `unity-code-deep`
-- Optimization-only cleanup with no behavior change → `unity-code-optimize`
+**Switch out if:** Work needs 2+ files (`unity-code-deep`), editor tooling (`unity-code-editor`), UI Toolkit (`unity-uitoolkit-create`), tests (`unity-test-unit`), or optimization-only cleanup (`unity-code-optimize`).
 
 ## Workflow
 
-1. **Qualify** — Confirm one runtime `.cs` file is enough. If the work spills into more files or another domain, switch skills.
-2. **Discover** — Read the target file plus 1-2 nearby runtime files for namespace, usings, field order, attributes, and serialization style.
-3. **Implement** — Make the smallest complete change that satisfies the request.
-4. **Verify** — Run diagnostics on the changed file and fix introduced issues.
-5. **Handoff** — Report the changed path, what changed, diagnostics status, and any Unity Editor follow-up.
+1. **Gate** — Confirm one runtime `.cs` file is enough. Switch immediately if scope grows.
+
+2. **Discover** — Read the target file plus 1-2 nearby runtime files. Capture:
+   - Namespace style (file-scoped vs block-scoped)
+   - Using directives already present
+   - Serialization pattern: `[SerializeField] private` vs `[field: SerializeField]`
+   - Attribute usage: `[Header]`, `[RequireComponent]`, `[DisallowMultipleComponent]`
+   - Access modifier conventions (sealed? explicit private?)
+   - Comment and XML doc density
+
+   If the project has no nearby files, load `read_skill_file("unity-standards", "references/code-standards/single-file-runtime-workflow.md")`.
+
+3. **Implement** — Write the smallest complete change. Follow type-specific guidance:
+
+   - **MonoBehaviour** — Pick the correct lifecycle method: `Awake` for caching refs, `FixedUpdate` for physics, `LateUpdate` for follow cameras. Expose designer data via `[SerializeField]` with `[Header]`/`[Tooltip]` when it aids inspector clarity. Add `[RequireComponent]` for hard dependencies. Subscribe events in `OnEnable`, unsubscribe in `OnDisable`.
+   - **ScriptableObject** — Always add `[CreateAssetMenu]`. Prefer `[field: SerializeField] public T Prop { get; private set; }` for runtime-immutable data. Keep it a data container — logic belongs in consumers.
+   - **Interface** — Properties and methods only. No default implementations unless the project already uses C# 8+ default interface methods.
+   - **Enum** — Use `[Flags]` only when bitwise combinations are needed; assign power-of-2 values explicitly with `None = 0`. Standard enums start at 0 by default.
+   - **Struct** — Prefer `readonly struct` for immutable data. Keep small (under 4 fields) to avoid copy overhead.
+   - **Static utility** — Seal the class, make it static, hide construction. Pure functions, no state.
+
+4. **Verify** — Run `lsp_diagnostics` on the changed file. Fix any introduced errors before reporting done.
+
+5. **Handoff** — Report: file path, what changed, diagnostics status, any Unity Editor follow-up (drag-drop refs, asset creation, scene wiring).
 
 ## Rules
 
-- Keep the change inside one `.cs` file. Do not create helper files, tests, or editor code.
-- Match existing namespace, access modifier, attribute, and serialization patterns before falling back to `unity-standards`.
-- If the repo is silent, prefer explicit `using` directives and inspector-friendly serialized fields that match surrounding style.
-- Keep the surface minimal. Do not invent namespaces, XML docs, attributes, or extra polish unless the prompt or nearby files justify them.
-- Add XML docs only for public API that benefits from them. Skip noise comments.
-- For bug fixes or narrow edits, change only the necessary code path; do not refactor adjacent systems.
-- Never leave `TODO`, placeholder logic, or partially wired code.
-- If the request is ambiguous, choose the simplest runtime implementation that fully satisfies it.
+- **One file only.** A second file means switching to `unity-code-deep`. Single-file discipline prevents half-wired systems.
+- **Local style wins.** Project patterns trump standard references — consistency in a codebase matters more than "correct" style in isolation.
+- **Minimal surface.** Skip namespaces, XML docs, attributes, or polish the prompt doesn't request and neighbors don't use. Extra ceremony adds maintenance noise.
+- **Complete, not placeholder.** No `TODO`, stub returns, or "wire this later" notes. A file that compiles but doesn't work is worse than no file.
+- **Bug fixes: minimal diff.** Change only the broken code path. Mixing refactors with fixes makes verification harder and raises regression risk.
+- **Ambiguity -> simplest path.** When the prompt is vague, pick the implementation with the fewest moving parts. State the assumption in the handoff.
 
 ## Standards
 
-Load `unity-standards` only for the references the task needs:
+Load only what the task needs via `read_skill_file("unity-standards", "references/<path>")`:
 
-- `references/code-standards/single-file-runtime-workflow.md` — routing, scope checks, local pattern capture, handoff
-- `references/code-standards/code-patterns.md` — MonoBehaviour, ScriptableObject, interface, UnityEvent templates
-- `references/code-standards/naming.md` — file, type, member naming
-- `references/code-standards/serialization.md` — `[SerializeField]`, `[field: SerializeField]`, SO data
-- `references/code-standards/null-safety.md` — guards, `TryGet`, nullable handling
-- `references/code-standards/lifecycle.md` — Unity message order, coroutine rules
-
-Load via `read_skill_file("unity-standards", "references/<path>")`.
+| When you need | Load |
+|---|---|
+| Workflow routing, scope checks | `code-standards/single-file-runtime-workflow.md` |
+| Type templates (MB, SO, interface) | `code-standards/code-patterns.md` |
+| Naming and casing | `code-standards/naming.md` |
+| Serialization patterns | `code-standards/serialization.md` |
+| Null safety and guards | `code-standards/null-safety.md` |
+| Unity lifecycle order | `code-standards/lifecycle.md` |
+| Events and callbacks | `code-standards/events.md` |

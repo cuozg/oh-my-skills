@@ -1,45 +1,42 @@
 ---
 name: unity-debug-deep
-description: Exhaustive multi-angle Unity bug analysis — read-only investigation across lifecycle, threading, state, data flow, and edge cases. Produces a structured report. Triggers — 'deep debug', 'analyze this bug', 'exhaustive analysis', 'debug report', 'root cause analysis'.
+description: Exhaustive multi-angle Unity bug analysis — read-only investigation across lifecycle, threading, state, data flow, and edge cases. Produces a structured report. Triggers — 'deep debug', 'analyze this bug', 'exhaustive analysis', 'debug report', 'root cause analysis', 'investigate this issue', 'trace this error', 'what's causing this'.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-debug-deep
 
-Exhaustive, read-only investigation that produces a structured analysis document covering all likely root causes across multiple angles.
+Exhaustive, read-only investigation that produces a structured analysis document covering all likely root causes across multiple investigation angles. Used by teams to document evidence before modifying production code.
 
 ## When to Use
 
-- A bug is intermittent, race-condition-like, or has resisted quick fixes
-- Team needs documented evidence before touching production code
+- Bug is intermittent, race-condition-like, or has resisted 2+ fix attempts
+- Team needs documented evidence before touching code
 - Multiple systems are potentially involved
-- unity-debug-quick looped 3+ times without resolution
+- Quick diagnosis (unity-debug-quick) looped 3+ times without resolution
+- Root cause unclear; multiple hypotheses exist
 
 ## Workflow
 
-1. **Scope** — define the affected system, symptom, and reproduction steps
-2. **Trace lifecycle** — map Awake/OnEnable/Start/OnDisable/OnDestroy order for involved objects
-3. **Trace data flow** — follow the value from source to point of failure; grep for all writers/readers
-4. **Check threading** — identify coroutines, async calls, Jobs, or main-thread-only API misuse
-5. **Check state** — find every place the relevant state variable is read and written; map transitions
-6. **Check edge cases** — null refs, empty collections, zero-division, order-of-operations
-7. **Cross-reference** — use lsp_find_references for every symbol in the call path
-8. **Rank causes** — sort candidates by likelihood; label each HIGH/MED/LOW confidence
-9. **Document** — write the structured report using the analysis template
+1. **Parse symptom** — extract error message, timing, frequency, scope (editor/build/both)
+2. **Select ≥3 angles** — from lifecycle, data flow, threading, state, edge cases, events, serialization (see investigation checklist)
+3. **Investigate each angle** — use grep patterns, LSP, lsp_find_references to gather evidence; cite file:line
+4. **Rank candidates** — sort by likelihood; mark HIGH/MED/LOW confidence per angle
+5. **Propose solutions** — for each cause, describe WHAT and WHERE (not code, not HOW)
+6. **Document** — write report using analysis template, citing evidence throughout
 
 ## Rules
 
-- Never modify project code during deep debug — read only
-- Investigate ≥3 angles (lifecycle, data flow, plus one more relevant angle)
-- Cite file:line for every cause candidate
-- Provide 2–4 solutions per cause with WHAT and WHERE
-- Never speculate without file evidence — mark as [UNCONFIRMED] if needed
-- Use grep/lsp_find_references before concluding "no other writers"
-- Save output to `Documents/Debug/ANALYSIS_{TOPIC}_{YYYYMMDD}.md`
-- Load the analysis template before writing the report
-- Label causes HIGH/MED/LOW confidence based on evidence strength
-- Do not include fix code in the report — describe WHAT and WHERE only
+- **Read-only** — never modify code during investigation
+- **Multi-angle (≥3)** — always investigate 3+ angles (lifecycle, data flow, threading, state, edges, events, serialization)
+- **Cite everything** — file:line for every cause candidate and solution location
+- **Evidence first** — mark [UNCONFIRMED] for speculative claims; use grep/LSP exhaustively
+- **Solutions WHAT/WHERE only** — describe the fix in plain language and exact location, not pseudocode/patches
+- **Confidence scoring** — label HIGH/MED/LOW per candidate based on evidence strength
+- **Template mandatory** — load analysis template BEFORE writing; follow structure exactly
+- **Output path** — `Documents/Debug/ANALYSIS_{TOPIC}_{YYYYMMDD}.md`
+- **2–4 solutions per cause** — multiple options with risk levels
 
 ## Output Format
 
@@ -51,13 +48,14 @@ Exhaustive, read-only investigation that produces a structured analysis document
 
 Load references on demand via `read_skill_file("unity-debug-deep", "references/{file}")`.
 
-## Standards
+## Investigation Guide
 
-Load `unity-standards` for analysis checklists. Key references:
+Load these `unity-standards` references on demand:
 
-- `debug/diagnosis-workflow.md` — symptom parsing, multi-angle analysis
-- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, physics
-- `review/concurrency-checklist.md` — threading, race conditions, main thread
-- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
+- `debug/diagnosis-workflow.md` — parse symptom, categorize, solution format (read first)
+- `debug/deep-investigation-checklist.md` — investigation angles, grep patterns, confidence scoring (read before investigating)
+- `debug/common-unity-errors.md` — NRE, serialization, lifecycle, IL2CPP reference table
+- `review/concurrency-checklist.md` — threading, race conditions, Jobs, main-thread safety
+- `code-standards/lifecycle.md` — Awake/Start/OnEnable execution order, coroutine semantics
 
-Load via `read_skill_file("unity-standards", "references/<path>")`.
+Via: `read_skill_file("unity-standards", "references/<path>")`

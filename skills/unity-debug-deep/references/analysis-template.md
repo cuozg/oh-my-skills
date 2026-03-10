@@ -1,6 +1,6 @@
 # analysis-template.md
 
-Use this template when writing the output document for unity-debug-deep.
+Template for unity-debug-deep analysis output. Load this BEFORE writing the report.
 
 ---
 
@@ -8,45 +8,39 @@ Use this template when writing the output document for unity-debug-deep.
 # Bug Analysis: {SHORT_TOPIC}
 
 **Date**: YYYY-MM-DD  
-**Reporter**: {name or "user"}  
 **Status**: OPEN | RESOLVED  
 
 ---
 
 ## Summary
 
-One-paragraph description of the symptom and the investigation scope.
-
-## Reproduction Steps
-
-1. {Step 1}
-2. {Step 2}
-3. {Observed result vs expected result}
-
----
+1-paragraph description: what broke, when, and which systems involved. Include reproduction frequency (always/intermittent/first-time-only).
 
 ## Root Cause Candidates
 
 ### [HIGH] Candidate 1 — {short name}
 
-**Evidence**: `{File.cs:line}` — {what the code does that causes this}  
-**Angle**: lifecycle | threading | state | data-flow | edge-case  
+**Evidence**: `{File.cs:line}` — {brief description of code causing this}  
+**Angle**: [lifecycle | data-flow | threading | state | edge-case | events | serialization]  
+**Confidence**: HIGH — direct code evidence + reproducible pattern
 
-> Quote the relevant 1-3 lines from the file if they fit.
+> Optional: 1-3 line quote from the offending code
 
 ---
 
 ### [MED] Candidate 2 — {short name}
 
 **Evidence**: `{File.cs:line}` — {description}  
-**Angle**: {angle}  
+**Angle**: [angle]  
+**Confidence**: MED — likely but indirect evidence
 
 ---
 
 ### [LOW] Candidate 3 — {short name} _(optional)_
 
 **Evidence**: `{File.cs:line}` — {description}  
-**Angle**: {angle}  
+**Angle**: [angle]  
+**Confidence**: LOW — speculative; minimal supporting evidence _(optional: [UNCONFIRMED])_
 
 ---
 
@@ -54,21 +48,21 @@ One-paragraph description of the symptom and the investigation scope.
 
 ### For Candidate 1
 
-- **WHAT**: {describe the change in plain language}  
-- **WHERE**: `{File.cs:line}` — {specific location}  
-- **Risk**: LOW | MED | HIGH  
+- **WHAT**: {plain-language description of the fix}  
+- **WHERE**: `{File.cs:line}` — {specific location or context}  
+- **Risk**: LOW | MED | HIGH
 
 ### For Candidate 2
 
-- **WHAT**: {describe the change}  
+- **WHAT**: {description}  
 - **WHERE**: `{File.cs:line}`  
-- **Risk**: LOW | MED | HIGH  
+- **Risk**: LOW | MED | HIGH
 
 ---
 
 ## Recommended Next Step
 
-{One sentence: which solution to try first and why.}
+{One sentence: which candidate to investigate/fix first and why.}
 ```
 
 ---
@@ -76,6 +70,8 @@ One-paragraph description of the symptom and the investigation scope.
 ## Notes
 
 - Save to `Documents/Debug/ANALYSIS_{TOPIC}_{YYYYMMDD}.md`
-- Mark unconfirmed causes with `[UNCONFIRMED]` label
-- Solutions describe WHAT and WHERE only — no code patches
-- Keep each candidate section under 10 lines
+- Keep each candidate section ≤10 lines
+- Solutions describe WHAT and WHERE only — NO code patches
+- Include file:line for every claim
+- Use [UNCONFIRMED] for speculative causes without file evidence
+
