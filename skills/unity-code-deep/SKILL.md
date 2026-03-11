@@ -1,6 +1,6 @@
 ---
 name: unity-code-deep
-description: Use this skill for Unity runtime work that needs multiple C# files or a safe refactor across classes: services, interfaces, ScriptableObject data, event channels, presenters, installer/bootstrap wiring, or breaking a large runtime class into smaller ones. Also use it when the user wants the implementation approach or file plan for that multi-file runtime work. Do not use it for editor tooling, UI Toolkit, tests, or one-file edits.
+description: "Use this skill for Unity runtime work that needs multiple C# files or a safe refactor across classes: services, interfaces, ScriptableObject data, event channels, presenters, installer/bootstrap wiring, or breaking a large runtime class into smaller ones. Also use it when the user wants the implementation approach or file plan for that multi-file runtime work. Do not use it for editor tooling, UI Toolkit, tests, or one-file edits."
 metadata:
   author: kuozg
   version: "1.2"

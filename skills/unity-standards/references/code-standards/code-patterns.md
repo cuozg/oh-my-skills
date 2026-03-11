@@ -59,48 +59,4 @@ For coroutines → `read_skill_file("unity-standards", "references/code-standard
 public void AddScore(int pts) { _score += pts; onScoreChanged?.Invoke(_score); }
 ```
 
-## Essential Attributes
-
-```csharp
-// Require dependencies — auto-added when this component is added
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(AudioSource))]
-public sealed class ProjectileLauncher : MonoBehaviour { }
-
-// Prevent duplicate components
-[DisallowMultipleComponent]
-public sealed class Health : MonoBehaviour { }
-
-// Custom menu path for Add Component
-[AddComponentMenu("Game/Combat/Weapon")]
-public sealed class Weapon : MonoBehaviour { }
-
-// Make parent selectable when child is clicked in Scene view
-[SelectionBase]
-public sealed class CharacterRoot : MonoBehaviour { }
-```
-
-## Inspector Attributes
-
-```csharp
-[Header("Movement")]
-[SerializeField] private float _speed = 5f;
-
-[Tooltip("Seconds before respawn")]
-[SerializeField] private float _respawnDelay = 3f;
-
-[Range(0f, 100f)]
-[SerializeField] private float _health = 100f;
-
-[Min(0f)]
-[SerializeField] private float _damage = 10f;
-
-[Space(10)]
-[SerializeField] private bool _useGravity = true;
-
-[TextArea(3, 5)]
-[SerializeField] private string _description;
-
-[ColorUsage(showAlpha: true, hdr: true)]
-[SerializeField] private Color _emissionColor;
-```
+For component/inspector/serialization attributes → `read_skill_file("unity-standards", "references/code-standards/unity-attributes.md")`

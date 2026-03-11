@@ -96,5 +96,4 @@ JsonUtility.FromJsonOverwrite(json, existingData); // avoids allocation
 - `Dictionary<K,V>` — wrap in serializable list
 - Interfaces — use concrete types or `[SerializeReference]`
 - `static` fields — never serialized
-- `readonly` fields — never serialized
-- Nested generic types — `List<List<int>>` fails
+- `readonly` fields — never serialized; nested generic types like `List<List<int>>` also fail
