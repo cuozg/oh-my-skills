@@ -1,12 +1,15 @@
 ---
 name: unity-project-init
 description: >
-  Use this skill to scaffold a Unity project's folder structure — creates Assets/_Project/ with
-  feature-based organization, assembly definitions, .gitignore, and namespace-aligned directories.
-  Use when the user says "set up my project," "create folder structure," "initialize project,"
-  "scaffold my Unity project," or wants a clean starting layout for a new game or prototype.
-  Also use when they mention "project organization," "folder layout," or "project template."
-  Do not use for adding individual features to an existing project — use unity-code-deep for that.
+  Use this skill to scaffold a Unity project's folder structure with feature-based organization,
+  assembly definitions (.asmdef), .gitignore, and namespace-aligned directories under Assets/_Project/.
+  Use whenever a user wants to start a new Unity project, set up folder structure, initialize or
+  scaffold a project, create a project template, or organize their Unity project from scratch — even
+  if they just say "I'm starting a new Unity game" or describe a game concept and ask for the
+  project setup. Also triggers on "folder layout," "project organization," "directory structure,"
+  "project template," "asmdef setup," or "best folder structure for Unity." Always use this skill
+  when the user provides a company name, project name, and feature list for a new Unity project.
+  Do not use for adding features to an existing project — use unity-code-deep for that.
 metadata:
   author: kuozg
   version: "1.0"
