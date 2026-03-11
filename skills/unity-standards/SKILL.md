@@ -29,9 +29,10 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 ## Reference Catalog
 
-### Code Standards (30)
+### Code Standards (31)
 
 - `code-standards/naming.md` — naming, casing, file and namespace rules
+- `code-standards/project-structure.md` — folder layout, feature-based organization, .asmdef, .gitignore
 - `code-standards/formatting.md` · `comments.md` · `access-modifiers.md`
 - `code-standards/null-safety.md` · `null-safety-advanced.md`
 - `code-standards/serialization.md` · `lifecycle.md` · `lifecycle-advanced.md`
