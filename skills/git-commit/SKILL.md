@@ -1,6 +1,10 @@
 ---
 name: git-commit
-description: Commit staged or unstaged changes with a clean imperative message — use for 'commit', 'git commit', 'commit changes', 'save changes'
+description: >
+  Use this skill to stage and commit changes with a clean, imperative-mood commit message. Use it
+  whenever the user wants to save their work, says "commit this," "save my changes," or "commit what
+  I've done." Handles both staged and unstaged files, writes structured messages with bullet points
+  for multi-change commits. Never pushes to remote. Do not use for amending — use git-comment for that.
 metadata:
   author: kuozg
   version: "1.0"

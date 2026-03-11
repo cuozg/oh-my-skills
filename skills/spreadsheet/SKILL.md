@@ -1,6 +1,11 @@
 ---
 name: "spreadsheet"
-description: "Use when tasks involve creating, editing, analyzing, or formatting spreadsheets (`.xlsx`, `.csv`, `.tsv`) with formula-aware workflows, cached recalculation, and visual review."
+description: >
+  Use this skill when the user needs to create, edit, analyze, or format spreadsheet data — .xlsx,
+  .csv, or .tsv files. Covers adding formulas, derived columns, charts, pivot analysis, data cleaning,
+  formatting, and formula-aware recalculation. Use it when the user has tabular data and wants to
+  explore, transform, or visualize it, even if they don't explicitly mention "spreadsheet" or "CSV."
+  Also use when the user says "add a column," "summarize this data," or "make a chart from this file."
 ---
 
 # Spreadsheet Skill
@@ -61,85 +66,19 @@ Optional:
 ```
 uv pip install matplotlib
 ```
-If `uv` is unavailable:
-```
-python3 -m pip install matplotlib
-```
 System tools (for rendering):
 ```
-# macOS (Homebrew)
-brew install libreoffice poppler
-
-# Ubuntu/Debian
-sudo apt-get install -y libreoffice poppler-utils
+brew install libreoffice poppler          # macOS
+sudo apt-get install -y libreoffice poppler-utils  # Ubuntu/Debian
 ```
 
-If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+If installation is not possible, tell the user which dependency is missing and how to install it locally.
 
 ## Environment
 No required environment variables.
 
-## Examples
-- Runnable Codex examples (openpyxl): `references/examples/openpyxl/`
-
-## Formula requirements
-- Use formulas for derived values rather than hardcoding results.
-- Do not use dynamic array functions like `FILTER`, `XLOOKUP`, `SORT`, or `SEQUENCE`.
-- Keep formulas simple and legible; use helper cells for complex logic.
-- Avoid volatile functions like `INDIRECT` and `OFFSET` unless required.
-- Prefer cell references over magic numbers (for example, `=H6*(1+$B$3)` instead of `=H6*1.04`).
-- Use absolute (`$B$4`) or relative (`B4`) references carefully so copied formulas behave correctly.
-- If you need literal text that starts with `=`, prefix it with a single quote.
-- Guard against `#REF!`, `#DIV/0!`, `#VALUE!`, `#N/A`, and `#NAME?` errors.
-- Check for off-by-one mistakes, circular references, and incorrect ranges.
-
-## Citation requirements
-- Cite sources inside the spreadsheet using plain-text URLs.
-- For financial models, cite model inputs in cell comments.
-- For tabular data sourced externally, add a source column when each row represents a separate item.
-
-## Formatting requirements (existing formatted spreadsheets)
-- Render and inspect a provided spreadsheet before modifying it when possible.
-- Preserve existing formatting and style exactly.
-- Match styles for any newly filled cells that were previously blank.
-- Never overwrite established formatting unless the user explicitly asks for a redesign.
-
-## Formatting requirements (new or unstyled spreadsheets)
-- Use appropriate number and date formats.
-- Dates should render as dates, not plain numbers.
-- Percentages should usually default to one decimal place unless the data calls for something else.
-- Currencies should use the appropriate currency format.
-- Headers should be visually distinct from raw inputs and derived cells.
-- Use fill colors, borders, spacing, and merged cells sparingly and intentionally.
-- Set row heights and column widths so content is readable without excessive whitespace.
-- Do not apply borders around every filled cell.
-- Group related calculations and make totals simple sums of the cells above them.
-- Add whitespace to separate sections.
-- Ensure text does not spill into adjacent cells.
-- Avoid unsupported spreadsheet data-table features such as `=TABLE`.
-
-## Color conventions (if no style guidance)
-- Blue: user input
-- Black: formulas and derived values
-- Green: linked or imported values
-- Gray: static constants
-- Orange: review or caution
-- Light red: error or flag
-- Purple: control or logic
-- Teal: visualization anchors and KPI highlights
-
-## Finance-specific requirements
-- Format zeros as `-`.
-- Negative numbers should be red and in parentheses.
-- Format multiples as `5.2x`.
-- Always specify units in headers (for example, `Revenue ($mm)`).
-- Cite sources for all raw inputs in cell comments.
-- For new financial models with no user-specified style, use blue text for hardcoded inputs, black for formulas, green for internal workbook links, red for external links, and yellow fill for key assumptions that need attention.
-
-## Investment banking layouts
-If the spreadsheet is an IB-style model (LBO, DCF, 3-statement, valuation):
-- Totals should sum the range directly above.
-- Hide gridlines and use horizontal borders above totals across relevant columns.
-- Section headers should be merged cells with dark fill and white text.
-- Column labels for numeric data should be right-aligned; row labels should be left-aligned.
-- Indent submetrics under their parent line items.
+## References
+- Examples (openpyxl): `references/examples/openpyxl/`
+- Formatting rules (existing + new sheets, color conventions): `references/formatting-rules.md`
+- Formula + citation rules: `references/formula-rules.md`
+- Finance-specific + IB layouts: `references/finance-guide.md`

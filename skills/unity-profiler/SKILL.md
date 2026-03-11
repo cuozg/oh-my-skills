@@ -1,6 +1,11 @@
 ---
 name: unity-profiler
-description: Analyze Unity Profiler data — identify CPU spikes, GC pressure, rendering bottlenecks, and generate a short highlight report with severity-ranked findings and actionable fixes. Triggers — 'profiler report', 'performance analysis', 'profiler review', 'analyze profiler', 'performance report'.
+description: >
+  Use this skill to analyze Unity Profiler data and generate a severity-ranked performance report.
+  Identifies CPU spikes, GC pressure, rendering bottlenecks, and cross-references profiler markers with
+  source code. Use when the user says "analyze the profiler data," "performance report," "why is my game
+  lagging," "check for GC spikes," or has completed a profiling session and needs interpretation.
+  Read-only — suggests fixes but does not modify code. Max 10 findings with cited evidence.
 metadata:
   author: kuozg
   version: "1.0"

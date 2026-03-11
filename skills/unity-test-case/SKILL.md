@@ -1,6 +1,10 @@
 ---
 name: unity-test-case
-description: Generate QA test cases as HTML — use for 'test cases', 'QA test cases', 'generate test cases', 'test plan', 'manual test cases'
+description: >
+  Use this skill to generate structured QA test cases as an HTML document — covering happy paths, edge
+  cases, boundary values, and negative tests. Use when the user needs a manual test plan, says "generate
+  test cases," "QA test plan," "what should we test," or wants documented test scenarios before a release.
+  Outputs to Documents/TestCases/. Do not use for automated unit tests — use unity-test-unit for that.
 metadata:
   author: kuozg
   version: "1.0"

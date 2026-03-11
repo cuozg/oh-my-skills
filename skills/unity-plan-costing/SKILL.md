@@ -1,6 +1,12 @@
 ---
 name: unity-plan-costing
-description: Detailed HTML plan with deep investigation and full epic/task tree for XL Unity features. Parallel subagent execution for investigation. No auto task_create. Triggers — 'detailed plan', 'XL plan', 'full breakdown', 'costing plan'.
+description: >
+  Use this skill to create a detailed HTML plan for XL Unity features (10+ days) or major refactors —
+  deep codebase investigation, full epic/task tree with dependencies, architecture analysis, and risk
+  assessment. Use when the user says "I need a full breakdown," "detailed plan for this feature,"
+  "costing plan," or describes a very large feature that needs thorough analysis before work begins. Does
+  not auto-create tasks — the user decides when to register them. For smaller features, use
+  unity-plan-deep (M/L) or unity-plan-quick (XS/S).
 metadata:
   author: kuozg
   version: "1.0"

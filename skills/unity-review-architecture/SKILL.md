@@ -1,6 +1,11 @@
 ---
 name: unity-review-architecture
-description: PR architecture review — DI, events, assemblies, coupling, SOLID. Triggers — 'architecture review', 'review architecture', 'check architecture', 'DI review', 'coupling review'.
+description: >
+  Use this skill to review a GitHub PR for architectural concerns — dependency injection patterns, event
+  systems, assembly boundaries, coupling, and SOLID principle violations. Use when a PR introduces new
+  systems, services, or manager classes, or when the user says "review the architecture," "check the DI
+  setup," "is this well-structured," or wants feedback on structural quality of a PR. Posts comments
+  directly to the GitHub PR. Do not use for logic review — use unity-review-code-pr.
 metadata:
   author: kuozg
   version: "1.0"

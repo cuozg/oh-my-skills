@@ -1,6 +1,11 @@
 ---
 name: unity-investigate-quick
-description: Quick Q&A about Unity codebase — how systems work, call chains, flow traces. Triggers — 'how does X work', 'what calls this', 'trace the flow', 'explain this system', 'quick investigate'.
+description: >
+  Use this skill for quick Q&A about a Unity codebase — how systems work, what calls what, tracing data
+  flows, and understanding code relationships. Use when the user asks "how does X work," "what calls this
+  method," "trace the flow from A to B," "explain this system," or any focused question about codebase
+  structure. Prioritizes speed over ceremony — answers in the fewest tool calls possible. Do not use for
+  comprehensive documented reports — use unity-investigate-deep for that.
 metadata:
   author: kuozg
   version: "1.0"

@@ -1,6 +1,11 @@
 ---
 name: mermaid
-description: Create Mermaid diagrams — flowcharts, sequence diagrams, state machines, class diagrams, architecture diagrams. Triggers — 'diagram', 'mermaid', 'flowchart', 'sequence diagram', 'state diagram', 'architecture diagram', 'visualize'.
+description: >
+  Use this skill to create Mermaid diagrams — flowcharts, sequence diagrams, state machines, class
+  diagrams, and architecture diagrams. Use it when the user wants to visualize a system, document a
+  flow, explain an architecture, or create any kind of technical diagram, even if they don't mention
+  "Mermaid" specifically. Also use when the user says "draw this," "show me how X flows," or
+  "visualize the architecture."
 metadata:
   author: kuozg
   version: "1.0"

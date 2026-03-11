@@ -1,6 +1,11 @@
 ---
 name: unity-document-system
-description: Write system documentation with architecture diagrams, data flows, and usage guides for Unity systems. Triggers — 'document system', 'system documentation', 'write system docs', 'architecture docs'.
+description: >
+  Use this skill to write system documentation for a Unity system — architecture diagrams, data flows,
+  public API references, and extension guides. Use when the user says "document this system," "write docs
+  for X," "I need architecture documentation," or wants a comprehensive technical reference for a codebase
+  module. Produces a structured markdown document with Mermaid diagrams and cited evidence. Do not use for
+  design decisions before implementation — use unity-document-tdd for that.
 metadata:
   author: kuozg
   version: "1.0"

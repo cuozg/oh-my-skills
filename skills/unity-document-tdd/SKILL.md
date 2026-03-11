@@ -1,6 +1,11 @@
 ---
 name: unity-document-tdd
-description: Write a Technical Design Document — architecture decisions, implementation strategy, dependency analysis. Triggers — 'write TDD', 'technical design document', 'design doc', 'architecture decision'.
+description: >
+  Use this skill to write a Technical Design Document (TDD) — architecture decisions, implementation
+  strategy, dependency analysis, and risk assessment. Use when the user is planning a new system, needs
+  architecture sign-off, or says "write a design doc," "TDD for this feature," "document the architecture
+  decision," or "what's the implementation strategy." Investigates the actual codebase first. Do not use
+  for documenting existing systems — use unity-document-system for that.
 metadata:
   author: kuozg
   version: "1.0"

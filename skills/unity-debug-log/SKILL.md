@@ -1,6 +1,11 @@
 ---
 name: unity-debug-log
-description: Generate copy-paste Debug.Log snippets — [DBG] prefix, color tags, string interpolation, wrapped in UNITY_EDITOR guard. Read-only, never writes to project files. Triggers — 'debug log', 'add logging', 'trace log', 'log snippet', 'debug output'.
+description: >
+  Use this skill to generate formatted Debug.Log snippets for copy-paste — [DBG] prefix, color tags,
+  string interpolation, wrapped in #if UNITY_EDITOR guards. Read-only: never writes to project files.
+  Use when the user needs quick log statements to trace values, says "add some debug logs," "I need to
+  trace this value," "give me logging for this method," or wants color-coded console output to diagnose
+  runtime behavior.
 metadata:
   author: kuozg
   version: "1.0"

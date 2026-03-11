@@ -1,6 +1,11 @@
 ---
 name: unity-review-quality
-description: Full Unity project audit — A-F graded HTML report covering architecture, performance, best practices, tech debt. Triggers — 'project audit', 'quality audit', 'project review', 'code quality report', 'tech debt audit'.
+description: >
+  Use this skill to run a full read-only audit of a Unity project, grading architecture, performance,
+  best practices, and tech debt on an A-F scale with evidence. Use when onboarding to an unfamiliar
+  codebase, running a pre-release quality gate, or when the user says "audit this project," "code quality
+  report," "how's the tech debt," or "rate this codebase." Produces a comprehensive HTML report. Do not
+  use for PR-level review — use the unity-review-* PR skills for that.
 metadata:
   author: kuozg
   version: "1.0"

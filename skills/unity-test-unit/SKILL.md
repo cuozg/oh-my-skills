@@ -1,6 +1,11 @@
 ---
 name: unity-test-unit
-description: Write Edit/Play Mode unit tests for Unity C# — use for 'write tests', 'unit test', 'test this class', 'add tests', 'create test'
+description: >
+  Use this skill to write Edit Mode and Play Mode unit tests for Unity C# using Arrange-Act-Assert
+  pattern with 10+ test cases per class. Use when the user says "write tests," "unit test this class,"
+  "add test coverage," "create tests for X," or wants automated verification of a MonoBehaviour,
+  ScriptableObject, or utility class. Do not use for manual QA test case documentation — use
+  unity-test-case for that.
 metadata:
   author: kuozg
   version: "1.0"

@@ -1,6 +1,11 @@
 ---
 name: unity-debug-fix
-description: Auto-fix loop for Unity compile and runtime errors — parse error, locate root cause, apply minimal fix, verify with lsp_diagnostics, loop until zero errors. Triggers — 'fix this error', 'auto fix', 'compile error', 'fix loop', 'resolve errors'.
+description: >
+  Use this skill to auto-fix Unity compile and runtime errors in a loop — parse error, locate root cause,
+  apply minimal fix, verify with lsp_diagnostics, repeat until zero errors. Use when the user has compiler
+  errors after a merge, refactor, or package update, or runtime exceptions with a clear stack trace.
+  Use when they say "fix this error," "auto fix," "resolve these compile errors," or paste an error
+  message. Do not use for behavioral bugs with no error — use unity-debug-quick for that.
 metadata:
   author: kuozg
   version: "1.0"

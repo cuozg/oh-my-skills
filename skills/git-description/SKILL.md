@@ -1,6 +1,10 @@
 ---
 name: git-description
-description: Generate and apply a structured PR description by investigating all changed files — use for 'PR description', 'write PR description', 'generate PR description', 'describe this PR'
+description: >
+  Use this skill to generate and apply a structured description for a GitHub Pull Request by
+  deep-investigating all changed files. Use it when the user opens a new PR and needs a description,
+  when a PR's description is missing or stale, or when the user says "describe this PR" or "write a
+  summary for this PR." Applies the result directly via gh pr edit.
 metadata:
   author: kuozg
   version: "1.0"

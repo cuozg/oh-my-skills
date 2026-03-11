@@ -1,6 +1,12 @@
 ---
 name: unity-code-editor
-description: Write Unity Editor tooling — EditorWindows, CustomEditor inspectors, PropertyDrawers, Gizmos, Handles, MenuItem. Use for any editor extension task. Triggers — 'editor window', 'custom inspector', 'property drawer', 'gizmo', 'editor tool', 'menu item'.
+description: >
+  Use this skill to write Unity Editor tooling — EditorWindows, CustomEditor inspectors, PropertyDrawers,
+  Gizmos, Handles, and MenuItem commands. Use it for any editor extension task, including custom inspectors
+  for components or ScriptableObjects, scene-view tools with Handles, editor windows for workflow
+  automation, or menu items. Use whenever the user says "custom inspector," "editor window," "add a menu
+  item," "gizmo," or wants any Editor-only tooling. Do not use for runtime scripts — use unity-code-quick
+  or unity-code-deep.
 metadata:
   author: kuozg
   version: "1.0"

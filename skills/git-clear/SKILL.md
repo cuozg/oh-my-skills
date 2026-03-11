@@ -1,6 +1,10 @@
 ---
 name: git-clear
-description: Delete all comments from a GitHub PR (issue comments + review comments) — use for 'clear PR comments', 'delete PR comments', 'remove PR comments', 'clean PR comments'
+description: >
+  Use this skill to delete all comments from a GitHub Pull Request — both issue/timeline comments and
+  inline review comments. Use it when the user wants to clear stale AI review comments, remove
+  bot-generated noise, or start a fresh review cycle on a PR. Also use when the user says "clean up
+  this PR" or "remove old comments" in the context of a GitHub PR.
 metadata:
   author: kuozg
   version: "1.0"

@@ -1,6 +1,11 @@
 ---
 name: unity-review-prefab
-description: PR prefab and scene review — missing scripts, broken variants, raycasts, hierarchy. Triggers — 'review prefabs', 'prefab review', 'scene review', 'check prefabs'.
+description: >
+  Use this skill to review .prefab and .unity scene files in a GitHub PR for missing scripts, broken
+  prefab variants, raycast blockers, and hierarchy issues. Use when a PR adds or modifies prefabs or
+  scene files, after a rename or delete that might break MonoBehaviour references, or when the user says
+  "review the prefabs," "check the scene files," or "are there missing scripts." Posts comments to the
+  GitHub PR via parallel subagents per file.
 metadata:
   author: kuozg
   version: "1.0"

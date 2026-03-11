@@ -1,6 +1,11 @@
 ---
 name: unity-plan-deep
-description: SHORT plan document and task hierarchy for M/L Unity features. Triggers — 'plan feature', 'deep plan', 'feature plan', 'complex plan', 'plan this feature'.
+description: >
+  Use this skill to create a concise plan document and task hierarchy for medium-to-large Unity features
+  (M: 1-3 days, L: 3-10 days) spanning 2+ systems or files. Use when the user says "plan this feature,"
+  "I need a feature plan," "break this down into tasks," or describes a feature with dependencies between
+  implementation steps. Outputs a short markdown plan with a registered task tree. For smaller tasks, use
+  unity-plan-quick (XS/S). For very large features (10+ days), use unity-plan-costing.
 metadata:
   author: kuozg
   version: "1.0"

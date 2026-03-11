@@ -1,6 +1,11 @@
 ---
 name: bash-install
-description: Install software with auto-retry, fallback strategies, and post-install verification — use for 'install', 'set up', 'install software', 'install tool', 'install dependency'
+description: >
+  Use this skill when the user needs to install a CLI tool, library, runtime, or dependency on their
+  machine or CI environment — handles package manager selection, auto-retry with fallback strategies,
+  and post-install verification. Use it even when the user just says "I need X set up" or "get me Y
+  installed" without specifying how. Do not use for npm/pip install of project dependencies managed
+  by a package file — those are standard tool calls.
 metadata:
   author: kuozg
   version: "1.0"

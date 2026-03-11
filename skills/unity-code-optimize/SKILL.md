@@ -1,6 +1,11 @@
 ---
 name: unity-code-optimize
-description: Simplify and optimize Unity C# code for clarity, consistency, and performance without changing behavior. Triggers — 'optimize code', 'simplify this', 'clean up code', 'improve readability', 'reduce allocations', 'code optimization'.
+description: >
+  Use this skill to simplify and optimize existing Unity C# code for clarity, consistency, and performance
+  without changing behavior. Use it when the user says "clean up this code," "simplify this," "reduce
+  allocations," "this code is messy," or wants readability and performance improvements to working code.
+  Covers removing dead code, reducing GC allocations, simplifying control flow, and enforcing conventions.
+  Do not use for bug fixes (unity-debug-*) or adding new functionality (unity-code-quick/deep).
 metadata:
   author: kuozg
   version: "1.0"

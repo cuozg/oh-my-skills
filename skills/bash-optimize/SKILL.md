@@ -1,6 +1,11 @@
 ---
 name: bash-optimize
-description: Refactor shell scripts for clarity, performance, and maintainability without changing behavior — use for 'optimize script', 'refactor bash', 'improve shell script', 'clean up script'
+description: >
+  Use this skill to refactor an existing shell script for clarity, performance, and maintainability
+  without changing its behavior. Use it when the user says a script is "messy," "hard to read," "slow,"
+  or asks to "clean up" or "improve" a .sh file. Covers removing unnecessary subshells, simplifying
+  conditionals, improving variable quoting, and applying best practices. Do not use for validation-only
+  tasks — use bash-check for that.
 metadata:
   author: kuozg
   version: "1.0"

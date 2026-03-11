@@ -1,6 +1,11 @@
 ---
 name: unity-debug-deep
-description: Exhaustive multi-angle Unity bug analysis — read-only investigation across lifecycle, threading, state, data flow, and edge cases. Produces a structured report. Triggers — 'deep debug', 'analyze this bug', 'exhaustive analysis', 'debug report', 'root cause analysis', 'investigate this issue', 'trace this error', 'what's causing this'.
+description: >
+  Use this skill for exhaustive, read-only Unity bug analysis when a bug is intermittent, has resisted
+  2+ fix attempts, or the team needs documented evidence before modifying code. Investigates across
+  lifecycle, threading, state, data flow, and edge cases, producing a structured analysis report. Use
+  when the user says "do a deep debug," "root cause analysis," "why does this keep happening," or
+  "analyze this bug thoroughly." Do not use for quick interactive fixes — use unity-debug-quick for that.
 metadata:
   author: kuozg
   version: "1.1"

@@ -1,6 +1,11 @@
 ---
 name: git-squash
-description: Squash commits for a PR — analyze, group, plan, get approval, execute — use for 'squash commits', 'squash for PR', 'clean up commits', 'combine commits'
+description: >
+  Use this skill to squash a branch's commits into clean, logical units before merging a PR. Use it
+  when the user wants to "clean up commits," "squash before merge," "combine WIP commits," or "make
+  the history cleaner." Analyzes commit history, groups related changes, presents a squash plan for
+  approval, then executes via interactive rebase. Do not use for amending a single commit — use
+  git-comment for that.
 metadata:
   author: kuozg
   version: "1.0"

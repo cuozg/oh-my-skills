@@ -1,6 +1,11 @@
 ---
 name: unity-review-asset
-description: PR asset review — shaders, textures, animations, import settings. Triggers — 'review assets', 'asset review', 'check assets', 'shader review', 'texture review'.
+description: >
+  Use this skill to review Unity asset files in a GitHub PR — materials (.mat), shaders (.shader),
+  textures, animations (.controller, .anim), FBX models, and import settings (.meta). Use when a PR adds
+  or modifies visual/asset files and the user wants to check for shader issues, texture memory bloat,
+  missing mip maps, incorrect import settings, or animation config problems. Use when the user says
+  "review the assets," "check the shader changes," or "are these import settings correct."
 metadata:
   author: kuozg
   version: "1.0"

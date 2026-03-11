@@ -1,6 +1,11 @@
 ---
 name: "pdf"
-description: "Use when tasks involve reading, creating, or reviewing PDF files where rendering and layout matter; prefer visual checks by rendering pages (Poppler) and use Python tools such as `reportlab`, `pdfplumber`, and `pypdf` for generation and extraction."
+description: >
+  Use this skill when the user needs to read, create, or review PDF files where rendering and layout
+  matter. Covers generating PDFs programmatically (reportlab), extracting data from PDFs (pdfplumber,
+  pypdf), and visually validating PDF output by rendering pages (Poppler). Use it even when the user
+  just says "make this into a PDF," "extract data from this PDF," or "check if this PDF looks right."
+  Do not use for simple text extraction where layout doesn't matter.
 ---
 
 

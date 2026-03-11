@@ -1,6 +1,11 @@
 ---
 name: unity-debug-quick
-description: Interactively diagnose Unity bugs — parse symptom, investigate, propose 2+ solutions, user picks, fix, loop until resolved. Triggers — 'debug this', 'why is this broken', 'fix this bug', 'something is wrong', 'not working'.
+description: >
+  Use this skill to interactively diagnose Unity bugs — parse the symptom, investigate the codebase,
+  propose 2+ solutions, let the user pick, apply the fix, and loop until resolved. Use when the user
+  says "why is this broken," "fix this bug," "something is wrong," "this isn't working," or describes
+  unexpected runtime behavior without a clear error. Do not use for compile errors with clear messages
+  (unity-debug-fix) or for deep documented analysis (unity-debug-deep).
 metadata:
   author: kuozg
   version: "1.0"

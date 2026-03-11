@@ -1,6 +1,11 @@
 ---
 name: unity-standards
-description: Unity development standards — MUST be included in load_skills for all Unity task delegations. Triggers when writing, reviewing, debugging, testing, or planning Unity C# code.
+description: >
+  Use this skill as the shared reference hub for all Unity C# development — coding standards, naming
+  conventions, review checklists, debug patterns, test patterns, and UI Toolkit guidelines. MUST be
+  included in load_skills for any Unity task delegation. Triggers automatically when writing, reviewing,
+  debugging, testing, or planning Unity C# code. Contains 60+ reference files across 8 categories that
+  other skills pull from on demand.
 metadata:
   author: kuozg
   version: "1.1"

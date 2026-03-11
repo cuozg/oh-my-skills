@@ -1,6 +1,11 @@
 ---
 name: unity-review-code-local
-description: Local C# logic review — adds inline REVIEW comments to changed files. Triggers — 'review my code', 'code review', 'review local', 'check my changes', 'review this file'.
+description: >
+  Use this skill to review locally changed Unity C# files by adding inline // REVIEW comments. Covers
+  logic correctness, Unity lifecycle risks, serialization, performance, architecture, and concurrency.
+  Use when the user says "review my code," "check my changes," "review this file," or wants feedback on
+  uncommitted work before pushing. Does not touch GitHub — reviews only local files. For GitHub PR
+  reviews, use unity-review-code-pr instead.
 metadata:
   author: kuozg
   version: "1.0"

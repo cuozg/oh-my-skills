@@ -1,6 +1,11 @@
 ---
 name: bash-check
-description: Validate shell scripts with syntax check and ShellCheck lint — use for 'check script', 'validate bash', 'lint shell', 'shellcheck', 'check shell script'
+description: >
+  Use this skill to validate a shell script before committing or deploying — runs bash -n syntax checks
+  and ShellCheck static analysis, then produces a findings report. Use it whenever the user has a .sh or
+  .bash script they want checked for bugs, unsafe patterns, or POSIX compliance, even if they just say
+  "is this script OK" or "check this for issues." Do not use for refactoring or optimizing scripts —
+  use bash-optimize for that.
 metadata:
   author: kuozg
   version: "1.0"

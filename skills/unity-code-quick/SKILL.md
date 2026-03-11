@@ -1,6 +1,12 @@
 ---
 name: unity-code-quick
-description: Use whenever the user wants a small Unity runtime C# change that should stay inside one .cs file — a MonoBehaviour, ScriptableObject, interface, enum, struct, data model, static helper, or a narrow edit to an existing runtime script. Reach for it even when they ask for a quick script or one-file fix. Do not use it for editor tooling, UI Toolkit, tests, optimization-only passes, or anything that needs multiple files or architecture planning.
+description: >
+  Use this skill whenever the user wants a small Unity runtime C# change that stays inside one .cs file —
+  a MonoBehaviour, ScriptableObject, interface, enum, struct, data model, static helper, or a narrow edit
+  to an existing runtime script. Reach for it even when they ask for "a quick script," "one-file fix," or
+  "write me a simple component." Do not use for editor tooling (unity-code-editor), UI Toolkit
+  (unity-uitoolkit-create), tests (unity-test-unit), optimization-only passes (unity-code-optimize), or
+  anything needing multiple files (unity-code-deep).
 metadata:
   author: kuozg
   version: "2.0"

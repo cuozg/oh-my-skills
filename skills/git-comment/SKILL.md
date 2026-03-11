@@ -1,6 +1,10 @@
 ---
 name: git-comment
-description: Amend the last commit message to be clean and descriptive — use for 'amend commit', 'fix commit message', 'rewrite commit', 'change commit message'
+description: >
+  Use this skill to rewrite the most recent local commit message to be clean, imperative, and
+  well-structured. Use it when the last commit message is unclear, auto-generated, or the user says
+  "fix my commit message," "that commit message is bad," or "reword the last commit." Never touches
+  pushed commits. Do not use for making new commits — use git-commit for that.
 metadata:
   author: kuozg
   version: "1.0"

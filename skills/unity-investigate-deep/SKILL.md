@@ -1,6 +1,12 @@
 ---
 name: unity-investigate-deep
-description: Full investigation report with architecture diagrams, execution flows, and risk tables. Triggers — 'deep investigate', 'investigation report', 'full analysis', 'system investigation', 'architecture analysis'.
+description: >
+  Use this skill to produce a comprehensive investigation report with Mermaid architecture diagrams,
+  execution flows, cited evidence, and risk tables. Use when the team needs documented understanding of
+  an unfamiliar system, a pre-refactor audit, or a thorough analysis of how a complex subsystem works.
+  Use when the user says "do a deep investigation," "full analysis of this system," "I need an
+  investigation report," or "analyze this architecture." Do not use for quick Q&A — use
+  unity-investigate-quick.
 metadata:
   author: kuozg
   version: "1.0"

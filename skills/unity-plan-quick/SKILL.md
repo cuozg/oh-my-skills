@@ -1,6 +1,11 @@
 ---
 name: unity-plan-quick
-description: Inline plan for XS/S tasks with cost, risk, and task_create. Triggers — 'plan this', 'quick plan', 'estimate this', 'small task plan', 'how long will this take'.
+description: >
+  Use this skill for quick inline planning of small Unity tasks (XS: 0-2h, S: 2-8h) — cost estimation,
+  risk assessment, and task creation. Use when the user says "plan this," "how long will this take,"
+  "estimate this task," "quick plan," or wants a fast assessment before starting a small change. Outputs
+  an inline report with cost, hours, risk level, and a task tree. For features spanning multiple systems,
+  use unity-plan-deep (M/L) or unity-plan-costing (XL).
 metadata:
   author: kuozg
   version: "1.0"

@@ -1,6 +1,11 @@
 ---
 name: unity-review-general
-description: PR quality gate — sole APPROVE or REQUEST_CHANGES authority. Triggers — 'approve PR', 'final review', 'quality gate', 'approve or reject'.
+description: >
+  Use this skill as the final quality gate for a GitHub PR — sole authority to APPROVE or REQUEST_CHANGES.
+  Evaluates security, correctness, test coverage, performance, and documentation. Use after specialist
+  reviews (code-pr, architecture, asset, prefab) have run, or when the user says "approve this PR," "is
+  this ready to merge," "final review," or "should we merge this." Posts the final decision to the
+  GitHub PR.
 metadata:
   author: kuozg
   version: "1.0"

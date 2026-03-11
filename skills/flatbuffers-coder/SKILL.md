@@ -1,6 +1,11 @@
 ---
 name: flatbuffers-coder
-description: FlatBuffers pipeline — define .fbs schema, generate C# via flatc, serialize/deserialize binary data. Triggers — 'flatbuffers', 'fbs schema', 'flatbuffer', 'binary serialization', 'flatc'.
+description: >
+  Use this skill when the user needs to work with FlatBuffers in a Unity project — defining .fbs schemas,
+  generating C# code via flatc, or implementing binary serialization/deserialization. Use it whenever the
+  user mentions FlatBuffers, .fbs files, flatc, or needs zero-copy binary serialization for game data,
+  network packets, or save files, even if they just say "I need fast binary serialization" without naming
+  FlatBuffers specifically.
 metadata:
   author: kuozg
   version: "1.0"
