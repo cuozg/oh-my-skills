@@ -10,7 +10,7 @@ description: >
   windows, gizmos, cleaning up code, reducing allocations. Triggers: "write a script," "quick
   component," "build a system," "implement feature," "refactor," "custom inspector," "editor
   window," "gizmo," "clean up," "simplify," "optimize this." Do not use for UI Toolkit
-  (unity-uitoolkit-create), tests (unity-test-unit), or debugging (unity-debug).
+  (unity-uitoolkit), tests (unity-test-unit), or debugging (unity-debug).
 metadata:
   author: kuozg
   version: "1.0"

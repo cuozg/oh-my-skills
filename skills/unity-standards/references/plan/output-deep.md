@@ -38,8 +38,8 @@ Save to `Documents/Plans/PLAN_{Name}.md`. Follow this structure exactly.
 
 | ID | Subject | Size | Skill | Blocked By |
 |---|---|---|---|---|
-| T-1 | {Imperative verb + target} | {XS-XL} | {skill-name} | — |
-| T-2 | {Imperative verb + target} | {XS-XL} | {skill-name} | T-1 |
+| T-1 | {Imperative verb + target} | {XS-L} | {skill-name} | — |
+| T-2 | {Imperative verb + target} | {XS-L} | {skill-name} | T-1 |
 
 ## Dependency Graph
 

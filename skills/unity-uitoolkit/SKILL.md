@@ -1,5 +1,5 @@
 ---
-name: unity-uitoolkit-create
+name: unity-uitoolkit
 description: >
   Use this skill to build runtime UI with Unity UI Toolkit — UXML templates, USS styling, C# controller
   bindings, and custom controls. Accepts design docs, images, or verbal descriptions as input and asks
@@ -11,7 +11,7 @@ metadata:
   version: "1.0"
 ---
 
-# unity-uitoolkit-create
+# unity-uitoolkit
 
 Build production runtime UI using UI Toolkit. Parse design input (document, image, description) → clarify unknowns → create UXML + USS + C# controller.
 

@@ -4,7 +4,7 @@
 
 ```
 ▲ {Feature Name}
-{cost} · {hours} · {risk} risk
+{size} · {hours} · {risk} risk
 
 {1-sentence summary with evidence}
 
@@ -24,7 +24,7 @@
 
 ```
 ▲ Add Player Health System
-S ($50-100) · 2-4h · Low risk
+S · 2-4h · Low risk
 
 Add health component with damage/heal API and death event, based on existing IDamageable pattern in Assets/Scripts/Interfaces/.
 
@@ -46,7 +46,7 @@ Add health component with damage/heal API and death event, based on existing IDa
 
 | Field       | Format                                      |
 |-------------|---------------------------------------------|
-| Cost        | XS/S/M/L/XL + dollar range                 |
+| Size        | XS/S/M/L                                    |
 | Hours       | Range (e.g., 2-4h)                          |
 | Risk        | Low / Medium / High / Critical              |
 | Summary     | 1 sentence, reference existing code/patterns|
@@ -56,4 +56,4 @@ Add health component with damage/heal API and death event, based on existing IDa
 
 ## Metadata Line
 
-Single line: `{size} ({cost}) · {hours} · {risk} risk`
+Single line: `{size} · {hours} · {risk} risk`

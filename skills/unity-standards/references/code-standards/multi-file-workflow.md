@@ -4,7 +4,7 @@
 
 - One runtime file or narrow bug fix → `unity-code` (Quick mode)
 - Editor tooling or inspectors → `unity-code` (Editor mode)
-- UI Toolkit screens or styling → `unity-uitoolkit-create`
+- UI Toolkit screens or styling → `unity-uitoolkit`
 - Tests → `unity-test-unit`
 
 ## File Creation Order
