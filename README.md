@@ -217,7 +217,7 @@ Plan Unity features with codebase-aware task breakdowns.
 │   ├─ Flow: Read → Scope → Investigate → Plan → Doc → Tasks → Validate
 │   └─ Out:  Documents/Plans/PLAN_*.md + task hierarchy
 │
-└── unity-plan-costing       📦 Very large features (XL)
+└── unity-costing            📦 Very large features (XL)
     ├─ What: Vercel-themed HTML plan. No auto task_create.
     ├─ Flow: Read → Scope → Investigate → Plan → Generate HTML → Save
     ├─ Rule: No JavaScript in HTML. User decides when to register tasks.

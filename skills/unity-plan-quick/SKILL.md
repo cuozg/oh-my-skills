@@ -5,7 +5,7 @@ description: >
   risk assessment, and task creation. Use when the user says "plan this," "how long will this take,"
   "estimate this task," "quick plan," or wants a fast assessment before starting a small change. Outputs
   an inline report with cost, hours, risk level, and a task tree. For features spanning multiple systems,
-  use unity-plan-deep (M/L) or unity-plan-costing (XL).
+  use unity-plan-deep (M/L) or unity-costing (XL).
 metadata:
   author: kuozg
   version: "1.0"

@@ -2,12 +2,12 @@
 
 ## Classification
 
-After fetching PR files (workflow step 2), classify by counting **changed C# files** and **changed functions/methods**.
+After fetching PR files, classify by counting **changed C# files** and **changed functions/methods**.
 
 | Size | C# Files Changed | Functions Changed | Review Mode |
 |------|:-:|:-:|---|
 | **Minor** | 1-2 | 1-5 | Quick (single-pass) |
-| **Large** | 3+ | 6+ | Deep (6 parallel subagents) |
+| **Large** | 3+ | 6+ | Deep (parallel subagents) |
 
 Either threshold triggers Large — e.g. 1 file with 8 changed functions = Large.
 

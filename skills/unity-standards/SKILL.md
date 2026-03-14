@@ -4,7 +4,7 @@ description: >
   Use this skill as the shared reference hub for all Unity C# development — coding standards, naming
   conventions, review checklists, debug patterns, test patterns, and UI Toolkit guidelines. MUST be
   included in load_skills for any Unity task delegation. Triggers automatically when writing, reviewing,
-  debugging, testing, or planning Unity C# code. Contains 60+ reference files across 8 categories that
+  debugging, testing, or planning Unity C# code. Contains 70+ reference files across 8 categories that
   other skills pull from on demand.
 metadata:
   author: kuozg
@@ -64,9 +64,10 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `plan/sizing-guide.md` · `risk-assessment.md` · `task-structure.md`
 - `plan/investigation-workflow.md` · `dependency-mapping.md` · `output-quick.md`
 
-### Debug (3)
+### Debug (4)
 
 - `debug/diagnosis-workflow.md` · `common-unity-errors.md` · `log-format.md`
+- `debug/analysis-template.md` — structured report template for deep bug analysis output
 
 ### Test (6)
 

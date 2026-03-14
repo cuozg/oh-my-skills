@@ -1,5 +1,5 @@
 ---
-name: unity-plan-costing
+name: unity-costing
 description: >
   Use this skill to create a detailed HTML plan for XL Unity features (10+ days) or major refactors —
   deep codebase investigation, full epic/task tree with dependencies, architecture analysis, and risk
@@ -11,7 +11,7 @@ metadata:
   author: kuozg
   version: "1.0"
 ---
-# unity-plan-costing
+# unity-costing
 
 Produce a comprehensive HTML plan for very large features — deep codebase investigation,
 architecture analysis, full epic/task tree with dependencies, waves, and risk assessment.
