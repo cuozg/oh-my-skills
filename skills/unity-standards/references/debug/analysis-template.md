@@ -1,6 +1,6 @@
 # analysis-template.md
 
-Template for unity-debug-deep analysis output. Load this BEFORE writing the report.
+Template for unity-debug Deep Mode analysis output. Load this BEFORE writing the report.
 
 ---
 

@@ -50,7 +50,7 @@ Triggered when out of combat for 3 seconds.
 | Multi-file, architecture | `→ skill:unity-code-deep` |
 | Editor tooling | `→ skill:unity-code-editor` |
 | Unit tests | `→ skill:unity-test-unit` |
-| Bug diagnosis | `→ skill:unity-debug-quick` |
+| Bug diagnosis | `→ skill:unity-debug` |
 | Investigation | `→ skill:unity-investigate-quick` |
 
 ## blockedBy Dependencies
