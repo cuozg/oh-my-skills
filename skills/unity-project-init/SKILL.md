@@ -9,7 +9,7 @@ description: >
   project setup. Also triggers on "folder layout," "project organization," "directory structure,"
   "project template," "asmdef setup," or "best folder structure for Unity." Always use this skill
   when the user provides a company name, project name, and feature list for a new Unity project.
-  Do not use for adding features to an existing project — use unity-code-deep for that.
+  Do not use for adding features to an existing project — use unity-code for that.
 metadata:
   author: kuozg
   version: "1.0"
@@ -23,7 +23,7 @@ Generate a production-ready Unity project folder tree with assembly definitions,
 
 **Use when:** Starting a new Unity project, reorganizing a messy project, or setting up a clean folder structure from scratch.
 
-**Switch out if:** Project already has an established structure and the user wants to add features (`unity-code-deep`) or write code (`unity-code-quick`).
+**Switch out if:** Project already has an established structure and the user wants to add features (`unity-code`).
 
 ## Workflow
 

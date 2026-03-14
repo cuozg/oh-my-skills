@@ -5,7 +5,7 @@
 ```python
 task_create(
     subject="Add health regeneration to PlayerStats",
-    description="Implement passive HP regen...\n→ skill:unity-code-quick",
+    description="Implement passive HP regen...\n→ skill:unity-code",
     blockedBy=["T-abc123"]  # optional
 )
 ```
@@ -39,16 +39,16 @@ Triggered when out of combat for 3 seconds.
 - Add _regenCoroutine field, start in OnOutOfCombat
 - Cache WaitForSeconds(1f), regen 5 HP/tick
 - Stop coroutine on damage received
-→ skill:unity-code-quick
+→ skill:unity-code
 ```
 
 ## Skill Routing
 
 | Task Type | Skill |
 |-----------|-------|
-| Single file, simple | `→ skill:unity-code-quick` |
-| Multi-file, architecture | `→ skill:unity-code-deep` |
-| Editor tooling | `→ skill:unity-code-editor` |
+| Single file, simple | `→ skill:unity-code` |
+| Multi-file, architecture | `→ skill:unity-code` |
+| Editor tooling | `→ skill:unity-code` |
 | Unit tests | `→ skill:unity-test-unit` |
 | Bug diagnosis | `→ skill:unity-debug` |
 | Investigation | `→ skill:unity-investigate` |

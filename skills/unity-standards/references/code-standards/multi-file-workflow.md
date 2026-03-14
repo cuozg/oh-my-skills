@@ -2,8 +2,8 @@
 
 ## Route Before Writing
 
-- One runtime file or narrow bug fix → `unity-code-quick`
-- Editor tooling or inspectors → `unity-code-editor`
+- One runtime file or narrow bug fix → `unity-code` (Quick mode)
+- Editor tooling or inspectors → `unity-code` (Editor mode)
 - UI Toolkit screens or styling → `unity-uitoolkit-create`
 - Tests → `unity-test-unit`
 

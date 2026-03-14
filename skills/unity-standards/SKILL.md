@@ -5,7 +5,8 @@ description: >
   conventions, review checklists, debug patterns, test patterns, and UI Toolkit guidelines. MUST be
   included in load_skills for any Unity task delegation. Triggers automatically when writing, reviewing,
   debugging, testing, or planning Unity C# code. Contains 70+ reference files across 8 categories that
-  other skills pull from on demand.
+  other skills pull from on demand. Includes editor patterns for CustomEditor, EditorWindow,
+  PropertyDrawer, Gizmos, and Handles.
 metadata:
   author: kuozg
   version: "1.1"
@@ -29,7 +30,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 ## Reference Catalog
 
-### Code Standards (31)
+### Code Standards (33)
 
 - `code-standards/naming.md` — naming, casing, file and namespace rules
 - `code-standards/project-structure.md` — folder layout, feature-based organization, .asmdef, .gitignore
@@ -44,6 +45,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `code-standards/refactoring-patterns.md` · `multi-file-workflow.md` · `single-file-runtime-workflow.md`
 - `code-standards/unity-attributes.md` · `unity-attributes-advanced.md`
 - `code-standards/object-pooling.md` · `object-pooling-advanced.md`
+- `code-standards/editor-patterns.md` · `gizmos-handles.md`
 
 ### Review (15)
 

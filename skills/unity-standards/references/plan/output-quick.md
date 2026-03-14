@@ -32,11 +32,11 @@ Add health component with damage/heal API and death event, based on existing IDa
 ├─ Implement HealthComponent MonoBehaviour
 │  Track current/max HP, expose TakeDamage/Heal, fire OnDeath event.
 │  Serialized fields for maxHealth, invincibility duration.
-│  → skill:unity-code-quick
+│  → skill:unity-code
 ├─ Create HealthBar UI prefab
 │  Slider-based bar, subscribe to HealthComponent events.
 │  Follow existing UI pattern in Assets/Prefabs/UI/.
-│  → skill:unity-code-quick
+│  → skill:unity-code
 └─ Write HealthComponent unit tests
    Cover: damage clamp, heal cap, death trigger, negative input.
    → skill:unity-test-unit

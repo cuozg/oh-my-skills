@@ -5,7 +5,7 @@ description: >
   bindings, and custom controls. Accepts design docs, images, or verbal descriptions as input and asks
   clarifying questions for ambiguous requirements. Use when the user says "create a UI screen," "build a
   menu," "make a HUD," "UI from this mockup," or any request involving UXML, USS, or runtime UI panels.
-  Do not use for editor-only UI — use unity-code-editor for that.
+  Do not use for editor-only UI — use unity-code for that.
 metadata:
   author: kuozg
   version: "1.0"
