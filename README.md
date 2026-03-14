@@ -1,13 +1,13 @@
-# Oh My Unity
+# Oh My Skills
 
-A comprehensive skill pack and tooling configuration for AI agents working with Unity projects. Clone it into your OpenCode config directory and get 37 specialized skills and 42 slash commands — all tuned for Unity C# development.
+A comprehensive skill pack and tooling configuration for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get 38 specialized skills and 42 slash commands — all tuned for Unity C# and Flutter development.
 
 ## Installation
 
 ### 1. Clone
 
 ```bash
-git clone https://github.com/cuozg/oh-my-unity.git ./.opencode
+git clone https://github.com/cuozg/oh-my-skills.git ./.opencode
 ```
 
 ### 2. Install GitHub CLI (`gh`)
@@ -58,6 +58,46 @@ read_skill_file("unity-standards", "references/code-standards/naming.md")
 read_skill_file("unity-standards", "references/review/logic-checklist.md")
 ```
 
+### `flutter-standards` — Shared Reference Hub
+
+`flutter-standards` is the **shared reference hub** for all Flutter & Dart conventions. It holds **12 reference files** across 6 categories:
+
+| Category | Count | Covers |
+| --- | --- | --- |
+| Code & Style | 2 | Dart naming, formatting, linting, null-safety, feature-first layout, pubspec |
+| Architecture & State | 3 | Feature-first patterns, Riverpod 2.x, DI with provider scoping |
+| UI & Assets | 2 | Widget composition, theming, responsive layout, asset management, flutter_gen |
+| Async & Errors | 2 | Future/Stream patterns, exception hierarchies, Result pattern |
+| Testing | 1 | Unit, widget, integration tests, AAA pattern, Mocktail |
+| Performance & Debug | 2 | Rebuild profiling, DevTools, structured logging, crash reporting |
+
+Other skills pull specific references on demand:
+
+```python
+read_skill_file("flutter-standards", "references/dart-style-guide.md")
+read_skill_file("flutter-standards", "references/state-management-guide.md")
+```
+
+#### Architecture
+
+```mermaid
+graph TD
+    FS[flutter-standards<br/>12 reference files] --> FC[flutter-code]
+    FS --> FU[flutter-ui]
+    FS --> FD[flutter-debug]
+    FS --> FR[flutter-review]
+    FS --> FT[flutter-test]
+    FS --> FP[flutter-profiler]
+    
+    style FS fill:#0175C2,color:#fff,stroke:#02569B
+    style FC fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style FU fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style FD fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style FR fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style FT fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style FP fill:#1a1a2e,color:#fff,stroke:#0175C2
+```
+
 ### Mandatory Skill Loading Rule
 
 > **When writing, reviewing, or refactoring Unity C# code, implementing features, setting up dependency injection, working with events, or reviewing code changes — always load `unity-standards`.**
@@ -70,9 +110,9 @@ task(category="deep", load_skills=["unity-code-deep", "unity-standards"], prompt
 ```
 
 
-## Skills (37)
+## Skills (38)
 
-> **37 skills** across 11 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
+> **38 skills** across 12 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
 
 ---
 
@@ -319,6 +359,24 @@ Build runtime UI with UI Toolkit.
     ├─ What: UXML templates, USS styling, C# bindings, custom controls
     ├─ Flow: Parse input → Clarify → Discover → Structure → Implement → Wire → Verify
     └─ Out:  .uxml + .uss + .cs controller files
+```
+
+---
+
+## 🦋 Flutter Skills (Planned)
+
+Write, review, debug, test, and profile Flutter/Dart code.
+
+```
+├── flutter-standards        📚 Shared reference hub (12 files)
+│   └─ Use:  Other flutter-* skills load refs via read_skill_file
+│
+├── flutter-code            🔷 Write Flutter/Dart code (planned)
+├── flutter-ui              🎨 Build screens & widgets (planned)
+├── flutter-debug           🐛 Diagnose & fix bugs (planned)
+├── flutter-review          🔍 Review PRs & local changes (planned)
+├── flutter-test            🧪 Unit, widget & integration tests (planned)
+└── flutter-profiler        📊 DevTools profiler analysis (planned)
 ```
 
 ---
