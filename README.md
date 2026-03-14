@@ -315,7 +315,7 @@ Shell script tooling.
 Build runtime UI with UI Toolkit.
 
 ```
-└── unity-uitoolkit-create  🎨 UI Toolkit builder
+└── unity-uitoolkit         🎨 UI Toolkit builder
     ├─ What: UXML templates, USS styling, C# bindings, custom controls
     ├─ Flow: Parse input → Clarify → Discover → Structure → Implement → Wire → Verify
     └─ Out:  .uxml + .uss + .cs controller files
