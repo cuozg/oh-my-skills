@@ -1,13 +1,6 @@
 ---
 name: flutter-standards
-description: >
-  Use this skill as the shared reference hub for all Flutter & Dart development — coding standards,
-  naming conventions, architecture patterns, state management, testing, performance, and UI guidelines.
-  MUST be included in load_skills for any Flutter task delegation. Triggers automatically when writing,
-  reviewing, debugging, testing, or planning Flutter/Dart code. Contains 12 reference files across
-  architecture, state, UI, performance, and tooling categories that downstream skills pull on demand.
-  Also use when the user says "Dart style guide," "Flutter best practices," "Riverpod patterns,"
-  "feature-first structure," "Flutter performance," or any Flutter/Dart coding standards question.
+description: "Use this skill as the shared reference hub for all Flutter & Dart development — coding standards, naming conventions, architecture patterns, state management, testing, performance, and UI guidelines. MUST be included in load_skills for any Flutter task delegation. Triggers automatically when writing, reviewing, debugging, testing, or planning Flutter/Dart code. Contains 12 reference files across architecture, state, UI, performance, and tooling categories that downstream skills pull on demand. Also use when the user says Dart style guide, Flutter best practices, Riverpod patterns, feature-first structure, Flutter performance, or any Flutter/Dart coding standards question."
 metadata:
   author: kuozg
   version: "1.0"
