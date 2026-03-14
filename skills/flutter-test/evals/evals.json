@@ -1,0 +1,125 @@
+{
+  "skill_name": "flutter-test",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Write unit tests for an AuthRepository class that has login(email, password) returning Future<User> and logout() returning Future<void>. It depends on an ApiClient. Cover success, failure, invalid input, and edge cases.",
+      "expected_output": "A test file using mocktail with MockApiClient, ProviderContainer if provider-based, 10+ test cases covering login success, login failure (401, network error), logout, empty email, empty password, null handling. Should use Unit mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Unit mode (repository/service class)",
+        "Uses mocktail (Mock, when, verify) — NOT mockito",
+        "Creates MockApiClient extending Mock",
+        "Has setUp with fresh mock and sut instances",
+        "Contains 10+ test cases covering happy path, error paths, edge cases",
+        "Uses AAA pattern with Arrange/Act/Assert comments",
+        "Test file path mirrors source: test/features/auth/data/auth_repository_test.dart"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Write tests for a CartNotifier Riverpod provider that manages a list of CartItem. It has addItem, removeItem, clearCart, and totalPrice getter. Test all state transitions.",
+      "expected_output": "Unit tests using ProviderContainer with addTearDown(container.dispose), testing all notifier methods and computed values. Should use Unit mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Unit mode (provider/notifier)",
+        "Uses ProviderContainer for provider testing",
+        "Calls addTearDown(container.dispose) for cleanup",
+        "Tests addItem, removeItem, clearCart methods",
+        "Tests totalPrice computation with various cart states",
+        "Tests edge cases: remove from empty cart, add duplicate item",
+        "Contains 10+ test cases"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Write tests for a UserService class with methods: fetchUsers() -> Future<List<User>>, getUserById(String id) -> Future<User?>, deleteUser(String id) -> Future<void>. It depends on a UserRepository.",
+      "expected_output": "Unit tests with MockUserRepository, covering all three methods with success, failure, empty results, and invalid IDs. Should use Unit mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Unit mode (service class)",
+        "Creates MockUserRepository with mocktail",
+        "Registers fallback values for custom types if needed",
+        "Tests fetchUsers returning empty list, single user, multiple users",
+        "Tests getUserById with valid ID, invalid ID, null result",
+        "Tests deleteUser success and failure scenarios",
+        "Uses group() to organize tests by method"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Write widget tests for a LoginScreen that has email field, password field, login button, and shows error messages on validation failure. It uses a Riverpod AuthNotifier for state.",
+      "expected_output": "Widget tests using testWidgets, pumpWidget with ProviderScope overrides, finder patterns, interaction testing. Should use Widget mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Widget mode (screen/UI)",
+        "Uses testWidgets and tester.pumpWidget with ProviderScope",
+        "Overrides authNotifierProvider with mock or test state",
+        "Tests rendering of email field, password field, login button",
+        "Tests validation error display on empty/invalid input",
+        "Tests tap interactions triggering state changes",
+        "Uses find.byKey, find.text, or find.byType finders"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Write widget tests for a ProductCard component that displays product name, price, and an 'Add to Cart' button. Verify rendering, tap behavior, and different product states (in stock, out of stock, on sale).",
+      "expected_output": "Widget tests for a reusable component with multiple render states and interaction verification. Should use Widget mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Widget mode (component)",
+        "Tests rendering of product name, price, and button",
+        "Tests 'Add to Cart' button tap calls the expected callback",
+        "Tests out-of-stock state disables the button or shows alternate text",
+        "Tests on-sale state shows discounted price or sale badge",
+        "Uses const Key for widget lookups",
+        "Has 10+ test cases covering all visual states"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Write golden tests for a ProfileCard widget to verify its visual appearance. The card shows avatar, name, email, and a settings icon. Test both light and dark themes.",
+      "expected_output": "Widget tests with matchesGoldenFile assertions for visual regression testing. Should use Widget mode with golden file patterns.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Widget mode (golden/visual test)",
+        "Uses matchesGoldenFile for visual assertions",
+        "Tests both light and dark theme variants",
+        "Wraps widget in MaterialApp with appropriate ThemeData",
+        "Provides instructions for running with --update-goldens flag",
+        "Golden file paths follow convention: goldens/profile_card_light.png",
+        "Sets fixed surface size for deterministic screenshots"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Write integration tests for a complete login-to-home flow: user opens app, sees login screen, enters credentials, taps login, gets navigated to home screen, sees welcome message with their name.",
+      "expected_output": "Integration tests using IntegrationTestWidgetsFlutterBinding with full app launch, form interaction, navigation verification. Should use Integration mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Integration mode (full app flow)",
+        "Uses IntegrationTestWidgetsFlutterBinding.ensureInitialized()",
+        "Launches full app with tester.pumpWidget",
+        "Tests sequential flow: login screen → enter credentials → tap login → home screen",
+        "Verifies navigation occurred (finds HomeScreen or home content)",
+        "Uses pumpAndSettle after navigation transitions",
+        "Test file placed in integration_test/ directory"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Write integration tests for bottom navigation: verify tapping each tab (Home, Search, Profile) switches to the correct screen and maintains state when switching back.",
+      "expected_output": "Integration tests verifying tab navigation and state preservation across screen switches. Should use Integration mode.",
+      "files": [],
+      "expectations": [
+        "The agent identifies this as Integration mode (navigation test)",
+        "Tests tapping each bottom nav icon navigates to correct screen",
+        "Verifies state is preserved when switching tabs and returning",
+        "Uses find.byIcon or find.byKey for tab buttons",
+        "Calls pumpAndSettle after each navigation",
+        "Asserts correct screen type or content is visible after each tap",
+        "Tests at least 3 tab switches with back-and-forth navigation"
+      ]
+    }
+  ]
+}
