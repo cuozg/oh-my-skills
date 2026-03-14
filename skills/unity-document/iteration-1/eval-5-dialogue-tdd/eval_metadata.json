@@ -1,0 +1,14 @@
+{
+  "eval_id": 5,
+  "eval_name": "dialogue-tdd",
+  "prompt": "I need a design doc for adding a Dialogue System. Requirements: branching conversations with conditions, localization support, integration with our EventBus for triggering game events from dialogue choices. We have no dialogue system currently.",
+  "assertions": [
+    "Output is saved to Documents/TDDs/ with TDD_ prefix",
+    "Document has Problem, Goals, Non-Goals clearly separated",
+    "Design section proposes concrete components with responsibilities",
+    "Design includes a Mermaid diagram showing data flow",
+    "Alternatives section compares at least 2 approaches with pros/cons",
+    "Dependencies section maps EventBus integration",
+    "No TODO/TBD/FIXME placeholders in the output"
+  ]
+}
