@@ -59,10 +59,11 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `quality/grading-criteria.md` · `architecture-audit.md` · `performance-audit.md`
 - `quality/best-practices-audit.md` · `tech-debt-audit.md` · `html-report-format.md`
 
-### Plan (6)
+### Plan (7)
 
 - `plan/sizing-guide.md` · `risk-assessment.md` · `task-structure.md`
 - `plan/investigation-workflow.md` · `dependency-mapping.md` · `output-quick.md`
+- `plan/investigation-template.md` — markdown template for system investigation reports
 
 ### Debug (4)
 

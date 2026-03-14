@@ -51,7 +51,7 @@ Triggered when out of combat for 3 seconds.
 | Editor tooling | `→ skill:unity-code-editor` |
 | Unit tests | `→ skill:unity-test-unit` |
 | Bug diagnosis | `→ skill:unity-debug` |
-| Investigation | `→ skill:unity-investigate-quick` |
+| Investigation | `→ skill:unity-investigate` |
 
 ## blockedBy Dependencies
 
