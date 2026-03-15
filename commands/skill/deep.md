@@ -7,8 +7,8 @@ subtask: true
 
 - Don't ask for review, do it by your self.
 - Don't stop until you finish all the task.
-- Check unity-standards first to see if it already contain the logic in references
-- Check if the document can be shared between skills, then put it in unity-standards/references accordingly.
+- Check standards first to see if it already contain the logic in references
+- Check if the document can be shared between skills, then put it in standards/references accordingly.
 
 ---
 
