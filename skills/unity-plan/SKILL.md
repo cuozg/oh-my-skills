@@ -1,15 +1,16 @@
 ---
 name: unity-plan
 description: >
-  Plan any Unity feature with scope confirmation workflow. Auto-detects scope (XS/S/M/L)
+  Plan any Unity feature with scope confirmation workflow. Auto-detects scope (XS/S/M/L/XL)
   with confidence + reasoning, then blocks for user confirmation before planning.
   Quick (XS/S: 0-8h, inline report) or Deep (M/L: 1-10 days, markdown plan).
+  XL (10+ days) gets scope reduction or phasing guidance before planning.
   Use when the user says "plan this," "how long will this take," "estimate this task,"
   "I need a feature plan," "break this down," or describes any feature needing scoping
   before implementation.
 metadata:
   author: kuozg
-  version: "2.0"
+  version: "2.1"
 ---
 
 # unity-plan
@@ -23,6 +24,7 @@ Every planning session follows 5 steps. Steps 2 and 4 are BLOCKING — do not pr
 ### Step 1: Scope Detection
 
 Analyze the request and investigate briefly (max 3 tool calls) to determine size.
+Investigation targets: entry points, similar existing patterns, system boundaries, file count.
 Read `scope-detection-guide.md` for signal analysis. Present scope with reasoning, confidence, hours, and risk using the template from `scope-confirmation.md`.
 
 ### Step 2: Confirm Scope ⛔ BLOCK
@@ -36,6 +38,13 @@ Read `confirmation-flow.md` for response handling. If user adjusts, re-present u
 |-------|------|--------|
 | XS/S | Quick | Inline report (no file) |
 | M/L | Deep | `Documents/Plans/PLAN_{Name}.md` |
+| XL | — | Too large — suggest phasing into M/L chunks or scope reduction |
+
+**XL Scope (40+h, 25+ files):** Do NOT plan XL directly. Recommend the user either:
+1. Phase the work into 2-3 milestone chunks (each M or L), or
+2. Reduce scope by deferring non-essential parts, or
+3. Run an investigation spike first to reduce unknowns.
+Re-present adjusted scope for confirmation.
 
 **Quick Mode:** Report inline using format from `output-quick.md`.
 
@@ -60,6 +69,7 @@ After user approves, call `task_create` per task with `blockedBy` for max parall
 |--------|------|
 | Single-file change, isolated fix, "quick plan," "how long" | **Quick** (XS/S) |
 | Feature spans 2+ systems/files, "plan this feature," "break this down" | **Deep** (M/L) |
+| New architecture, multi-sprint, 25+ files, "massive refactor" | **XL** → phase or reduce scope |
 
 When scope is unclear, investigate briefly (max 3 tool calls) then present for confirmation.
 
@@ -75,6 +85,7 @@ When scope is unclear, investigate briefly (max 3 tool calls) then present for c
 
 Load `unity-standards` for planning methodology. Key references in `plan/`:
 `sizing-guide.md`, `scope-detection-guide.md`, `scope-confirmation.md`, `confirmation-flow.md`,
-`risk-assessment.md`, `dependency-mapping.md`, `task-structure.md`, `output-quick.md`, `output-deep.md`.
+`risk-assessment.md`, `dependency-mapping.md`, `task-structure.md`, `output-quick.md`, `output-deep.md`,
+`investigation-workflow.md`, `investigation-template.md`.
 
 Load via `read_skill_file("unity-standards", "references/plan/<file>")`.
