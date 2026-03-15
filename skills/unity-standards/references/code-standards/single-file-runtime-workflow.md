@@ -4,7 +4,7 @@
 
 - One runtime `.cs` file or narrow bug fix → `unity-code` (Quick mode)
 - 2+ runtime files, new abstractions, or registration steps → `unity-code` (Deep mode)
-- Editor tooling or inspectors → `unity-code` (Editor mode)
+- Editor tooling or inspectors → `unity-editor`
 - UI Toolkit screens or styling → `unity-uitoolkit`
 - Tests → `unity-test-unit`
 - Optimization-only cleanup with no behavior change → `unity-code` (Optimize mode)

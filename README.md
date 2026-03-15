@@ -1,6 +1,6 @@
 # Oh My Skills
 
-A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **37 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
+A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **38 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
 
 ## Installation
 
@@ -93,6 +93,7 @@ task(category="quick", load_skills=["flutter-standards"], prompt="...")
 ```mermaid
 graph TD
     US[unity-standards<br/>84 reference files] --> UC[unity-code]
+    US --> UE[unity-editor]
     US --> UR[unity-review]
     US --> UI[unity-investigate]
     US --> UD[unity-debug]
@@ -114,6 +115,7 @@ graph TD
 
     style US fill:#E04E39,color:#fff,stroke:#C03E2B
     style UC fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UE fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UR fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UI fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UD fill:#1a1a2e,color:#fff,stroke:#E04E39
@@ -137,22 +139,33 @@ graph TD
 
 ---
 
-## Skills (37)
+## Skills (38)
 
-> **37 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
+> **38 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
 ---
 
 ### unity-code
 
-Write, extend, or optimize Unity C# code. Auto-triages into the right mode.
+Write, extend, or optimize runtime Unity C# code. Auto-triages into the right mode.
 
 ```
-└── unity-code                  Unified C# coding skill
+└── unity-code                  Unified C# coding skill (runtime)
     ├─ Quick     ⚡  Single-file MonoBehaviour, SO, interface, enum, struct, helper
     ├─ Deep      🏗️  Multi-file features, services, state machines, refactors (2+ classes)
-    ├─ Editor    🛠️  EditorWindow, CustomEditor, PropertyDrawer, Gizmos, Handles, MenuItem
     └─ Optimize  ⚡  Simplify & clean up without behavior change
+```
+
+---
+
+### unity-editor
+
+Write Unity Editor scripts — inspectors, windows, drawers, gizmos, handles.
+
+```
+└── unity-editor                Unified Editor coding skill
+    ├─ Quick     ⚡  Single editor script — one inspector, one window, one drawer
+    └─ Deep      🏗️  Multi-file editor tooling — level editors, pipelines, inspector + gizmos
 ```
 
 ---
@@ -410,7 +423,8 @@ omo/               atlas · prometheus · sisyphus · sisyphus-junior
 skill/             deep · quick
 visual-explainer/  diff-review · fact-check · generate-slides · generate-visual-plan
                    generate-web-diagram · plan-review · project-recap · share
-unity/code/        deep · editor · optimize · quick
+unity/code/        deep · optimize · quick
+unity/editor/      deep · quick
 unity/debug/       deep · fix · log · profiler · quick
 unity/document/    system · tdd
 unity/investigate/ deep · quick

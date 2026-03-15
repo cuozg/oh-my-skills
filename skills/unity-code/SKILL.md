@@ -1,19 +1,18 @@
 ---
 name: unity-code
 description: >
-  Unified Unity C# coding skill — write, extend, or optimize Unity code across all domains.
+  Unified Unity C# coding skill — write, extend, or optimize runtime Unity code.
   Auto-triages: Quick (single-file MonoBehaviour, SO, interface, enum, struct, helper), Deep
-  (multi-file features, services, state machines, refactors spanning 2+ classes), Editor
-  (EditorWindow, CustomEditor, PropertyDrawer, Gizmos, MenuItem), Optimize (simplify/clean up
-  without behavior change). MUST use for ANY Unity C# code request — writing scripts, adding
-  components, implementing features, building systems, refactoring, creating inspectors, editor
-  windows, gizmos, cleaning up code, reducing allocations. Triggers: "write a script," "quick
-  component," "build a system," "implement feature," "refactor," "custom inspector," "editor
-  window," "gizmo," "clean up," "simplify," "optimize this." Do not use for UI Toolkit
-  (unity-uitoolkit), tests (unity-test-unit), or debugging (unity-debug).
+  (multi-file features, services, state machines, refactors spanning 2+ classes), Optimize
+  (simplify/clean up without behavior change). MUST use for ANY Unity C# runtime code request —
+  writing scripts, adding components, implementing features, building systems, refactoring,
+  cleaning up code, reducing allocations. Triggers: "write a script," "quick component,"
+  "build a system," "implement feature," "refactor," "clean up," "simplify," "optimize this."
+  Do not use for Editor scripts (unity-editor), UI Toolkit (unity-uitoolkit), tests
+  (unity-test-unit), or debugging (unity-debug).
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "2.0"
 ---
 # unity-code
 
@@ -25,7 +24,6 @@ Detect scope, pick mode, implement. Match local patterns, verify compilation, de
 |--------|------|
 | One `.cs` file, quick script, narrow edit, single component | **Quick** |
 | 2+ files, build system, implement feature, refactor across classes | **Deep** |
-| Inspector, EditorWindow, PropertyDrawer, Gizmo, MenuItem | **Editor** |
 | "Clean up," "simplify," "optimize," "reduce allocations," behavior unchanged | **Optimize** |
 
 State triage: "This is [mode] — [reason]."
@@ -48,12 +46,6 @@ State triage: "This is [mode] — [reason]."
 4. **Implement** — interfaces first → data/config → concrete logic → bootstrap/registration
 5. **Verify** — `lsp_diagnostics` per dependency tier, then all files
 6. **Handoff** — changed paths, verification, editor follow-up (SO assets, scene wiring, installer registration)
-
-### Editor Mode
-
-Load `read_skill_file("unity-code", "references/editor-mode.md")` for workflow, rules, and placement conventions.
-
-Key points: save under `Editor/`, use `SerializedProperty` for Undo/Prefab support, `serializedObject.Update()`/`ApplyModifiedProperties()` around edits, register windows via `[MenuItem]` + `GetWindow<T>()`.
 
 ### Optimize Mode
 
@@ -78,7 +70,7 @@ Key points: save under `Editor/`, use `SerializedProperty` for Undo/Prefab suppo
 |------|----|------|
 | Quick | Deep | Work requires a second file |
 | Deep | Quick | Plan reveals single-file scope |
-| Any | Editor | Target is editor domain |
+| Any | unity-editor | Target is editor domain (inspector, window, drawer, gizmo) |
 | Any | Optimize | User pivots to cleanup-only |
 
 Carry forward context; tell user why.
@@ -93,4 +85,4 @@ Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 - `code-standards/architecture-patterns.md` — state machine, MVP, command
 - `code-standards/refactoring-patterns.md` — extract, decompose, migrate
 - `code-standards/naming.md` · `serialization.md` · `null-safety.md` · `lifecycle.md` · `events.md` · `dependencies.md`
-- `code-standards/editor-patterns.md` · `gizmos-handles.md` — Editor boilerplate
+- For editor scripts (inspectors, windows, drawers, gizmos) → use **unity-editor** skill
