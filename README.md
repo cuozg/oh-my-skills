@@ -1,6 +1,6 @@
 # Oh My Skills
 
-A comprehensive skill pack and tooling configuration for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get 38 specialized skills and 42 slash commands — all tuned for Unity C# and Flutter development.
+A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **37 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
 
 ## Installation
 
@@ -38,17 +38,17 @@ Level 3 — References (loaded on demand)      detailed standards, checklists, t
 
 ### `unity-standards` — Shared Reference Hub
 
-`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **60 reference files** across 8 categories:
+`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **84 reference files** across 8 categories:
 
 | Category | Count | Covers |
 | --- | --- | --- |
-| Code Standards | 19 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ, collections, error-handling, comments, access-modifiers, code-patterns, architecture-patterns, multi-file-workflow, refactoring-patterns, unity-attributes, object-pooling |
-| Review | 12 | Logic, lifecycle risks, serialization risks, performance, security, concurrency, architecture, assets, prefabs, comment format, PR submission, parallel review |
+| Code Standards | 32 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ, collections, error-handling, comments, access-modifiers, code-patterns, architecture-patterns, multi-file-workflow, refactoring-patterns, unity-attributes, object-pooling |
+| Review | 15 | Logic, lifecycle risks, serialization risks, performance, security, concurrency, architecture, assets, prefabs, comment format, PR submission, parallel review |
+| Plan | 11 | Sizing, risk, task structure, investigation workflow, dependency mapping, quick output, deep workflow |
 | Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits, HTML report format |
-| Plan | 6 | Sizing, risk, task structure, investigation workflow, dependency mapping, quick output |
-| Debug | 3 | Diagnosis workflow, common Unity errors, log format |
-| Test | 5 | Edit/Play mode patterns, test case format, coverage strategy, naming |
 | UI Toolkit | 6 | Setup, performance, UXML patterns, USS styling, C# bindings, custom controls |
+| Test | 6 | Edit/Play mode patterns, test case format, coverage strategy, naming |
+| Debug | 5 | Diagnosis workflow, common Unity errors, log format, fix mode, deep mode |
 | Other | 3 | Mermaid syntax, FlatBuffers guide, skill authoring |
 
 Other skills pull specific references on demand:
@@ -78,17 +78,54 @@ read_skill_file("flutter-standards", "references/dart-style-guide.md")
 read_skill_file("flutter-standards", "references/state-management-guide.md")
 ```
 
-#### Architecture
+### Mandatory Skill Loading Rule
+
+> **When delegating any Unity or Flutter task, always include the corresponding standards skill.**
+
+```python
+task(category="quick", load_skills=["unity-standards"], prompt="...")
+task(category="deep", load_skills=["unity-code", "unity-standards"], prompt="...")
+task(category="quick", load_skills=["flutter-standards"], prompt="...")
+```
+
+### Architecture
 
 ```mermaid
 graph TD
+    US[unity-standards<br/>84 reference files] --> UC[unity-code]
+    US --> UR[unity-review]
+    US --> UI[unity-investigate]
+    US --> UD[unity-debug]
+    US --> UP[unity-plan]
+    US --> UDoc[unity-document]
+    US --> UProf[unity-profiler]
+    US --> UTU[unity-test-unit]
+    US --> UTC[unity-test-case]
+    US --> UUI[unity-uitoolkit]
+    US --> UPI[unity-project-init]
+    US --> USpec[unity-spec]
+
     FS[flutter-standards<br/>12 reference files] --> FC[flutter-code]
     FS --> FU[flutter-ui]
     FS --> FD[flutter-debug]
     FS --> FR[flutter-review]
     FS --> FT[flutter-test]
     FS --> FP[flutter-profiler]
-    
+
+    style US fill:#E04E39,color:#fff,stroke:#C03E2B
+    style UC fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UR fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UI fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UD fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UP fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UDoc fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UProf fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UTU fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UTC fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UUI fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UPI fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style USpec fill:#1a1a2e,color:#fff,stroke:#E04E39
+
     style FS fill:#0175C2,color:#fff,stroke:#02569B
     style FC fill:#1a1a2e,color:#fff,stroke:#0175C2
     style FU fill:#1a1a2e,color:#fff,stroke:#0175C2
@@ -98,264 +135,125 @@ graph TD
     style FP fill:#1a1a2e,color:#fff,stroke:#0175C2
 ```
 
-### Mandatory Skill Loading Rule
+---
 
-> **When writing, reviewing, or refactoring Unity C# code, implementing features, setting up dependency injection, working with events, or reviewing code changes — always load `unity-standards`.**
+## Skills (37)
 
-For delegated tasks, pass it via `load_skills`:
-
-```python
-task(category="quick", load_skills=["unity-standards"], prompt="...")
-task(category="deep", load_skills=["unity-code-deep", "unity-standards"], prompt="...")
-```
-
-
-## Skills (38)
-
-> **38 skills** across 12 domains. Each skill loads shared refs, follows a strict workflow, and produces a defined output.
+> **37 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
 ---
 
-## 🔷 unity-code
+### unity-code
 
-Write Unity C# code — standards, architecture, security, performance.
+Write, extend, or optimize Unity C# code. Auto-triages into the right mode.
 
 ```
-├── unity-code-quick        ⚡ Fast single-file C#
-│   ├─ What: MonoBehaviours, SOs, interfaces, data models, boilerplate
-│   ├─ Flow: Receive → match conventions → write
-│   └─ Out:  Single .cs, Function
-│
-├── unity-code-deep         🏗️ Complex multi-file C#
-│   ├─ What: Cross-system features, refactors
-│   ├─ Flow: Understand → Plan → Implement
-│   └─ Out:  Multiple .cs files, Functions
-│
-├── unity-code-optimize     ⚡ Simplify & optimize existing C#
-│   ├─ What: Clarity, consistency, performance. No behavior change.
-│   ├─ Flow: Scope → Discover conventions → Analyze → Simplify → Verify → Report
-│   └─ Out:  Inline modifications + change summary
-│
-└── unity-code-editor       🛠️ Editor tooling
-    ├─ What: EditorWindows, Inspectors, PropertyDrawers, Gizmos, Handles
-    ├─ Flow: Identify need → implement
-    └─ Out:  Production Editor scripts under Editor/
+└── unity-code                  Unified C# coding skill
+    ├─ Quick     ⚡  Single-file MonoBehaviour, SO, interface, enum, struct, helper
+    ├─ Deep      🏗️  Multi-file features, services, state machines, refactors (2+ classes)
+    ├─ Editor    🛠️  EditorWindow, CustomEditor, PropertyDrawer, Gizmos, Handles, MenuItem
+    └─ Optimize  ⚡  Simplify & clean up without behavior change
 ```
 
 ---
 
-## 🔍 unity-review
+### unity-review
 
 Review code, architecture, assets, prefabs, and project quality.
 
 ```
-├── unity-review-code-local     📝 Local logic review
-│   ├─ Focus: Logic correctness, edge cases, state, data flow, concurrency
-│   ├─ Flow:  Fetch changes → Read → Investigate → Review → Add comments
-│   ├─ Out:   Inline // ── REVIEW comments + background fix tasks
-│   └─ Note:  No GitHub. No commit. User reviews the diff.
-│
-├── unity-review-code-pr        🔗 GitHub PR logic review
-│   ├─ Focus: Same as local + Unity lifecycle/serialization risks
-│   ├─ Flow:  Fetch PR → Read → Investigate → Review → Build JSON → Submit
-│   └─ Out:   Comments pushed to GitHub PR via API
-│
-├── unity-review-architecture   🏛️ PR architecture review
-│   ├─ Focus: DI, events, assemblies, coupling, patterns
-│   └─ Out:   Architecture comments pushed to GitHub PR
-│
-├── unity-review-asset          🎨 PR asset review
-│   ├─ Focus: .mat .shader .meta .controller .anim .fbx .asset
-│   ├─ Check: Shader issues, texture memory, animation config, import settings
-│   └─ Out:   Asset comments pushed to GitHub PR
-│
-├── unity-review-prefab         🧩 PR prefab/scene review
-│   ├─ Focus: Missing scripts, broken variants, raycasts, hierarchy
-│   ├─ Mode:  Parallel — one subagent per file
-│   └─ Out:   Prefab/scene comments pushed to GitHub PR
-│
-├── unity-review-general        ✅ PR quality gate
-│   ├─ Focus: Security, correctness, testing, performance, docs
-│   ├─ Role:  Sole approval authority — APPROVE or REQUEST_CHANGES
-│   └─ Out:   Final decision pushed to GitHub PR
-│
-└── unity-review-quality        📊 Full project audit (read-only)
-    ├─ Focus: Architecture, performance, best practices, tech debt
-    ├─ Grade: A–F severity scoring, evidence-based
-    └─ Out:   Comprehensive md report
+└── unity-review                Unified review skill
+    ├─ Local     📝  Inline // REVIEW comments on local changes (no GitHub)
+    ├─ PR        🔗  GitHub PR review — parallel specialists → APPROVE / REQUEST_CHANGES
+    └─ Project   📊  Full A–F audit — architecture, performance, best practices, tech debt
 ```
 
 ---
 
-## 🔬 unity-investigate
+### unity-investigate
 
 Analyze codebases, understand systems, trace data flows.
 
 ```
-├── unity-investigate-quick     💬 Quick Q&A
-│   ├─ What: How does X work? What calls Y? Trace the flow.
-│   ├─ Flow: Parse → Find (lsp, grep, trace) → Reply
-│   ├─ Rule: Speed over ceremony — stop when you can answer
-│   └─ Out:  Summary + 1-3 detail blocks, tree format
-│
-└── unity-investigate-deep      📋 Full investigation report
-    ├─ What: Architecture diagrams, execution flows, risk tables
-    ├─ Flow: Scope → Discover → Analyze → Write → Summarize
-    ├─ Rule: Cite file:line for every claim
-    └─ Out:  Documents/Investigations/*.md with Mermaid diagrams
+└── unity-investigate           Unified investigation skill
+    ├─ Quick     💬  How does X work? What calls Y? → inline answer
+    └─ Deep      📋  Full report with Mermaid diagrams, cited evidence, risk tables
 ```
 
 ---
 
-## 🐛 unity-debug
+### unity-debug
 
 Diagnose, trace, and fix Unity issues.
 
 ```
-├── unity-debug-quick       🩺 Interactive diagnosis
-│   ├─ What: Propose ≥2 solutions → user picks → delegate fix → loop
-│   ├─ Flow: Parse → Investigate → Analyze → Propose → User picks → Fix → Loop
-│   └─ Out:  Diagnostic tree + interactive choice. Loops until done.
-│
-├── unity-debug-deep        🔎 Exhaustive analysis (read-only)
-│   ├─ What: Multi-angle: lifecycle, threading, state, data flow, edge cases
-│   ├─ Flow: 9-step deep investigation → structured document
-│   ├─ Rule: ≥3 angles. 2-4 solutions as WHAT/WHERE. Cite file:line. Never modifies code.
-│   └─ Out:  Documents/Debug/ANALYSIS_*.md
-│
-├── unity-debug-fix         🔧 Auto-fix loop
-│   ├─ What: Parse error → root cause → minimal fix → verify → loop
-│   ├─ Rule: Minimal changes only. Always lsp_diagnostics after.
-│   └─ Out:  Fixed code, zero errors, minimal diff
-│
-├── unity-debug-log         📋 Debug.Log generator (read-only)
-│   ├─ What: Color-coded, #if UNITY_EDITOR wrapped log snippets
-│   ├─ Format: [DBG] prefix, <color=X> tags, $"..." interpolation
-│   └─ Out:   Text output only — never written to project files
-│
-└── unity-profiler          📊 Profiler analysis
+└── unity-debug                 Unified debugging skill
+    ├─ Fix       🔧  Compile errors → auto-fix loop → zero errors
+    ├─ Quick     🩺  Runtime bugs → 2-3 proposals → user picks → fix
+    ├─ Deep      🔎  Intermittent/multi-system → read-only investigation report
+    └─ Log       📋  Color-coded Debug.Log snippets (text output only)
+```
+
+---
+
+### unity-plan
+
+Plan Unity features with codebase-aware task breakdowns.
+
+```
+└── unity-plan                  Unified planning skill
+    ├─ Quick     ⚡  XS/S (0-8h) → inline report + task_create
+    └─ Deep      🏗️  M/L (1-10 days) → markdown plan + task hierarchy
+```
+
+---
+
+### unity-document
+
+Generate technical documentation from real code state.
+
+```
+└── unity-document              Unified documentation skill
+    ├─ System    📘  Existing system → architecture diagrams, API ref, extension guides
+    └─ TDD       📐  Pre-implementation → architecture decisions, alternatives, risk assessment
+```
+
+---
+
+### unity-profiler
+
+```
+└── unity-profiler              📊 Profiler analysis
     ├─ What: CPU spikes, GC pressure, rendering bottlenecks
-    ├─ Flow: Collect data → Scan codebase → Classify → Rank → Cross-reference → Report
     ├─ Rule: Read-only. Max 10 findings. Cite profiler markers and file:line.
     └─ Out:  Documents/Profiler/PERF_*.md
 ```
 
 ---
 
-## 📐 unity-plan
-
-Plan Unity features with codebase-aware task breakdowns.
-
-```
-├── unity-plan-quick        ⚡ Small tasks (XS/S)
-│   ├─ What: Inline assessment + task_create. Effort & feasibility.
-│   ├─ Flow: Parse → Investigate → Cost/risk → Report → Create tasks
-│   └─ Out:  ▲ header + cost·hours·risk + ┌ Tasks tree
-│
-├── unity-plan-deep         🏗️ Complex features (M/L)
-│   ├─ What: SHORT plan doc + task_create
-│   ├─ Flow: Read → Scope → Investigate → Plan → Doc → Tasks → Validate
-│   └─ Out:  Documents/Plans/PLAN_*.md + task hierarchy
-│
-└── unity-costing            📦 Very large features (XL)
-    ├─ What: Vercel-themed HTML plan. No auto task_create.
-    ├─ Flow: Read → Scope → Investigate → Plan → Generate HTML → Save
-    ├─ Rule: No JavaScript in HTML. User decides when to register tasks.
-    └─ Out:  Documents/Plans/{name}/PLAN.html
-```
-
----
-
-## 📖 unity-document
-
-Generate technical documentation from real code state.
-
-```
-├── unity-document-system   📘 System documentation
-│   ├─ What: Architecture, data flows, usage guides, extension guides
-│   ├─ Rule: Cite file:line. Mandatory Mermaid. Bullets > prose.
-│   └─ Out:  Documents/Systems/{Name}.md
-│
-└── unity-document-tdd      📐 Technical Design Document
-    ├─ What: Architecture decisions, implementation strategy, dependency analysis
-    ├─ Rule: No TODO/TBD. Investigate actual codebase first.
-    └─ Out:  Documents/TDDs/TDD_{Name}.md
-```
-
----
-
-## 🧪 unity-test
+### unity-test
 
 Testing automation for Unity projects.
 
 ```
-├── unity-test-unit         🔬 Unit tests
+├── unity-test-unit             🔬 Unit tests
 │   ├─ What: Edit/Play Mode tests, mocking, coverage maximization
 │   ├─ Target: 10+ test cases per class, Arrange-Act-Assert
 │   └─ Out:   Test scripts with [Test] / [UnityTest] attributes
 │
-└── unity-test-case         📋 QA test cases
+└── unity-test-case             📋 QA test cases
     ├─ What: Happy paths, edge cases, boundary values, negative tests
     └─ Out:  Documents/TestCases/{Name}_TestCases.html
 ```
 
 ---
 
-## 🔀 git
-
-Git workflow automation.
-
-```
-├── git-commit              💾 Commit with clean message
-│   ├─ Rule: No AI metadata. Imperative mood. Bullet points.
-│   └─ Out:  Local commit. Never pushes.
-│
-├── git-comment             ✏️ Amend last commit message
-│   ├─ Rule: Never amend if pushed. Never push.
-│   └─ Out:  Amended local commit with bullet points
-│
-├── git-squash              📦 Squash commits for PR
-│   ├─ Flow: Analyze → Group → Plan → User approval → Execute
-│   └─ Out:  Squash plan → user approves → executed
-│
-├── git-description         📝 Generate PR description
-│   ├─ What: Deep investigate ALL PR changes → structured description
-│   └─ Out:  Applied to GitHub PR via gh pr edit
-│
-└── git-clear               🧹 Delete PR comments
-    ├─ What: Delete all issue + review comments from a GitHub PR
-    ├─ Flow: Identify → List → Confirm → Delete → Verify
-    └─ Out:  Zero comments remaining on PR
-```
-
----
-
-## 🐚 bash
-
-Shell script tooling.
-
-```
-├── bash-check              ✅ Validate scripts
-│   ├─ Check: bash -n syntax + ShellCheck lint + manual review
-│   └─ Out:   Validation report
-│
-├── bash-optimize           ⚡ Refactor scripts
-│   ├─ What: Clarity, performance, maintainability. No behavior change.
-│   └─ Out:  Optimized script + report
-│
-└── bash-install            📥 Install software
-    ├─ What: Auto-retry with fallback. Always verify after install.
-    └─ Out:  Installation report
-```
-
----
-
-## 🖼️ unity-ui
+### unity-ui
 
 Build runtime UI with UI Toolkit.
 
 ```
-└── unity-uitoolkit         🎨 UI Toolkit builder
+└── unity-uitoolkit             🎨 UI Toolkit builder
     ├─ What: UXML templates, USS styling, C# bindings, custom controls
     ├─ Flow: Parse input → Clarify → Discover → Structure → Implement → Wire → Verify
     └─ Out:  .uxml + .uss + .cs controller files
@@ -363,59 +261,161 @@ Build runtime UI with UI Toolkit.
 
 ---
 
-## 🦋 Flutter Skills (Planned)
-
-Write, review, debug, test, and profile Flutter/Dart code.
+### unity-project-init
 
 ```
-├── flutter-standards        📚 Shared reference hub (12 files)
-│   └─ Use:  Other flutter-* skills load refs via read_skill_file
-│
-├── flutter-code            🔷 Write Flutter/Dart code (planned)
-├── flutter-ui              🎨 Build screens & widgets (planned)
-├── flutter-debug           🐛 Diagnose & fix bugs (planned)
-├── flutter-review          🔍 Review PRs & local changes (planned)
-├── flutter-test            🧪 Unit, widget & integration tests (planned)
-└── flutter-profiler        📊 DevTools profiler analysis (planned)
+└── unity-project-init          🏗️ Project scaffolding
+    ├─ What: Feature-based folder structure, .asmdef, .gitignore, namespaces
+    └─ Out:  Assets/_Project/ directory tree
 ```
 
 ---
 
-## 📦 Other
+### unity-spec
 
 ```
-├── flatbuffers-coder       🗂️ FlatBuffers pipeline
-│   ├─ What: .fbs schemas → C# generation → JSON-to-binary
-│   └─ Out:  .fbs + generated C# + binary data
-│
-├── mermaid                 📊 Diagram creation
-│   ├─ What: Flowcharts, sequence diagrams, state machines, architecture
-│   └─ Out:  ```mermaid code blocks
-│
-└── unity-standards          📚 Unity development standards
-    ├─ What: Code Standards (19), Review (12), Quality (6), Plan (6), Debug (3), Test (5), UI Toolkit (6), Other (3)
-    └─ Use:  Other skills load specific refs via read_skill_file
+└── unity-spec                  📄 Game Design Specification
+    ├─ What: GDD covering mechanics, systems, progression, UX/UI, art, audio, tech
+    └─ Out:  Structured GDD document
 ```
 
 ---
 
-## ⚡ Commands (42)
+### flutter-code
+
+Write, extend, or optimize Flutter/Dart code.
+
+```
+└── flutter-code                Unified Dart coding skill
+    ├─ Quick     ⚡  Single-file widget, provider, model, utility, service
+    ├─ Deep      🏗️  Multi-file features, state machines, refactors (3+ files)
+    └─ Optimize  ⚡  Simplify & clean up without behavior change
+```
+
+---
+
+### flutter-ui
+
+Compose screens, widgets, themes, and responsive layouts.
+
+```
+└── flutter-ui                  Unified UI composition skill
+    ├─ Quick     ⚡  Single widget, one screen, layout fix, simple styling
+    └─ Deep      🏗️  Multi-screen systems, custom themes, responsive breakpoints, animations
+```
+
+---
+
+### flutter-debug
+
+Diagnose and fix Flutter/Dart bugs.
+
+```
+└── flutter-debug               Unified Dart debugging skill
+    ├─ Fix       🔧  Dart analysis errors → auto-fix loop
+    ├─ Quick     🩺  Runtime crashes → 2-3 proposals → fix
+    ├─ Deep      🔎  Intermittent/multi-system → investigation report
+    └─ Log       📋  Structured logging snippets
+```
+
+---
+
+### flutter-review
+
+Review Flutter code, PRs, and projects.
+
+```
+└── flutter-review              Unified Flutter review skill
+    ├─ Local     📝  Inline // REVIEW comments on .dart files
+    ├─ PR        🔗  GitHub PR review → APPROVE / REQUEST_CHANGES
+    └─ Project   📊  Full A–F audit — architecture, code style, performance
+```
+
+---
+
+### flutter-test
+
+```
+└── flutter-test                🧪 Flutter tests (Unit, Widget, Integration)
+    ├─ Pattern: AAA (Arrange-Act-Assert), mocktail, ProviderContainer
+    ├─ Target:  10+ test cases per class
+    └─ Out:     Test files with group/test structure
+```
+
+---
+
+### flutter-profiler
+
+```
+└── flutter-profiler            📊 DevTools profiler analysis
+    ├─ What: CPU frames, memory/GC, frame rendering, jank detection
+    ├─ Rule: Read-only — suggests fixes, does not modify code
+    └─ Out:  Severity-ranked performance report
+```
+
+---
+
+### git
+
+Git workflow automation.
+
+```
+├── git-commit                  💾 Commit with clean message (never pushes)
+├── git-comment                 ✏️ Rewrite last commit message (never touches pushed)
+├── git-squash                  📦 Squash commits for PR (plan → approve → execute)
+├── git-description             📝 Generate & apply PR description via gh
+└── git-clear                   🧹 Delete all comments from a GitHub PR
+```
+
+---
+
+### bash
+
+Shell script tooling.
+
+```
+├── bash-check                  ✅ Validate scripts (syntax + ShellCheck)
+├── bash-optimize               ⚡ Refactor scripts (no behavior change)
+└── bash-install                📥 Install software (auto-retry + verify)
+```
+
+---
+
+### Other
+
+```
+├── flatbuffers-coder           🗂️  .fbs schemas → C# generation → binary data
+├── mermaid                     📊  Flowcharts, sequence diagrams, state machines
+├── skill-creator               🛠️  Create, modify, benchmark, and optimize skills
+├── visual-explainer            🎨  Self-contained HTML pages for visual explanations
+├── spreadsheet                 📊  Create, edit, analyze .xlsx/.csv/.tsv files
+├── screenshot                  📸  Desktop/system screenshots (macOS, Linux, Windows)
+├── pdf                         📄  Read, create, review PDFs with layout fidelity
+├── imagegen                    🖼️  Generate & edit images via OpenAI API
+└── mcp-builder                 🔧  Build MCP servers (Python FastMCP / Node SDK)
+```
+
+---
+
+## Commands (50)
 
 Slash commands for quick access to skills and workflows.
 
 ```
-bash/           check · install · optimize
-flatbuffers/    coder
-git/            clear · comment · commit · description · squash
-mermaid/        create
-omo/            atlas · prometheus · sisyphus · sisyphus-junior
-skill/          deep · quick
-unity/code/     deep · editor · optimize · quick
-unity/debug/    deep · fix · log · profiler · quick
-unity/document/ system · tdd
+bash/              check · install · optimize
+flatbuffers/       coder
+git/               clear · comment · commit · description · squash
+mermaid/           create
+omo/               atlas · prometheus · sisyphus · sisyphus-junior
+skill/             deep · quick
+visual-explainer/  diff-review · fact-check · generate-slides · generate-visual-plan
+                   generate-web-diagram · plan-review · project-recap · share
+unity/code/        deep · editor · optimize · quick
+unity/debug/       deep · fix · log · profiler · quick
+unity/document/    system · tdd
 unity/investigate/ deep · quick
-unity/plan/     deep · costing · quick
-unity/review/   architecture · asset · code-pr · general · local · prefab · quality
-unity/test/     case · unit
-unity/ui/       create
+unity/plan/        costing · deep · quick
+unity/review/      architecture · asset · code-pr · general · local · prefab · quality
+unity/test/        case · unit
+unity/ui/          create
 ```
