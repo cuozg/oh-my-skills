@@ -4,12 +4,12 @@ description: >
   Unified Unity C# coding skill — write, extend, or optimize runtime Unity code.
   Auto-triages: Quick (single-file MonoBehaviour, SO, interface, enum, struct, helper), Deep
   (multi-file features, services, state machines, refactors spanning 2+ classes), Optimize
-  (simplify/clean up without behavior change). MUST use for ANY Unity C# runtime code request —
-  writing scripts, adding components, implementing features, building systems, refactoring,
-  cleaning up code, reducing allocations. Triggers: "write a script," "quick component,"
-  "build a system," "implement feature," "refactor," "clean up," "simplify," "optimize this."
-  Do not use for Editor scripts (unity-editor), UI Toolkit (unity-uitoolkit), tests
-  (unity-test-unit), or debugging (unity-debug).
+  (simplify/clean up without behavior change — structural only, not perf-focused). MUST use
+  for ANY Unity C# runtime code request — writing scripts, adding components, implementing
+  features, building systems, refactoring, cleaning up code. Triggers: "write a script,"
+  "quick component," "build a system," "implement feature," "refactor," "clean up," "simplify."
+  Do not use for performance optimization (unity-optimize), Editor scripts (unity-editor),
+  UI Toolkit (unity-uitoolkit), tests (unity-test-unit), or debugging (unity-debug).
 metadata:
   author: kuozg
   version: "2.0"
@@ -24,7 +24,7 @@ Detect scope, pick mode, implement. Match local patterns, verify compilation, de
 |--------|------|
 | One `.cs` file, quick script, narrow edit, single component | **Quick** |
 | 2+ files, build system, implement feature, refactor across classes | **Deep** |
-| "Clean up," "simplify," "optimize," "reduce allocations," behavior unchanged | **Optimize** |
+| "Clean up," "simplify," structural improvement, behavior unchanged | **Optimize** |
 
 State triage: "This is [mode] — [reason]."
 
@@ -49,11 +49,13 @@ State triage: "This is [mode] — [reason]."
 
 ### Optimize Mode
 
+Structural cleanup — simplify code without changing behavior. For **performance-focused** optimization (GC elimination, allocation-free patterns, frame budget work), escalate to **unity-optimize**.
+
 1. **Read** — load file(s); fully understand current behavior before touching anything
-2. **Identify** — dead code, redundant allocations, complex control flow, missing `readonly`/`sealed`, LINQ in hot paths, inconsistent style
-3. **Refactor** — preserve behavior: cache `GetComponent`/`Find`, pool per-frame allocations, simplify conditionals, extract methods, add `sealed`/`readonly`, replace hot-path LINQ with loops
+2. **Identify** — dead code, redundant logic, complex control flow, missing `readonly`/`sealed`, inconsistent style, code duplication
+3. **Refactor** — preserve behavior: simplify conditionals, extract methods, add `sealed`/`readonly`, remove dead code, improve naming, reduce complexity
 4. **Verify** — `lsp_diagnostics` on every changed file
-5. **Report** — what changed, why, estimated perf impact
+5. **Report** — what changed, why, structural improvement summary
 
 ## Rules
 
@@ -71,6 +73,7 @@ State triage: "This is [mode] — [reason]."
 | Quick | Deep | Work requires a second file |
 | Deep | Quick | Plan reveals single-file scope |
 | Any | unity-editor | Target is editor domain (inspector, window, drawer, gizmo) |
+| Any | unity-optimize | User wants performance optimization (GC, allocations, frame budget) |
 | Any | Optimize | User pivots to cleanup-only |
 
 Carry forward context; tell user why.
@@ -86,3 +89,4 @@ Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 - `code-standards/refactoring-patterns.md` — extract, decompose, migrate
 - `code-standards/naming.md` · `serialization.md` · `null-safety.md` · `lifecycle.md` · `events.md` · `dependencies.md`
 - For editor scripts (inspectors, windows, drawers, gizmos) → use **unity-editor** skill
+- For performance optimization (GC, allocations, hot paths, draw calls) → use **unity-optimize** skill

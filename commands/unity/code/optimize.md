@@ -1,6 +1,6 @@
 ---
-description: Simplify and optimize Unity C# code without changing behavior
+description: Structural cleanup of Unity C# code without changing behavior
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-code-optimize to optimize $ARGUMENTS
+Use skill unity-code in Optimize mode to clean up $ARGUMENTS. For performance-focused optimization (GC, allocations, hot paths), use /unity/optimize/code instead.

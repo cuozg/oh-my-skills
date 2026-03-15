@@ -1,6 +1,6 @@
 # Oh My Skills
 
-A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **38 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
+A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **39 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
 
 ## Installation
 
@@ -38,7 +38,7 @@ Level 3 — References (loaded on demand)      detailed standards, checklists, t
 
 ### `unity-standards` — Shared Reference Hub
 
-`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **84 reference files** across 8 categories:
+`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **92 reference files** across 9 categories:
 
 | Category | Count | Covers |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ task(category="quick", load_skills=["flutter-standards"], prompt="...")
 
 ```mermaid
 graph TD
-    US[unity-standards<br/>84 reference files] --> UC[unity-code]
+    US[unity-standards<br/>92 reference files] --> UC[unity-code]
     US --> UE[unity-editor]
     US --> UR[unity-review]
     US --> UI[unity-investigate]
@@ -103,8 +103,9 @@ graph TD
     US --> UTU[unity-test-unit]
     US --> UTC[unity-test-case]
     US --> UUI[unity-uitoolkit]
-    US --> UPI[unity-project-init]
+    US --> UPI[unity-init]
     US --> USpec[unity-spec]
+    US --> UOpt[unity-optimize]
 
     FS[flutter-standards<br/>12 reference files] --> FC[flutter-code]
     FS --> FU[flutter-ui]
@@ -127,6 +128,7 @@ graph TD
     style UUI fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UPI fill:#1a1a2e,color:#fff,stroke:#E04E39
     style USpec fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UOpt fill:#1a1a2e,color:#fff,stroke:#E04E39
 
     style FS fill:#0175C2,color:#fff,stroke:#02569B
     style FC fill:#1a1a2e,color:#fff,stroke:#0175C2
@@ -139,9 +141,9 @@ graph TD
 
 ---
 
-## Skills (38)
+## Skills (39)
 
-> **38 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
+> **39 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
 ---
 
@@ -153,7 +155,20 @@ Write, extend, or optimize runtime Unity C# code. Auto-triages into the right mo
 └── unity-code                  Unified C# coding skill (runtime)
     ├─ Quick     ⚡  Single-file MonoBehaviour, SO, interface, enum, struct, helper
     ├─ Deep      🏗️  Multi-file features, services, state machines, refactors (2+ classes)
-    └─ Optimize  ⚡  Simplify & clean up without behavior change
+    └─ Optimize  ⚡  Structural cleanup without behavior change
+```
+
+---
+
+### unity-optimize
+
+Optimize Unity project performance — code, settings, and full audits.
+
+```
+└── unity-optimize              Unified performance optimization skill
+    ├─ Code     ⚡  GC elimination, allocation-free patterns, Jobs/Burst migration
+    ├─ Settings 🔧  Player/Quality/Physics settings, platform-specific tuning
+    └─ Audit    📊  Full project sweep with ranked findings and applied fixes
 ```
 
 ---
@@ -274,10 +289,10 @@ Build runtime UI with UI Toolkit.
 
 ---
 
-### unity-project-init
+### unity-init
 
 ```
-└── unity-project-init          🏗️ Project scaffolding
+└── unity-init                  🏗️ Project scaffolding
     ├─ What: Feature-based folder structure, .asmdef, .gitignore, namespaces
     └─ Out:  Assets/_Project/ directory tree
 ```
@@ -410,7 +425,7 @@ Shell script tooling.
 
 ---
 
-## Commands (50)
+## Commands (53)
 
 Slash commands for quick access to skills and workflows.
 
@@ -428,6 +443,7 @@ unity/editor/      deep · quick
 unity/debug/       deep · fix · log · profiler · quick
 unity/document/    system · tdd
 unity/investigate/ deep · quick
+unity/optimize/    audit · code · settings
 unity/plan/        costing · deep · quick
 unity/review/      architecture · asset · code-pr · general · local · prefab · quality
 unity/test/        case · unit
