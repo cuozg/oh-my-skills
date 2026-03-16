@@ -10,6 +10,8 @@ Use this template when writing the output report for unity-profiler.
 **Date**: YYYY-MM-DD
 **Platform**: {target platform}
 **Target**: {fps} fps ({budget} ms/frame)
+**Build**: {IL2CPP/Mono} · {Development/Release}
+**Profiling**: {Profiler / Deep Profile / Memory Profiler}
 
 ---
 
@@ -19,8 +21,10 @@ Use this template when writing the output report for unity-profiler.
 |--------|----------|--------|--------|
 | Frame time (avg) | {avg_ms} ms | {budget} ms | {OK/OVER} |
 | Frame time (peak) | {peak_ms} ms | {budget} ms | {OK/OVER} |
+| Scripting | {script_ms} ms | {script_budget} ms | {OK/OVER} |
 | GC alloc/frame | {gc_kb} KB | < 1 KB | {OK/OVER} |
 | Draw calls | {draws} | {draw_target} | {OK/OVER} |
+| Batches | {batches} | {batch_target} | {OK/OVER} |
 
 ---
 
@@ -50,12 +54,15 @@ Use this template when writing the output report for unity-profiler.
 
 | Subsystem | Time (ms) | % Budget | Trend |
 |-----------|-----------|----------|-------|
-| Rendering | {ms} | {pct}% | {stable/rising/new} |
-| Scripts | {ms} | {pct}% | {trend} |
+| Scripts (Update) | {ms} | {pct}% | {stable/rising/new} |
+| Scripts (FixedUpdate) | {ms} | {pct}% | {trend} |
+| Rendering | {ms} | {pct}% | {trend} |
 | Physics | {ms} | {pct}% | {trend} |
-| GC | {ms} | {pct}% | {trend} |
 | Animation | {ms} | {pct}% | {trend} |
-| Other | {ms} | {pct}% | {trend} |
+| GC | {ms} | {pct}% | {trend} |
+| UI (Canvas) | {ms} | {pct}% | {trend} |
+| Audio | {ms} | {pct}% | {trend} |
+| Loading | {ms} | {pct}% | {trend} |
 
 ---
 
@@ -67,8 +74,8 @@ Use this template when writing the output report for unity-profiler.
 
 ---
 
-**Data source**: {get_worst_cpu_frames / get_worst_gc_frames / manual capture}
-**Build**: {IL2CPP/Mono, Development/Release}
+**Data source**: {Profiler capture / manual measurement / ProfilerRecorder}
+**Thermal factor**: {applied/not applied} ({factor}x)
 ```
 
 ---
@@ -79,5 +86,7 @@ Use this template when writing the output report for unity-profiler.
 - Max 10 findings — prioritize impact over quantity
 - Each finding: 3 lines only (Source, Impact, Fix)
 - CRITICAL findings must include estimated ms or KB cost
-- Omit subsystem rows that show 0 ms
-- Mobile reports: apply 0.65 thermal factor to budget column
+- Omit subsystem rows that show 0 ms or are not measured
+- Mobile reports: apply 0.65x thermal factor to budget column
+- Split Scripts into Update/FixedUpdate when both contribute significant time
+- Note build type (IL2CPP vs Mono) — IL2CPP is 2-3x faster for CPU-bound code

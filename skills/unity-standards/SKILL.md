@@ -4,12 +4,13 @@ description: >
   Use this skill as the shared reference hub for all Unity C# development — coding standards, naming
   conventions, review checklists, debug patterns, test patterns, and UI Toolkit guidelines. MUST be
   included in load_skills for any Unity task delegation. Triggers automatically when writing, reviewing,
-  debugging, testing, or planning Unity C# code. Contains 70+ reference files across 8 categories that
+  debugging, testing, or planning Unity C# code.   Contains 80+ reference files across 9 categories that
   other skills pull from on demand. Includes editor patterns for CustomEditor, EditorWindow,
-  PropertyDrawer, Gizmos, and Handles.
+  PropertyDrawer, Gizmos, and Handles. Also covers optimization settings for build, rendering,
+  memory, physics, mobile, startup, and Jobs/Burst migration.
 metadata:
   author: kuozg
-  version: "1.1"
+  version: "1.2"
 ---
 
 # unity-standards
@@ -22,6 +23,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - Reviewing local changes or pull requests
 - Debugging Unity runtime or compile issues
 - Planning, testing, or documenting Unity systems
+- Optimizing Unity project performance
 
 ## Usage
 
@@ -30,7 +32,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 ## Reference Catalog
 
-### Code Standards (33)
+### Code Standards (34)
 
 - `code-standards/naming.md` — naming, casing, file and namespace rules
 - `code-standards/project-structure.md` — folder layout, feature-based organization, .asmdef, .gitignore
@@ -46,6 +48,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `code-standards/unity-attributes.md` · `unity-attributes-advanced.md`
 - `code-standards/object-pooling.md` · `object-pooling-advanced.md`
 - `code-standards/editor-patterns.md` · `gizmos-handles.md`
+- `code-standards/webgl-restrictions.md` — WebGL platform restrictions, unsupported APIs, workaround patterns
 
 ### Review (15)
 
@@ -86,3 +89,13 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 - `ui-toolkit/setup.md` · `performance.md` · `uxml-patterns.md`
 - `ui-toolkit/uss-styling.md` · `csharp-bindings.md` · `custom-controls.md`
+
+### Optimization (7)
+
+- `optimization/build-settings.md` — code stripping, IL2CPP, compression, texture/audio/mesh settings
+- `optimization/rendering-settings.md` — SRP Batcher, GPU instancing, batching, shader variants, LOD, occlusion culling
+- `optimization/memory-settings.md` — texture streaming, audio memory, asset lifecycle, Addressables, scene loading
+- `optimization/physics-settings.md` — layer collision matrix, fixed timestep, collision shapes, auto sync transforms
+- `optimization/mobile-settings.md` — target frame rate, thermal throttling, resolution scaling, battery-conscious design
+- `optimization/startup-settings.md` — Enter Play Mode settings, domain reload, preloading, script execution order
+- `optimization/jobs-burst-migration.md` — Jobs system, Burst compiler, data layout, migration checklist
