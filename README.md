@@ -425,7 +425,7 @@ Shell script tooling.
 
 ---
 
-## Commands (53)
+## Commands (57)
 
 Slash commands for quick access to skills and workflows.
 
@@ -434,7 +434,8 @@ bash/              check · install · optimize
 flatbuffers/       coder
 git/               clear · comment · commit · description · squash
 mermaid/           create
-omo/               atlas · prometheus · sisyphus · sisyphus-junior
+omo/               atlas · prometheus · sisyphus · sisyphus-goal · sisyphus-improve
+                   sisyphus-junior · sisyphus-work
 skill/             deep · quick
 visual-explainer/  diff-review · fact-check · generate-slides · generate-visual-plan
                    generate-web-diagram · plan-review · project-recap · share
