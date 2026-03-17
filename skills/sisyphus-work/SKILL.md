@@ -73,6 +73,7 @@ Optional references, design decisions, prior art.
 ### Phase 2 — Prioritize and Plan
 
 1. **Sort by priority**: `critical` → `high` → `medium` → `low`. Within the same priority, process in alphabetical filename order.
+   - **Check dependencies**: If a goal has `depends_on: [other-goal-filename]` in its frontmatter, defer it until those goals are completed. If a dependency is `blocked`, mark the dependent goal as `blocked` too.
 2. For each goal, autonomously determine:
    - **Complexity**: Trivial (single file), moderate (multi-file), or complex (multi-system)
    - **Domain**: Unity, Flutter, web, infra, docs, etc.
@@ -83,7 +84,7 @@ Optional references, design decisions, prior art.
 
 ### Phase 3 — Execute
 
-Process goals in priority order. For independent goals at the same priority, run them in parallel where possible.
+Process goals in priority order. For independent goals at the same priority level (no shared `depends_on` conflicts), execute them in parallel using `run_in_background=true` and collect results via `background_output`. This significantly reduces total execution time for multi-goal runs.
 
 For each goal:
 
@@ -225,6 +226,9 @@ Goals skipped: Z (if any, with reasons)
 - Build: [PASS/FAIL/N/A]
 - Diagnostics: [PASS/N errors found]
 - Tests: [X/Y passed / N/A]
+
+### Next Step
+For a quality refinement pass, run `sisyphus-improve` to assess work output against acceptance criteria and fix any gaps.
 ```
 
 ---

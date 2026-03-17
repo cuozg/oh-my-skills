@@ -3,7 +3,8 @@ description: Autonomous goal execution — scans Docs/Goals/*.md and executes al
 agent: sisyphus
 subtask: true
 ---
-
+ULTRAWORK (ulw)
+---
 You are entering **Sisyphus Work Mode** — fully autonomous goal execution.
 
 ## Activation

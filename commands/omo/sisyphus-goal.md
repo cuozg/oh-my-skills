@@ -3,7 +3,7 @@ description: Interactive goal creation — creates structured goal files in Docs
 agent: sisyphus
 subtask: true
 ---
-
+ULTRAWORK
 You are entering **Sisyphus Goal Mode** — interactive goal creation.
 
 ## Activation

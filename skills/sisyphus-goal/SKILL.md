@@ -5,7 +5,7 @@ description: "Interactive goal creation skill — collaboratively defines struct
 
 # Sisyphus Goal — Interactive Goal Creator
 
-You create structured goal files that `sisyphus-work` can execute autonomously. You are the **front door** to the Sisyphus system — you make sure every goal is clear, actionable, and complete before writing it to disk.
+You create structured goal files that `sisyphus-work` can execute autonomously. You are the **front door** to the Sisyphus pipeline: **`sisyphus-goal`** → `sisyphus-work` → `sisyphus-improve`. You make sure every goal is clear, actionable, and complete before writing it to disk.
 
 ## Core Philosophy
 
@@ -21,6 +21,14 @@ Read the user's input. Identify:
 - What they want to achieve (the objective)
 - What domain this touches (Unity, Flutter, web, infra, docs, etc.)
 - What they've already decided vs. what's still open
+
+### Step 1.5 — Check for Duplicates
+
+Before proceeding, scan `Docs/Goals/` for existing goal files. If a goal with a similar title or objective already exists, warn the user:
+
+> "I found an existing goal that looks related: `Docs/Goals/{filename}`. Should I update that goal instead, or create a new one?"
+
+If the existing goal is `completed`, proceed with the new goal (it may be a follow-up). If `pending` or `in-progress`, strongly suggest updating rather than duplicating.
 
 ### Step 2 — Ask Clarifying Questions
 
@@ -50,6 +58,7 @@ Once you have enough clarity, draft the goal file and present it to the user for
 status: pending
 priority: {critical|high|medium|low}
 created: {YYYY-MM-DD}
+depends_on: []
 ---
 
 # {Goal Title}
@@ -83,6 +92,41 @@ created: {YYYY-MM-DD}
 - Use concrete, observable outcomes ("API returns 401 for expired tokens" not "auth works")
 - Include edge cases and error handling where relevant
 - Aim for 3-7 criteria per goal. Under 3 suggests the goal is too vague. Over 7 suggests it should be split.
+
+**Example of a well-written goal:**
+
+```markdown
+---
+status: pending
+priority: high
+created: 2026-03-17
+depends_on: []
+---
+
+# Add JWT Authentication to API Routes
+
+## Objective
+Protect all `/api/protected/*` routes with JWT bearer token authentication so only logged-in users can access them.
+
+## Context
+The app uses Next.js App Router with Drizzle ORM. Login endpoint exists at `/api/auth/login` but currently returns a session cookie — needs to return a JWT instead. No middleware exists yet.
+
+## Acceptance Criteria
+- [ ] POST `/api/auth/login` returns a signed JWT with user ID and role claims
+- [ ] All routes under `/api/protected/*` reject requests without a valid JWT (401)
+- [ ] Expired tokens return 401 with `{"error": "token_expired"}` body
+- [ ] JWT secret is read from `JWT_SECRET` env var, not hardcoded
+- [ ] Middleware runs before route handlers (not duplicated per route)
+
+## Constraints
+- Must use `jose` library (already in package.json), not `jsonwebtoken`
+- Must not break existing public routes (`/api/auth/login`, `/api/health`)
+- Token expiry: 15 minutes (access), 7 days (refresh)
+
+## Notes
+- Related PR discussion: #42
+- Follow existing error response format in `src/lib/errors.ts`
+```
 
 ### Step 4 — Confirm and Write
 
