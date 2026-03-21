@@ -1,28 +1,31 @@
 # Serialization
 
-## SerializeField Private Fields
+## Prefer Explicit Backing Fields
+
+Use explicit serialized fields for inspector-driven state. This is the least surprising pattern across Unity versions and makes rename and migration work easier to review.
 
 ```csharp
 public sealed class EnemyConfig : MonoBehaviour
 {
-    [SerializeField] float _health = 100f;
-    [SerializeField] float _speed = 3f;
-    [SerializeField] GameObject _deathVfx;
+    [SerializeField] private float _health = 100f;
+    [SerializeField] private float _speed = 3f;
+    [SerializeField] private GameObject _deathVfx;
+
     public float Health => _health;
+    public float Speed => _speed;
 }
 ```
 
-## Auto-Property Serialization
+## Auto-Property Serialization Is Optional, Not The Default
+
+If a repo already standardizes on field-target attributes and the local Unity version supports it, keep that style consistent. Do not introduce it blindly into mixed-version or mixed-style codebases.
 
 ```csharp
-// Unity 2023.3+ — [field: SerializeField] on auto-properties
-public sealed class WeaponData : ScriptableObject
-{
-    [field: SerializeField] public string DisplayName { get; private set; }
-    [field: SerializeField] public float Damage { get; private set; }
-    [field: SerializeField] public Sprite Icon { get; private set; }
-}
+// Acceptable only when the project already uses this pattern consistently.
+[field: SerializeField] public int MaxHealth { get; private set; } = 100;
 ```
+
+When in doubt, prefer an explicit backing field plus a read-only property.
 
 ## Serializable Nested Types
 
@@ -37,7 +40,7 @@ public struct WaveConfig
 
 public sealed class WaveSpawner : MonoBehaviour
 {
-    [SerializeField] WaveConfig[] _waves;
+    [SerializeField] private WaveConfig[] _waves;
 }
 ```
 
@@ -45,18 +48,35 @@ public sealed class WaveSpawner : MonoBehaviour
 
 ```csharp
 [CreateAssetMenu(fileName = "EnemyConfig", menuName = "Game/Enemy Config")]
-public class EnemyConfig : ScriptableObject
+public sealed class EnemyConfig : ScriptableObject
 {
-    [SerializeField] float _maxHealth = 100f;
-    [SerializeField] float _moveSpeed = 3f;
-    [SerializeField] AnimationCurve _damageFalloff;
+    [SerializeField] private float _maxHealth = 100f;
+    [SerializeField] private float _moveSpeed = 3f;
+    [SerializeField] private AnimationCurve _damageFalloff;
+
     public float MaxHealth => _maxHealth;
     public float MoveSpeed => _moveSpeed;
     public float GetDamage(float dist) => _damageFalloff.Evaluate(dist);
 }
 ```
 
-## FormerlySerializedAs — Safe Renames
+## SerializeReference For Polymorphism
+
+Use `[SerializeReference]` only when you actually need polymorphic managed references. It is useful, but it is not a general replacement for normal field serialization.
+
+```csharp
+public interface IAbility
+{
+    void Execute(GameObject owner);
+}
+
+public sealed class AbilityRunner : MonoBehaviour
+{
+    [SerializeReference] private IAbility _primaryAbility;
+}
+```
+
+## FormerlySerializedAs - Safe Renames
 
 ```csharp
 using UnityEngine.Serialization;
@@ -64,36 +84,40 @@ using UnityEngine.Serialization;
 public sealed class Player : MonoBehaviour
 {
     [FormerlySerializedAs("_speed")]
-    [SerializeField] float _moveSpeed = 5f;
+    [SerializeField] private float _moveSpeed = 5f;
 
-    // Multiple attrs for chained renames — keep until all scenes re-saved
     [FormerlySerializedAs("hp")]
     [FormerlySerializedAs("_hp")]
-    [SerializeField] float _health = 100f;
+    [SerializeField] private float _health = 100f;
 }
 ```
+
+Keep rename attributes until affected scenes, prefabs, and ScriptableObjects have been re-saved and validated.
 
 ## JsonUtility Rules
 
 | Feature | Supported | Notes |
 |---------|-----------|-------|
-| Public fields | ✅ | Serialized by default |
-| `[SerializeField]` private | ✅ | Works |
-| Properties | ❌ | Not serialized |
-| Dictionary | ❌ | Use list of key-value pairs |
-| Polymorphism | ❌ | No type info in JSON |
-| `[NonSerialized]` | ✅ | Excludes field |
+| Public fields | Yes | Serialized by default |
+| `[SerializeField]` private fields | Yes | Works |
+| Properties | No | Inspector does not serialize property accessors |
+| Dictionary | No | Use a serializable list or custom serializer |
+| Polymorphism | No | `JsonUtility` does not carry managed type info |
+| `[NonSerialized]` | Yes | Excludes field |
 
 ```csharp
 string json = JsonUtility.ToJson(saveData, prettyPrint: true);
 File.WriteAllText(path, json);
+
 var data = JsonUtility.FromJson<SaveData>(json);
 JsonUtility.FromJsonOverwrite(json, existingData); // avoids allocation
 ```
 
-## What Unity Cannot Serialize
+## What Unity Does Not Serialize Reliably
 
-- `Dictionary<K,V>` — wrap in serializable list
-- Interfaces — use concrete types or `[SerializeReference]`
-- `static` fields — never serialized
-- `readonly` fields — never serialized; nested generic types like `List<List<int>>` also fail
+- `Dictionary<K, V>` - wrap in a serializable list or use a custom serializer
+- Interfaces and abstract types - use `[SerializeReference]` only when you need managed-reference polymorphism
+- `static` fields - never serialized
+- `readonly` fields - not inspector-authored serialized state
+- Properties - use explicit fields unless the project intentionally uses serialized backing-field attributes
+- Deeply nested containers and unsupported generic shapes - validate in the inspector before relying on them

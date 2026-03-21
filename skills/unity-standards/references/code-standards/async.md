@@ -1,64 +1,79 @@
 # Async Patterns
 
-## UniTask — Preferred Over Task
+## Pick One Async Stack Per Project
+
+- Use the async primitive already established in the repo.
+- If the project uses Unity's built-in `Awaitable`, stay consistent with it for Unity-native async flows.
+- If the project already uses UniTask or targets older Unity versions, keep UniTask instead of mixing styles.
+- Use plain `Task` mainly at library or external API boundaries.
+- Avoid mixing `Task`, `UniTask`, and `Awaitable` in the same gameplay flow without a clear boundary.
+
+## UniTask Example
 
 ```csharp
 using Cysharp.Threading.Tasks;
 
-async UniTask LoadLevel(string sceneName)
+async UniTask LoadLevel(string sceneName, CancellationToken ct)
 {
     await SceneManager.LoadSceneAsync(sceneName);
-    await UniTask.Delay(500);
+    await UniTask.Delay(500, cancellationToken: ct);
     _ui.ShowHUD();
 }
 
-// ❌ avoid: async Task LoadLevel(...) { }
-
-// Frame waits
 await UniTask.Yield();
 await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
 await UniTask.WaitForEndOfFrame(this);
 ```
 
-## CancellationToken — Always Use
+## Awaitable Example
+
+```csharp
+async Awaitable LoadLevelAsync(string sceneName)
+{
+    await SceneManager.LoadSceneAsync(sceneName);
+    await Awaitable.WaitForSecondsAsync(0.5f);
+    _ui.ShowHUD();
+}
+
+await Awaitable.NextFrameAsync();
+await Awaitable.EndOfFrameAsync();
+await Awaitable.FixedUpdateAsync();
+```
+
+## Cancellation - Always Pass It Through
 
 ```csharp
 public sealed class EnemyAI : MonoBehaviour
 {
-    async UniTaskVoid Start()
+    private async Awaitable Start()
     {
-        await PatrolLoop(destroyCancellationToken); // auto-cancels on Destroy
+        await PatrolLoopAsync(destroyCancellationToken);
     }
 
-    async UniTask PatrolLoop(CancellationToken ct)
+    private async Awaitable PatrolLoopAsync(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)
         {
-            await MoveToNextWaypoint(ct);
-            await UniTask.Delay(1000, cancellationToken: ct);
-        }
-    }
-
-    async UniTask MoveToNextWaypoint(CancellationToken ct)
-    {
-        while (Vector3.Distance(transform.position, _target) > 0.1f)
-        {
-            transform.position = Vector3.MoveTowards(
-                transform.position, _target, _speed * Time.deltaTime);
-            await UniTask.Yield(ct);
+            await MoveToNextWaypointAsync(ct);
+            await Awaitable.WaitForSecondsAsync(1f, ct);
         }
     }
 }
 ```
 
-## Async Void — Event Handlers Only
+If the project uses UniTask, apply the same rule there: every long-lived async path should accept and forward a `CancellationToken`.
+
+## Async Void - Event Handlers Only
 
 ```csharp
-// ✅ async void for Unity event handlers (can't return UniTask)
-async void OnButtonClick() { await SaveGame(destroyCancellationToken); }
+// Acceptable for Unity event handlers only
+async void OnButtonClick()
+{
+    await SaveGameAsync(destroyCancellationToken);
+}
 
-// ❌ async void for normal methods — exceptions vanish
-async void LoadData() { } // NO — use async UniTask
+// Avoid for normal methods
+async Awaitable LoadDataAsync() { }
 ```
 
 ## Parallel Execution
@@ -66,16 +81,13 @@ async void LoadData() { } // NO — use async UniTask
 ```csharp
 async UniTask InitGame(CancellationToken ct)
 {
-    await UniTask.WhenAll(LoadPlayerData(ct), LoadInventory(ct), PreloadVFX(ct));
-    Debug.Log("All loaded");
+    await UniTask.WhenAll(
+        LoadPlayerData(ct),
+        LoadInventory(ct),
+        PreloadVfx(ct));
 }
-
-// With timeout
-var result = await UniTask.WhenAny(
-    FetchFromServer(ct),
-    UniTask.Delay(5000, cancellationToken: ct)
-);
-if (result == 1) Debug.LogWarning("Server timeout");
 ```
+
+If the project uses `Awaitable`, keep parallel composition explicit and remember that a single `Awaitable` instance must not be awaited multiple times.
 
 <!-- Advanced: async-advanced.md -->

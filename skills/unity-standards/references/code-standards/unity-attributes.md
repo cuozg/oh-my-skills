@@ -1,4 +1,4 @@
-# Unity Attributes — Quick Reference
+# Unity Attributes - Quick Reference
 
 ## Component Attributes
 
@@ -63,7 +63,7 @@ public sealed class EnemyConfig : MonoBehaviour
 | `[TextArea(min, max)]` | Multi-line text input |
 | `[ColorUsage]` | Color picker options (alpha, HDR) |
 | `[GradientUsage]` | Gradient editor options |
-| `[Multiline(lines)]` | Fixed multi-line text (no scroll) |
+| `[Multiline(lines)]` | Fixed multi-line text |
 | `[HideInInspector]` | Hide public field from Inspector |
 | `[NonSerialized]` | Exclude from serialization entirely |
 
@@ -73,15 +73,21 @@ public sealed class EnemyConfig : MonoBehaviour
 // Expose private field to Inspector
 [SerializeField] private float _speed = 5f;
 
-// Auto-property serialization (Unity 2023.3+)
-[field: SerializeField] public int MaxHealth { get; private set; }
+// Preferred default: explicit backing field + read-only property
+[SerializeField] private int _maxHealth = 100;
+public int MaxHealth => _maxHealth;
 
-// Safe rename — preserves serialized data
+// Acceptable only if the repo already standardizes on it
+[field: SerializeField] public int BonusLives { get; private set; }
+
+// Safe rename - preserves serialized data
 [FormerlySerializedAs("_hp")]
 [SerializeField] private float _health = 100f;
 
-// Polymorphic serialization — serialize interface/abstract refs
+// Polymorphic managed-reference serialization
 [SerializeReference] private IAbility _ability;
 ```
+
+Use explicit backing fields by default because Unity serializes fields, not property logic. Only lean on field-target attributes when the project already uses that style consistently.
 
 <!-- Advanced: unity-attributes-advanced.md -->

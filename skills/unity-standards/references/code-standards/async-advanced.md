@@ -1,30 +1,36 @@
-# Async Patterns — Advanced
+# Async Patterns - Advanced
 
-## Error Handling & Converting Unity Async
+## Error Handling And Converting Unity Async
 
 ```csharp
-async UniTask<bool> TrySave(CancellationToken ct)
+async UniTask<bool> TrySaveAsync(CancellationToken ct)
 {
     try
     {
         await WriteFile(_savePath, _data, ct);
         return true;
     }
-    catch (OperationCanceledException) { return false; } // normal — don't log
-    catch (System.Exception ex) { Debug.LogException(ex); return false; }
+    catch (OperationCanceledException)
+    {
+        return false; // normal cancellation path
+    }
+    catch (System.Exception ex)
+    {
+        Debug.LogException(ex);
+        return false;
+    }
 }
 
-// AsyncOperation → UniTask: await SceneManager.LoadSceneAsync("Level1"); await Resources.LoadAsync<Texture2D>("splash");
-// Coroutine → UniTask: await SomeLegacyCoroutine().ToUniTask(cancellationToken: ct);
-// UnityWebRequest: await UnityWebRequest.Get(url).SendWebRequest().WithCancellation(ct);
+// AsyncOperation -> UniTask: await SceneManager.LoadSceneAsync("Level1");
+// Coroutine -> UniTask: await SomeLegacyCoroutine().ToUniTask(cancellationToken: ct);
+// UnityWebRequest -> UniTask: await UnityWebRequest.Get(url).SendWebRequest().WithCancellation(ct);
 ```
 
-## Awaitable — Unity 6+ Built-In
+## Awaitable - Built-In Unity Async
 
-Unity 6 (2023.1+) introduces `Awaitable` as a built-in async primitive — no UniTask dependency needed:
+Use `Awaitable` in Unity versions that ship it, including Unity 6. It is a strong default for Unity-native async operations when the project does not already standardize on UniTask.
 
 ```csharp
-// Awaitable replaces UniTask for Unity-native async
 async Awaitable LoadLevelAsync(string sceneName)
 {
     await SceneManager.LoadSceneAsync(sceneName);
@@ -32,33 +38,33 @@ async Awaitable LoadLevelAsync(string sceneName)
     _ui.ShowHUD();
 }
 
-// Frame waits
 await Awaitable.NextFrameAsync();
-await Awaitable.EndOfFrameAsync();
-await Awaitable.FixedUpdateAsync();
-
-// Background thread round-trip
 await Awaitable.BackgroundThreadAsync();
 var result = HeavyComputation();
-await Awaitable.MainThreadAsync(); // back to main thread
+await Awaitable.MainThreadAsync();
 ApplyResult(result);
 ```
 
-| Feature | UniTask | Awaitable (Unity 6+) |
-|---------|---------|---------------------|
-| Dependency | External package | Built-in |
-| Thread switching | `UniTask.SwitchToThreadPool()` | `Awaitable.BackgroundThreadAsync()` |
-| Frame wait | `UniTask.Yield()` | `Awaitable.NextFrameAsync()` |
-| Cancellation | `CancellationToken` | `CancellationToken` + `destroyCancellationToken` |
-| Min Unity version | 2019.3+ | 2023.1+ (Unity 6) |
+## Awaitable Vs UniTask Vs Task
 
-**Guideline:** Use `Awaitable` for new projects on Unity 6+. Use `UniTask` for older projects or when you need features like `UniTask.WhenAll` with value-type returns.
+| Concern | Awaitable | UniTask | Task |
+|---------|-----------|---------|------|
+| Unity-native async | Strong fit | Strong fit | Fine but heavier |
+| Extra dependency | None | Package dependency | None |
+| Multiple await on same result | No - do not reuse same instance | Usually fine | Fine |
+| Third-party .NET interop | Bridge as needed | Bridge as needed | Best fit |
+| Older Unity support | Verify local version | Good when repo already uses it | Works broadly |
 
-## Version Compatibility
+Important difference: official Unity docs note that `Awaitable` instances are pooled, so a single instance is not safe to await multiple times.
 
-| Feature | Min Unity Version |
-|---------|------------------|
-| `destroyCancellationToken` | 2022.2+ |
-| `Awaitable` | 2023.1+ (Unity 6) |
-| `async/await` in Unity | 2017.1+ |
-| UniTask recommended | 2019.3+ |
+## Guidance
+
+- Prefer `Awaitable` for Unity-native async in projects that already use it.
+- Prefer UniTask when the repo already uses it or needs older-version support.
+- Prefer `Task` for external library interop or APIs that already expose `Task`.
+- Do not convert a codebase to a new async stack opportunistically inside an unrelated feature.
+
+## Version Notes
+
+- `destroyCancellationToken` exists on recent Unity versions; verify exact availability in `references/other/official-source-map.md` before making a hard version claim.
+- Do not describe `Awaitable` as "Unity 6 only". Confirm against the official docs for the local editor version.

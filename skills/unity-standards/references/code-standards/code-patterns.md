@@ -1,4 +1,4 @@
-# Code Patterns — Unity C# Quick Reference
+# Code Patterns - Unity C# Quick Reference
 
 ## MonoBehaviour
 
@@ -8,8 +8,8 @@ namespace Project.Feature
     public sealed class ThingController : MonoBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private float speed = 5f;
-        [SerializeField] private Transform target;
+        [SerializeField] private float _speed = 5f;
+        [SerializeField] private Transform _target;
 
         private Rigidbody _rb;
 
@@ -17,27 +17,31 @@ namespace Project.Feature
 
         private void FixedUpdate()
         {
-            if (target == null) return;
-            var dir = (target.position - transform.position).normalized;
-            _rb.MovePosition(transform.position + dir * (speed * Time.fixedDeltaTime));
+            if (_target == null) return;
+            var dir = (_target.position - transform.position).normalized;
+            _rb.MovePosition(transform.position + dir * (_speed * Time.fixedDeltaTime));
         }
     }
 }
 ```
 
-## ScriptableObject — Data Container
+## ScriptableObject - Data Container
 
 ```csharp
 [CreateAssetMenu(fileName = "New Item", menuName = "Game/Item Data")]
 public sealed class ItemData : ScriptableObject
 {
-    [field: SerializeField] public string DisplayName { get; private set; }
-    [field: SerializeField] public int Cost { get; private set; }
-    [field: SerializeField] public Sprite Icon { get; private set; }
+    [SerializeField] private string _displayName;
+    [SerializeField] private int _cost;
+    [SerializeField] private Sprite _icon;
+
+    public string DisplayName => _displayName;
+    public int Cost => _cost;
+    public Sprite Icon => _icon;
 }
 ```
 
-For SO event channels → `read_skill_file("unity-standards", "references/code-standards/events.md")`
+For SO event channels -> `read_skill_file("unity-standards", "references/code-standards/events.md")`
 
 ## Interface
 
@@ -49,8 +53,8 @@ public interface IDamageable
 }
 ```
 
-For singleton patterns → `read_skill_file("unity-standards", "references/code-standards/dependencies.md")`
-For coroutines → `read_skill_file("unity-standards", "references/code-standards/lifecycle.md")`
+For singleton patterns -> `read_skill_file("unity-standards", "references/code-standards/dependencies.md")`
+For coroutines -> `read_skill_file("unity-standards", "references/code-standards/lifecycle.md")`
 
 ## UnityEvent
 
@@ -59,4 +63,4 @@ For coroutines → `read_skill_file("unity-standards", "references/code-standard
 public void AddScore(int pts) { _score += pts; onScoreChanged?.Invoke(_score); }
 ```
 
-For component/inspector/serialization attributes → `read_skill_file("unity-standards", "references/code-standards/unity-attributes.md")`
+For component, inspector, and serialization attributes -> `read_skill_file("unity-standards", "references/code-standards/unity-attributes.md")`

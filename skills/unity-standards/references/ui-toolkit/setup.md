@@ -2,24 +2,24 @@
 
 ## UIDocument Component
 
-Attach to a GameObject to render UI Toolkit content at runtime.
+Attach `UIDocument` to a GameObject to render runtime UI Toolkit content.
 
 | Property | Description |
 |----------|-------------|
-| `Panel Settings` | PanelSettings asset — defines rendering panel, scale mode |
-| `Source Asset` | UXML file to instantiate as root |
-| `Sort Order` | Render layer (higher = on top) within same PanelSettings |
+| `Panel Settings` | PanelSettings asset that defines rendering, scaling, and input behavior |
+| `Source Asset` | UXML file instantiated as the root tree |
+| `Sort Order` | Render order relative to sibling `UIDocument` components on the same panel |
 
 ```
-┌─ GameObject
-│  ├─ UIDocument
-│  │  ├─ Panel Settings → Assets/UI/Settings/MainPanel.asset
-│  │  ├─ Source Asset   → Assets/UI/Screens/MainMenu.uxml
-│  │  └─ Sort Order     → 0
-│  └─ MainMenuController.cs (MonoBehaviour)
+GameObject
+|- UIDocument
+|  |- Panel Settings -> Assets/UI/Settings/MainPanel.asset
+|  |- Source Asset   -> Assets/UI/Screens/MainMenu.uxml
+|  `- Sort Order     -> 0
+`- MainMenuController.cs
 ```
 
-Access root: `GetComponent<UIDocument>().rootVisualElement`
+Access the root with `GetComponent<UIDocument>().rootVisualElement`.
 
 ## PanelSettings Asset
 
@@ -29,44 +29,55 @@ Create via `Assets > Create > UI Toolkit > Panel Settings Asset`.
 
 | Mode | Behavior | Use Case |
 |------|----------|----------|
-| `ConstantPixelSize` | Fixed pixel size, ignores resolution | Desktop, pixel-perfect |
-| `ScaleWithScreenSize` | Scales relative to reference resolution | Mobile, multi-platform |
-| `ConstantPhysicalSize` | Same physical size across DPIs | DPI-aware responsive |
+| `ConstantPixelSize` | Fixed pixel size | Desktop, pixel-perfect UI |
+| `ScaleWithScreenSize` | Scales relative to reference resolution | Most runtime game UI |
+| `ConstantPhysicalSize` | Attempts physical-size consistency across DPIs | Specialized DPI-aware UI |
 
-**Default recommendation**: `ScaleWithScreenSize`, reference 1920×1080, match mode `Expand`.
+**Default recommendation:** `ScaleWithScreenSize` with an explicit reference resolution.
 
-### Multiple PanelSettings
+## Multiple Documents On One Panel
 
-Use separate PanelSettings for independent UI contexts:
+Unity supports multiple `UIDocument` components targeting the same `PanelSettings` asset.
 
 ```
-HUD_UIDocument     → HUD_PanelSettings (Sort: 10)
-Minimap_UIDocument → Minimap_PanelSettings (Sort: 20)
-Modal_UIDocument   → Modal_PanelSettings (Sort: 100)
+HUD_UIDocument     -> HUD_PanelSettings   (Sort: 10)
+Minimap_UIDocument -> HUD_PanelSettings   (Sort: 20)
+Modal_UIDocument   -> HUD_PanelSettings   (Sort: 100)
 ```
+
+Guidance:
+- Use sort order intentionally.
+- Child `UIDocument` components render above their parent.
+- When toggling visibility temporarily, prefer style or GameObject state changes instead of rebuilding the whole screen unintentionally.
 
 ## Scene Setup Checklist
 
-1. Create `PanelSettings` asset (scale mode, reference resolution)
-2. Create `.uxml` template and `.uss` stylesheet
-3. Add `UIDocument` component to GameObject
-4. Assign PanelSettings + UXML source
-5. Add C# controller MonoBehaviour to same GameObject
-6. Query elements in `OnEnable`, unregister in `OnDisable`
+1. Create a `PanelSettings` asset.
+2. Create the `.uxml` template and `.uss` stylesheet.
+3. Add a `UIDocument` component to a GameObject.
+4. Assign `PanelSettings` and the UXML source.
+5. Add a C# controller to the same GameObject when runtime logic is needed.
+6. Query elements in `OnEnable` and unregister callbacks in `OnDisable`.
+
+Query in `OnEnable` because the visual tree can be rebuilt when a `UIDocument` is disabled and enabled again.
 
 ## Event System
 
-- UI Toolkit works without `EventSystem` component (has its own input handling)
-- If mixing with uGUI, add `EventSystem` + appropriate input module
-- Input source auto-detected: Legacy Input Manager or Input System Package
+- UI Toolkit runtime UI handles its own input path.
+- If mixing with uGUI, validate the event and input setup carefully.
+- Multiple documents sharing one panel also share focus navigation context.
+
+## Runtime Binding Note
+
+Runtime data binding exists in newer UI Toolkit versions, but it is version-sensitive. If a project uses it, confirm the exact feature set in `references/other/official-source-map.md` before assuming runtime and editor binding behave the same way.
 
 ## File Organization
 
 ```
 Assets/UI/
-├── Settings/         ← PanelSettings assets (.asset)
-├── Screens/          ← Full-screen UXML files
-├── Components/       ← Reusable UXML template snippets
-├── Styles/           ← USS files (theme.uss, variables.uss, per-screen)
-└── Controllers/      ← C# MonoBehaviour controllers
+|- Settings/      <- PanelSettings assets
+|- Screens/       <- Full-screen UXML files
+|- Components/    <- Reusable UXML fragments
+|- Styles/        <- USS files and theme variables
+`- Controllers/   <- C# MonoBehaviour controllers
 ```

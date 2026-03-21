@@ -1,54 +1,51 @@
-# Concurrency Checklist — Advanced
+# Concurrency Checklist - Advanced
 
 ## Race Conditions
 
-- [ ] Shared mutable state protected by `lock` or concurrent collection
-- [ ] `Interlocked` for simple counters: `Interlocked.Increment(ref count)`
-- [ ] Event unsubscribe is thread-safe (use `lock` around delegate)
-- [ ] `ConcurrentDictionary` / `ConcurrentQueue` over `Dictionary` + `lock`
-- [ ] Double-checked locking for lazy init uses `volatile`
+- [ ] Shared mutable state protected by `lock`, `Interlocked`, or a concurrent collection
+- [ ] Event subscribe and unsubscribe paths stay on the expected thread
+- [ ] `ConcurrentDictionary` / `ConcurrentQueue` used instead of ad-hoc locking where appropriate
+- [ ] No Unity API calls inside background-thread code paths
+- [ ] Background work returns plain data, then re-enters the main thread before touching scene objects
 
 ## Common Patterns
 
 ```csharp
-// Thread-safe singleton
-private static volatile GameManager _instance;
-private static readonly object _lock = new();
-public static GameManager Instance
+// Pure C# singleton - no Unity API involved
+private static readonly Lazy<PathCache> s_Instance = new(() => new PathCache());
+public static PathCache Instance => s_Instance.Value;
+
+// Main-thread dispatcher for projects that need one
+private readonly ConcurrentQueue<Action> _mainThreadQueue = new();
+
+private void Update()
 {
-    get
-    {
-        if (_instance == null)
-            lock (_lock)
-                if (_instance == null)
-                    _instance = FindObjectOfType<GameManager>();
-        return _instance;
-    }
+    while (_mainThreadQueue.TryDequeue(out var action))
+        action();
 }
 
-// Main thread dispatcher (pre-2022)
-private readonly ConcurrentQueue<Action> mainThreadQueue = new();
-void Update()
-{
-    while (mainThreadQueue.TryDequeue(out var action)) action();
-}
-public void RunOnMainThread(Action action) => mainThreadQueue.Enqueue(action);
+public void RunOnMainThread(Action action) => _mainThreadQueue.Enqueue(action);
 ```
 
-## Awaitable (Unity 6+)
+If a project already has UniTask or Awaitable-based thread switching helpers, prefer those over inventing another dispatcher.
 
-- [ ] `Awaitable` used instead of UniTask for Unity 6+ projects
-- [ ] `Awaitable.BackgroundThreadAsync()` / `MainThreadAsync()` for thread switching
-- [ ] `Awaitable.NextFrameAsync()` instead of `yield return null`
-- [ ] Cancellation via `destroyCancellationToken` on MonoBehaviour methods
+## Awaitable And UniTask Review Points
+
+- [ ] Project uses one async stack consistently inside the feature under review
+- [ ] `Awaitable.BackgroundThreadAsync()` / `MainThreadAsync()` used only around pure data work
+- [ ] `destroyCancellationToken` or another lifetime token is forwarded through long-lived async methods
+- [ ] No code awaits the same `Awaitable` instance multiple times
+- [ ] No Unity object access happens after switching to a background thread
 
 ```csharp
-// Unity 6 thread switching — no external package needed
-async Awaitable ProcessDataAsync()
+async Awaitable ProcessDataAsync(CancellationToken ct)
 {
     await Awaitable.BackgroundThreadAsync();
-    var result = ExpensiveComputation(); // runs on thread pool
+    var result = ExpensiveComputation();
+
+    ct.ThrowIfCancellationRequested();
+
     await Awaitable.MainThreadAsync();
-    transform.position = result; // safe — back on main thread
+    transform.position = result;
 }
 ```

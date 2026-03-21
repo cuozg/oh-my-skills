@@ -20,14 +20,15 @@ Detect bug type, select mode, execute the right workflow. Always propose 2–3 s
 
 ## Step 1 — Detect Mode
 
-| Signal | Mode | Action |
-|--------|------|--------|
-| `CS####` codes, red console, compiler errors, "fix this error" | **Fix** | `references/fix-mode.md` |
-| Runtime bug, NRE, wrong behavior, "fix this bug", first encounter | **Quick** | Inline below |
-| Intermittent, 2+ failed fixes, multi-system, "root cause analysis" | **Deep** | `references/deep-mode.md` |
-| "Add debug logs", "trace this value", "logging for this method" | **Log** | Inline below |
+| Signal                                                             | Mode            | Action                      |
+| ------------------------------------------------------------------ | --------------- | --------------------------- |
+| `CS####` codes, red console, compiler errors, "fix this error"   | **Fix**   | `references/fix-mode.md`  |
+| Runtime bug, NRE, wrong behavior, "fix this bug", first encounter  | **Quick** | Inline below                |
+| Intermittent, 2+ failed fixes, multi-system, "root cause analysis" | **Deep**  | `references/deep-mode.md` |
+| "Add debug logs", "trace this value", "logging for this method"    | **Log**   | Inline below                |
 
 When uncertain, start in Quick — cheaper to escalate than over-invest. State the triage:
+
 > "This looks like a [type]. I'll [approach]. Sound right?"
 
 ## Step 2 — Execute
@@ -75,11 +76,11 @@ Use `Debug.LogWarning` for unexpected-but-handled states, `Debug.LogError` for f
 
 ## Escalation
 
-| From | To | Trigger |
-|------|----|---------|
-| Fix | Quick | Errors cleared but behavioral bug remains |
-| Quick | Deep | 3 loops without resolution, or multi-system involvement |
-| Deep | Quick | Report identifies clear single-system fix |
+| From  | To    | Trigger                                                 |
+| ----- | ----- | ------------------------------------------------------- |
+| Fix   | Quick | Errors cleared but behavioral bug remains               |
+| Quick | Deep  | 3 loops without resolution, or multi-system involvement |
+| Deep  | Quick | Report identifies clear single-system fix               |
 
 On escalation, carry forward all evidence gathered. Tell the user why you're switching.
 
@@ -92,5 +93,3 @@ Load `unity-standards` references on demand via `read_skill_file("unity-standard
 - `debug/common-unity-errors.md` — NRE, serialization, lifecycle, IL2CPP reference table
 - `debug/analysis-template.md` — structured report template for Deep Mode output
 - `debug/log-format.md` — Debug.Log format, color tags, UNITY_EDITOR guard
-- `review/concurrency-checklist.md` — threading, race conditions, Jobs, main-thread safety
-- `code-standards/lifecycle.md` — Awake/Start/OnEnable execution order, coroutine semantics

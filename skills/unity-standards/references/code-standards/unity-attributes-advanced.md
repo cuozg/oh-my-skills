@@ -1,6 +1,6 @@
-# Unity Attributes — Advanced
+# Unity Attributes - Advanced
 
-## Conditional & Debug Attributes
+## Conditional And Debug Attributes
 
 ```csharp
 // Method call stripped from non-editor builds (no runtime cost)
@@ -11,15 +11,14 @@ private static void DebugDrawPath(Vector3[] pts) { }
 [UnityEngine.Scripting.Preserve]
 public class NetworkMessage { }
 
-// Mark as obsolete with warning/error
+// Mark as obsolete with warning or error
 [System.Obsolete("Use TakeDamage(DamageInfo) instead", error: false)]
 public void TakeDamage(float amount) { }
 ```
 
-## Attribute Combinations — Common Patterns
+## Attribute Combinations - Common Patterns
 
 ```csharp
-// Required component with readonly-like exposure
 [RequireComponent(typeof(Rigidbody))]
 [DisallowMultipleComponent]
 public sealed class PhysicsController : MonoBehaviour
@@ -36,13 +35,19 @@ public sealed class PhysicsController : MonoBehaviour
     [SerializeField] private bool _drawGizmos;
 }
 
-// ScriptableObject with full inspector polish
 [CreateAssetMenu(fileName = "NewWeapon", menuName = "Game/Weapon Data", order = 1)]
 public sealed class WeaponData : ScriptableObject
 {
-    [field: SerializeField] public string DisplayName { get; private set; }
-    [field: SerializeField, Range(1f, 100f)] public float Damage { get; private set; } = 10f;
-    [field: SerializeField, Min(0.1f)] public float Cooldown { get; private set; } = 0.5f;
-    [field: SerializeField] public Sprite Icon { get; private set; }
+    [SerializeField] private string _displayName;
+    [SerializeField, Range(1f, 100f)] private float _damage = 10f;
+    [SerializeField, Min(0.1f)] private float _cooldown = 0.5f;
+    [SerializeField] private Sprite _icon;
+
+    public string DisplayName => _displayName;
+    public float Damage => _damage;
+    public float Cooldown => _cooldown;
+    public Sprite Icon => _icon;
 }
 ```
+
+If a project already uses `[field: SerializeField]` pervasively, match the local style. Otherwise prefer explicit serialized backing fields in shared reference material.

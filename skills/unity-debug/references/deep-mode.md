@@ -51,5 +51,3 @@ Load on demand from `unity-standards`:
 - `debug/deep-investigation-checklist.md` — angles, grep patterns, confidence scoring
 - `debug/analysis-template.md` — report template
 - `debug/common-unity-errors.md` — error reference table
-- `review/concurrency-checklist.md` — threading, race conditions, Jobs
-- `code-standards/lifecycle.md` — execution order, coroutine semantics

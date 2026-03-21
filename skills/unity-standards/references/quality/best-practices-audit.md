@@ -4,62 +4,63 @@
 
 | Deprecated | Replacement |
 |-----------|-------------|
-| `OnGUI()` | UI Toolkit or uGUI |
+| `OnGUI()` for production UI | UI Toolkit or uGUI |
 | `WWW` | `UnityWebRequest` |
 | `Application.LoadLevel` | `SceneManager.LoadScene` |
 | `GUIText` / `GUITexture` | `TextMeshPro` / `Image` |
-| `Network.*` (UNet) | Netcode for GameObjects |
-| `JsonUtility` limitations | Newtonsoft or custom serializer |
+| `Network.*` (UNet) | Netcode for GameObjects or project-specific networking layer |
+| Stretching `JsonUtility` past its limits | Newtonsoft or a custom serializer |
 
 ## CompareTag Usage
 
 ```csharp
-// ✗ Allocates string
+// Avoid string-based tag comparisons
 if (other.gameObject.tag == "Player")
 
-// ✓ No allocation
+// Preferred
 if (other.CompareTag("Player"))
 ```
 
-- Flag every `== "tag"` comparison as **Medium** issue
+- Flag repeated `== "tag"` comparisons as a medium issue when they are in gameplay hot paths or hide intent.
 
 ## Null Check Patterns
 
 ```csharp
-// ✗ Bypasses Unity's null override
-obj?.DoSomething();        // null-conditional
-obj ?? fallback;           // null-coalescing
+// Bypasses Unity's destroyed-object null semantics
+obj?.DoSomething();
+obj ?? fallback;
 
-// ✓ Correct for UnityEngine.Object
+// Correct for UnityEngine.Object
 if (obj != null) obj.DoSomething();
 ```
 
-- C# `?.` and `??` skip Unity's destroyed-object check
-- Use `== null` / `!= null` for all `UnityEngine.Object` types
-- Pure C# classes: `?.` and `??` are fine
+- C# `?.` and `??` skip Unity's destroyed-object check.
+- Use `== null` / `!= null` for `UnityEngine.Object` types.
+- Pure C# classes can use `?.` and `??` normally.
 
 ## Coroutine Management
 
-- Cache `WaitForSeconds` instances (`static readonly`)
-- Stop coroutines in `OnDisable` or `OnDestroy`
-- Prefer `async/await` with `UniTask` for complex flows
-- Never use `StopAllCoroutines()` as cleanup strategy
-- Flag `StartCoroutine` in `Update` as **Critical**
+- Cache `WaitForSeconds` instances only when the delay value is stable and reuse is readable.
+- Stop or cancel long-lived flows in `OnDisable` or `OnDestroy`.
+- Prefer the project's established async stack for complex flows.
+- Never use `StopAllCoroutines()` as a blanket cleanup strategy.
+- Flag `StartCoroutine` in `Update` as critical.
 
 ## SerializeField
 
 ```csharp
-// ✗ Public field
+// Avoid public field just for inspector access
 public float speed = 5f;
 
-// ✓ Private + SerializeField
+// Preferred default
 [SerializeField] private float _speed = 5f;
+public float Speed => _speed;
 ```
 
-- All inspector-exposed fields: `[SerializeField] private`
-- Use `[field: SerializeField]` for auto-properties
-- Add `[Tooltip]` for non-obvious fields
-- Add `[Range]` for bounded numeric values
+- Inspector-exposed fields should default to `[SerializeField] private`.
+- Use `[field: SerializeField]` only when the repo already standardizes on serialized auto-properties.
+- Add `[Tooltip]` for non-obvious fields.
+- Add `[Range]` or `[Min]` for bounded numeric values.
 
 ## Event Lifecycle Pairing
 
@@ -69,9 +70,9 @@ public float speed = 5f;
 | `OnEnable` | `OnDisable` |
 | `Start` | `OnDestroy` |
 
-- Every `+=` must have a matching `-=`
-- Flag unpaired subscriptions as **High** issue
-- Static events: always unsubscribe — leak source
+- Every `+=` should have a matching `-=`.
+- Flag unpaired subscriptions as a high issue.
+- Static events always need an unsubscribe path.
 
 ## Platform Guards
 
@@ -85,15 +86,15 @@ public float speed = 5f;
 #endif
 ```
 
-- Wrap editor-only code in `#if UNITY_EDITOR`
-- Wrap platform APIs: `#if UNITY_IOS`, `#if UNITY_ANDROID`
-- Use `Application.isEditor` for runtime checks
-- Never ship `Debug.Log` in release builds
+- Wrap editor-only code in `#if UNITY_EDITOR`.
+- Wrap platform APIs with targeted symbols such as `UNITY_IOS`, `UNITY_ANDROID`, or `UNITY_WEBGL`.
+- Use `Application.isEditor` only for runtime branching, not compile-time exclusions.
+- Prefer stripping or conditional compilation over shipping noisy debug logging.
 
 ## Assembly Definition Usage
 
-- Every folder with scripts has an `.asmdef`
-- Test assemblies marked as `Test` platform
-- Editor assemblies include only `Editor` platform
-- Minimize inter-assembly references
-- Flag loose scripts in `Assets/` root as **Medium**
+- Every meaningful script area should have an `.asmdef`.
+- Test assemblies should be marked as test assemblies.
+- Editor assemblies should include only `Editor` platform code.
+- Minimize inter-assembly references.
+- Flag loose scripts in `Assets/` root as a medium issue.

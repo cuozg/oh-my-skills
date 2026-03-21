@@ -1,4 +1,4 @@
-# Refactoring Patterns — Safe Multi-File Transforms
+# Refactoring Patterns - Safe Multi-File Transforms
 
 ## Extract Interface
 
@@ -13,43 +13,46 @@ public interface IAudioService { void PlaySFX(AudioClip clip); }
 public sealed class AudioManager : MonoBehaviour, IAudioService { public void PlaySFX(AudioClip clip) { } }
 ```
 
-**Steps:** Create interface file → add `: IInterface` to class → update consumer references → verify.
+**Steps:** Create interface file -> add `: IInterface` to class -> update consumer references -> verify.
 
-## Extract Class (decompose god class)
+## Extract Class (Decompose God Class)
 
 **When:** Class exceeds ~200 lines or has 3+ unrelated responsibilities.
 
 ```
-Before: PlayerController.cs (400 lines — movement + combat + inventory + audio)
+Before: PlayerController.cs (400 lines - movement + combat + inventory + audio)
 After:
-  PlayerMovement.cs     ← movement logic
-  PlayerCombat.cs       ← attack, damage
-  PlayerInventory.cs    ← items, equipment
-  PlayerController.cs   ← orchestrates via references to above
+  PlayerMovement.cs     <- movement logic
+  PlayerCombat.cs       <- attack, damage
+  PlayerInventory.cs    <- items, equipment
+  PlayerController.cs   <- orchestrates via references to above
 ```
 
 **Steps:**
 1. Identify responsibility groups (fields + methods that cluster together)
-2. Create new class per group — move fields and methods
-3. Original class holds references, delegates calls
+2. Create new class per group - move fields and methods
+3. Original class holds references and delegates calls
 4. Preserve public API on original class (wrapper methods if needed)
 
-## Replace Inheritance with Composition
+## Replace Inheritance With Composition
 
 **When:** Deep inheritance tree, or "is-a" should be "has-a".
 
 ```csharp
-// Before: FlyingEnemy : Enemy : MonoBehaviour (3-level hierarchy)
-// After:
 public sealed class Enemy : MonoBehaviour
 {
-    [SerializeField] private MovementStrategy movement; // SO or interface
+    [SerializeField] private MovementStrategy movement;
     [SerializeField] private AttackStrategy attack;
-    private void Update() { movement.Execute(transform); attack.TryAttack(); }
+
+    private void Update()
+    {
+        movement.Execute(transform);
+        attack.TryAttack();
+    }
 }
 ```
 
-Use ScriptableObject strategies or interface references injected via inspector.
+Use ScriptableObject strategies or interface references injected via Inspector.
 
 ## Extract ScriptableObject Data
 
@@ -63,16 +66,19 @@ Use ScriptableObject strategies or interface references injected via inspector.
 [CreateAssetMenu(menuName = "Config/Movement")]
 public sealed class MovementConfig : ScriptableObject
 {
-    [field: SerializeField] public float Speed { get; private set; } = 5f;
-    [field: SerializeField] public float JumpForce { get; private set; } = 10f;
-    [field: SerializeField] public float Gravity { get; private set; } = -20f;
+    [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _jumpForce = 10f;
+    [SerializeField] private float _gravity = -20f;
+
+    public float Speed => _speed;
+    public float JumpForce => _jumpForce;
+    public float Gravity => _gravity;
 }
 
-// Consumer:
 [SerializeField] private MovementConfig config;
 ```
 
-## Migrate to Event-Driven
+## Migrate To Event-Driven
 
 **When:** Direct method calls create tight coupling between systems.
 
@@ -83,13 +89,14 @@ _uiManager.ShowDamage(amount);
 // After: raise event, UI subscribes independently
 [SerializeField] private GameEvent<float> onDamageDealt;
 onDamageDealt.Raise(amount);
-// UI subscribes via OnEnable/OnDisable — zero coupling
 ```
+
+UI subscribes via `OnEnable` and `OnDisable` with zero direct dependency on the sender.
 
 ## Refactoring Safety Checklist
 
-- [ ] Identify ALL callers before changing signatures (lsp_find_references)
+- [ ] Identify all callers before changing signatures
 - [ ] Preserve public API unless explicitly changing it
-- [ ] One refactoring type per pass — don't extract + rename + restructure simultaneously
-- [ ] If 5+ files affected, create a file change plan before starting
-- [ ] Check for serialized field references that may break in Unity Inspector
+- [ ] One refactoring type per pass - do not extract, rename, and restructure simultaneously
+- [ ] If 5+ files are affected, create a file change plan before starting
+- [ ] Check for serialized field references that may break in the Inspector

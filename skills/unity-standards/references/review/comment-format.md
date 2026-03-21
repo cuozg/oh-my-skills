@@ -3,9 +3,9 @@
 ## Syntax
 
 ```
-// ── REVIEW {icon} {LABEL} #{category}
+// -- REVIEW {icon} {LABEL} #{category}
 // What: 1-line summary
-// Why:  1-3 lines — impact + evidence
+// Why:  1-3 lines - impact + evidence
 ```
 
 ## Severity Levels
@@ -25,66 +25,66 @@
 ## Examples
 
 ```csharp
-// ── REVIEW 🔴 CRITICAL #null-safety
+// -- REVIEW 🔴 CRITICAL #null-safety
 // What: GetComponent result used without null check
-// Why:  Returns null if component missing → NullReferenceException at runtime.
+// Why:  Returns null if component missing -> NullReferenceException at runtime.
 
-// ── REVIEW 🟠 HIGH #event-leak
+// -- REVIEW 🟠 HIGH #event-leak
 // What: Event subscribed in OnEnable but never unsubscribed
-// Why:  Listener persists after disable → stale callbacks, potential crash.
+// Why:  Listener persists after disable -> stale callbacks, potential crash.
 
-// ── REVIEW 🟡 MEDIUM #allocation
-// What: GetComponent called every Update — cache in Awake
-// Why:  Native interop call per frame. Cache once in Awake/Start.
+// -- REVIEW 🟡 MEDIUM #allocation
+// What: GetComponent called every Update - cache in Awake
+// Why:  Native interop call per frame. Cache once in Awake or Start.
 
-// ── REVIEW 🔵 LOW #logic
-// What: Magic number 0.5f — extract to const
-// Why:  Unclear intent. A named const improves readability.
+// -- REVIEW 🔵 LOW #logic
+// What: Magic number 0.5f - extract to const
+// Why:  Unclear intent. A named constant improves readability.
 
-// ── REVIEW ⚪ STYLE #naming
+// -- REVIEW ⚪ STYLE #naming
 // What: Field _health should be _currentHealth for clarity
-// Why:  Ambiguous alongside _maxHealth — prefix clarifies.
+// Why:  Ambiguous alongside _maxHealth - prefix clarifies.
 ```
 
 ## Fix Suggestion Format
 
 ```csharp
-// ── REVIEW 🟠 HIGH #allocation
-// What: Camera.main called in Update — allocates every frame
-// Why:  FindGameObjectWithTag under the hood → GC pressure in hot path.
-private Camera _cam;
-void Awake() => _cam = Camera.main;  // ← applied fix
+// -- REVIEW 🟠 HIGH #allocation
+// What: Scene-wide lookup repeated in Update
+// Why:  Global lookup in a hot path. Cache once or inject the dependency.
+private Player _player;
+void Awake() => _player = FindFirstObjectByType<Player>();
 ```
 
 ## Fix Application
 
-Apply the fix directly below the comment when safe:
+Apply the fix directly below the comment when safe.
 
 ```csharp
-// ── REVIEW 🟠 HIGH #null-safety
+// -- REVIEW 🟠 HIGH #null-safety
 // What: GetComponent result used without null check
-// Why:  Returns null if component missing → NullReferenceException at runtime.
+// Why:  Returns null if component missing -> NullReferenceException at runtime.
 //       Called from Start() with no prior AddComponent guarantee.
 var rb = GetComponent<Rigidbody>();
-if (rb != null) rb.isKinematic = true;  // ← applied fix
+if (rb != null) rb.isKinematic = true;
 ```
 
-When fix is not possible (too risky, needs design decision, or cross-file):
+When the fix is not possible in place because it needs a design decision or touches other files:
 
 ```csharp
-// ── REVIEW 🟡 MEDIUM #allocation
+// -- REVIEW 🟡 MEDIUM #allocation
 // What: String concat in Update() allocates every frame
-// Why:  GC pressure in hot path — 60 allocs/sec.
-//       Use StringBuilder or cache the result.
-debugText.text = "HP: " + health + " / " + maxHealth;  // ← unchanged
+// Why:  GC pressure in a hot path.
+//       Use StringBuilder or cache the formatted result.
+debugText.text = "HP: " + health + " / " + maxHealth;
 ```
 
 ## Rules
 
-- One comment per issue — no multi-issue comments
-- Place comment on the line ABOVE the problem line
-- Always include icon + label + tag on the header line
-- `What:` = 1 line, plain summary of the issue
-- `Why:` = 1-3 lines, explain impact with evidence (variable names, call sites)
-- Apply code fix inline when safe; leave code unchanged when fix needs design decision or touches other files
-- Never commit review changes — leave diff for user inspection
+- One comment per issue - do not combine unrelated findings
+- Place the comment on the line above the problem line
+- Always include icon, label, and tag on the header line
+- `What:` is a one-line summary of the issue
+- `Why:` is 1-3 lines explaining impact with evidence
+- Apply code fixes inline only when they are safe and local
+- Never commit review changes - leave the diff for inspection

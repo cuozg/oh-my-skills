@@ -5,82 +5,83 @@ Multi-angle bug analysis using targeted investigation angles. Use this checklist
 ## Investigation Angles
 
 ### 1. Lifecycle Angle
-- Trace Awake → OnEnable → Start → Update/LateUpdate → OnDisable → OnDestroy for ALL involved objects
-- Check: Is component/object active? Destroyed prematurely? Re-instantiated?
-- **Key file pattern**: `[DefaultExecutionOrder]`, event subscription/unsubscription timing
-- **Grep**: `Awake|OnEnable|Start|OnDisable|OnDestroy` + scene reload patterns
+- Trace `Awake -> OnEnable -> Start -> Update/LateUpdate -> OnDisable -> OnDestroy` for all involved objects
+- Check whether the component is active, destroyed prematurely, or re-instantiated
+- **Key file pattern:** `[DefaultExecutionOrder]`, event subscription timing, bootstrapping order
+- **Grep:** `Awake|OnEnable|Start|OnDisable|OnDestroy`
 
 ### 2. Data Flow Angle
-- Identify value at source (serialized field, method return, event payload)
-- Trace through every assignment and read
-- Check: Is value null? Empty? Default? Corrupted by modification?
-- **Key file pattern**: Every writer to the variable (assignment targets), every reader (conditionals, logs, function args)
-- **Grep**: Variable name + grep all files; `_fieldName\s*=` for writers, `_fieldName\s*[!=<>]` for readers
+- Identify the value at the source (serialized field, method return, event payload)
+- Trace every assignment and every read
+- Check whether the value is null, empty, defaulted, or overwritten later
+- **Key file pattern:** every writer and every reader of the target value
+- **Grep:** variable name, assignment sites, conditional reads, and logging sites
 
 ### 3. Threading Angle
-- Identify: Coroutines, `WaitForSeconds`, async/await, `Parallel.ForEach`, Jobs, `Physics.BakeMesh`, callbacks
-- Check: Is value accessed from multiple threads? Mutated without lock? Yielded across frame boundary?
-- **Key file pattern**: `yield`, `async`, `IJob`, `IJobParallelFor`, `OnCollisionEnter` (physics thread)
-- **Grep**: `yield|async|Task|Job|Parallel` + target method names; check if accessed in different threads
+- Identify coroutines, async and await, Jobs, callbacks from non-main systems, and any explicit thread-pool work
+- Check whether data is accessed from multiple threads, crosses a frame boundary, or re-enters Unity API from a worker thread
+- **Key file pattern:** `yield`, `async`, `Awaitable.BackgroundThreadAsync`, `Task.Run`, `IJob`, `IJobParallelFor`, `OnAudioFilterRead`
+- **Grep:** `yield|async|Awaitable|Task|Job|Parallel|OnAudioFilterRead`
 
 ### 4. State Transitions Angle
-- Map every state variable; chart valid state paths
-- Check: Invalid transition possible? Race condition in state check + mutation?
-- **Key file pattern**: Boolean flags, enums with transitions, if/else chains controlling behavior
-- **Grep**: State variable name; map all writes and conditional reads
+- Map every state variable and valid transition path
+- Check whether invalid transitions or check-then-mutate races are possible
+- **Key file pattern:** booleans, enums, and transition-heavy branches
+- **Grep:** state variable writes plus every conditional read
 
 ### 5. Edge Cases Angle
 - Null refs: uninitialized field, destroyed object, missing serialized ref
-- Empty collections: `Count == 0`, indexing empty list
-- Math: division by zero, float precision, negative values where positive expected
-- Timing: object destroyed before operation completes, listener removed mid-iteration
-- **Grep**: Direct indexing `[0]`, division without guard, no null check before dereference
+- Empty collections: `Count == 0`, indexing empty lists
+- Math: division by zero, precision loss, negative values where positive expected
+- Timing: object destroyed before async completion, listener removed mid-iteration
+- **Grep:** direct indexing, unchecked division, dereference without guard
 
-### 6. Event System Angle _(if applicable)_
-- Trace: Who subscribes? When? In what order? Who unsubscribes?
-- Check: Unsubscribe in OnDestroy? Stale listener still subscribed? Event fired after listener destroyed?
-- **Key file pattern**: `event`, `+=`, `-=`, `OnDestroy` unsubscribe, static/global event buses
-- **Grep**: Event name + `+=|-=` patterns; cross-ref listeners
+### 6. Event System Angle (If Applicable)
+- Trace who subscribes, when they subscribe, and when they unsubscribe
+- Check whether stale listeners remain after disable or destroy
+- **Key file pattern:** `event`, `+=`, `-=`, `OnDestroy`, static buses
+- **Grep:** event name plus `+=` and `-=`
 
-### 7. Serialization Angle _(if applicable)_
-- Check: Is field `public` without `[SerializeField]`? Is type serializable? Property instead of field?
-- Trace: Value in Inspector vs runtime value; prefab override state
-- **Key file pattern**: `[SerializeField]`, `[NonSerialized]`, property declarations, ScriptableObject refs
-- **Grep**: Target field name in .cs; check for type annotations
+### 7. Serialization Angle (If Applicable)
+- Check whether the value is actually serialized and whether the type is supported
+- Compare Inspector state with runtime state
+- Validate prefab overrides and managed-reference usage where relevant
+- **Key file pattern:** `[SerializeField]`, `[SerializeReference]`, `[FormerlySerializedAs]`, property declarations, ScriptableObject refs
+- **Grep:** target field name, type definition, rename attributes
 
 ## Confidence Scoring
 
 | Confidence | Criteria |
 |------------|----------|
-| **HIGH** | Evidence found in file:line. Direct causation clear. Reproducible pattern. |
-| **MED** | Likely candidate but indirect evidence. Alternative explanations possible. |
-| **LOW** | Speculative. No direct file evidence. [UNCONFIRMED]. |
+| High | Evidence found in file and line, direct causation is clear |
+| Medium | Likely candidate with indirect evidence |
+| Low | Speculative; mark as unconfirmed |
 
 ## Evidence Format
 
 ```
-Evidence: File.cs:line — specific code snippet or description
+Evidence: File.cs:line - specific code snippet or description
 Angle: [angle name from above]
 ```
 
-## Quick Reference: Common Causes by Category
+## Quick Reference: Common Causes By Category
 
-### Intermittent / Race-Condition-Like
-- Threading angle: Value accessed unsafely from multiple threads
-- Lifecycle angle: Execution order dependency not enforced
-- Event angle: Unsubscribe not called; stale listener fires
+### Intermittent Or Race-Like
+- Threading angle: data accessed unsafely across threads or async boundaries
+- Lifecycle angle: execution order dependency not enforced
+- Event angle: stale listener still subscribed
 
-### "Works in Editor, Broken in Build"
-- Serialization: Non-serialized public property; IL2CPP stripping
-- Edge case: IL2CPP requires `[Preserve]` for reflection targets
-- Threading: Main thread safety assumptions
+### Works In Editor, Broken In Build
+- Serialization: unsupported type or non-serialized property relied on by the Inspector
+- Edge case: IL2CPP stripping or AOT assumption
+- Threading: main-thread assumptions hidden by editor timing
 
-### "Worked Yesterday, Broken Today"
-- Scene reload: Object not re-initialized in OnEnable
-- Dependency version change: API signature or behavior changed
-- Lifecycle: Initialization order not enforced; race condition exposed
+### Worked Yesterday, Broken Today
+- Scene reload: object not re-initialized in `OnEnable`
+- Dependency or package version change: API behavior shifted
+- Lifecycle: initialization order assumption exposed by another change
 
 ### NullReferenceException
-- Data flow: No null check before dereference
-- Lifecycle: GetComponent/Find called before target exists
-- Serialization: Public field assigned in Editor, missing at runtime
+- Data flow: dereference with no guard
+- Lifecycle: dependency lookup happens before target exists
+- Serialization: missing or lost Inspector assignment

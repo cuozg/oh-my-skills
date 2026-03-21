@@ -1,67 +1,72 @@
 # Performance Checklist
 
-## Allocations in Hot Paths (Update/FixedUpdate/LateUpdate)
+## Allocations In Hot Paths (Update, FixedUpdate, LateUpdate)
 
-- [ ] No string concatenation — use `StringBuilder` or interpolated `Span<char>`
-- [ ] No LINQ in Update (`Where`, `Select`, `ToList` allocate)
-- [ ] No lambda/closure captures (allocate delegate + closure object)
-- [ ] No boxing: `object val = myInt` or `string.Format("{0}", myInt)`
-- [ ] No `new List<T>()` — reuse with `.Clear()`
-- [ ] No `ToString()` on value types in hot paths
+- [ ] No string concatenation in hot loops - use `StringBuilder`, cached formatting, or UI-specific non-alloc formatting
+- [ ] No LINQ in Update (`Where`, `Select`, `ToList` often allocate)
+- [ ] No lambda or closure captures that allocate delegate state
+- [ ] No boxing through `object`, interface calls, or formatting helpers
+- [ ] No per-frame `new List<T>()` - reuse buffers with `.Clear()`
+- [ ] No repeated `ToString()` on value types in hot paths
 
 ```csharp
-// BAD: 3 allocations per frame
+// BAD: allocations every frame
 void Update()
 {
-    var nearby = enemies.Where(e => e.IsAlive).ToList(); // LINQ + closure + list
-    debugText.text = "HP: " + health.ToString(); // string concat + ToString
+    var nearby = enemies.Where(e => e.IsAlive).ToList();
+    debugText.text = "HP: " + health;
 }
 
-// GOOD: Zero allocations
-private List<Enemy> nearbyCache = new();
-private StringBuilder sb = new();
+// GOOD: reusable buffers
+private readonly List<Enemy> _nearbyCache = new();
+private readonly StringBuilder _sb = new();
+
 void Update()
 {
-    nearbyCache.Clear();
-    foreach (var e in enemies) if (e.IsAlive) nearbyCache.Add(e);
-    sb.Clear(); sb.Append("HP: ").Append(health);
-    debugText.SetText(sb);
+    _nearbyCache.Clear();
+    foreach (var e in enemies)
+        if (e.IsAlive)
+            _nearbyCache.Add(e);
+
+    _sb.Clear();
+    _sb.Append("HP: ").Append(health);
+    debugText.SetText(_sb);
 }
 ```
 
-## Component / Object Lookup
+## Component And Object Lookup
 
 | Pattern | Cost | Alternative |
 |---------|------|-------------|
-| `GetComponent<T>()` per frame | High | Cache in `Awake` |
-| `Find("name")` | Very High | Cache reference or inject |
-| `FindObjectOfType<T>()` | Extreme | Singleton pattern or registry |
-| `Camera.main` | Cached since 2020.2 — safe | Cache on older versions |
-| `SendMessage("Method")` | Reflection | Direct call or interface |
-| `CompareTag("tag")` vs `tag == "tag"` | String alloc | Always use `CompareTag` |
+| `GetComponent<T>()` per frame | High | Cache in `Awake` or `Start` |
+| `Find("name")` | Very high | Cache reference or inject |
+| `FindObjectOfType<T>()` | Extreme | Registry, injection, or explicit wiring |
+| `Camera.main` | Usually cached on newer Unity, still a tagged global lookup | Cache for older projects, hot paths, or multi-camera flows |
+| `SendMessage("Method")` | Reflection and string dispatch | Direct call or interface |
+| `CompareTag("tag")` | Preferred tag check | Use instead of `gameObject.tag == "tag"` |
 
 ## Physics
 
-- [ ] `Physics.Raycast` uses layerMask parameter (avoids checking all layers)
-- [ ] `NonAlloc` variants: `RaycastNonAlloc`, `OverlapSphereNonAlloc`
-- [ ] Rigidbody manipulation in `FixedUpdate`, not `Update`
-- [ ] Static colliders not moved at runtime (rebuilds physics tree)
-- [ ] Mesh colliders marked convex if on Rigidbody
+- [ ] `Physics.Raycast` uses a `layerMask` where possible
+- [ ] `NonAlloc` variants used in hot loops: `RaycastNonAlloc`, `OverlapSphereNonAlloc`
+- [ ] Rigidbody manipulation happens in `FixedUpdate`, not `Update`
+- [ ] Static colliders are not moved at runtime
+- [ ] Mesh colliders on rigidbodies are validated carefully and usually kept convex
 
 ## Rendering
 
-- [ ] `Material` access creates instance — use `sharedMaterial` for read
-- [ ] `Renderer.material` in Update leaks material instances
-- [ ] `MaterialPropertyBlock` for per-instance changes without instancing break
-- [ ] Canvas: split dynamic from static elements into separate Canvases
-- [ ] UI text changes trigger Canvas rebuild — batch changes
+- [ ] `Renderer.material` is not touched repeatedly in gameplay loops
+- [ ] `sharedMaterial` used for read-only inspection
+- [ ] `MaterialPropertyBlock` used for per-instance overrides without breaking batching
+- [ ] Canvas split between static and dynamic UI when rebuild cost matters
+- [ ] Text churn is batched instead of triggering repeated rebuilds
 
 ## Memory
 
-- [ ] Textures: appropriate max size (mobile: 1024, desktop: 2048)
-- [ ] Audio: streaming for music, decompress-on-load for short SFX
-- [ ] `Resources.UnloadUnusedAssets()` after large scene transitions
-- [ ] Addressables: release handles after use
-- [ ] Object pooling for frequently spawned/destroyed objects
+- [ ] Textures sized appropriately per target platform
+- [ ] Music streams, short SFX load appropriately for low latency
+- [ ] `Resources.UnloadUnusedAssets()` used deliberately after large transitions
+- [ ] Addressables handles released after use
+- [ ] Object pooling used for frequent spawn and despawn cycles
 
 <!-- Advanced: performance-checklist-advanced.md -->

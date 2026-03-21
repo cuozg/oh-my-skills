@@ -3,10 +3,9 @@
 ## Target Frame Rate
 
 ```csharp
-// Set explicitly — mobile defaults to 30fps
-Application.targetFrameRate = 60; // or 30 for battery-conscious
+// Set explicitly - mobile often defaults lower than desktop expectations
+Application.targetFrameRate = 60; // or 30 for battery-conscious experiences
 
-// Adaptive frame rate based on thermal state (Unity 2022+)
 void Update()
 {
     if (SystemInfo.thermalStatus >= ThermalStatus.Throttling)
@@ -20,35 +19,32 @@ void Update()
 |--------|----------|----------------|
 | 30 fps | Casual, puzzle, turn-based | Low |
 | 60 fps | Action, racing, shooter | High |
-| Adaptive | Any game with thermal concern | Medium |
+| Adaptive | Games with thermal concern | Medium |
 
 ## Thermal Throttling Management
 
-Sustained GPU/CPU load causes thermal throttling — device drops clocks by 30-50%.
+Sustained GPU and CPU load causes thermal throttling.
 
 **Budget with throttling factor:**
-- Peak performance: 16.67ms frame budget (60fps)
-- After 5-10 min sustained load: budget effectively 25-30ms
-- **Design for 0.65x of peak** to avoid frame drops after warmup
+- Peak performance: 16.67ms frame budget at 60 FPS
+- After sustained load: budget can effectively widen to 25-30ms on weak devices
+- Design for headroom instead of shipping right at the thermal edge
 
 **Mitigation strategies:**
 - Reduce particle counts when `SystemInfo.thermalStatus >= Warning`
 - Lower LOD bias dynamically
-- Disable post-processing effects
-- Reduce shadow resolution or disable shadows
+- Disable expensive post-processing first
+- Reduce shadow resolution or distance
 
 ## Resolution Scaling
 
 ```csharp
-// Dynamic resolution scaling
 Screen.SetResolution(
     (int)(Screen.width * scaleFactor),
     (int)(Screen.height * scaleFactor),
     true);
 
-// URP Dynamic Resolution (preferred)
-// In URP Asset: enable Dynamic Resolution
-// Camera → Allow Dynamic Resolution: ON
+// URP dynamic resolution is usually the better long-term option.
 ```
 
 | Scale | Visual Impact | Performance Gain |
@@ -66,45 +62,45 @@ Screen.SetResolution(
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| Scripting Backend | IL2CPP | Required for iOS, 1.5-3x faster |
+| Scripting Backend | IL2CPP | Required for iOS and generally faster |
 | Managed Stripping Level | Medium-High | Reduce binary size |
-| Target Architecture | ARM64 only | Google Play requires ARM64, drop ARMv7 |
-| Rendering Path | Forward | Deferred too expensive for most mobile |
-| Color Space | Linear | Correct lighting (Gamma acceptable for simple 2D) |
+| Target Architecture | ARM64 only | Modern store requirement and simpler QA |
+| Rendering Path | Forward | Deferred is usually too expensive |
+| Color Space | Linear | Better lighting consistency |
 
 ### Recommended Quality Settings
 
 | Setting | Mobile Value | Why |
 |---------|-------------|-----|
-| VSync Count | Don't Sync (use targetFrameRate) | VSync on mobile = unpredictable |
-| Anti-Aliasing | 2x MSAA or Off | 4x/8x too expensive |
-| Shadow Resolution | 512-1024 | 2048+ destroys mobile GPU |
-| Shadow Distance | 20-50m | Reduces shadow map coverage |
+| VSync Count | Don't Sync | Prefer explicit `targetFrameRate` |
+| Anti-Aliasing | 2x MSAA or Off | 4x and 8x are often too expensive |
+| Shadow Resolution | 512-1024 | High resolutions are costly |
+| Shadow Distance | 20-50m | Reduces shadow map work |
 | Pixel Light Count | 1-2 | Limit real-time lights |
 | Texture Quality | Half Res for low-end | Reduces memory pressure |
 | LOD Bias | 0.5-0.7 | More aggressive LOD switching |
-| Particle Raycast Budget | 16-64 | Limit collision particle checks |
+| Particle Raycast Budget | 16-64 | Limit collision checks |
 
 ## Mobile-Specific Code Patterns
 
 ```csharp
-// Reduce texture fillrate pressure
-// UI: disable raycast target on non-interactive elements
-image.raycastTarget = false; // on decorative UI images
+// Decorative UI should not block raycasts
+image.raycastTarget = false;
 
-// Avoid Camera.main in Update (cached since 2020.2 but verify)
-// Cache heavy system calls
+// Prefer caching globals used every frame
 private int _screenWidth;
 void Start() => _screenWidth = Screen.width;
 
-// Use simpler math on mobile
-Vector3.SqrMagnitude(a - b) < threshold * threshold // instead of Vector3.Distance < threshold
+// Use cheaper math in hot paths
+Vector3.SqrMagnitude(a - b) < threshold * threshold;
 ```
+
+`Camera.main` is safer on newer Unity versions than it used to be, but repeated global lookups still reduce clarity in multi-camera scenes. Cache the intended camera when the code path is hot or the scene is not trivial.
 
 ## Battery-Conscious Design
 
-- Lower frame rate during menus, inventory, pause (30fps or lower)
-- Disable unnecessary sensors (gyroscope, accelerometer) when not used
-- Reduce network polling frequency when app is backgrounded
-- Use dark UI themes on OLED devices (pixels off = power saved)
-- Audio: mono SFX, lower sample rates, streaming for music
+- Lower frame rate during menus, inventory, and pause screens
+- Disable unnecessary sensors when not used
+- Reduce network polling when the app is backgrounded or idle
+- OLED-friendly dark UI can help on some devices
+- Use mono SFX, lower sample rates where acceptable, and stream music

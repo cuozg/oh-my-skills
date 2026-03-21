@@ -1,6 +1,6 @@
 # Comments
 
-## XML Docs — Public API Only
+## XML Docs - Public API Only
 
 ```csharp
 /// <summary>
@@ -17,23 +17,19 @@ public float TakeDamage(float amount)
 }
 ```
 
-## Inline Comments — WHY Not WHAT
+## Inline Comments - Why, Not What
 
 ```csharp
-// ❌ What — obvious from code
-// Subtract damage from health
+// Avoid obvious restatement comments
 _currentHealth -= damage;
 
-// ✅ Why — explains intent
-// Clamp to prevent negative health causing UI overflow
+// Explain intent or non-obvious behavior
 _currentHealth = Mathf.Max(0f, _currentHealth - damage);
 
-// ✅ Why — explains non-obvious decision
-// Cache on Awake — GetComponent is expensive in hot paths
+// Cache in Awake because this path runs every frame later
 _rb = GetComponent<Rigidbody>();
 
-// ✅ Workaround context
-// Unity 2022.3 bug: NavMeshAgent.SetDestination fails on first frame
+// Delay one frame because the navigation graph is initialized in Start
 yield return null;
 _nav.SetDestination(target);
 ```
@@ -41,42 +37,42 @@ _nav.SetDestination(target);
 ## TODO Format
 
 ```csharp
-// TODO(alice): Replace magic number with config SO
-// TODO(bob): Pool these allocations — GC spike in profiler
-// HACK: Workaround for Unity issue UUM-12345, remove after 2023.2
-// FIXME: Race condition when spawning during scene transition
+// TODO(alice): Replace magic number with config asset
+// TODO(bob): Pool these allocations after profiler capture on the combat loop
+// HACK(team): Temporary compatibility shim for legacy save data. Remove after migration window closes.
+// FIXME(netcode): Spawn can race scene unload during reconnect.
 ```
 
-## When NOT to Comment
+## When Not To Comment
 
-- Self-documenting names — `CalculateDamageReduction()` needs no comment
-- Obvious Unity callbacks — don't comment `void Start()` or `void Update()`
-- Commented-out code — delete it, git remembers
-- Trivial getters/setters
+- Self-documenting names - `CalculateDamageReduction()` needs no comment
+- Obvious Unity callbacks - do not comment `Start()` or `Update()` just to restate their name
+- Commented-out code - delete it; version control keeps history
+- Trivial getters and setters
 - Restating the type: `// The player's health` above `float _health`
 
-## Header Comments for Sections
+## Header Comments For Sections
 
 ```csharp
 public class GameManager : MonoBehaviour
 {
-    // --- Serialized Config ---
-    [SerializeField] GameConfig _config;
+    // Serialized config
+    [SerializeField] private GameConfig _config;
 
-    // --- Runtime State ---
-    GameState _state;
-    int _score;
+    // Runtime state
+    private GameState _state;
+    private int _score;
 
-    // --- Unity Callbacks ---
-    void Awake() { }
-    void OnDestroy() { }
+    // Unity callbacks
+    private void Awake() { }
+    private void OnDestroy() { }
 
-    // --- Public API ---
+    // Public API
     public void StartGame() { }
     public void EndGame() { }
 }
 ```
 
-## File Headers — Skip
+## File Headers - Skip
 
-No license headers, author names, or creation dates. Git tracks history.
+Do not add author names, creation dates, or manual history blocks. Source control already tracks that information.
