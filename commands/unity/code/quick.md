@@ -1,6 +1,6 @@
 ---
-description: Create simple function/logic
+description: Write single-file Unity C# scripts — MonoBehaviour, ScriptableObject, interface, enum, struct, helper
 agent: sisyphus-junior
 subtask: true
 ---
-Use skill unity-code-quick to implement $ARGUMENTS
+Use skill unity-code in Quick mode to implement $ARGUMENTS

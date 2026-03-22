@@ -1,5 +1,5 @@
 ---
-description: Structural cleanup of Unity C# code without changing behavior
+description: Behavior-preserving structural cleanup of Unity C# code
 agent: sisyphus
 subtask: true
 ---

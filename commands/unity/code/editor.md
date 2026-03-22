@@ -1,6 +1,6 @@
 ---
-description: Write Unity Editor C# code and tools
-agent:sisyphus
+description: Write Unity Editor scripts — custom inspectors, editor windows, property drawers, gizmos, handles, menu items
+agent: sisyphus
 subtask: true
 ---
-Use skill unity-code-editor to implement $ARGUMENTS (ulw)
+Use skill unity-editor to implement $ARGUMENTS (ulw)

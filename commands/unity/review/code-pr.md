@@ -1,6 +1,6 @@
 ---
-description: Review C# code logic in GitHub PRs with Unity-specific checks
+description: Review GitHub PR C# code with Unity-specific checks and APPROVE/REQUEST_CHANGES
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-review-code-pr to review the code for $ARGUMENTS (ulw)
+Use skill unity-review in PR mode to review the code for $ARGUMENTS (ulw)

@@ -7,7 +7,7 @@ A comprehensive skill pack for AI agents working with **Unity** and **Flutter** 
 ### 1. Clone
 
 ```bash
-git clone https://github.com/cuozg/oh-my-skills.git ./.opencode
+git clone https://github.com/cuozg/oh-my-skills.git ./.claude
 ```
 
 ### 2. Install GitHub CLI (`gh`)

@@ -1,6 +1,6 @@
 ---
-description: Quick costing and impact assessment
+description: Quick scope estimation and inline plan for XS/S Unity features (0-8h)
 agent: prometheus
 subtask: true
 ---
-Use skill unity-plan-quick to create the quick plan document for $ARGUMENTS
+Use skill unity-plan in Quick mode to plan $ARGUMENTS

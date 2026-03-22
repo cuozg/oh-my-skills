@@ -1,6 +1,6 @@
 ---
-description: Deep investigation of complex Unity issues
-agent:sisyphus
+description: Deep investigation of complex intermittent Unity issues with read-only report
+agent: sisyphus
 subtask: true
 ---
-Use skill unity-debug-deep to deep investigate $ARGUMENTS
+Use skill unity-debug in Deep mode to deep investigate $ARGUMENTS

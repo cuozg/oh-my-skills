@@ -1,6 +1,6 @@
 ---
-description: Analyze errors and suggest fix solutions
+description: Auto-fix Unity compile errors with fix loop
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-debug-fix to fix $ARGUMENTS
+Use skill unity-debug in Fix mode to fix $ARGUMENTS

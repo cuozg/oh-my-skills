@@ -1,6 +1,6 @@
 ---
-description: Explain Unity issues, flows, or logic
+description: Diagnose runtime Unity bugs with interactive solution proposals
 agent: sisyphus-junior
 subtask: true
 ---
-Use skill unity-debug-quick to debug $ARGUMENTS
+Use skill unity-debug in Quick mode to debug $ARGUMENTS

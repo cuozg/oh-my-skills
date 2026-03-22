@@ -1,6 +1,6 @@
 ---
-description: Create an implementation plan document
+description: Detailed implementation plan for M/L Unity features (1-10 days)
 agent: prometheus
 subtask: true
 ---
-Use skill unity-plan-deep to create the plan document for $ARGUMENTS (ulb ulw)
+Use skill unity-plan in Deep mode to create the plan document for $ARGUMENTS (ulb ulw)

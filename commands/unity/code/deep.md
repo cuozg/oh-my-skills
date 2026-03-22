@@ -1,6 +1,6 @@
 ---
-description: Expert Unity C# implementation with best practices
+description: Multi-file Unity C# features, services, state machines, refactors spanning 2+ classes
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-code-deep to implement $ARGUMENTS (ulw)
+Use skill unity-code in Deep mode to implement $ARGUMENTS (ulw)

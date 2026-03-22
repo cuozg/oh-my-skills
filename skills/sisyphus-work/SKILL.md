@@ -102,40 +102,6 @@ After all goals are processed:
 
 ---
 
-## Skill Selection Guide
-
-Match goals to skills aggressively. When in doubt, include the skill.
-
-| Goal Domain | Primary Skills | Standards Skill |
-|-------------|---------------|-----------------|
-| Unity C# runtime | `unity-code` | `unity-standards` |
-| Unity Editor tooling | `unity-editor` | `unity-standards` |
-| Unity UI | `unity-uitoolkit` | `unity-standards` |
-| Unity debugging | `unity-debug` | `unity-standards` |
-| Unity optimization | `unity-optimize` | `unity-standards` |
-| Unity testing | `unity-test-unit` | `unity-standards` |
-| Unity docs | `unity-document` | `unity-standards` |
-| Unity WebGL | `unity-webgl` | `unity-standards` |
-| Flutter/Dart code | `flutter-code` | `flutter-standards` |
-| Flutter UI | `flutter-ui` | `flutter-standards` |
-| Flutter debugging | `flutter-debug` | `flutter-standards` |
-| Flutter testing | `flutter-test` | `flutter-standards` |
-| Frontend/web UI | `frontend-design` | — |
-| Shell scripts | `bash-check`, `bash-optimize` | — |
-| Git operations | `git-commit`, `git-squash` | — |
-| Documentation | `unity-document`, `visual-explainer` | — |
-| Diagrams | `mermaid` | — |
-| Images | `imagegen` | — |
-| PDF | `pdf` | — |
-| Spreadsheets | `spreadsheet` | — |
-| MCP servers | `mcp-builder` | — |
-| Database design | `database-design` | — |
-| Next.js backend | `nextjs-backend` | — |
-| Cloud infra | `cloud-infra` | — |
-| FlatBuffers | `flatbuffers-coder` | — |
-
----
-
 ## Progress Tracking
 
 - One `task_create` per goal. `task_update(status="in_progress")` before starting. `task_update(status="completed")` immediately after verification. Never batch completions.

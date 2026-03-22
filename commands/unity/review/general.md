@@ -3,4 +3,4 @@ description: Review PR against general quality checklists (security, correctness
 agent: sisyphus
 subtask: true
 ---
-Use skill unity-review-general to review $ARGUMENTS
+Use skill unity-review focusing on general quality for $ARGUMENTS

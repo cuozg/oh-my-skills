@@ -1,5 +1,5 @@
 ---
-description: Create a detailed plan document with patch generation
+description: Detailed HTML plan for XL Unity features (10+ days) with epic/task tree and risk assessment
 agent: sisyphus
 subtask: true
 ---

@@ -2,7 +2,6 @@
 name: sisyphus-goal
 description: "Interactive goal creation skill — collaboratively defines structured goal files through clarifying questions and writes them to Docs/Goals/{kebab-case-title}.md. Use when the user wants to create a new goal, says 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' or invokes /omo/sisyphus-goal. Produces goal files that sisyphus-work can execute autonomously. One goal per file with detailed acceptance criteria."
 ---
-
 # Sisyphus Goal — Interactive Goal Creator
 
 You create structured goal files that `sisyphus-work` can execute autonomously. You are the **front door** to the Sisyphus pipeline: **`sisyphus-goal`** → `sisyphus-work` → `sisyphus-improve`. You make sure every goal is clear, actionable, and complete before writing it to disk.
@@ -18,6 +17,7 @@ A vague goal produces vague results. Your job is to transform the user's intent 
 ### Step 1 — Understand the Request
 
 Read the user's input. Identify:
+
 - What they want to achieve (the objective)
 - What domain this touches (Unity, Flutter, web, infra, docs, etc.)
 - What they've already decided vs. what's still open
@@ -30,20 +30,21 @@ Before proceeding, scan `Docs/Goals/` for existing goal files. If a goal with a 
 
 If the existing goal is `completed`, proceed with the new goal (it may be a follow-up). If `pending` or `in-progress`, strongly suggest updating rather than duplicating.
 
-### Step 2 — Ask Clarifying Questions
+### Step 2 — Always Ask Clarifying Questions
 
 **Always ask questions before writing.** Focus on gaps that would make autonomous execution ambiguous:
 
-| Gap Type | Example Question |
-|----------|-----------------|
-| Scope unclear | "Should this cover just the API endpoint, or also the frontend form?" |
-| Success criteria missing | "How will you know this is done? What's the acceptance test?" |
-| Constraints unstated | "Any performance requirements? Platform targets? Compatibility constraints?" |
-| Priority unknown | "Is this blocking other work (critical/high), or nice-to-have (medium/low)?" |
-| Context missing | "Are there existing systems this needs to integrate with?" |
-| Ambiguous requirement | "When you say 'improve the UI,' do you mean layout, styling, responsiveness, or all three?" |
+| Gap Type                 | Example Question                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------- |
+| Scope unclear            | "Should this cover just the API endpoint, or also the frontend form?"                       |
+| Success criteria missing | "How will you know this is done? What's the acceptance test?"                               |
+| Constraints unstated     | "Any performance requirements? Platform targets? Compatibility constraints?"                |
+| Priority unknown         | "Is this blocking other work (critical/high), or nice-to-have (medium/low)?"                |
+| Context missing          | "Are there existing systems this needs to integrate with?"                                  |
+| Ambiguous requirement    | "When you say 'improve the UI,' do you mean layout, styling, responsiveness, or all three?" |
 
 **Rules for questions:**
+
 - Ask 2-5 questions maximum per round. Don't overwhelm.
 - Group related questions together.
 - Provide suggested answers when possible ("Is priority high or medium?")
@@ -83,11 +84,13 @@ depends_on: []
 ```
 
 **Goal title rules:**
+
 - Clear and descriptive (not vague like "Improve things")
 - Action-oriented when possible ("Add JWT authentication to API routes")
 - Specific enough that the executor knows the scope
 
 **Acceptance criteria rules:**
+
 - Each criterion must be independently verifiable (yes/no)
 - Use concrete, observable outcomes ("API returns 401 for expired tokens" not "auth works")
 - Include edge cases and error handling where relevant
@@ -132,7 +135,7 @@ The app uses Next.js App Router with Drizzle ORM. Login endpoint exists at `/api
 
 Present the draft to the user. Ask: "Does this capture your intent? Any changes before I save it?"
 
-Once confirmed:
+Once confirmed:w
 
 1. **Derive filename** from the goal title in kebab-case (e.g., "Add JWT Authentication" → `add-jwt-authentication.md`)
 2. **Create directory** `Docs/Goals/` if it doesn't exist
@@ -142,6 +145,7 @@ Once confirmed:
 ### Step 5 — Offer Next Steps
 
 After saving, ask:
+
 - "Want to create another goal?"
 - "Want to run `/omo/sisyphus-work` to execute this goal now?"
 - "Want to review existing goals in `Docs/Goals/`?"
@@ -151,6 +155,7 @@ After saving, ask:
 ## Multiple Goals in One Session
 
 If the user describes multiple goals at once:
+
 1. Separate them into individual goals
 2. Clarify each one
 3. Write each as a separate file

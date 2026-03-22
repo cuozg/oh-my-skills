@@ -1,6 +1,6 @@
 ---
-description: Deep investigation with full report output
+description: Comprehensive Unity system analysis with Mermaid diagrams, evidence citations, and risk tables
 agent: prometheus
 subtask: true
 ---
-Use skill unity-investigate-deep to deep investigate $ARGUMENTS (ulw)
+Use skill unity-investigate in Deep mode to deep investigate $ARGUMENTS (ulw)
