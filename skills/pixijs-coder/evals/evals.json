@@ -1,0 +1,53 @@
+{
+  "skill_name": "pixijs-coder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a simple PixiJS app that loads a spritesheet called 'hero.json' from the assets folder, displays the character centered on an 800x600 canvas, and plays through the spritesheet frames as a walk animation at 12fps using the ticker. Also add a subtle bounce effect so the sprite moves up and down a few pixels while walking. Use TypeScript.",
+      "expected_output": "A complete TypeScript file with proper v8 async app.init(), Assets.load for the spritesheet, AnimatedSprite from the loaded spritesheet, ticker loop that receives Ticker instance (not deltaTime float), app.canvas (not app.view), and proper typing throughout.",
+      "files": [],
+      "expectations": [
+        "Uses `await app.init(` for async initialization, NOT `new Application({`",
+        "Uses `await Assets.load(` to load the spritesheet, NOT `Texture.from(` or `Loader`",
+        "Ticker callback receives Ticker instance: pattern like `(ticker) =>` or `(ticker: Ticker) =>`, NOT `(delta) =>` or `(dt) =>`",
+        "Uses `app.canvas` to append to DOM, NOT `app.view`",
+        "Imports are from 'pixi.js' only, NOT from '@pixi/sprite-animated' or other subpackages",
+        "Uses AnimatedSprite for spritesheet animation",
+        "Code is TypeScript with type annotations"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Build me an interactive fireworks particle system in PixiJS. When the user clicks anywhere on the canvas, a burst of colorful particles should shoot out from that point and fade away. Each particle should be a small colored circle drawn with Graphics. Add a BlurFilter to the particle container for a glow effect. The canvas should be fullscreen (window size). Include proper cleanup when particles die. TypeScript please.",
+      "expected_output": "A multi-part TypeScript solution with: async app init, click event handling via eventMode and FederatedPointerEvent, Graphics using v8 API (rect/circle + .fill(), not beginFill/drawRect/endFill), BlurFilter with object constructor, Container hierarchy where only Containers have children (not Sprites/Graphics), particle lifecycle with cleanup, fullscreen resize handling.",
+      "files": [],
+      "expectations": [
+        "Uses `await app.init(` for async initialization",
+        "Uses `eventMode` for pointer interaction, NOT `interactive = true`",
+        "Graphics uses v8 API: `.circle(...).fill(` or `.rect(...).fill(` pattern, NOT `beginFill`/`drawRect`/`endFill`",
+        "BlurFilter uses object constructor: `new BlurFilter({` or `new BlurFilter({ blur:`, NOT `new BlurFilter(number`",
+        "Particles are added to a Container (not directly to a Sprite or Graphics parent)",
+        "Ticker callback receives Ticker instance, NOT a raw delta number",
+        "Includes particle removal/cleanup logic (removing from parent and/or destroy)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I have this old PixiJS v7 code that I need to migrate to v8. Can you convert it and explain what changed?\n\n```typescript\nimport { Application, Sprite, Graphics, Text, TextStyle, Ticker } from 'pixi.js';\nimport { CRTFilter } from '@pixi/filter-crt';\n\nconst app = new Application({\n  width: 800,\n  height: 600,\n  backgroundColor: 0x1a1a2e,\n});\ndocument.body.appendChild(app.view);\n\nconst sprite = Sprite.from('/assets/hero.png');\nsprite.name = 'hero';\nsprite.interactive = true;\nsprite.cacheAsBitmap = true;\nsprite.anchor.set(0.5);\nsprite.position.set(400, 300);\napp.stage.addChild(sprite);\n\nconst graphics = new Graphics();\ngraphics.beginFill(0xff0000);\ngraphics.drawRect(0, 0, 100, 50);\ngraphics.endFill();\napp.stage.addChild(graphics);\n\nconst style = new TextStyle({ fontSize: 24, fill: 'white' });\nconst text = new Text('Score: 0', style);\ntext.name = 'scoreText';\napp.stage.addChild(text);\n\nconst button = new Graphics();\nbutton.beginFill(0x00ff00);\nbutton.drawRoundedRect(0, 0, 120, 40, 8);\nbutton.endFill();\nbutton.interactive = true;\nbutton.on('pointermove', (e) => {\n  console.log(e.data.global);\n});\napp.stage.addChild(button);\n\napp.ticker.add((delta) => {\n  sprite.rotation += 0.01 * delta;\n  const bounds = sprite.getBounds();\n  console.log(bounds.x, bounds.y);\n});\n\nsprite.on('pointerdown', () => {\n  sprite.updateTransform();\n  console.log('clicked');\n});\n```",
+      "expected_output": "Complete v8 migration with all breaking changes addressed: async init, app.canvas, .label instead of .name, eventMode instead of interactive, cacheAsTexture instead of cacheAsBitmap, v8 Graphics API, Sprite.from is OK for static but should note Assets.load for URLs, ticker receives Ticker instance not delta float, getBounds().rectangle, no updateTransform (use onRender), globalpointermove for move events outside bounds, e.global instead of e.data.global.",
+      "files": [],
+      "expectations": [
+        "Converts `new Application({...})` to `await app.init({...})` with async pattern",
+        "Changes `app.view` to `app.canvas`",
+        "Changes `.name =` to `.label =` on containers/sprites",
+        "Changes `.interactive = true` to `.eventMode = 'static'` or `.eventMode = 'dynamic'`",
+        "Changes `.cacheAsBitmap` to `.cacheAsTexture(true)` or `cacheAsTexture`",
+        "Changes `beginFill/drawRect/endFill` to v8 `.rect(...).fill(...)` pattern",
+        "Changes ticker `(delta) =>` to receive Ticker instance `(ticker) =>` and use `ticker.deltaTime`",
+        "Changes `getBounds()` usage to access `.rectangle` property",
+        "Removes or replaces `updateTransform()` with `onRender` callback",
+        "Addresses `e.data.global` to `e.global` (FederatedPointerEvent)"
+      ]
+    }
+  ]
+}
