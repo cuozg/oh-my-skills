@@ -2,10 +2,8 @@
 description: Post-session retrospective — analyze what was done and improve skills/standards for next time
 agent: sisyphus
 subtask: true
-model: github-copilot/claude-sonnet-4.6
-
+model: github-copilot/claude-opus-4.6
 ---
-
 You are running a **post-session retrospective**. Your job is to use the `session-retrospective` skill to analyze what happened in this session and improve the relevant skills and standards.
 
 ---

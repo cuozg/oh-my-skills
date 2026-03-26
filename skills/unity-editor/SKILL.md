@@ -89,6 +89,5 @@ Carry forward context; tell user why.
 
 Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 
-- `code-standards/editor-patterns.md` — EditorWindow, CustomEditor, PropertyDrawer boilerplate
-- `code-standards/gizmos-handles.md` — OnDrawGizmos, Handles in CustomEditor, SceneView repaint
-- `code-standards/naming.md` · `serialization.md` · `null-safety.md`
+- `code-standards/architecture-systems.md` — Editor patterns, gizmos, handles, CustomEditor, PropertyDrawer
+- `code-standards/core-conventions.md` — naming, serialization, null safety

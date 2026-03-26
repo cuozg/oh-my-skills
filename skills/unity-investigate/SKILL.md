@@ -78,11 +78,9 @@ The reference contains the full deep workflow: scoping, discovery, diagramming, 
 
 Load `unity-standards` when answers require convention context. Key references:
 
-- `code-standards/lifecycle.md` — Awake/Start/OnEnable order, coroutine rules
-- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
-- `code-standards/dependencies.md` — DI, service locator, constructor injection
-- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
-- `review/architecture-checklist.md` — coupling, SOLID, assembly boundaries
+- `code-standards/lifecycle-async-errors.md` — Awake/Start/OnEnable order, coroutine rules
+- `code-standards/architecture-systems.md` — events, dependencies, architecture patterns
+- `review/checklist.md` — section `## 7. Architecture`: coupling, SOLID, assembly boundaries
 - `plan/investigation-workflow.md` — file tracing, call chains, dependency mapping
 - `plan/investigation-template.md` — markdown template for investigation reports
 

@@ -33,31 +33,16 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 ## Reference Catalog
 
-### Code Standards (34)
+### Code Standards (4 consolidated files)
 
-- `code-standards/naming.md` - naming, casing, file and namespace rules
-- `code-standards/project-structure.md` - folder layout, feature-based organization, .asmdef, .gitignore
-- `code-standards/formatting.md` - `comments.md` - `access-modifiers.md`
-- `code-standards/null-safety.md` - `null-safety-advanced.md`
-- `code-standards/serialization.md` - `lifecycle.md` - `lifecycle-advanced.md`
-- `code-standards/events.md` - `error-handling.md` - `error-handling-advanced.md`
-- `code-standards/collections.md` - `collections-advanced.md` - `linq.md`
-- `code-standards/async.md` - `async-advanced.md`
-- `code-standards/dependencies.md` - `dependencies-advanced.md` - `code-patterns.md`
-- `code-standards/architecture-patterns.md` - `architecture-patterns-advanced.md`
-- `code-standards/refactoring-patterns.md` - `multi-file-workflow.md` - `single-file-runtime-workflow.md`
-- `code-standards/unity-attributes.md` - `unity-attributes-advanced.md`
-- `code-standards/object-pooling.md` - `object-pooling-advanced.md`
-- `code-standards/editor-patterns.md` - `gizmos-handles.md`
-- `code-standards/webgl-restrictions.md` - Web platform restrictions, unsupported APIs, workaround patterns
+- `code-standards/core-conventions.md` - naming, formatting, comments, access modifiers, null safety, unity attributes, code patterns
+- `code-standards/lifecycle-async-errors.md` - lifecycle, async patterns, error handling, security/validation
+- `code-standards/performance-data.md` - collections, LINQ, object pooling, serialization
+- `code-standards/architecture-systems.md` - project structure, dependencies, events, architecture patterns, refactoring, workflows, editor patterns, gizmos, WebGL
 
-### Review (15)
+### Review (4)
 
-- `review/logic-checklist.md` - `unity-lifecycle-risks.md` - `serialization-risks.md`
-- `review/performance-checklist.md` - `performance-checklist-advanced.md`
-- `review/security-checklist.md` - `security-checklist-advanced.md`
-- `review/concurrency-checklist.md` - `concurrency-checklist-advanced.md`
-- `review/architecture-checklist.md` - `asset-checklist.md` - `prefab-checklist.md`
+- `review/checklist.md` — unified checklist: logic, lifecycle, serialization, performance, security, concurrency, architecture, assets/prefabs
 - `review/comment-format.md` - `pr-submission.md` - `parallel-review-criteria.md`
 
 ### Quality (6)

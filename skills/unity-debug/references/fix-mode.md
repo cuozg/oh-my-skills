@@ -45,5 +45,5 @@ Brief summary: files changed, root causes resolved, error count before/after.
 
 Load on demand from `unity-standards`:
 - `debug/common-unity-errors.md` — error reference table
-- `code-standards/lifecycle.md` — execution order
-- `code-standards/null-safety.md` — null check patterns
+- `code-standards/lifecycle-async-errors.md` — execution order, error handling
+- `code-standards/core-conventions.md` — null check patterns

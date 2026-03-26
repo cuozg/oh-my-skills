@@ -48,9 +48,9 @@ Optimize specific scripts for runtime performance.
 3. **Rank** — prioritize by estimated frame-time impact: Critical (> frame budget) > Warning (measurable) > Info (minor)
 4. **Fix** — apply optimizations using `references/gc-allocation-patterns.md` and `references/allocation-free-cookbook.md`:
    - Cache lookups in `Awake`/`Start` → replace per-frame calls
-   - Replace LINQ in hot paths with manual loops (load `code-standards/linq.md`)
+   - Replace LINQ in hot paths with manual loops (load `code-standards/performance-data.md`)
    - Eliminate allocations: reuse lists with `.Clear()`, `StringBuilder`, `NonAlloc` physics queries
-   - Pool frequently spawned objects (load `code-standards/object-pooling.md`)
+   - Pool frequently spawned objects (load `code-standards/performance-data.md`)
    - Add `sealed` to non-inherited MonoBehaviours
    - For 100+ entity loops: propose Jobs/Burst migration (load `optimization/jobs-burst-migration.md`)
 5. **Instrument** — add ProfilerMarkers to optimized sections (load `references/profiling-instrumentation.md`)
@@ -126,12 +126,9 @@ Full project performance sweep.
 Load shared references from unity-standards via `read_skill_file("unity-standards", "references/<path>")`:
 
 **Performance patterns:**
-- `review/performance-checklist.md` — hot-path allocation patterns, component lookup costs, physics
-- `review/performance-checklist-advanced.md` — Burst compiler, ProfilerMarker, Jobs
+- `review/checklist.md` — section `## 4. Performance`: hot-path allocations, component lookup, physics, Burst/Jobs
 - `quality/performance-audit.md` — frame budgets, GC hotspots, draw call/texture budgets
-- `code-standards/object-pooling.md` · `object-pooling-advanced.md` — pooling patterns
-- `code-standards/collections.md` · `collections-advanced.md` — collection choice, NativeContainers
-- `code-standards/linq.md` — LINQ hot-path rules
+- `code-standards/performance-data.md` — collections, LINQ, object pooling, serialization
 
 **Optimization settings:**
 - `optimization/build-settings.md` — stripping, IL2CPP, compression, texture/audio/mesh

@@ -75,8 +75,6 @@ Save to `Documents/Specs/SPEC_{Name}.md`. Run validation:
 
 Load `unity-standards` for architecture context. Key references:
 
-- `code-standards/architecture-patterns.md` — state machine, MVC/MVP, command pattern
-- `code-standards/dependencies.md` — DI, service locator, constructor injection
-- `code-standards/events.md` — C# events, UnityEvent, SO channels, Action
+- `code-standards/architecture-systems.md` — architecture patterns, dependencies, events, project structure
 
 Load via `read_skill_file("unity-standards", "references/<path>")`.

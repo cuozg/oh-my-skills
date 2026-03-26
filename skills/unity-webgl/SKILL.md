@@ -97,8 +97,8 @@ Carry forward context; tell user why you're switching.
 
 Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 
-- `code-standards/webgl-restrictions.md` — platform restrictions, unsupported APIs, workaround patterns
-- `code-standards/naming.md` · `lifecycle.md` · `null-safety.md` · `error-handling.md`
+- `code-standards/architecture-systems.md` — includes WebGL restrictions, platform workarounds
+- `code-standards/lifecycle-async-errors.md` · `core-conventions.md` — lifecycle, null safety, error handling
 - `debug/common-unity-errors.md` — includes WebGL-specific errors (code stripping, OOM)
 
 Load skill-specific references via `read_skill_file("unity-webgl", "references/<path>")`:

@@ -89,8 +89,8 @@ Assets/
 
 Load the shared project structure reference for detailed rules:
 ```
-read_skill_file("unity-standards", "references/code-standards/project-structure.md")
+read_skill_file("unity-standards", "references/code-standards/architecture-systems.md")
 ```
 
-For naming conventions: `read_skill_file("unity-standards", "references/code-standards/naming.md")`
-For assembly boundaries: `read_skill_file("unity-standards", "references/code-standards/dependencies.md")`
+For naming conventions: `read_skill_file("unity-standards", "references/code-standards/core-conventions.md")`
+For assembly boundaries: `read_skill_file("unity-standards", "references/code-standards/architecture-systems.md")`

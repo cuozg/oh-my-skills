@@ -81,7 +81,6 @@ Load via `read_skill_file("unity-profiler", "references/<filename>")`.
 Load `unity-standards` for performance thresholds and anti-pattern checklists:
 
 - `quality/performance-audit.md` — frame budgets, GC hotspots, draw call targets, ProfilerMarker patterns
-- `review/performance-checklist.md` — hot-path allocation patterns, component lookup costs, physics checks
-- `review/performance-checklist-advanced.md` — Burst compiler, ProfilerMarker best practices, Jobs system
+- `review/checklist.md` — section `## 4. Performance`: hot-path allocations, component lookup, physics, Burst/Jobs
 
 Load via `read_skill_file("unity-standards", "references/<path>")`.

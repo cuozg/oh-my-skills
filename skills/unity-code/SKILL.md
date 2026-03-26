@@ -32,9 +32,9 @@ State triage: "This is [mode] — [reason]."
 
 1. Read target files first; capture namespace, serialization, DI, event, lifecycle, asmdef, and naming patterns
 2. Load one workflow ref only:
-   - Quick → `code-standards/single-file-runtime-workflow.md`
-   - Deep → `code-standards/multi-file-workflow.md`
-   - Optimize → `code-standards/refactoring-patterns.md`
+   - Quick → `code-standards/architecture-systems.md` (§ Single-File Runtime Workflow)
+   - Deep → `code-standards/architecture-systems.md` (§ Multi-File Workflow)
+   - Optimize → `code-standards/architecture-systems.md` (§ Refactoring Patterns)
 3. Load only the refs directly implied by the work; use `read_skill_file("unity-code", "references/reference-routing.md")`
 4. Keep the active ref set small: baseline + at most 2-3 targeted refs before writing. Re-load only if scope expands.
 5. Prefer base refs over `*-advanced.md`; load advanced refs only for version-sensitive, package-specific, or genuinely complex work
@@ -45,7 +45,7 @@ State triage: "This is [mode] — [reason]."
 
 1. **Qualify** — confirm one runtime `.cs` file suffices; escalate if scope grows
 2. **Discover** — read target + 1-2 nearby runtime files
-3. **Implement** — smallest complete change matching local style. For new `MonoBehaviour`, `ScriptableObject`, or interface skeletons, load `code-standards/code-patterns.md`
+3. **Implement** — smallest complete change matching local style. For new `MonoBehaviour`, `ScriptableObject`, or interface skeletons, load `code-standards/core-conventions.md`
 4. **Verify** — `lsp_diagnostics` on changed file
 5. **Handoff** — path, what changed, diagnostics, editor follow-up
 

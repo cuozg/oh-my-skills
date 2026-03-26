@@ -1,52 +1,80 @@
 ---
 name: unity-review
 description: >
-  Unified Unity review skill — reviews local changes, GitHub PRs, or full projects. For local changes,
-  adds inline // REVIEW comments to C# files. For GitHub PRs, classifies changed files by type (.cs,
-  .prefab, .mat, .shader, etc.), assesses change size, spawns parallel specialist reviews (code,
-  architecture, assets, prefabs), aggregates findings, and posts APPROVE or REQUEST_CHANGES via GitHub
-  API. For project audits, grades architecture, performance, best practices, and tech debt A-F with an
-  HTML report. Use whenever the user says "review my code," "review this PR," "check my changes,"
-  "review PR #123," "audit this project," "code quality report," "is this ready to merge," "check the
-  prefabs," "review the assets," or wants any form of Unity code, asset, or architecture review.
+  Use this skill to review Unity code changes, GitHub pull requests, or audit entire Unity projects for
+  quality. Covers three modes: local review (inline // REVIEW comments on changed C# files), PR review
+  (parallel specialist reviews of .cs, .prefab, .shader files with APPROVE/REQUEST_CHANGES via GitHub
+  API), and project audit (A-F grades on architecture, performance, best practices, tech debt as HTML
+  report). MUST use whenever the user mentions reviewing code, checking changes, evaluating a pull
+  request, auditing project quality, or assessing merge readiness. Also use when they say "look over my
+  changes," "check this PR," "code review," "is this ready to merge," "rate this codebase," "tech debt,"
+  "quality report," "check the prefabs," "review the assets," or wants any feedback on Unity code,
+  assets, or architecture before merging or committing.
+metadata:
+  author: kuozg
+  version: "2.0"
 ---
+
 # unity-review
 
 Detect review target, classify changed file types and size, delegate specialist reviews to parallel subagents, aggregate findings, deliver results — inline comments for local, GitHub comments + APPROVE/REQUEST_CHANGES for PRs, HTML reports for audits.
 
 ## Step 1 — Detect Review Mode
 
-| Signal | Mode | Reference |
-|--------|------|-----------|
-| PR URL/number, "PR", "pull request", "merge" | **PR Review** | `references/pr-review-workflow.md` |
-| "review my code", "check changes", specific file, no PR | **Local Review** | `references/local-review-workflow.md` |
-| "audit project", "quality report", "tech debt", "rate codebase" | **Project Audit** | `references/quality-audit-workflow.md` |
+| Signal | Mode | First Action |
+|--------|------|-------------|
+| PR URL/number, "PR", "pull request", "merge", "is this ready" | **PR Review** | `read_skill_file("unity-review", "references/pr-review-workflow.md")` |
+| "review my code", "check changes", specific file path, no PR context | **Local Review** | `read_skill_file("unity-review", "references/local-review-workflow.md")` |
+| "audit project", "quality report", "tech debt", "rate codebase", "grade" | **Project Audit** | `read_skill_file("unity-review", "references/quality-audit-workflow.md")` |
 
-## Step 2 — Execute
+If ambiguous, ask: "Should I review your local changes, a GitHub PR, or audit the whole project?"
+
+## Step 2 — Load Standards
+
+For all modes, load `unity-standards` checklists via `read_skill_file("unity-standards", "references/<path>")`:
+
+| Mode | Required References |
+|------|-------------------|
+| **PR Review** | `review/checklist.md`, `review/pr-submission.md`, `review/parallel-review-criteria.md` (for Large PRs) |
+| **Local Review** | `review/checklist.md`, `review/comment-format.md`, `review/parallel-review-criteria.md` |
+| **Project Audit** | `quality/grading-criteria.md`, `quality/architecture-audit.md`, `quality/performance-audit.md`, `quality/best-practices-audit.md`, `quality/tech-debt-audit.md`, `quality/html-report-format.md` |
+
+## Step 3 — Execute
 
 ### PR Review
 
-1. **Fetch PR** — follow `references/pr-review-workflow.md`
-2. **Classify files** by type and spawn specialist subagents in parallel:
-   - `.cs` → code review (size-aware routing per `references/size-assessment.md`)
-   - `.prefab`, `.unity` → prefab/scene review (one subagent per file)
-   - `.mat`, `.shader`, `.meta`, `.controller`, `.anim`, `.fbx`, `.asset` → asset review
-   - `.cs` with new systems/services/managers or `.asmdef` → architecture review
-3. **Specialist rules** — `references/pr-specialist-reviews.md`
-4. **Aggregate** — deduplicate by (path, line), keep highest severity, sort file → line
-5. **Final decision** — APPROVE or REQUEST_CHANGES per `references/final-decision.md`
-6. **Submit** — single review POST per `unity-standards/references/review/pr-submission.md`
-7. **Verify** — confirm posted, retry on failure
+Follow `references/pr-review-workflow.md` — a self-contained 11-step workflow:
+
+1. Resolve owner/repo → 2. Fetch PR metadata → 3. Fetch file content → 4. Assess PR size (Minor/Large) → 5. Classify files and route to specialists (`references/pr-specialist-reviews.md`) → 6. Aggregate findings → 7. Check for prior reviews → 8. Make final decision (APPROVE/REQUEST_CHANGES/COMMENT) → 9. Build review body → 10. Submit via `gh api` → 11. Verify submission
+
+**Key rules:**
+- Minor PR (1-2 CS files, 1-5 functions) → single-pass review
+- Large PR (3+ files or 6+ functions) → parallel subagents (one per checklist criterion)
+- Always fetch full file content, not just diff hunks
+- One review submission per run — never call reviews API twice
+- Verify submission succeeded before reporting done
 
 ### Local Review
 
 Follow `references/local-review-workflow.md`:
-`git diff` → read .cs files → 6 parallel subagents (one per criterion) → aggregate → insert `// ── REVIEW` comments → apply safe fixes → `task_create` for unfixed issues.
+
+1. Determine scope (all changes / staged / specific file) → 2. Filter to `.cs` files → 3. Read full files → 4. Spawn 6 parallel subagents (one per review criterion) → 5. Collect results → 6. Aggregate and validate with LSP → 7. Insert `// ── REVIEW` comments → 8. Apply safe single-line fixes → 9. Queue remaining issues via `task_create`
+
+**Key rules:**
+- Always read full file, not just diff hunk
+- Use `lsp_find_references` before flagging dead code
+- Never commit — leave diff for user inspection
 
 ### Project Audit
 
 Follow `references/quality-audit-workflow.md`:
-Scope files → analyze 4 categories → grade A-F per `references/quality-grading-rubric.md` → generate HTML report.
+
+1. Scope files → 2. Analyze architecture → 3. Analyze performance → 4. Evaluate best practices → 5. Measure tech debt → 6. Grade A-F per rubric → 7. Generate HTML report
+
+**Key rules:**
+- Read-only — never modify source code
+- Every grade must cite evidence (file:line)
+- Include "Top 5 Priority Fixes" ranked by severity × frequency
 
 ## Comment Format (PR)
 
@@ -62,16 +90,43 @@ Scope files → analyze 4 categories → grade A-F per `references/quality-gradi
 
 Suggestion blocks required for MEDIUM+ severity.
 
+## Comment Format (Local)
+
+```csharp
+// ── REVIEW {icon} {LABEL} #{category}
+// What: 1-line summary
+// Why:  1-3 lines — impact + evidence
+```
+
 ## Severity Scale
 
 🔴 CRITICAL → 🟠 HIGH → 🟡 MEDIUM → 🔵 LOW → ⚪ STYLE
 
-Minimum floors: GetComponent/Find* per frame → MEDIUM · Missing event unsub → HIGH · Coroutine not stopped on lifecycle exit → HIGH · `async void` → MEDIUM
+### Minimum Severity Floors
 
-## Standards
+These issues must NEVER be graded below the stated level:
 
-Load `unity-standards` for all checklists via `read_skill_file("unity-standards", "references/<path>")`:
+| Issue | Floor |
+|-------|:-----:|
+| Missing event unsubscription (OnEnable += / no OnDisable -=) | HIGH |
+| Coroutine not stopped on lifecycle exit | HIGH |
+| `async void` outside Unity event handlers | MEDIUM |
+| `GetComponent` / `Find*` per frame (Update/FixedUpdate) | MEDIUM |
+| Missing null check on deserialized gameplay data | MEDIUM |
+| Hardcoded API keys, passwords, tokens | CRITICAL |
+| `m_Script: {fileID: 0}` (missing MonoBehaviour in prefab) | CRITICAL |
+| LINQ / string concat / lambda allocations in Update | MEDIUM |
+| `FindObjectOfType` in production code for runtime wiring | HIGH |
+| Missing `[FormerlySerializedAs]` on renamed serialized field | HIGH |
+| `DestroyImmediate` in runtime code | HIGH |
 
-- `review/` — logic, lifecycle, serialization, performance, security, concurrency, architecture, asset, prefab checklists
-- `review/comment-format.md`, `review/pr-submission.md`, `review/parallel-review-criteria.md`
-- `quality/` — grading-criteria, architecture-audit, performance-audit, best-practices-audit, tech-debt-audit, html-report-format
+## Error Handling
+
+| Problem | Action |
+|---------|--------|
+| `gh` not installed or not authenticated | Tell user: `brew install gh && gh auth login` |
+| PR number not found (404) | Verify owner/repo. Check if PR is in a fork. |
+| No local changes found | Check `git status`. Inform user if working tree is clean. |
+| Project too large (1000+ files) for audit | Use sampling strategy (see quality audit workflow). |
+| Subagent returns empty findings | That's fine — no issues in that criterion. Include in summary. |
+| Review submission fails (422) | Re-fetch HEAD SHA. Check comment size (<32KB). Retry. |

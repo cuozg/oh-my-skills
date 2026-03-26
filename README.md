@@ -38,12 +38,12 @@ Level 3 — References (loaded on demand)      detailed standards, checklists, t
 
 ### `unity-standards` — Shared Reference Hub
 
-`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **92 reference files** across 9 categories:
+`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **81 reference files** across 9 categories:
 
 | Category | Count | Covers |
 | --- | --- | --- |
 | Code Standards | 32 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ, collections, error-handling, comments, access-modifiers, code-patterns, architecture-patterns, multi-file-workflow, refactoring-patterns, unity-attributes, object-pooling |
-| Review | 15 | Logic, lifecycle risks, serialization risks, performance, security, concurrency, architecture, assets, prefabs, comment format, PR submission, parallel review |
+| Review | 4 | Unified checklist (logic, lifecycle, serialization, performance, security, concurrency, architecture, assets/prefabs), comment format, PR submission, parallel review |
 | Plan | 11 | Sizing, risk, task structure, investigation workflow, dependency mapping, quick output, deep workflow |
 | Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits, HTML report format |
 | UI Toolkit | 6 | Setup, performance, UXML patterns, USS styling, C# bindings, custom controls |

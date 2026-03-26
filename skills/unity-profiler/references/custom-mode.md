@@ -164,4 +164,4 @@ public class GameSystem : MonoBehaviour
 ## For More Patterns
 
 Load `unity-standards` for additional ProfilerMarker patterns and Burst compiler integration:
-- `read_skill_file("unity-standards", "references/review/performance-checklist-advanced.md")`
+- `read_skill_file("unity-standards", "references/review/checklist.md")` — see section `## 4. Performance` → Burst / Jobs
