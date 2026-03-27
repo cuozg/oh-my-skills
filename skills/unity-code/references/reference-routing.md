@@ -1,46 +1,68 @@
-# Reference Routing
+# Reference Routing — Code-Standards On Demand
 
-Read local files first. Load one workflow ref, then only the smallest extra set needed to write correctly.
+Code-standards is the single source of truth for all Unity C# patterns and conventions. Use this table to load only the sections relevant to your current task.
 
-## Baseline
+## How to Use
 
-- Quick → `code-standards/architecture-systems.md` (§ Single-File Runtime Workflow)
-- Deep → `code-standards/architecture-systems.md` (§ Multi-File Workflow)
-- Optimize → `code-standards/architecture-systems.md` (§ Refactoring Patterns)
-- New `MonoBehaviour`, `ScriptableObject`, or interface skeleton → `code-standards/core-conventions.md`
+1. Scan the task description for clues in the left column
+2. Load the indicated code-standards file via `read_skill_file("unity-standards", "references/code-standards/<file>.md")`
+3. Focus on the section indicated after §
+4. Load **1-3 files maximum** per task — reassess if scope changes
 
-## Add By Need
+## Route By Task Clue
 
-| Task clue | Load |
-|-----------|------|
-| Serialized fields, inspector data, safe renames, `JsonUtility`, `SerializeReference` | `code-standards/performance-data.md` § Serialization |
-| Component lookups, nullable refs, destroyed Unity objects, guard clauses | `code-standards/core-conventions.md` § Null Safety |
-| `Awake`, `Start`, `OnEnable`, `FixedUpdate`, coroutines, app lifecycle | `code-standards/lifecycle-async-errors.md` § Unity Lifecycle |
-| C# events, `UnityEvent`, event channels, subscription ownership | `code-standards/architecture-systems.md` § Events |
-| 2+ runtime files, services, DI, asmdefs, registration, assembly boundaries | `code-standards/architecture-systems.md` § Dependency Management |
-| State machine, MVP/MVC, command flow, feature architecture | `code-standards/architecture-systems.md` § Architecture Patterns |
-| Extract class/interface, composition, data extraction, event-driven migration | `code-standards/architecture-systems.md` § Refactoring Patterns |
-| Collection choice, lookup-heavy code, pre-sizing, `Contains` cost | `code-standards/performance-data.md` § Collections |
-| LINQ in gameplay code or repeated loops | `code-standards/performance-data.md` § LINQ Usage |
-| `async`/`await`, `Task`, UniTask, `Awaitable`, cancellation | `code-standards/lifecycle-async-errors.md` § Async Patterns |
-| `RequireComponent`, `SerializeField`, `CreateAssetMenu`, inspector attributes | `code-standards/core-conventions.md` § Unity Attributes |
-| `private` vs `public`, `readonly`, `const`, `sealed`, API surface cleanup | `code-standards/core-conventions.md` § Access Modifiers |
-| Try/catch, asserts, error logs, editor-only safety guards | `code-standards/lifecycle-async-errors.md` § Error Handling |
-| Naming cleanup, namespaces, file names, boolean names | `code-standards/core-conventions.md` § Naming Conventions |
-| Brace/style cleanup, `var`, terse comments, section headers | `code-standards/core-conventions.md` § Formatting / § Comments |
-| New folders, namespace layout, asmdef placement | `code-standards/architecture-systems.md` § Project Folder Structure |
-| Pooling is part of the feature design, not a perf pass | `code-standards/performance-data.md` § Object Pooling |
-| Web target or browser restrictions matter | `code-standards/architecture-systems.md` § Web Platform Restrictions |
+### core-conventions.md
 
-## Do Not Load Yet
+| Task clue | Section |
+|-----------|---------|
+| New MonoBehaviour, ScriptableObject, interface, enum, struct, helper class | § Code Patterns |
+| Naming, namespaces, file names, boolean names, async suffix | § Naming Conventions |
+| Brace style, `var` usage, line breaks, expression-bodied members | § Formatting |
+| XML docs, inline comments, header comments, TODO format | § Comments |
+| `private` vs `public`, `readonly`, `const`, `sealed`, API surface | § Access Modifiers |
+| Component lookups, nullable refs, destroyed Unity objects, guard clauses | § Null Safety |
+| `RequireComponent`, `SerializeField`, `CreateAssetMenu`, inspector attributes | § Unity Attributes |
 
-- Editor-specific patterns → route to `unity-editor`
-- Optimization refs for GC/frame-budget work → route to `unity-optimize`
-- Style refs if local style is already clear and style cleanup is not requested
+### lifecycle-async-errors.md
 
-## Budget
+| Task clue | Section |
+|-----------|---------|
+| `Awake`, `Start`, `OnEnable`, `FixedUpdate`, coroutines, app lifecycle | § Unity Lifecycle |
+| `async`/`await`, `Task`, UniTask, `Awaitable`, cancellation | § Async Patterns |
+| Try/catch, asserts, error logs, editor-only safety guards | § Error Handling |
+| Input validation, save data security, rate limiting | § Security — Input & Data Validation |
 
-- Start with 1 workflow ref
-- Add 1-3 targeted refs
-- Reassess after discovery or scope changes
-- Prefer correctness refs before style refs
+### performance-data.md
+
+| Task clue | Section |
+|-----------|---------|
+| Serialized fields, inspector data, safe renames, `JsonUtility`, `SerializeReference` | § Serialization |
+| Collection choice, lookup-heavy code, pre-sizing, `Contains` cost | § Collections |
+| LINQ in gameplay code or repeated loops | § LINQ Usage |
+| Object pooling as part of feature design (not perf pass) | § Object Pooling |
+
+### architecture-systems.md
+
+| Task clue | Section |
+|-----------|---------|
+| C# events, `UnityEvent`, event channels, subscription ownership | § Events |
+| 2+ runtime files, services, DI, asmdefs, registration, assembly boundaries | § Dependency Management |
+| State machine, MVP/MVC, command flow, strategy pattern | § Architecture Patterns |
+| Extract class/interface, composition, data extraction, event-driven migration | § Refactoring Patterns |
+| New folders, namespace layout, asmdef placement | § Project Folder Structure |
+| Web target or browser restrictions matter | § Web Platform Restrictions |
+
+## Loading Priority
+
+For most writing tasks, start with these (unless discovery shows clear established conventions):
+
+1. `core-conventions.md` — almost always relevant (naming, patterns, attributes)
+2. The domain-specific file indicated by task clues (async, architecture, serialization, etc.)
+3. A second domain file only if the task clearly spans two concerns
+
+## Do Not Load
+
+- Editor-specific patterns → route to `unity-editor` skill
+- Optimization refs for GC/frame-budget work → route to `unity-optimize` skill
+- All 4 code-standards files at once — pick the 1-3 that matter
+- Style refs if local style is already clear from discovery and style cleanup is not requested

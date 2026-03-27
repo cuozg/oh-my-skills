@@ -1,0 +1,68 @@
+{
+  "skill_name": "unity-code",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a health component for my enemies in Unity. It should track current and max health, let things take damage, die when health hits zero, and fire C# events when health changes or the enemy dies. Also needs a way to heal. Put it in the Combat namespace.",
+      "expected_output": "A single well-structured MonoBehaviour following code-standards conventions from core-conventions.md",
+      "files": [],
+      "expectations": [
+        "Triages as Quick mode",
+        "Loads reference-routing.md to identify needed code-standards",
+        "Loads core-conventions.md from unity-standards for code patterns, naming, and attributes",
+        "Creates exactly one .cs file",
+        "Class is sealed and inherits MonoBehaviour",
+        "Uses namespace containing Combat",
+        "Health fields use [SerializeField] private with read-only properties (code-standards serialization pattern)",
+        "Has C# events (event Action) for health change and death (code-standards event pattern)",
+        "TakeDamage and Heal methods with guard clauses for invalid input (code-standards null safety pattern)",
+        "Follows _camelCase for private fields, PascalCase for methods (code-standards naming)",
+        "No GetComponent in Update or hot path",
+        "No TODO, stubs, or placeholder code",
+        "lsp_diagnostics is called on the file"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Build a wave-based enemy spawner system for my Unity game. I need ScriptableObject configs for each wave (enemy prefab, count, spawn interval, delay before wave), a spawner MonoBehaviour that reads the configs and spawns enemies in sequence, and events for wave start/complete/all waves done. The project uses VContainer for DI and the namespace is MyGame.Combat.",
+      "expected_output": "3-5 well-structured C# files created in dependency order following code-standards architecture and event patterns",
+      "files": [],
+      "expectations": [
+        "Triages as Deep mode",
+        "Loads reference-routing.md to identify needed code-standards",
+        "Loads architecture-systems.md from unity-standards for DI and event patterns",
+        "Loads core-conventions.md from unity-standards for code patterns and naming",
+        "Creates WaveConfig ScriptableObject with CreateAssetMenu (code-standards SO pattern)",
+        "Creates a spawner MonoBehaviour that is sealed (code-standards access modifier pattern)",
+        "Fires C# events for wave lifecycle — start, complete, all done (code-standards event pattern)",
+        "Uses VContainer [Inject] pattern for dependencies in consumer MonoBehaviours (code-standards DI pattern)",
+        "Files created in dependency order: data/interfaces first, then logic, then wiring",
+        "Namespace is MyGame.Combat on all files (code-standards namespace convention)",
+        "All serialized fields use [SerializeField] private with read-only properties",
+        "No stubs or incomplete wiring",
+        "lsp_diagnostics called on all files"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create an async save system for my Unity game. I need a SaveData class with player stats (health, position, level, play time), a SaveService that writes/reads JSON to Application.persistentDataPath using async file I/O with proper cancellation, and error handling for missing/corrupted files. The project uses UniTask. Namespace is MyGame.Core.",
+      "expected_output": "2-3 well-structured C# files following code-standards async, error handling, and serialization patterns",
+      "files": [],
+      "expectations": [
+        "Triages as Deep mode",
+        "Loads reference-routing.md to identify needed code-standards",
+        "Loads lifecycle-async-errors.md from unity-standards for async and error handling patterns",
+        "Loads performance-data.md from unity-standards for serialization patterns",
+        "Creates SaveData class with proper serialization attributes (code-standards serialization pattern)",
+        "Creates SaveService with async methods using UniTask — matches project convention (code-standards async guidance)",
+        "All async methods accept CancellationToken parameter (code-standards cancellation pattern)",
+        "Uses try/catch with specific exception types, not bare catch (code-standards error handling)",
+        "Validates deserialized data — clamps values to valid ranges (code-standards save data security)",
+        "Uses Application.persistentDataPath for file paths (code-standards security rule)",
+        "Follows _camelCase for private fields, PascalCase for methods (code-standards naming)",
+        "No TODO, stubs, or placeholder code",
+        "lsp_diagnostics called on all files"
+      ]
+    }
+  ]
+}

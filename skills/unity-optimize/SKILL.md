@@ -109,7 +109,7 @@ Full project performance sweep.
 - **Never sacrifice correctness** for performance without explicit user approval
 - **Ask target platform** before recommending platform-specific settings
 - **Cite references** for each recommendation — link to specific unity-standards file
-- **Boundary**: This skill optimizes for performance. For structural cleanup without perf focus, use unity-code Optimize mode. For profiler data analysis, use unity-profiler.
+- **Boundary**: This skill optimizes for performance. For structural cleanup without perf focus, use unity-code. For profiler data analysis, use unity-profiler.
 
 ## Escalation
 
