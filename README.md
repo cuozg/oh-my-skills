@@ -1,98 +1,153 @@
-# Oh My Skills
+<p align="center">
+  <br />
+  <img width="100" src="./icon-200.png" alt="Oh My Skills" />
+  <br />
+</p>
 
-A comprehensive skill pack for AI agents working with **Unity** and **Flutter** projects. Clone it into your OpenCode config directory and get **39 specialized skills** and **50 slash commands** — all tuned for Unity C# and Flutter/Dart development.
+<h1 align="center">Oh My Skills</h1>
+
+<p align="center">
+  <strong>50 battle-tested AI agent skills. 252 reference docs. 322 commits of relentless refinement.</strong>
+  <br />
+  Built for Unity, Flutter, and full-stack development &mdash; evaluated, iterated, and hardened until they actually work.
+</p>
+
+<p align="center">
+  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-50">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-57">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
+</p>
+
+---
+
+## Why This Exists
+
+Most AI agent skills are written once and abandoned. They hallucinate patterns, miss edge cases, and produce output that looks right but isn't.
+
+**Oh My Skills** is different. Every skill in this pack has been:
+
+- **Written** from real-world project experience, not hypotheticals
+- **Evaluated** against concrete test scenarios with pass/fail criteria
+- **Refined** across 50+ iteration cycles &mdash; rewrite, eval, fix, re-eval
+- **Hardened** with 252 reference documents that ground the agent in real conventions
+
+The result: skills that produce **senior-engineer-quality output** &mdash; code that follows your project's actual patterns, reviews that catch real bugs, plans that map to your real codebase.
+
+---
 
 ## Installation
 
-### 1. Clone
+### 1. Clone into your config directory
 
 ```bash
-git clone https://github.com/cuozg/oh-my-skills.git ./.claude
+# For OpenCode
+git clone https://github.com/cuozg/oh-my-skills.git ~/.config/opencode/skills
+
+# For Claude Code / Codex
+git clone https://github.com/cuozg/oh-my-skills.git ./.claude/skills
 ```
 
-### 2. Install GitHub CLI (`gh`)
+### 2. Install GitHub CLI (optional, for git skills)
 
-Several skills (PR reviews, PR descriptions, git workflows) use the [GitHub CLI](https://cli.github.com/) to interact with GitHub. Install it and authenticate:
+Several skills (PR reviews, PR descriptions, git workflows) use the [GitHub CLI](https://cli.github.com/):
 
-**macOS**
 ```bash
-brew install gh
-```
-
-Then authenticate:
-```bash
-gh auth login
+brew install gh && gh auth login
 ```
 
 > For other platforms, see the [official install docs](https://github.com/cli/cli#installation).
 
-## Skills Design System
+That's it. Skills auto-activate based on your requests.
 
-Skills follow a **3-tier progressive disclosure** architecture to minimize token usage while maximizing guidance quality:
+---
+
+## The Numbers
+
+| Metric | Count |
+|:---|---:|
+| Specialized skills | **50** |
+| Reference documents | **252** |
+| Commits of refinement | **322+** |
+| Eval & refinement iterations | **53+** |
+| Unity standards reference files | **54** |
+| Flutter standards reference files | **12** |
+| Slash commands | **57** |
+| Covered domains | **13** |
+
+---
+
+<a id="philosophy"></a>
+
+## Philosophy: Eval-Driven Skill Development
+
+Skills aren't written &mdash; they're **forged**.
 
 ```
-Level 1 — Metadata (always in context)      name + description (~100 words)
-Level 2 — SKILL.md (loaded on trigger)       workflow + tool list (<100 lines)
-Level 3 — References (loaded on demand)      detailed standards, checklists, templates
+ Write v1       Eval against       Identify        Rewrite &       Re-eval
+ of skill  -->  real scenarios -->  failures   -->  harden     -->  until pass
+     |                                                                  |
+     '--- repeat 3-10x per skill until output is indistinguishable ----'
+                         from a senior engineer's work
 ```
 
-### `unity-standards` — Shared Reference Hub
+### The 3-Tier Progressive Disclosure System
 
-`unity-standards` is the **single source of truth** for all Unity-related conventions. It holds **81 reference files** across 9 categories:
+Every skill uses a **token-efficient architecture** that loads only what's needed:
 
-| Category | Count | Covers |
-| --- | --- | --- |
-| Code Standards | 32 | Naming, formatting, lifecycle, events, DI, serialization, null-safety, async, LINQ, collections, error-handling, comments, access-modifiers, code-patterns, architecture-patterns, multi-file-workflow, refactoring-patterns, unity-attributes, object-pooling |
-| Review | 4 | Unified checklist (logic, lifecycle, serialization, performance, security, concurrency, architecture, assets/prefabs), comment format, PR submission, parallel review |
-| Plan | 11 | Sizing, risk, task structure, investigation workflow, dependency mapping, quick output, deep workflow |
-| Quality | 6 | A–F grading, architecture/performance/best-practices/tech-debt audits, HTML report format |
-| UI Toolkit | 6 | Setup, performance, UXML patterns, USS styling, C# bindings, custom controls |
-| Test | 6 | Edit/Play mode patterns, test case format, coverage strategy, naming |
-| Debug | 5 | Diagnosis workflow, common Unity errors, log format, fix mode, deep mode |
-| Other | 3 | Mermaid syntax, FlatBuffers guide, skill authoring |
+```
+Tier 1 ── Metadata          Always in context       ~100 words    name + description
+Tier 2 ── SKILL.md          Loaded on trigger        <100 lines   workflow + tool list + rules
+Tier 3 ── References        Loaded on demand         Deep docs    standards, checklists, templates
+```
 
-Other skills pull specific references on demand:
+**Why this matters:** A naive skill dumps everything into context and wastes tokens. Our 3-tier system means the agent gets surgical precision &mdash; Tier 1 for routing, Tier 2 for workflow, Tier 3 only when the specific reference is needed.
 
+### The Standards Hub Pattern
+
+Instead of duplicating conventions across skills, **shared standards hubs** act as the single source of truth:
+
+```
+unity-standards/references/          54 files across 9 categories
+├── code-standards/                  Naming, formatting, patterns, architecture
+├── review/                          Checklists, PR format, parallel review
+├── plan/                            Sizing, risk, task structure, dependencies
+├── quality/                         A-F grading, audit templates
+├── ui-toolkit/                      UXML, USS, C# bindings, custom controls
+├── test/                            Edit/Play mode, coverage, naming
+├── debug/                           Diagnosis, common errors, log format
+├── optimization/                    Build, rendering, memory, mobile, Jobs/Burst
+└── other/                           Mermaid, FlatBuffers, skill authoring
+
+flutter-standards/references/        12 files across 6 categories
+├── Code & Style                     Dart naming, formatting, linting
+├── Architecture & State             Feature-first, Riverpod 2.x, DI
+├── UI & Assets                      Widget composition, theming, responsive
+├── Async & Errors                   Future/Stream, exception hierarchies
+├── Testing                          AAA pattern, Mocktail
+└── Performance & Debug              Rebuild profiling, DevTools, logging
+```
+
+Any skill can pull a specific reference on demand:
 ```python
 read_skill_file("unity-standards", "references/code-standards/naming.md")
-read_skill_file("unity-standards", "references/review/logic-checklist.md")
-```
-
-### `flutter-standards` — Shared Reference Hub
-
-`flutter-standards` is the **shared reference hub** for all Flutter & Dart conventions. It holds **12 reference files** across 6 categories:
-
-| Category | Count | Covers |
-| --- | --- | --- |
-| Code & Style | 2 | Dart naming, formatting, linting, null-safety, feature-first layout, pubspec |
-| Architecture & State | 3 | Feature-first patterns, Riverpod 2.x, DI with provider scoping |
-| UI & Assets | 2 | Widget composition, theming, responsive layout, asset management, flutter_gen |
-| Async & Errors | 2 | Future/Stream patterns, exception hierarchies, Result pattern |
-| Testing | 1 | Unit, widget, integration tests, AAA pattern, Mocktail |
-| Performance & Debug | 2 | Rebuild profiling, DevTools, structured logging, crash reporting |
-
-Other skills pull specific references on demand:
-
-```python
-read_skill_file("flutter-standards", "references/dart-style-guide.md")
 read_skill_file("flutter-standards", "references/state-management-guide.md")
 ```
 
-### Mandatory Skill Loading Rule
-
-> **When delegating any Unity or Flutter task, always include the corresponding standards skill.**
-
+**Rule:** When delegating any Unity or Flutter task, always include the corresponding standards skill:
 ```python
-task(category="quick", load_skills=["unity-standards"], prompt="...")
-task(category="deep", load_skills=["unity-code", "unity-standards"], prompt="...")
-task(category="quick", load_skills=["flutter-standards"], prompt="...")
+task(category="quick", load_skills=["unity-standards", "unity-code"], prompt="...")
+task(category="deep",  load_skills=["flutter-standards", "flutter-code"], prompt="...")
 ```
 
-### Architecture
+---
+
+<a id="architecture"></a>
+
+## Architecture
+
+Every domain skill pulls from its standards hub. The hub holds the conventions; the skill holds the workflow.
 
 ```mermaid
 graph TD
-    US[unity-standards<br/>92 reference files] --> UC[unity-code]
+    US[unity-standards<br/>54 reference files] --> UC[unity-code]
     US --> UE[unity-editor]
     US --> UR[unity-review]
     US --> UI[unity-investigate]
@@ -106,6 +161,9 @@ graph TD
     US --> UPI[unity-init]
     US --> USpec[unity-spec]
     US --> UOpt[unity-optimize]
+    US --> UWgl[unity-webgl]
+    US --> UPro[unity-prototype]
+    US --> UCost[unity-costing]
 
     FS[flutter-standards<br/>12 reference files] --> FC[flutter-code]
     FS --> FU[flutter-ui]
@@ -115,6 +173,8 @@ graph TD
     FS --> FP[flutter-profiler]
 
     style US fill:#E04E39,color:#fff,stroke:#C03E2B
+    style FS fill:#0175C2,color:#fff,stroke:#02569B
+
     style UC fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UE fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UR fill:#1a1a2e,color:#fff,stroke:#E04E39
@@ -129,8 +189,10 @@ graph TD
     style UPI fill:#1a1a2e,color:#fff,stroke:#E04E39
     style USpec fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UOpt fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UWgl fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UPro fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UCost fill:#1a1a2e,color:#fff,stroke:#E04E39
 
-    style FS fill:#0175C2,color:#fff,stroke:#02569B
     style FC fill:#1a1a2e,color:#fff,stroke:#0175C2
     style FU fill:#1a1a2e,color:#fff,stroke:#0175C2
     style FD fill:#1a1a2e,color:#fff,stroke:#0175C2
@@ -141,312 +203,183 @@ graph TD
 
 ---
 
-## Skills (39)
+<a id="skills-50"></a>
 
-> **39 skills** across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
+## Skills (50)
 
----
+50 skills across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
-### unity-code
+### Unity &mdash; Runtime Code
 
-Write, extend, or optimize runtime Unity C# code. Auto-triages into the right mode.
+| Skill | What it does | Modes |
+|:---|:---|:---|
+| **unity-code** | Write, extend, or refactor runtime C# | Quick / Deep / Optimize |
+| **unity-optimize** | Performance &mdash; code hot paths, build settings, audits | Code / Settings / Audit |
+| **unity-editor** | Custom inspectors, windows, drawers, gizmos, handles | Quick / Deep |
+| **unity-uitoolkit** | Runtime UI &mdash; UXML, USS, C# bindings, custom controls | &mdash; |
+| **unity-webgl** | JSLib plugins, WebGL builds, templates, deployment | JSLib / Build / Template |
+| **unity-prototype** | Playable prototypes from game ideas | &mdash; |
 
-```
-└── unity-code                  Unified C# coding skill (runtime)
-    ├─ Quick     ⚡  Single-file MonoBehaviour, SO, interface, enum, struct, helper
-    ├─ Deep      🏗️  Multi-file features, services, state machines, refactors (2+ classes)
-    └─ Optimize  ⚡  Structural cleanup without behavior change
-```
+### Unity &mdash; Quality & Review
 
----
+| Skill | What it does | Modes |
+|:---|:---|:---|
+| **unity-review** | Code review, PR review, full project audit | Local / PR / Project |
+| **unity-debug** | Diagnose and fix bugs, from compile errors to intermittent issues | Fix / Quick / Deep / Log |
+| **unity-investigate** | Codebase analysis, system tracing, architecture reports | Quick / Deep |
+| **unity-profiler** | CPU spikes, GC pressure, rendering bottlenecks | &mdash; |
+| **unity-test-unit** | Edit/Play mode unit tests (10+ per class, AAA pattern) | &mdash; |
+| **unity-test-case** | QA test case documentation (HTML output) | &mdash; |
 
-### unity-optimize
+### Unity &mdash; Planning & Docs
 
-Optimize Unity project performance — code, settings, and full audits.
+| Skill | What it does | Modes |
+|:---|:---|:---|
+| **unity-plan** | Feature planning with scope detection (XS &rarr; XL) | Quick / Deep |
+| **unity-costing** | XL feature breakdown (10+ days), epic/task trees | &mdash; |
+| **unity-document** | System docs or technical design documents | System / TDD |
+| **unity-spec** | Game Design Specification (GDD) | &mdash; |
+| **unity-init** | Project scaffolding &mdash; folders, .asmdef, namespaces | &mdash; |
+| **unity-standards** | **54 reference files** &mdash; the single source of truth | Hub |
 
-```
-└── unity-optimize              Unified performance optimization skill
-    ├─ Code     ⚡  GC elimination, allocation-free patterns, Jobs/Burst migration
-    ├─ Settings 🔧  Player/Quality/Physics settings, platform-specific tuning
-    └─ Audit    📊  Full project sweep with ranked findings and applied fixes
-```
+### Flutter
 
----
+| Skill | What it does | Modes |
+|:---|:---|:---|
+| **flutter-code** | Write, extend, or optimize Dart code | Quick / Deep / Optimize |
+| **flutter-ui** | Screens, widgets, themes, responsive layouts | Quick / Deep |
+| **flutter-debug** | Dart analysis errors to intermittent bugs | Fix / Quick / Deep / Log |
+| **flutter-review** | Code review, PR review, project audit | Local / PR / Project |
+| **flutter-test** | Unit, widget, and integration tests (AAA, mocktail) | Auto-triage |
+| **flutter-profiler** | DevTools analysis, CPU/memory/jank reports | &mdash; |
+| **flutter-standards** | **12 reference files** &mdash; Dart/Flutter conventions | Hub |
 
-### unity-editor
+### Full-Stack & Infrastructure
 
-Write Unity Editor scripts — inspectors, windows, drawers, gizmos, handles.
+| Skill | What it does |
+|:---|:---|
+| **nextjs-backend** | API routes, server actions, auth, multi-tenant (App Router) |
+| **database-design** | PostgreSQL schemas, migrations, indexing, Prisma/Drizzle |
+| **cloud-infra** | Cloudflare R2, Vercel deployment, CDN, signed URLs |
 
-```
-└── unity-editor                Unified Editor coding skill
-    ├─ Quick     ⚡  Single editor script — one inspector, one window, one drawer
-    └─ Deep      🏗️  Multi-file editor tooling — level editors, pipelines, inspector + gizmos
-```
+### Git Workflow
 
----
+| Skill | What it does |
+|:---|:---|
+| **git-commit** | Stage + commit with clean imperative messages |
+| **git-comment** | Rewrite last commit message |
+| **git-squash** | Squash commits into clean logical units |
+| **git-description** | Generate + apply PR descriptions |
+| **git-clear** | Delete all comments from a GitHub PR |
 
-### unity-review
+### Autonomous Execution
 
-Review code, architecture, assets, prefabs, and project quality.
+| Skill | What it does |
+|:---|:---|
+| **sisyphus-work** | Scan goal files, execute all autonomously |
+| **sisyphus-goal** | Interactive goal creation with acceptance criteria |
+| **sisyphus-improve** | Quality refinement &mdash; assess work against goals |
+| **session-retrospective** | Post-session learning &mdash; improve skills from experience |
 
-```
-└── unity-review                Unified review skill
-    ├─ Local     📝  Inline // REVIEW comments on local changes (no GitHub)
-    ├─ PR        🔗  GitHub PR review — parallel specialists → APPROVE / REQUEST_CHANGES
-    └─ Project   📊  Full A–F audit — architecture, performance, best practices, tech debt
-```
+### Shell & CLI
 
----
+| Skill | What it does |
+|:---|:---|
+| **bash-check** | Validate scripts (syntax + ShellCheck) |
+| **bash-optimize** | Refactor scripts without behavior change |
+| **bash-install** | Install software with auto-retry + verification |
 
-### unity-investigate
+### Specialized
 
-Analyze codebases, understand systems, trace data flows.
+| Skill | What it does |
+|:---|:---|
+| **pixijs-coder** | PixiJS v8 &mdash; apps, shaders, filters, animations |
+| **flatbuffers-coder** | .fbs schemas, C# generation, binary serialization |
+| **mcp-builder** | Build MCP servers (Python FastMCP / Node SDK) |
+| **skill-creator** | Create, modify, benchmark, and optimize skills |
 
-```
-└── unity-investigate           Unified investigation skill
-    ├─ Quick     💬  How does X work? What calls Y? → inline answer
-    └─ Deep      📋  Full report with Mermaid diagrams, cited evidence, risk tables
-```
+### Productivity & Output
 
----
-
-### unity-debug
-
-Diagnose, trace, and fix Unity issues.
-
-```
-└── unity-debug                 Unified debugging skill
-    ├─ Fix       🔧  Compile errors → auto-fix loop → zero errors
-    ├─ Quick     🩺  Runtime bugs → 2-3 proposals → user picks → fix
-    ├─ Deep      🔎  Intermittent/multi-system → read-only investigation report
-    └─ Log       📋  Color-coded Debug.Log snippets (text output only)
-```
-
----
-
-### unity-plan
-
-Plan Unity features with codebase-aware task breakdowns.
-
-```
-└── unity-plan                  Unified planning skill
-    ├─ Quick     ⚡  XS/S (0-8h) → inline report + task_create
-    └─ Deep      🏗️  M/L (1-10 days) → markdown plan + task hierarchy
-```
-
----
-
-### unity-document
-
-Generate technical documentation from real code state.
-
-```
-└── unity-document              Unified documentation skill
-    ├─ System    📘  Existing system → architecture diagrams, API ref, extension guides
-    └─ TDD       📐  Pre-implementation → architecture decisions, alternatives, risk assessment
-```
-
----
-
-### unity-profiler
-
-```
-└── unity-profiler              📊 Profiler analysis
-    ├─ What: CPU spikes, GC pressure, rendering bottlenecks
-    ├─ Rule: Read-only. Max 10 findings. Cite profiler markers and file:line.
-    └─ Out:  Documents/Profiler/PERF_*.md
-```
+| Skill | What it does |
+|:---|:---|
+| **visual-explainer** | Self-contained HTML pages for visual explanations |
+| **mermaid** | Flowcharts, sequence diagrams, state machines |
+| **spreadsheet** | Create, edit, analyze .xlsx/.csv/.tsv files |
+| **pdf** | Read, create, review PDFs with layout fidelity |
+| **imagegen** | Generate + edit images via OpenAI API |
+| **screenshot** | Desktop/system screenshots (macOS, Linux, Windows) |
 
 ---
 
-### unity-test
-
-Testing automation for Unity projects.
-
-```
-├── unity-test-unit             🔬 Unit tests
-│   ├─ What: Edit/Play Mode tests, mocking, coverage maximization
-│   ├─ Target: 10+ test cases per class, Arrange-Act-Assert
-│   └─ Out:   Test scripts with [Test] / [UnityTest] attributes
-│
-└── unity-test-case             📋 QA test cases
-    ├─ What: Happy paths, edge cases, boundary values, negative tests
-    └─ Out:  Documents/TestCases/{Name}_TestCases.html
-```
-
----
-
-### unity-ui
-
-Build runtime UI with UI Toolkit.
-
-```
-└── unity-uitoolkit             🎨 UI Toolkit builder
-    ├─ What: UXML templates, USS styling, C# bindings, custom controls
-    ├─ Flow: Parse input → Clarify → Discover → Structure → Implement → Wire → Verify
-    └─ Out:  .uxml + .uss + .cs controller files
-```
-
----
-
-### unity-init
-
-```
-└── unity-init                  🏗️ Project scaffolding
-    ├─ What: Feature-based folder structure, .asmdef, .gitignore, namespaces
-    └─ Out:  Assets/_Project/ directory tree
-```
-
----
-
-### unity-spec
-
-```
-└── unity-spec                  📄 Game Design Specification
-    ├─ What: GDD covering mechanics, systems, progression, UX/UI, art, audio, tech
-    └─ Out:  Structured GDD document
-```
-
----
-
-### flutter-code
-
-Write, extend, or optimize Flutter/Dart code.
-
-```
-└── flutter-code                Unified Dart coding skill
-    ├─ Quick     ⚡  Single-file widget, provider, model, utility, service
-    ├─ Deep      🏗️  Multi-file features, state machines, refactors (3+ files)
-    └─ Optimize  ⚡  Simplify & clean up without behavior change
-```
-
----
-
-### flutter-ui
-
-Compose screens, widgets, themes, and responsive layouts.
-
-```
-└── flutter-ui                  Unified UI composition skill
-    ├─ Quick     ⚡  Single widget, one screen, layout fix, simple styling
-    └─ Deep      🏗️  Multi-screen systems, custom themes, responsive breakpoints, animations
-```
-
----
-
-### flutter-debug
-
-Diagnose and fix Flutter/Dart bugs.
-
-```
-└── flutter-debug               Unified Dart debugging skill
-    ├─ Fix       🔧  Dart analysis errors → auto-fix loop
-    ├─ Quick     🩺  Runtime crashes → 2-3 proposals → fix
-    ├─ Deep      🔎  Intermittent/multi-system → investigation report
-    └─ Log       📋  Structured logging snippets
-```
-
----
-
-### flutter-review
-
-Review Flutter code, PRs, and projects.
-
-```
-└── flutter-review              Unified Flutter review skill
-    ├─ Local     📝  Inline // REVIEW comments on .dart files
-    ├─ PR        🔗  GitHub PR review → APPROVE / REQUEST_CHANGES
-    └─ Project   📊  Full A–F audit — architecture, code style, performance
-```
-
----
-
-### flutter-test
-
-```
-└── flutter-test                🧪 Flutter tests (Unit, Widget, Integration)
-    ├─ Pattern: AAA (Arrange-Act-Assert), mocktail, ProviderContainer
-    ├─ Target:  10+ test cases per class
-    └─ Out:     Test files with group/test structure
-```
-
----
-
-### flutter-profiler
-
-```
-└── flutter-profiler            📊 DevTools profiler analysis
-    ├─ What: CPU frames, memory/GC, frame rendering, jank detection
-    ├─ Rule: Read-only — suggests fixes, does not modify code
-    └─ Out:  Severity-ranked performance report
-```
-
----
-
-### git
-
-Git workflow automation.
-
-```
-├── git-commit                  💾 Commit with clean message (never pushes)
-├── git-comment                 ✏️ Rewrite last commit message (never touches pushed)
-├── git-squash                  📦 Squash commits for PR (plan → approve → execute)
-├── git-description             📝 Generate & apply PR description via gh
-└── git-clear                   🧹 Delete all comments from a GitHub PR
-```
-
----
-
-### bash
-
-Shell script tooling.
-
-```
-├── bash-check                  ✅ Validate scripts (syntax + ShellCheck)
-├── bash-optimize               ⚡ Refactor scripts (no behavior change)
-└── bash-install                📥 Install software (auto-retry + verify)
-```
-
----
-
-### Other
-
-```
-├── flatbuffers-coder           🗂️  .fbs schemas → C# generation → binary data
-├── mermaid                     📊  Flowcharts, sequence diagrams, state machines
-├── skill-creator               🛠️  Create, modify, benchmark, and optimize skills
-├── visual-explainer            🎨  Self-contained HTML pages for visual explanations
-├── spreadsheet                 📊  Create, edit, analyze .xlsx/.csv/.tsv files
-├── screenshot                  📸  Desktop/system screenshots (macOS, Linux, Windows)
-├── pdf                         📄  Read, create, review PDFs with layout fidelity
-├── imagegen                    🖼️  Generate & edit images via OpenAI API
-└── mcp-builder                 🔧  Build MCP servers (Python FastMCP / Node SDK)
-```
-
----
+<a id="commands-57"></a>
 
 ## Commands (57)
 
-Slash commands for quick access to skills and workflows.
+Slash commands for direct access to specific skill modes.
 
 ```
-bash/              check · install · optimize
+bash/              check   install   optimize
 flatbuffers/       coder
-git/               clear · comment · commit · description · squash
+git/               clear   comment   commit   description   squash
 mermaid/           create
-omo/               atlas · prometheus · sisyphus · sisyphus-goal · sisyphus-improve
-                   sisyphus-junior · sisyphus-work
-skill/             deep · quick
-visual-explainer/  diff-review · fact-check · generate-slides · generate-visual-plan
-                   generate-web-diagram · plan-review · project-recap · share
-unity/code/        deep · optimize · quick
-unity/editor/      deep · quick
-unity/debug/       deep · fix · log · profiler · quick
-unity/document/    system · tdd
-unity/investigate/ deep · quick
-unity/optimize/    audit · code · settings
-unity/plan/        costing · deep · quick
-unity/review/      architecture · asset · code-pr · general · local · prefab · quality
-unity/test/        case · unit
+omo/               atlas   prometheus   sisyphus   sisyphus-goal
+                   sisyphus-improve   sisyphus-junior   sisyphus-work
+skill/             deep   quick
+visual-explainer/  diff-review   fact-check   generate-slides
+                   generate-visual-plan   generate-web-diagram
+                   plan-review   project-recap   share
+
+unity/code/        deep   optimize   quick
+unity/debug/       deep   fix   log   profiler   quick
+unity/document/    system   tdd
+unity/editor/      deep   quick
+unity/investigate/ deep   quick
+unity/optimize/    audit   code   settings
+unity/plan/        costing   deep   quick
+unity/review/      architecture   asset   code-pr   general
+                   local   prefab   quality
+unity/test/        case   unit
 unity/ui/          create
 ```
+
+---
+
+## How Skills Are Built
+
+Each skill goes through a rigorous development cycle:
+
+```
+1. AUTHOR       Write SKILL.md with workflow, tool whitelist, rules
+                Write reference docs grounding the agent in real patterns
+
+2. EVALUATE     Run against real-world test scenarios
+                Grade output: correctness, pattern adherence, completeness
+
+3. IDENTIFY     Find failure modes — hallucinated patterns, missed edge cases,
+                vague instructions that let the agent drift
+
+4. HARDEN       Rewrite weak sections, add guardrails, tighten constraints
+                Add "MUST DO" / "MUST NOT DO" rules for observed failure modes
+
+5. RE-EVALUATE  Run the same scenarios again — verify failures are fixed
+                Run NEW scenarios — verify no regressions
+
+6. REPEAT       Until the skill produces output indistinguishable
+                from a senior engineer working on the same codebase
+```
+
+The `skill-creator` skill automates parts of this process &mdash; it can benchmark skills with variance analysis, run eval suites, and optimize trigger descriptions for routing accuracy.
+
+---
+
+## Contributing
+
+Found a bug in a skill? Have an idea for a new one? PRs welcome.
+
+The bar: every skill must produce output you'd accept in a code review from a senior engineer. If it doesn't, it needs more eval cycles.
+
+---
+
+<p align="center">
+  <sub>Built with obsessive iteration by <a href="https://github.com/cuozg">@cuozg</a></sub>
+</p>
