@@ -14,7 +14,7 @@ description: >
   or general code writing (unity-code).
 metadata:
   author: kuozg
-  version: "2.0"
+  version: "2.1"
 ---
 
 # unity-optimize
@@ -110,6 +110,21 @@ Full project performance sweep.
 - **Ask target platform** before recommending platform-specific settings
 - **Cite references** for each recommendation — link to specific unity-standards file
 - **Boundary**: This skill optimizes for performance. For structural cleanup without perf focus, use unity-code. For profiler data analysis, use unity-profiler.
+
+## MCP Tools for Measurement
+
+When Unity MCP is available, use these tools to establish baselines and verify improvements:
+
+| Purpose | Tool |
+|---------|------|
+| Baseline GC allocations (all frames) | `Unity.Profiler_GetOverallGcAlloca` |
+| Baseline frame time (frame range) | `Unity.Profiler_GetFrameRangeTopTimeSummary` |
+| Verify GC reduction after optimization | `Unity.Profiler_GetFrameGcAllocati` (per frame) |
+| Verify time improvement after optimization | `Unity.Profiler_GetFrameTopTimeSam` (per frame) |
+| Check for errors after settings changes | `Unity.ReadConsole` or `Unity.GetConsoleLogs` |
+| Verify project settings | `Unity.ManageEditor(GetState)` for current editor state |
+
+For the full profiler tool decision tree and all 12 profiler tools with parameters, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Profiling Branch**.
 
 ## Escalation
 

@@ -13,7 +13,7 @@ description: >
   documents (unity-spec), or planning without implementation (unity-plan).
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-prototype
 
@@ -97,7 +97,20 @@ After all scripts compile, assemble the prototype scene:
 5. Position camera to frame the action
 6. Add Canvas + UIDocument for any HUD elements
 
-Use Unity MCP tools (`create_game_object`, `add_component`, `set_property`, etc.) when available. Otherwise provide clear step-by-step Editor instructions.
+**Unity MCP tools for scene wiring** (when available):
+
+| Action | Tool |
+|--------|------|
+| Create/modify/find GameObjects | `Unity.ManageGameObject` (actions: create, modify, find, add_component, set_component_property) |
+| Create primitives (Cube, Sphere) | `Unity.ManageGameObject` with `primitive_type` param |
+| Save as prefab | `Unity.ManageGameObject` with `save_as_prefab=true` |
+| Load/save/get scene hierarchy | `Unity.ManageScene` (actions: Create, Load, Save, GetHierarchy) |
+| Play/pause to test | `Unity.ManageEditor` (actions: Play, Pause, Stop) |
+| Verify visually (3D) | `Unity.SceneView_CaptureMultiAngleSceneView` |
+| Verify visually (2D) | `Unity.SceneView_Capture2DScene` |
+| Check for errors | `Unity.GetConsoleLogs` or `Unity.ReadConsole` |
+
+For the full MCP tool decision tree, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Scene Branch** and **Visual Capture Branch**.
 
 ## Step 6 — Verify & Report
 
@@ -138,3 +151,5 @@ Load prototype-specific references from this skill:
 - `references/usage-examples.md` — Full prompt-to-breakdown walkthroughs (3 examples)
 
 Load via `read_skill_file("unity-prototype", "references/<file>")`.
+
+For MCP tool routing: `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")`.

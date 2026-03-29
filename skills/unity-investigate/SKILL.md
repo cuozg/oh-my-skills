@@ -83,5 +83,6 @@ Load `unity-standards` when answers require convention context. Key references:
 - `review/checklist.md` — section `## 7. Architecture`: coupling, SOLID, assembly boundaries
 - `plan/investigation-workflow.md` — file tracing, call chains, dependency mapping
 - `plan/investigation-template.md` — markdown template for investigation reports
+- `other/unity-mcp-routing-matrix.md` — MCP tool routing for reading files (`ReadResource`), finding assets (`FindProjectAssets`), and scene inspection (`ManageScene(GetHierarchy)`)
 
 Load via `read_skill_file("unity-standards", "references/<path>")`.

@@ -11,7 +11,7 @@ description: >
   UI Toolkit (unity-uitoolkit), tests (unity-test-unit), or debugging (unity-debug).
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-editor
 
@@ -54,6 +54,25 @@ State triage: "This is [scope] — [reason]."
 5. **Verify** — `lsp_diagnostics` on all files
 6. **Handoff** — all paths, what each does, editor follow-up (menu locations, shortcuts)
 
+## MCP Editor Tools
+
+When Unity MCP is available, these tools complement editor script development:
+
+| Action | Tool |
+|--------|------|
+| Manage tags and layers | `Unity.ManageEditor` (AddTag, RemoveTag, GetTags, AddLayer, RemoveLayer, GetLayers) |
+| Execute menu items (test custom menus) | `Unity.ManageMenuItem` (Execute — use List first to find path) |
+| Find existing menu items | `Unity.ManageMenuItem` (List with Search filter) |
+| Check editor state, selection, prefab stage | `Unity.ManageEditor` (GetState, GetSelection, GetPrefabStage) |
+| Verify editor scripts compiled | `Unity.ReadConsole` or `Unity.GetConsoleLogs` |
+
+**Guard clauses:**
+- Don't use `ManageMenuItem(Execute)` to create new menu items — that requires editor scripts
+- Always use `ManageMenuItem(List)` before `Execute` if unsure of exact menu path
+- Use `ManageEditor` for tags/layers, not for scene hierarchy (use `ManageScene` for that)
+
+For the full MCP tool decision tree, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Editor Control Branch**.
+
 ## Rules
 
 - Always save under `Editor/` folder (compile-guard for editor-only APIs)
@@ -91,3 +110,4 @@ Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 
 - `code-standards/architecture-systems.md` — Editor patterns, gizmos, handles, CustomEditor, PropertyDrawer
 - `code-standards/core-conventions.md` — naming, serialization, null safety
+- `other/unity-mcp-routing-matrix.md` — MCP editor control tools (ManageEditor, ManageMenuItem), guard clauses

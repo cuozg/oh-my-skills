@@ -11,7 +11,7 @@ description: >
   profiling snippets).
 metadata:
   author: kuozg
-  version: "2.0"
+  version: "2.1"
 ---
 
 # unity-profiler
@@ -31,9 +31,33 @@ Detect the mode from the user's request:
 
 If unclear, ask: "Are you investigating CPU/scripting timing, memory/GC pressure, rendering performance, or do you need profiling instrumentation?"
 
+## MCP Profiler Tools
+
+When Unity MCP is available, use these tools to pull live profiler data instead of asking for screenshots. Pick tools based on analysis scope — don't use single-frame tools for multi-frame analysis or vice versa.
+
+**Start broad, then drill down:**
+
+| Step | Goal | Tool |
+|------|------|------|
+| 1. Overall picture | GC summary across all captured frames | `Unity.Profiler_GetOverallGcAlloca` |
+| 2. Find slow range | Time summary across a frame range | `Unity.Profiler_GetFrameRangeTopTimeSummary` (needs `targetFrameTime`) |
+| 3. Find GC range | GC allocations across a frame range | `Unity.Profiler_GetFrameRangeGcAll` |
+| 4. Worst frame — time | Top samples by total or self time in one frame | `Unity.Profiler_GetFrameTopTimeSam` or `Unity.Profiler_GetFrameSelfTimeSa` |
+| 5. Worst frame — GC | GC allocations in one frame | `Unity.Profiler_GetFrameGcAllocati` |
+| 6. Drill into sample | Time or GC for a specific sample (by index or marker path) | `Unity.Profiler_GetSampleTimeSummary` / `Unity.Profiler_GetSampleGcAllocat` |
+| 7. Cross-thread | Related samples on other threads | `Unity.Profiler_GetRelatedSamplesT` |
+| 8. Bottom-up | Bottom-up analysis of a sample | `Unity.Profiler_GetBottomUpSampleT` |
+
+**Tool selection guard clauses:**
+- Use `markerIdPath` variants when you know the marker name — more stable than index-based lookups
+- Use `FrameRange*` tools for multi-frame analysis — never loop single-frame tools across frames
+- Profiler tools are read-only analysis — they identify problems but don't fix them
+
+For the full decision tree with all parameters, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see the **Profiling Branch** section.
+
 ## Workflow (All Analysis Modes)
 
-1. **Gather data** — ask user for Profiler screenshots, profiler captures, or describe the symptoms; identify target platform and fps target
+1. **Gather data** — if MCP is available, use profiler tools above (start with overall GC summary → narrow to frame range → drill into worst frame). Otherwise, ask user for Profiler screenshots or describe symptoms. Identify target platform and fps target.
 2. **Scan codebase** — grep for known anti-patterns in hot paths (mode-specific scan targets in reference files, general patterns in `unity-standards`)
 3. **Classify findings** — assign severity using thresholds below
 4. **Rank by impact** — sort by frame-time cost or allocation size; group into CPU, Memory, Rendering
@@ -82,5 +106,6 @@ Load `unity-standards` for performance thresholds and anti-pattern checklists:
 
 - `quality/performance-audit.md` — frame budgets, GC hotspots, draw call targets, ProfilerMarker patterns
 - `review/checklist.md` — section `## 4. Performance`: hot-path allocations, component lookup, physics, Burst/Jobs
+- `other/unity-mcp-routing-matrix.md` — full MCP profiler tool decision tree with parameters, guard clauses, and 12 profiler tools
 
 Load via `read_skill_file("unity-standards", "references/<path>")`.

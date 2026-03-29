@@ -2,21 +2,19 @@
 name: unity-webgl
 description: >
   Unified Unity WebGL skill — write JavaScript interop plugins, optimize WebGL builds, configure
-  deployment, and customize HTML templates. Auto-triages: JSLib (write .jslib plugins + C# bridge
-  for browser API access), Build (optimize build size, compression, memory, linker.xml, Player
-  Settings), Template (customize HTML shell, loading screen, responsive canvas). MUST use for ANY
-  Unity WebGL-specific work — JavaScript plugins, browser API access, WebGL build optimization,
-  deployment configuration, server MIME types, WebGL template customization, platform-conditional
-  code (#if UNITY_WEBGL). Triggers: "jslib," "JavaScript plugin," "call JS from Unity," "browser
-  API," "WebGL build," "reduce build size," "WebGL deployment," "server config," "loading screen,"
-  "WebGL template," "linker.xml for WebGL," "localStorage from Unity," "clipboard in WebGL,"
-  "WebGL memory," "Brotli compression," "works in editor but not WebGL," "#if UNITY_WEBGL,"
-  "responsive WebGL canvas," "embed Unity in iframe." Do not use for general C# runtime code
-  (unity-code), editor scripts (unity-editor), or debugging (unity-debug — though WebGL-specific
-  errors may route here for platform context).
+  deployment, and customize HTML templates. Auto-triages: JSLib (.jslib plugins + C# bridge for
+  browser API access), Build (build size, compression, memory, linker.xml, Player Settings),
+  Template (HTML shell, loading screen, responsive canvas). MUST use for ANY Unity WebGL work —
+  JavaScript plugins, browser API, WebGL build optimization, deployment, server MIME types,
+  template customization, platform-conditional code (#if UNITY_WEBGL). Triggers: "jslib,"
+  "JavaScript plugin," "call JS from Unity," "browser API," "WebGL build," "reduce build size,"
+  "WebGL deployment," "loading screen," "WebGL template," "linker.xml," "localStorage from Unity,"
+  "WebGL memory," "Brotli compression," "works in editor but not WebGL," "responsive WebGL canvas,"
+  "embed Unity in iframe." Do not use for runtime C# (unity-code), editor scripts (unity-editor),
+  or debugging (unity-debug).
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-webgl
 
@@ -100,6 +98,7 @@ Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
 - `code-standards/architecture-systems.md` — includes WebGL restrictions, platform workarounds
 - `code-standards/lifecycle-async-errors.md` · `core-conventions.md` — lifecycle, null safety, error handling
 - `debug/common-unity-errors.md` — includes WebGL-specific errors (code stripping, OOM)
+- `other/unity-mcp-routing-matrix.md` — MCP tool routing for editor control, console tools, and script management
 
 Load skill-specific references via `read_skill_file("unity-webgl", "references/<path>")`:
 

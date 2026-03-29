@@ -8,7 +8,7 @@ description: >
   Do not use for editor-only UI — use unity-code for that.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 
 # unity-uitoolkit
@@ -56,6 +56,21 @@ Build production runtime UI using UI Toolkit. Parse design input (document, imag
 ## Output Format
 
 Write all files directly. Report: file list with paths, element hierarchy, and compilation status.
+
+## MCP Tools for UI Wiring
+
+When Unity MCP is available, use these tools to wire up UI in the scene:
+
+| Action | Tool |
+|--------|------|
+| Create UIDocument GameObject | `Unity.ManageGameObject(create)` + `add_component` with `UIDocument` |
+| Find existing UIDocument in scene | `Unity.ManageGameObject(find)` with `search_term="UIDocument"` |
+| Assign UXML/USS references | `Unity.ManageGameObject(set_component_property)` on UIDocument component |
+| Create asset folders for UI files | `Unity.ManageAsset(CreateFolder)` |
+| Verify no compile errors | `Unity.ReadConsole` or `Unity.GetConsoleLogs` |
+| Visual verification | `Unity.ManageEditor(Play)` then `Unity.Camera_Capture` |
+
+For the full MCP tool decision tree, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Scene Branch** and **Asset Management Branch**.
 
 ## Reference Files
 

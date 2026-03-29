@@ -12,7 +12,7 @@ description: >
   documented analysis.
 metadata:
   author: kuozg
-  version: "2.0"
+  version: "2.1"
 ---
 # unity-debug
 
@@ -74,6 +74,24 @@ Use `Debug.LogWarning` for unexpected-but-handled states, `Debug.LogError` for f
 - Keep fixes minimal — change only what is needed
 - If root cause is ambiguous after investigation, ask one clarifying question
 
+## MCP Console Tools
+
+When Unity MCP is available, use console tools to read errors and verify fixes. Pick the right tool:
+
+| Need | Tool | Why |
+|------|------|-----|
+| Quick error check (what errors exist?) | `Unity.GetConsoleLogs` | Fast, returns errors/warnings/messages with stack traces |
+| Filter by text/timestamp | `Unity.ReadConsole(Get)` | Supports `FilterText`, `SinceTimestamp`, structured output (Json format) |
+| Clear console before a test run | `Unity.ReadConsole(Clear)` | Only way to clear — `GetConsoleLogs` is read-only |
+| Verify fix after code change | `Unity.ReadConsole(Get)` with `SinceTimestamp` | Checks only NEW errors since the fix was applied |
+
+**Guard clauses:**
+- Don't use `GetConsoleLogs` if you need text filtering — use `ReadConsole(Get)` with `FilterText`
+- Don't use `GetConsoleLogs` to clear console — use `ReadConsole(Clear)`
+- Use `ReadConsole` with `Format=Json` when you need structured output for programmatic parsing
+
+For the full console tool decision tree, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see the **Debugging Branch**.
+
 ## Escalation
 
 | From  | To    | Trigger                                                 |
@@ -93,3 +111,4 @@ Load `unity-standards` references on demand via `read_skill_file("unity-standard
 - `debug/common-unity-errors.md` — NRE, serialization, lifecycle, IL2CPP reference table
 - `debug/analysis-template.md` — structured report template for Deep Mode output
 - `debug/log-format.md` — Debug.Log format, color tags, UNITY_EDITOR guard
+- `other/unity-mcp-routing-matrix.md` — MCP console tool decision tree, guard clauses (GetConsoleLogs vs ReadConsole)

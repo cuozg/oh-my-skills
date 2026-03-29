@@ -94,3 +94,4 @@ read_skill_file("unity-standards", "references/code-standards/architecture-syste
 
 For naming conventions: `read_skill_file("unity-standards", "references/code-standards/core-conventions.md")`
 For assembly boundaries: `read_skill_file("unity-standards", "references/code-standards/architecture-systems.md")`
+For MCP asset/folder tools: `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Asset Management Branch** for `ManageAsset(CreateFolder)` and `ListResources`
