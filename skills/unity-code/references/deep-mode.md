@@ -38,9 +38,29 @@ Each layer depends only on layers above it. Writing in order lets `lsp_diagnosti
 
 ## Verification Rhythm
 
-- **2-3 files**: diagnostics after the last file
-- **4-7 files**: diagnostics after shared abstractions, again after concrete implementations, once after wiring
-- **8+ files**: diagnostics per dependency tier (interfaces → data → logic → consumers → wiring)
+All verification uses two steps: `lsp_diagnostics` first, then `Unity.ReadConsole` for Unity console errors.
+
+- **2-3 files**: diagnostics + console check after the last file
+- **4-7 files**: diagnostics + console check after shared abstractions, again after concrete implementations, once after wiring
+- **8+ files**: diagnostics + console check per dependency tier (interfaces → data → logic → consumers → wiring)
+
+### Console Verification (MANDATORY)
+
+After each verification point, run:
+
+1. **`lsp_diagnostics`** on all changed files in the current tier
+2. **`Unity.ReadConsole`** `{ Action: "Get", Types: ["Error", "Warning"], Count: 50, Format: "Detailed" }` — reads Unity console
+
+**Parse console output:**
+- `error CS####` → fix immediately before writing the next tier
+- `warning CS####` → note; fix if it indicates a real bug
+- Assembly errors → check asmdef boundaries and package dependencies
+- Clean → proceed to next tier
+
+**If Unity MCP is not available:** Run `lsp_diagnostics` only and note in handoff: "Console verification unavailable — verify in Unity Editor console."
+**If LSP is not available but MCP is:** `Unity.ReadConsole` becomes the primary check; note LSP limitation in handoff.
+
+Catching errors tier-by-tier prevents cascading failures. A missing interface in tier 1 would cause false errors in every tier below — fix before proceeding.
 
 ## Cross-File Checklist
 
@@ -77,6 +97,7 @@ Wiring needed:
 - [Inspector assignment / DI registration / asset creation]
 
 Diagnostics: [clean / N warnings]
+Console verification: [clean / N errors / MCP unavailable]
 
 Follow-up:
 - [ScriptableObject assets to create]

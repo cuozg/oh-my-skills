@@ -70,10 +70,11 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `test/play-mode-patterns.md` - `test-case-format.md`
 - `test/coverage-strategy.md` - `naming-conventions.md`
 
-### Other (4)
+### Other (5)
 
 - `other/mermaid-syntax.md` - `flatbuffers-guide.md` - `skill-authoring.md`
 - `other/official-source-map.md` - official Unity docs for version-sensitive behavior and package features
+- `other/unity-mcp-routing-matrix.md` - Unity MCP tool routing matrix, decision trees, guard clauses, keyword index, workflow cheat sheets (51 tools)
 
 ### UI Toolkit (6)
 

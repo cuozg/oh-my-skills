@@ -66,3 +66,16 @@ For most writing tasks, start with these (unless discovery shows clear establish
 - Optimization refs for GC/frame-budget work → route to `unity-optimize` skill
 - All 4 code-standards files at once — pick the 1-3 that matter
 - Style refs if local style is already clear from discovery and style cleanup is not requested
+
+## MCP Tools Reference
+
+Load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` when:
+
+| Task clue | What you need from MCP reference |
+|-----------|----------------------------------|
+| First task in session, unfamiliar with MCP verification | § Console Verification Protocol (full workflow) |
+| Writing code that touches asmdef boundaries or packages | § Error Categories (assembly error patterns) |
+| Need to create GameObjects or scene objects as part of feature | § Scene and GameObject Tools |
+| Writing custom MCP tool registration code | § Custom MCP Tool Registration |
+
+**Load once per session** — the console verification protocol applies to every task. After the first load, you know the workflow.

@@ -9,8 +9,8 @@ For code templates, naming conventions, and pattern details, refer to code-stand
 1. **Qualify** — confirm one runtime `.cs` file suffices; escalate to Deep if scope grows
 2. **Discover** — read target + 1-2 nearby runtime files for local patterns (see below)
 3. **Implement** — smallest complete change following code-standards + local style
-4. **Verify** — `lsp_diagnostics` on changed file
-5. **Handoff** — file path, what changed, diagnostics result, editor follow-up if needed
+4. **Verify** — `lsp_diagnostics` on changed file, then `Unity.ReadConsole` for Unity console errors (see below)
+5. **Handoff** — file path, what changed, diagnostics result, console verification result, editor follow-up if needed
 
 ## Discovery
 
@@ -53,6 +53,24 @@ When the task is cleanup/simplification (not new code):
 - Preserve existing behavior — if you notice a bug, note it but do not fix it (separate concern)
 - Use `[FormerlySerializedAs]` when renaming serialized fields
 - Check callers via `lsp_find_references` before changing any public member
+
+## Console Verification (MANDATORY)
+
+After every code change, run the two-step verification:
+
+1. **`lsp_diagnostics`** on the changed file — catches type errors, syntax issues instantly
+2. **`Unity.ReadConsole`** `{ Action: "Get", Types: ["Error", "Warning"], Count: 50, Format: "Detailed" }` — reads the Unity console for compilation errors
+
+**Parse console output:**
+- `error CS####` → fix immediately, do not proceed to handoff
+- `warning CS####` → note in handoff; fix if it indicates a real bug
+- Assembly errors → check asmdef files and package dependencies
+- Clean → proceed to handoff
+
+**If Unity MCP is not available:** Run `lsp_diagnostics` only and add to handoff: "Console verification unavailable — verify in Unity Editor console."
+**If LSP is not available but MCP is:** `Unity.ReadConsole` becomes the primary check; note LSP limitation in handoff.
+
+This step is non-negotiable. `lsp_diagnostics` misses assembly reference issues, Unity-specific API problems, and package version mismatches that only Unity's compiler catches.
 
 ### Refactoring Standards to Load
 

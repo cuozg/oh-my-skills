@@ -15,7 +15,6 @@ metadata:
   author: kuozg
   version: "1.0"
 ---
-
 # unity-prototype
 
 Take a game idea, scope the MVP, build it, make it playable. Prototypes answer one question: "Does this feel right?" Cut everything that doesn't serve that answer.
@@ -24,13 +23,13 @@ Take a game idea, scope the MVP, build it, make it playable. Prototypes answer o
 
 These show how the skill interprets different requests:
 
-| # | User Says | Triage | What Happens |
-|---|-----------|--------|-------------|
-| 1 | *"Prototype a 2D platformer — run, jump, collect coins. I want to test if the jump feels good."* | Standard MVP | Extract core = jump physics. BUILD: PlayerController, Collectible, ScoreManager. STUB: score text, respawn. SKIP: sprites, parallax. 4-5 scripts. |
-| 2 | *"Puzzle game where you rotate pipe segments to connect water flow — but should I use grid snapping or free rotation?"* | Mechanic question → prototype BOTH | Propose two micro-prototypes: one with 90-degree snap, one with free rotation. Let playtesting decide. 3-4 scripts each variant. |
-| 3 | *"Open-world RPG with crafting, skill trees, weather system, branching narrative, and multiplayer co-op."* | Overscoped → scope reduction | Do NOT attempt full scope. Identify the ONE mechanic the user cares most about. Offer choices: "Combat feel? Crafting loop? Exploration?" Prototype only the chosen slice. |
-| 4 | *"I already have a design doc for a tower defense game. Can we quickly build something to test if the tower placement grid feels right?"* | Focused validation | User knows what to test. Skip brainstorming, go straight to BUILD/STUB/SKIP for grid placement. 4-5 scripts, one scene. |
-| 5 | *"Mechanic idea: player leaves behind shadow clones that replay their movement after a delay. No art needed."* | Mechanic-first, no art | Extract core = position recording + delayed playback. BUILD: movement, clone recorder, clone replayer. STUB: clone = sphere, level = cubes. Pure mechanic validation. |
+| # | User Says                                                                                                                                   | Triage                              | What Happens                                                                                                                                                               |
+| - | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | *"Prototype a 2D platformer — run, jump, collect coins. I want to test if the jump feels good."*                                         | Standard MVP                        | Extract core = jump physics. BUILD: PlayerController, Collectible, ScoreManager. STUB: score text, respawn. SKIP: sprites, parallax. 4-5 scripts.                          |
+| 2 | *"Puzzle game where you rotate pipe segments to connect water flow — but should I use grid snapping or free rotation?"*                  | Mechanic question → prototype BOTH | Propose two micro-prototypes: one with 90-degree snap, one with free rotation. Let playtesting decide. 3-4 scripts each variant.                                           |
+| 3 | *"Open-world RPG with crafting, skill trees, weather system, branching narrative, and multiplayer co-op."*                                | Overscoped → scope reduction       | Do NOT attempt full scope. Identify the ONE mechanic the user cares most about. Offer choices: "Combat feel? Crafting loop? Exploration?" Prototype only the chosen slice. |
+| 4 | *"I already have a design doc for a tower defense game. Can we quickly build something to test if the tower placement grid feels right?"* | Focused validation                  | User knows what to test. Skip brainstorming, go straight to BUILD/STUB/SKIP for grid placement. 4-5 scripts, one scene.                                                    |
+| 5 | *"Mechanic idea: player leaves behind shadow clones that replay their movement after a delay. No art needed."*                            | Mechanic-first, no art              | Extract core = position recording + delayed playback. BUILD: movement, clone recorder, clone replayer. STUB: clone = sphere, level = cubes. Pure mechanic validation.      |
 
 ## Step 1 — Extract Core
 
@@ -46,11 +45,11 @@ If the idea is vague, ask ONE question targeting the core mechanic. If clear eno
 
 Split features into three buckets. Load `references/mvp-scoping.md` for detailed rules.
 
-| Bucket | Rule | Example |
-|--------|------|---------|
-| **BUILD** | Required to test the core mechanic | Player movement, core interaction |
-| **STUB** | Needed for flow but fake data is fine | Score as Debug.Log, health as a field |
-| **SKIP** | Not needed to validate the idea | Save system, menus, audio, polish |
+| Bucket          | Rule                                  | Example                               |
+| --------------- | ------------------------------------- | ------------------------------------- |
+| **BUILD** | Required to test the core mechanic    | Player movement, core interaction     |
+| **STUB**  | Needed for flow but fake data is fine | Score as Debug.Log, health as a field |
+| **SKIP**  | Not needed to validate the idea       | Save system, menus, audio, polish     |
 
 Present the scope table to the user. **STOP. Wait for user confirmation before proceeding.** Prototype scope targets: 3-8 scripts, one scene, primitives for art.
 
@@ -58,11 +57,11 @@ Present the scope table to the user. **STOP. Wait for user confirmation before p
 
 Break the MVP into ordered tasks. Each task maps to one skill delegation.
 
-| Task Type | Delegate To |
-|-----------|-------------|
-| Runtime C# script (MonoBehaviour, data, manager) | `unity-code` + `unity-standards` |
-| UI screen, HUD, overlay | `unity-uitoolkit` + `unity-standards` |
-| Scene setup, wiring, GameObjects | Direct (CoPlay MCP or manual instructions) |
+| Task Type                                        | Delegate To                               |
+| ------------------------------------------------ | ----------------------------------------- |
+| Runtime C# script (MonoBehaviour, data, manager) | `unity-code` + `unity-standards`      |
+| UI screen, HUD, overlay                          | `unity-uitoolkit` + `unity-standards` |
+| Scene setup, wiring, GameObjects                 | Direct (Unity MCP or manual instructions) |
 
 **Ordering**: Core mechanic scripts (parallel) → supporting scripts → UI → scene wiring.
 
@@ -80,6 +79,7 @@ For each task, spawn a subagent with the right skill. Every delegation prompt mu
 Load `references/prototype-patterns.md` for common game-type patterns (platformer, shooter, puzzle, etc.) to inform delegation prompts.
 
 **Prototype delegation rules:**
+
 - Always include `unity-standards` in load_skills for coding conventions
 - Prefer `MonoBehaviour` with `[SerializeField]` over services/DI
 - `Debug.Log` over event systems for MVP feedback
@@ -92,12 +92,12 @@ After all scripts compile, assemble the prototype scene:
 
 1. Create/use a scene with appropriate name
 2. Create GameObjects — use Unity primitives (Cube, Sphere, Plane) or sprites
-3. Attach scripts, assign references via Inspector or CoPlay MCP
+3. Attach scripts, assign references via Inspector or Unity MCP
 4. Add colliders/triggers for interactions
 5. Position camera to frame the action
 6. Add Canvas + UIDocument for any HUD elements
 
-Use CoPlay MCP tools (`create_game_object`, `add_component`, `set_property`, etc.) when available. Otherwise provide clear step-by-step Editor instructions.
+Use Unity MCP tools (`create_game_object`, `add_component`, `set_property`, etc.) when available. Otherwise provide clear step-by-step Editor instructions.
 
 ## Step 6 — Verify & Report
 
@@ -121,12 +121,12 @@ Use CoPlay MCP tools (`create_game_object`, `add_component`, `set_property`, etc
 
 ## Escalation
 
-| From | To | When |
-|------|----|------|
-| Prototype | unity-plan | User wants production-quality implementation after validation |
-| Prototype | unity-spec | User wants a full design document before building more |
-| Prototype | unity-code | Single script needs deeper implementation (state machine, etc.) |
-| Prototype | unity-uitoolkit | UI is complex (multi-screen, data binding, custom controls) |
+| From      | To              | When                                                            |
+| --------- | --------------- | --------------------------------------------------------------- |
+| Prototype | unity-plan      | User wants production-quality implementation after validation   |
+| Prototype | unity-spec      | User wants a full design document before building more          |
+| Prototype | unity-code      | Single script needs deeper implementation (state machine, etc.) |
+| Prototype | unity-uitoolkit | UI is complex (multi-screen, data binding, custom controls)     |
 
 ## Standards
 
