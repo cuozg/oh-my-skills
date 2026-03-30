@@ -1,0 +1,134 @@
+{
+  "skill_name": "sisyphus-goal",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to add dark mode to our Flutter app. The app uses Riverpod for state management and we already have a ThemeData defined in lib/core/theme/app_theme.dart. It should support system preference detection and manual toggle. Priority is medium.",
+      "expected_output": "A goal file written to Docs/Goals/add-dark-mode-to-flutter-app.md (or similar kebab-case name) with frontmatter (status: pending, priority: medium, created date), clear objective, context referencing the existing theme file, 3-7 verifiable acceptance criteria covering dark mode toggle and system preference, constraints section, and notes.",
+      "files": [],
+      "expectations": [
+        "A file was written to Docs/Goals/ directory with a .md extension",
+        "The file contains YAML frontmatter with status: pending",
+        "The file contains YAML frontmatter with priority: medium",
+        "The file contains YAML frontmatter with a created date in YYYY-MM-DD format",
+        "The file contains an '## Objective' section",
+        "The file contains an '## Acceptance Criteria' section with at least 3 criteria",
+        "Each acceptance criterion is a checkbox item (- [ ])",
+        "The file contains an '## Constraints' section",
+        "The acceptance criteria mention system preference detection",
+        "The acceptance criteria mention manual toggle",
+        "The agent verified the file exists after writing (read-back or confirmation)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "new goal: add a leaderboard to our Unity game. It's a mobile casual game using Firebase. We need both daily and all-time leaderboards. High priority since soft launch is next month.",
+      "expected_output": "A goal file written to Docs/Goals/ with high priority, Firebase-aware context, acceptance criteria covering daily and all-time leaderboards, mobile constraints. File must be on disk.",
+      "files": [],
+      "expectations": [
+        "A file was written to Docs/Goals/ directory with a .md extension",
+        "The file contains YAML frontmatter with status: pending",
+        "The file contains YAML frontmatter with priority: high",
+        "The file contains an '## Acceptance Criteria' section with at least 3 criteria",
+        "The acceptance criteria mention both daily and all-time leaderboards",
+        "The context or constraints mention Firebase",
+        "The context or constraints mention mobile platform",
+        "The agent wrote the file before asking for final confirmation (write-first pattern)",
+        "The agent verified the file exists after writing"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need a goal for setting up CI/CD. We use GitHub Actions. The project is a Next.js app deployed on Vercel. I want automated testing on PR, preview deployments, and production deploy on merge to main.",
+      "expected_output": "A goal file written to Docs/Goals/ covering CI/CD setup with GitHub Actions, Vercel, automated testing, preview deploys, and production deploy. Must be exported to disk.",
+      "files": [],
+      "expectations": [
+        "A file was written to Docs/Goals/ directory with a .md extension",
+        "The file contains YAML frontmatter with status: pending and a priority field",
+        "The file contains an '## Objective' section describing CI/CD setup",
+        "The file contains an '## Acceptance Criteria' section with at least 3 criteria",
+        "The acceptance criteria mention automated testing on PR",
+        "The acceptance criteria mention preview deployments",
+        "The acceptance criteria mention production deploy on merge to main",
+        "The context mentions GitHub Actions and Vercel",
+        "The file was written to disk (not just presented in conversation)",
+        "The agent verified the file exists after writing"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "create a goal for adding user authentication with email/password and Google OAuth to our app",
+      "expected_output": "A goal file written to Docs/Goals/ covering authentication with both email/password and Google OAuth. The skill should ask clarifying questions (what framework, what database, etc.) but MUST still produce a file on disk regardless of how brief the user's input is.",
+      "files": [],
+      "expectations": [
+        "A file was written to Docs/Goals/ directory with a .md extension",
+        "The skill asked at least one clarifying question before writing",
+        "The file contains YAML frontmatter with status: pending",
+        "The file contains an '## Acceptance Criteria' section with at least 3 criteria",
+        "The acceptance criteria cover email/password authentication",
+        "The acceptance criteria cover Google OAuth",
+        "The file was physically written to Docs/Goals/ (not just shown in chat)",
+        "The agent verified the file exists after writing"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I want to build a real-time chat feature AND also add push notifications AND also set up analytics tracking. Can you create goals for these?",
+      "expected_output": "The skill should recognize this as multiple goals and decompose them into separate files. Each goal gets its own file in Docs/Goals/. All files must be written to disk.",
+      "files": [],
+      "expectations": [
+        "The skill identified this as multiple independent objectives",
+        "At least 2 separate goal files were written to Docs/Goals/",
+        "Each goal file has its own YAML frontmatter with status: pending",
+        "Each goal file has its own '## Acceptance Criteria' section",
+        "depends_on fields are populated where appropriate",
+        "All goal files were verified to exist on disk after writing",
+        "No goal was left unwritten (only discussed in conversation without file export)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I want to update the existing goal in Docs/Goals/add-jwt-authentication.md — we decided to use RSA keys instead of HMAC for signing, and we need to add a criterion about automatic key rotation every 90 days. Also bump the priority to critical since it's blocking the B2B onboarding.",
+      "expected_output": "The skill should locate and read the existing goal file, apply the three changes (RSA instead of HMAC, add key rotation criterion, priority to critical), and show the user the before/after. Should not rewrite the entire goal — surgical updates only.",
+      "files": [],
+      "expectations": [
+        "The skill attempts to read the existing goal file at Docs/Goals/add-jwt-authentication.md",
+        "The skill modifies the existing file in place rather than creating a new goal",
+        "Priority is changed to critical in the YAML frontmatter",
+        "A new acceptance criterion about key rotation (90 days) is added",
+        "The HMAC-to-RSA change is reflected in constraints or criteria",
+        "Existing criteria that are unaffected remain unchanged",
+        "The skill shows the user what changed before or after confirming"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "make the app faster",
+      "expected_output": "The skill should recognize this is extremely vague and ask probing questions to narrow scope. Should NOT write a goal with vague criteria. Should explore the codebase first to understand what kind of app this is, then ask targeted questions about which areas are slow, what metrics matter, and what the performance target is.",
+      "files": [],
+      "expectations": [
+        "The skill does NOT immediately write a goal file with vague criteria like 'app is faster'",
+        "The skill asks at least 2 clarifying questions before attempting to write a goal",
+        "Questions target specific ambiguities: which part of the app, what metric, what target",
+        "The skill attempts to explore the codebase to understand the project type",
+        "If a goal is eventually written, criteria are specific and measurable (not 'app is faster' or 'performance is acceptable')"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I need a goal for adding dark mode to our Flutter app. We're using Riverpod 2.x for state and Material 3 theming. The theme setup is in lib/core/theme/app_theme.dart and the settings screen is at lib/features/settings/settings_screen.dart. I want it to: persist the user's choice in SharedPreferences, follow system default initially, have a toggle in the settings screen, and make sure all 12 screens respect the theme. Priority is medium, no dependencies.",
+      "expected_output": "The skill should recognize this is a well-specified request and NOT over-interrogate. Should ask at most 1-2 quick confirmation questions, then write a precise goal file. Should reference the specific file paths provided. Should not ask about priority (already specified) or framework (already detailed).",
+      "files": [],
+      "expectations": [
+        "The skill recognizes the request is already detailed and does not ask more than 2 clarifying questions",
+        "A goal file is written to Docs/Goals/ with kebab-case filename",
+        "Priority is set to medium (as specified by the user)",
+        "The Context section references lib/core/theme/app_theme.dart",
+        "The Context section references lib/features/settings/settings_screen.dart",
+        "Criteria cover: persistence in SharedPreferences, system default, settings toggle, and all-screens coverage",
+        "Criteria mention Riverpod where relevant for state management",
+        "The goal has between 4-7 acceptance criteria"
+      ]
+    }
+  ]
+}
