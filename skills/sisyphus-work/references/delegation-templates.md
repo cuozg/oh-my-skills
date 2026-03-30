@@ -36,6 +36,7 @@ Use when delegating a sub-task to an implementer subagent.
    - Architecture: [brief description of how this fits into the system]
    - Dependencies: [what must exist before this sub-task]
    - Conventions: [naming patterns, file organization, error handling patterns]
+   - Feature spec: [If a spec exists in Docs/Specs/, include relevant sections — especially Systems Design, Data Model, and Events. This defines the target architecture to follow. If no spec exists, state "No spec — implement based on acceptance criteria and codebase conventions."]
 ```
 
 ### Self-Review Checklist (include in every implementer prompt)

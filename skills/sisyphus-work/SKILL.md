@@ -1,6 +1,6 @@
 ---
 name: sisyphus-work
-description: "Autonomous goal execution engine — scans Docs/Goals/*.md for uncompleted goals and executes ALL of them without asking, stopping, or confirming. Thinks, decides, plans, delegates, and verifies entirely on its own. Creates task breakdowns, verifies with domain-specific checks (Unity console, build commands, static analysis), and performs a final goal review gate. Use when the user says 'execute goals,' 'run all goals,' 'autonomous mode,' 'sisyphus work,' 'just do everything,' 'do the goals,' 'start working,' 'execute the plan,' 'implement everything,' or invokes /omo/sisyphus-work. Also use when goal files exist in Docs/Goals/ and the user wants unattended execution. MUST use for any autonomous, no-questions-asked goal completion from goal documents."
+description: "Autonomous goal execution engine — scans Docs/Goals/**/*.md (recursively, including feature subfolders) for uncompleted goals and executes ALL of them without asking, stopping, or confirming. Checks Docs/Specs/ for related design specs before implementation and mandatorily updates specs after each goal completes via unity-spec. Thinks, decides, plans, delegates, and verifies entirely on its own. Creates task breakdowns, verifies with domain-specific checks (Unity console, build commands, static analysis), and performs a final goal review gate. Use when the user says 'execute goals,' 'run all goals,' 'autonomous mode,' 'sisyphus work,' 'just do everything,' 'do the goals,' 'start working,' 'execute the plan,' 'implement everything,' or invokes /omo/sisyphus-work. Also use when goal files exist in Docs/Goals/ and the user wants unattended execution. MUST use for any autonomous, no-questions-asked goal completion from goal documents."
 ---
 
 # Sisyphus Work — Autonomous Goal Execution Engine
@@ -23,7 +23,7 @@ Claiming work is complete without verification is dishonesty, not efficiency. If
 
 ## Goal File Format
 
-Each goal file in `Docs/Goals/` has YAML frontmatter (`status`, `priority`, `created`, optional `depends_on`) followed by sections: **Objective**, **Context**, **Acceptance Criteria** (checkboxes), **Constraints**, and **Notes**. Created by `sisyphus-goal`.
+Each goal file in `Docs/Goals/` (organized by feature subfolders) has YAML frontmatter (`status`, `priority`, `created`, optional `depends_on`) followed by sections: **Objective**, **Context**, **Acceptance Criteria** (checkboxes), **Constraints**, and **Notes**. Created by `sisyphus-goal`. Goal titles follow the `[Feature] Task` format.
 
 Status values: `pending` | `in-progress` | `completed` | `blocked`
 Priority values: `critical` | `high` | `medium` | `low`
@@ -34,7 +34,7 @@ Priority values: `critical` | `high` | `medium` | `low`
 
 ### Step 1 — Scan and Prioritize
 
-1. Scan `Docs/Goals/*.md`. Parse YAML frontmatter for `status` and `priority`.
+1. Scan `Docs/Goals/**/*.md` (recursively, including all feature subfolders). Parse YAML frontmatter for `status` and `priority`.
 2. Filter to `pending` or `in-progress` goals only. If a specific goal file was given, process only that file.
 3. Sort: `critical` > `high` > `medium` > `low`. Same priority = alphabetical filename.
 4. Check `depends_on` — defer goals whose dependencies are not yet `completed`. If a dependency is `blocked`, mark the dependent as `blocked` too.
@@ -45,8 +45,13 @@ Priority values: `critical` | `high` | `medium` | `low`
 For each goal, **before any implementation**:
 
 1. **Read the goal file completely** — internalize objective, context, acceptance criteria, and constraints. Extract the full text once and keep it in memory. Never make subagents read the goal file — you provide the text.
-2. **Explore the codebase** — fire `explore` agents in parallel to understand existing patterns, related files, and conventions. Understand the architecture before touching anything.
-3. **Detect project domain** — identify the project type to determine the right verification strategy:
+2. **Check for related spec documents** — before exploring the codebase, check if a design spec exists for this goal's feature:
+   - Extract the feature name from the goal title (goals follow `[Feature] Task` format — the bracketed text is the feature name). Also check the goal's parent folder name under `Docs/Goals/`.
+   - Scan `Docs/Specs/` for a matching file: `Docs/Specs/{Feature_Name}.md` (PascalCase with underscores, e.g., `[Combat] Add parry mechanic` → `Combat.md`, `[Inventory System] Add sorting` → `Inventory_System.md`). Use glob to find partial matches if the exact name doesn't match.
+   - **If a spec exists**: Read it completely. This is the architectural blueprint — it defines the intended design, components, state machines, data models, events, and dependencies. Store the spec content in memory and pass it to all implementer subagents for this goal. The spec's Systems Design, Data Model, and Events sections are especially critical for guiding implementation.
+   - **If no spec exists**: Note this and proceed. A spec will be created after implementation completes (see Spec Integration section).
+3. **Explore the codebase** — fire `explore` agents in parallel to understand existing patterns, related files, and conventions. Understand the architecture before touching anything.
+4. **Detect project domain** — identify the project type to determine the right verification strategy:
 
 | Project Type | Detection Signals | Verification Tools |
 |---|---|---|
@@ -55,7 +60,7 @@ For each goal, **before any implementation**:
 | Web/Node | `package.json`, `tsconfig.json`, `.ts`/`.tsx` files | `lsp_diagnostics` + build command |
 | General | Any other project | `lsp_diagnostics` only |
 
-4. **Determine execution plan**: complexity (trivial/moderate/complex), domain, category, skills needed, direct vs. delegated.
+5. **Determine execution plan**: complexity (trivial/moderate/complex), domain, category, skills needed, direct vs. delegated.
 
 ### Step 3 — Create Detailed Task Plan
 
@@ -82,6 +87,8 @@ Description:
   - QA: [verification steps — e.g., "lsp_diagnostics clean + Unity console clean + method signatures match spec"]
 ```
 
+**Spec-aware planning:** If a feature spec was found in Step 2, reference its architecture, components, data model, and events when decomposing sub-tasks. The spec's class diagrams and state machines define the intended structure — align sub-tasks to implement that structure rather than inventing a new one. Include spec section references in each sub-task's description so implementers know which part of the spec guides their work.
+
 The task plan is your contract for the goal. Once the plan is set, execute it task by task.
 
 ### Step 4 — Execute with Three-Gate Verification
@@ -95,6 +102,7 @@ For each sub-task:
 3. **Delegate implementation** using the appropriate category + skills. Provide full context upfront using the delegation template from `references/delegation-templates.md`:
    - Include the sub-task description, relevant acceptance criteria verbatim, file paths, architectural context, and conventions.
    - **Scene-setting context is critical** — the subagent needs to understand where this task fits in the larger system, what came before, and what comes after.
+   - **If a feature spec exists** (from Step 2), include the relevant spec sections in the delegation prompt — especially Systems Design, Data Model, and Events. The spec defines the target architecture the implementer should follow.
    - Select the appropriate model/category for the task complexity (see Model Selection below).
 
 4. **Gate 1: Static Analysis (always)**
@@ -138,11 +146,16 @@ When an approach fails:
 3. Task too large → break into smaller sub-tasks
 4. Approach is wrong → re-plan with different strategy, consult Oracle if needed
 
-### Step 6 — Complete and Re-Scan
+### Step 6 — Complete, Update Spec, and Re-Scan
 
 1. Once all sub-tasks for a goal are verified and complete, proceed to the Final Goal Review Gate (Step 7) before marking the goal done.
 2. After Step 7 confirms all criteria are met: set `status: completed` in goal frontmatter, mark parent task complete via `task_update(status="completed")`.
-3. **Re-scan `Docs/Goals/*.md`** — previously blocked goals may now be unblocked. Process any newly eligible goals.
+3. **Update the feature spec** (mandatory — see Spec Integration section below):
+   - Delegate a spec update using `unity-spec`. If a spec existed before implementation, use Update mode to reflect what was actually built. If no spec existed, use Feature Spec mode to create one from the implementation.
+   - This is autonomous — pass all context upfront and instruct the subagent to save directly without blocking for user review.
+   - Category: `unspecified-high`. Skills: `unity-spec`, `unity-standards`.
+   - See the Spec Integration section for the full delegation template.
+4. **Re-scan `Docs/Goals/**/*.md`** — previously blocked goals may now be unblocked. Process any newly eligible goals.
 
 ### Step 7 — Final Goal Review Gate
 
@@ -194,6 +207,9 @@ Goals blocked: Z (if any, with reasons)
 ### Files Modified
 - [list]
 
+### Spec Updates
+- [Feature 1]: Updated/Created Docs/Specs/Feature_1.md
+
 ### Verification
 - Build: PASS/FAIL/N/A
 - Diagnostics: PASS/N errors
@@ -204,6 +220,82 @@ Goals blocked: Z (if any, with reasons)
 ### Next Step
 Run `sisyphus-improve` for quality refinement.
 ```
+
+---
+
+## Spec Integration (Mandatory)
+
+The spec cycle ensures design documents and implementation stay synchronized. Every goal execution follows this pattern:
+
+```
+Docs/Specs/Feature.md  ──read──▶  Implementation  ──update──▶  Docs/Specs/Feature.md
+     (blueprint)                   (goal work)                   (living doc)
+```
+
+### Pre-Implementation: Spec as Blueprint
+
+When a feature spec exists in `Docs/Specs/`, it serves as the architectural blueprint. The spec's Systems Design (class diagrams, components), Data Model (fields, configs), Events (publisher/subscriber), and State Machines define the intended structure. Implementation should follow this structure — not contradict it without good reason.
+
+If the goal's acceptance criteria conflict with the spec, the acceptance criteria take priority (they represent the latest requirements), but note the divergence for the spec update.
+
+### Post-Implementation: Spec Update (Non-Negotiable)
+
+After every goal completes (Step 7 passes), the feature spec **must** be updated to reflect the actual implementation. This is not optional — specs that drift from code are worse than no specs because they actively mislead future work.
+
+**Delegation template for spec update:**
+
+```
+task(
+  category="unspecified-high",
+  load_skills=["unity-spec", "unity-standards"],
+  run_in_background=false,
+  description="Update spec for {Feature}",
+  prompt="
+    1. TASK: Update the feature spec for {Feature} to reflect the completed implementation.
+       Mode: {Update if spec exists, Feature Spec if creating new}.
+
+    2. EXPECTED OUTCOME: Docs/Specs/{Feature_Name}.md accurately reflects the current
+       codebase — architecture, components, events, data models, state machines all match
+       what was actually built.
+
+    3. REQUIRED TOOLS: read, write, edit, glob, grep, lsp tools, Unity MCP tools (if Unity project)
+
+    4. MUST DO:
+       - Use unity-spec {Update|Feature Spec} mode workflow
+       - Load the feature template: read_skill_file('unity-spec', 'references/feature-template.md')
+       - Investigate the actual codebase — cite file:line for every reference
+       - Preserve user-authored design intent — only change sections where code reality diverges
+       - Add [UPDATED: reason] tags next to changed sections (Update mode only)
+       - Run validation: run_skill_script('unity-spec', 'scripts/validate_spec.py', arguments=[spec_path])
+       - Save the spec directly — do NOT block for user review (autonomous post-implementation documentation)
+
+    5. MUST NOT DO:
+       - Do not block or ask for user approval
+       - Do not rewrite sections that are still accurate
+       - Do not add speculative future features
+       - Do not remove sections — only update or add
+
+    6. CONTEXT:
+       - Feature: {feature_name}
+       - Spec path: Docs/Specs/{Feature_Name}.md (or 'create new' if none exists)
+       - Goal completed: {goal_title}
+       - Implementation summary: {brief summary of what was built}
+       - Files modified: {list of files changed during this goal}
+  "
+)
+```
+
+### Feature Name Mapping
+
+Goals follow the `[Feature] Task` title format and live in `Docs/Goals/{feature-name}/`. Specs use PascalCase with underscores in `Docs/Specs/`. The mapping:
+
+| Goal Title | Goal Folder | Spec File |
+|---|---|---|
+| `[Combat] Add parry mechanic` | `combat/` | `Combat.md` |
+| `[Inventory System] Add sorting` | `inventory-system/` | `Inventory_System.md` |
+| `[UI] Build health bar` | `ui/` | `UI.md` |
+
+If the exact spec filename doesn't match, use `glob("Docs/Specs/{Feature}*.md")` to find partial matches — specs may use slightly different naming (e.g., `Combat_System.md` for `[Combat]`).
 
 ---
 
@@ -268,6 +360,7 @@ When delegating sub-tasks, match the goal's domain to appropriate skills:
 | Cloud infra | `cloud-infra` | — |
 | Shell scripts | `bash-check`, `bash-optimize` | — |
 | Documentation | `unity-document`, `visual-explainer` | — |
+| Spec updates | `unity-spec` | `unity-standards` |
 
 Always include the relevant standards skill when delegating domain-specific work — it provides the coding conventions the delegate needs to match the project's patterns.
 
@@ -321,3 +414,5 @@ If you catch yourself doing any of these, stop immediately:
 13. **Always delegate to specialists.** Use category + skills, not yourself.
 14. **Always explore before implementing.** Understand existing patterns first.
 15. **Always provide full context to subagents.** Never make them read the goal file — provide extracted text.
+16. **Always check specs before implementing.** Scan `Docs/Specs/` for related feature specs in Step 2. Use them as architectural blueprints when they exist.
+17. **Always update specs after completing a goal.** Delegate a spec update via `unity-spec` after Step 7 passes. This is mandatory — no exceptions.

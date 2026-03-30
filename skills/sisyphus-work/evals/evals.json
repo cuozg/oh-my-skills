@@ -1,0 +1,47 @@
+{
+  "skill_name": "sisyphus-work",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Execute the goals in Docs/Goals/. There's a pending goal at Docs/Goals/combat/add-parry-mechanic.md with title '[Combat] Add parry mechanic'. The project is a Unity project with existing spec at Docs/Specs/Combat.md that defines the combat system architecture including class diagrams, state machines, and event definitions.",
+      "expected_output": "The skill reads the goal file, then checks Docs/Specs/ for a matching spec before exploring the codebase. It finds Combat.md, reads it, and uses it as architectural context when planning and delegating sub-tasks. After completing the goal and passing the Final Goal Review Gate, it delegates a spec update via unity-spec Update mode to reflect the new parry mechanic implementation. The updated spec is saved to Docs/Specs/Combat.md.",
+      "files": [],
+      "expectations": [
+        "Step 2 checks Docs/Specs/ for a spec matching the [Combat] feature before exploring codebase",
+        "Reads Docs/Specs/Combat.md and uses its Systems Design and Events sections as implementation context",
+        "Includes spec content in delegation prompts to implementer subagents",
+        "After Step 7 passes, delegates a spec update using unity-spec with Update mode",
+        "The spec update delegation includes load_skills=['unity-spec', 'unity-standards']",
+        "The spec update delegation instructs the subagent to save without blocking for user review",
+        "Execution summary includes a 'Spec Updates' section mentioning Combat.md"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Execute goals. There's a pending goal at Docs/Goals/crafting/implement-recipe-system.md with title '[Crafting] Implement recipe system'. This is a Unity project. No spec exists in Docs/Specs/ for Crafting — the directory has specs for other features but not this one.",
+      "expected_output": "The skill reads the goal, checks Docs/Specs/ for a Crafting spec, finds none, notes this and proceeds with implementation using only the goal file and codebase exploration. After completing the goal and passing the Final Goal Review Gate, it delegates a spec creation (Feature Spec mode, not Update mode) via unity-spec to create Docs/Specs/Crafting.md from the implementation.",
+      "files": [],
+      "expectations": [
+        "Step 2 checks Docs/Specs/ for a Crafting spec and correctly determines none exists",
+        "Proceeds with implementation without a spec, using goal acceptance criteria and codebase exploration",
+        "After Step 7 passes, delegates a spec creation using unity-spec Feature Spec mode (not Update mode)",
+        "The spec creation results in a new Docs/Specs/Crafting.md file",
+        "Execution summary includes a 'Spec Updates' section mentioning Crafting.md was created"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Execute goals. There are two pending goals: Docs/Goals/inventory-system/add-sorting.md with title '[Inventory System] Add sorting' (priority: high) and Docs/Goals/inventory-system/add-filtering.md with title '[Inventory System] Add filtering' (priority: medium). The project is Unity. A spec exists at Docs/Specs/Inventory_System.md. Execute both goals in priority order.",
+      "expected_output": "The skill processes the high-priority sorting goal first, reads Docs/Specs/Inventory_System.md as architectural context, implements the goal, passes review gate, updates the spec. Then processes the filtering goal, re-reads the now-updated spec (which includes the sorting changes), implements, passes review gate, and updates the spec again. Both spec updates use Update mode since the spec exists.",
+      "files": [],
+      "expectations": [
+        "Processes [Inventory System] Add sorting first (high priority) before Add filtering (medium)",
+        "Reads Docs/Specs/Inventory_System.md before implementing the first goal",
+        "Updates the spec after completing the sorting goal via unity-spec Update mode",
+        "Re-reads the updated spec before implementing the filtering goal (captures sorting changes)",
+        "Updates the spec again after completing the filtering goal",
+        "Feature name mapping correctly converts '[Inventory System]' to 'Inventory_System.md' spec lookup"
+      ]
+    }
+  ]
+}
