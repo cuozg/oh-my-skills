@@ -1,6 +1,6 @@
 ---
 name: sisyphus-goal
-description: "Interactive goal creation and update skill — collaboratively defines structured goal files through clarifying questions and ALWAYS writes them to Docs/Goals/{kebab-case-title}.md. Every invocation MUST produce or update a goal document on disk — this is non-negotiable. Use when the user wants to create a new goal, says 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' 'break this down into goals,' 'define acceptance criteria,' or invokes /omo/sisyphus-goal. Also use when the user wants to update, modify, or revise an existing goal — 'change the priority,' 'add a criterion,' 'update this goal,' 'bump priority to critical,' 'revise the scope.' Produces goal files that sisyphus-work can execute autonomously. One goal per file with detailed acceptance criteria. Also triggers when the user describes a feature or task and wants it captured as a structured, executable goal before implementation — even if they don't say 'goal' explicitly but say things like 'I want to build X,' 'we need to add Y,' 'can you plan this out as something the agent can execute,' 'capture this as an executable plan,' 'write acceptance criteria for this,' 'scope this feature,' or describes any work they want planned with verifiable criteria before coding starts. Make sure to use this skill whenever the user mentions planning a feature with acceptance criteria, defining what done looks like, creating actionable goals from vague ideas, decomposing large requests into executable units, or preparing work for autonomous agent execution — even if they phrase it as 'plan this,' 'spec this out,' or 'what should we build.'"
+description: "Interactive goal creation and update skill — collaboratively defines structured goal files through clarifying questions and writes them to Docs/Goals/{feature-name}/{kebab-case-task}.md using the [Feature] Task title format. Every invocation MUST produce or update a goal document on disk. Always scans Docs/Goals/ and all subfolders to avoid duplicates and groups related goals by feature folder. Use when the user wants to create, update, or revise goals — 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' 'break this down into goals,' 'define acceptance criteria,' 'change the priority,' 'add a criterion,' 'bump priority.' Also triggers on 'I want to build X,' 'capture this as an executable plan,' 'write acceptance criteria,' 'scope this feature,' 'plan this,' 'spec this out,' or any work planned with verifiable criteria before coding starts. Produces one goal per file that sisyphus-work executes autonomously."
 ---
 
 # Sisyphus Goal — Interactive Goal Creator
@@ -19,7 +19,7 @@ The acceptance criteria you write will be executed by an autonomous agent with z
 
 Every invocation of this skill MUST produce a goal file on disk. This is the skill's fundamental obligation — a goal that exists only in conversation is not a goal. It cannot be executed by `sisyphus-work`, cannot be tracked, and will be forgotten.
 
-The document export happens at Step 7 and is **non-negotiable**. The workflow cannot end, and you cannot offer next steps, until the file exists at `Docs/Goals/{kebab-case-title}.md`. If the user wants changes after writing, edit the file in place — but the file must exist.
+The document export happens at Step 7 and is **non-negotiable**. The workflow cannot end, and you cannot offer next steps, until the file exists at `Docs/Goals/{feature-name}/{kebab-case-task}.md`. If the user wants changes after writing, edit the file in place — but the file must exist.
 
 **Write first, revise later.** Don't wait for perfect confirmation to write. Write the goal as soon as your self-review passes (Step 6), then present it and offer revisions. A written draft that gets edited is infinitely more useful than a perfect draft that never gets saved.
 
@@ -43,11 +43,11 @@ Read the user's input. Identify:
 
 ### Step 1.5 — Check for Duplicates
 
-Before proceeding, scan `Docs/Goals/` for existing goal files. If a goal with a similar title or objective already exists, warn the user:
+Before proceeding, scan `Docs/Goals/` **recursively — including all subfolders** — for existing goal files. Compare against both filenames and goal titles (the `# [Feature] Task` heading). If a goal with a similar title, objective, or feature+task combination already exists, warn the user:
 
-> "I found an existing goal that looks related: `Docs/Goals/{filename}`. Should I update that goal instead, or create a new one?"
+> "I found an existing goal that looks related: `Docs/Goals/{feature}/{filename}`. Should I update that goal instead, or create a new one?"
 
-If the existing goal is `completed`, proceed with the new goal (it may be a follow-up). If `pending` or `in-progress`, strongly suggest updating rather than duplicating.
+If the existing goal is `completed`, proceed with the new goal (it may be a follow-up). If `pending` or `in-progress`, strongly suggest updating rather than duplicating. Pay special attention to goals in the same feature folder — duplicates are most likely there.
 
 ### Step 2 — Explore Context
 
@@ -72,9 +72,26 @@ Before asking clarifying questions, understand the landscape. This prevents aski
 
 This exploration informs your questions. Instead of asking "What testing framework do you use?" when `jest.config.js` exists, you already know. Instead of asking "What state management?" when `lib/providers/` is full of Riverpod providers, you already know.
 
-### Step 3 — Assess Scope and Size
+### Step 3 — Assess Scope, Size, and Feature
 
-Before diving into details, assess whether this is one goal or multiple, and whether the goal is the right size for autonomous execution.
+Before diving into details, assess whether this is one goal or multiple, whether the goal is the right size for autonomous execution, and **which feature this goal belongs to**.
+
+**Feature identification — determines the folder:**
+
+Every goal belongs to a feature. The feature is the domain area, module, or system that the goal touches. Extract it from the user's request:
+
+| User Request | Feature | Task |
+|---|---|---|
+| "Add JWT authentication to API routes" | `authentication` | `Add JWT Authentication to API Routes` |
+| "Implement dark mode for the Flutter app" | `dark-mode` | `Implement Dark Mode` |
+| "Set up CI/CD pipeline" | `ci-cd` | `Set Up CI/CD Pipeline` |
+| "Add leaderboard to our Unity game" | `leaderboard` | `Add Leaderboard` |
+| "Fix the login timeout bug" | `authentication` | `Fix Login Timeout Bug` |
+| "Add pull-to-refresh on the feed screen" | `feed` | `Add Pull to Refresh` |
+
+If the feature is ambiguous, ask the user: "What feature area does this belong to? For example: `authentication`, `payments`, `onboarding`?" The feature name becomes the folder name in kebab-case.
+
+**Check for existing feature folders** — scan `Docs/Goals/` for a folder that matches or is closely related to the identified feature. If one exists, the new goal goes into that folder. If none exists, create a new feature folder.
 
 **Scope check — one goal or many?**
 
@@ -150,7 +167,7 @@ created: {YYYY-MM-DD}
 depends_on: []
 ---
 
-# {Goal Title}
+# [{Feature}] {Task}
 
 ## Objective
 {Clear, actionable description — 1-3 sentences. What needs to be accomplished and why.}
@@ -173,9 +190,19 @@ depends_on: []
 
 **Goal title rules:**
 
-- Clear and descriptive (not vague like "Improve things")
-- Action-oriented when possible ("Add JWT authentication to API routes")
-- Specific enough that the executor knows the scope
+- **Format: `[Feature] Task`** — always prefix with the feature name in square brackets, followed by a concise action-oriented task description. Examples:
+  - `[Authentication] Add JWT Token Validation`
+  - `[Dark Mode] Implement Theme Switching`
+  - `[CI/CD] Set Up GitHub Actions Pipeline`
+  - `[Leaderboard] Add Daily and All-Time Rankings`
+- The `Feature` in brackets must match the feature folder name (title case in brackets → kebab-case for folder: `[Dark Mode]` → folder `dark-mode/`, `[CI/CD]` → folder `ci-cd/`)
+- The `Task` part should be action-oriented and specific enough that the executor knows the scope
+- Keep it clear and descriptive (not vague like `[Misc] Improve things`)
+
+**Critical format requirements (the goal file is useless without these):**
+- YAML frontmatter block (`---` delimiters) with `status`, `priority`, `created`, `depends_on`
+- All five sections present: `## Objective`, `## Context`, `## Acceptance Criteria`, `## Constraints`, `## Notes`
+- Feature folder MUST be kebab-case (e.g., `dark-mode/`, never `Dark Mode/`)
 
 **Acceptance criteria — the most important part:**
 
@@ -222,11 +249,21 @@ Fix any issues inline. Then proceed immediately to Step 7 — write the file fir
 
 Write the goal file immediately after self-review passes. Do not wait for explicit user confirmation — the file gets written now, and the user can request changes afterward. This step is the skill's core contract: every invocation produces a file.
 
-1. **Derive filename** from the goal title in kebab-case (e.g., "Add JWT Authentication" → `add-jwt-authentication.md`)
-2. **Create directory** `Docs/Goals/` if it doesn't exist
-3. **Write the file** to `Docs/Goals/{kebab-case-title}.md`
-4. **Verify the write** — read back the file to confirm it exists and has the expected content. If the write failed, retry immediately.
-5. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{filename}`. Want to make any changes before execution? Run `/omo/sisyphus-work` to execute it."
+1. **Derive feature folder** from the `[Feature]` part of the title in kebab-case (e.g., `[Authentication]` → `authentication/`, `[Dark Mode]` → `dark-mode/`)
+2. **Derive filename** from the `Task` part of the title in kebab-case (e.g., `Add JWT Token Validation` → `add-jwt-token-validation.md`)
+3. **Create directory** `Docs/Goals/{feature-name}/` if it doesn't exist (also create `Docs/Goals/` if needed)
+4. **Write the file** to `Docs/Goals/{feature-name}/{kebab-case-task}.md`
+5. **Verify the write** — read back the file to confirm it exists and has the expected content. If the write failed, retry immediately.
+6. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Want to make any changes before execution? Run `/omo/sisyphus-work` to execute it."
+
+**Path derivation examples:**
+
+| Title | Folder | Filename | Full Path |
+|---|---|---|---|
+| `[Authentication] Add JWT Token` | `authentication/` | `add-jwt-token.md` | `Docs/Goals/authentication/add-jwt-token.md` |
+| `[Dark Mode] Implement Theme Switching` | `dark-mode/` | `implement-theme-switching.md` | `Docs/Goals/dark-mode/implement-theme-switching.md` |
+| `[CI/CD] Set Up GitHub Actions` | `ci-cd/` | `set-up-github-actions.md` | `Docs/Goals/ci-cd/set-up-github-actions.md` |
+| `[Feed] Add Pull to Refresh` | `feed/` | `add-pull-to-refresh.md` | `Docs/Goals/feed/add-pull-to-refresh.md` |
 
 If the user requests changes after writing, edit the file in place and re-verify. The file must remain on disk at all times — never delete it to rewrite from scratch.
 
@@ -256,7 +293,7 @@ Not every interaction creates a new goal. When the user wants to modify an exist
 
 ### Update Workflow
 
-1. **Locate the goal** — read the file from `Docs/Goals/`. If the user refers to it by name, match against filenames and titles. If ambiguous, list the matching goals and ask which one.
+1. **Locate the goal** — search `Docs/Goals/` recursively (all feature subfolders) for the file. Match against filenames, titles (the `[Feature] Task` heading), and feature folder names. If ambiguous, list the matching goals and ask which one.
 2. **Understand the change** — what specifically needs to change? Frontmatter (status, priority, depends_on), objective, criteria, constraints?
 3. **Apply the change** — modify the goal file in-place. Preserve everything that isn't changing.
 4. **Self-review the change** — apply the same quality checks from Step 6 to any new or modified criteria.
@@ -279,13 +316,21 @@ If the user describes multiple goals at once:
 
 1. Separate them into individual goals
 2. Identify dependencies between them
-3. Clarify and write each as a separate file, starting with the one that has no dependencies
-4. Populate `depends_on` fields to establish execution order
-5. Report all created files at the end
+3. **Identify the feature for each goal** — goals touching the same feature go into the same feature folder
+4. Clarify and write each as a separate file, starting with the one that has no dependencies
+5. Populate `depends_on` fields to establish execution order (use the full relative path, e.g., `authentication/add-jwt-token.md`)
+6. Report all created files at the end, grouped by feature folder
+
+**Example:** If a user says "I need authentication, a dashboard, and API rate limiting":
+- `Docs/Goals/authentication/add-user-auth.md` — `[Authentication] Add User Auth`
+- `Docs/Goals/dashboard/build-analytics-dashboard.md` — `[Dashboard] Build Analytics Dashboard`
+- `Docs/Goals/api/add-rate-limiting.md` — `[API] Add Rate Limiting`
 
 ---
 
 ## Example of a Well-Written Goal
+
+**File path:** `Docs/Goals/authentication/add-jwt-authentication-to-api-routes.md`
 
 ```markdown
 ---
@@ -295,7 +340,7 @@ created: 2026-03-17
 depends_on: []
 ---
 
-# Add JWT Authentication to API Routes
+# [Authentication] Add JWT Authentication to API Routes
 
 ## Objective
 Protect all `/api/protected/*` routes with JWT bearer token authentication so only logged-in users can access them.
@@ -333,10 +378,13 @@ The app uses Next.js App Router with Drizzle ORM. Login endpoint exists at `/api
 7. **Assess scope early.** Multi-objective requests get decomposed before detailed clarification.
 8. **Self-review before presenting.** Catch your own ambiguity before the user sees it.
 9. **Respect user intent.** Don't add scope the user didn't ask for. Don't remove scope they did ask for.
-10. **Filename = kebab-case of title.** No creativity needed — deterministic derivation.
-11. **Always set priority.** Default to `medium` if the user doesn't specify, but always ask.
-12. **Set `created` to today's date.** Use ISO 8601 format (YYYY-MM-DD).
-13. **Set dependencies.** Check existing goals and populate `depends_on` when relationships exist.
-14. **Always export the document.** The goal file MUST be written to `Docs/Goals/` before the skill's workflow ends. A goal that lives only in chat is worthless — it can't be executed by `sisyphus-work`. Write first, revise later. This is non-negotiable.
-15. **Verify after writing.** After writing the file, read it back to confirm it exists and has correct content. If the write failed, retry immediately.
-16. **Never delete without replacement.** If editing a goal file, edit in place. Never delete the file and leave the user with no goal on disk.
+10. **Title format = `[Feature] Task`.** Always use square brackets around the feature name, followed by the task description. Consistent, deterministic.
+11. **Filename = kebab-case of task part.** Derived from the `Task` portion of the title only (not the `[Feature]` prefix). No creativity needed.
+12. **Feature folder = kebab-case of feature name.** The `[Feature]` prefix determines the subfolder under `Docs/Goals/`. Always create the feature folder.
+13. **Always set priority.** Default to `medium` if the user doesn't specify, but always ask.
+14. **Set `created` to today's date.** Use ISO 8601 format (YYYY-MM-DD).
+15. **Set dependencies.** Check existing goals (recursively in all feature folders) and populate `depends_on` when relationships exist. Use relative paths from `Docs/Goals/` (e.g., `authentication/add-jwt-token.md`).
+16. **Always export the document.** The goal file MUST be written to `Docs/Goals/{feature-name}/{task}.md` before the skill's workflow ends. A goal that lives only in chat is worthless — it can't be executed by `sisyphus-work`. Write first, revise later. This is non-negotiable.
+17. **Verify after writing.** After writing the file, read it back to confirm it exists and has correct content. If the write failed, retry immediately.
+18. **Never delete without replacement.** If editing a goal file, edit in place. Never delete the file and leave the user with no goal on disk.
+19. **Scan recursively for duplicates.** Always check `Docs/Goals/` and ALL subfolders before creating a new goal. Match on title similarity, not just exact filenames.
