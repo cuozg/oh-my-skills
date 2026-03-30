@@ -1,80 +1,81 @@
 ---
 name: unity-spec
 description: >
-  Generate detailed Game Design Specification (GDD) documents for Unity game projects.
-  Covers game overview, core mechanics, systems design, progression, content, UX/UI flows,
-  art direction, audio, technical constraints, platform targets, and risks. Investigates
-  the existing codebase to align the spec with current architecture. Use when the user says
-  "write a game spec," "create a GDD," "game design document," "spec out this game,"
-  "feature specification," or describes a game concept needing a structured specification.
-  Do not use for technical design docs (unity-document TDD mode) or planning (unity-plan).
+  Investigate Unity projects and generate per-feature Game Design Specification documents.
+  Splits specs into one file per feature (FEATURE_NAME.md) in Docs/Specs/. Three modes:
+  Full GDD (index + per-feature files), Feature Spec (single feature), Update (diff
+  existing spec against codebase). MUST use when the user says "write a game spec,"
+  "create a GDD," "game design document," "spec out this game," "feature specification,"
+  "spec this feature," "update the spec," "spec is stale," "split into per-feature files,"
+  or describes a game concept needing structured design documentation. Also use when the
+  user wants to document game mechanics, systems design, progression, UX/UI flows, or
+  technical constraints — even if they say "document this feature" without saying "spec."
+  Do not use for technical design docs or system documentation (unity-document), task
+  planning (unity-plan), codebase investigation without spec output (unity-investigate),
+  or project scaffolding (unity-init).
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "2.0"
 ---
 
 # unity-spec
 
-Generate codebase-aware Game Design Specifications. Auto-triage into Full GDD or Feature Spec.
+Investigate Unity projects and produce per-feature Game Design Specifications. Each feature gets its own file in `Docs/Specs/`.
 
 ## Triage
 
-Classify the request before starting:
+| Signal | Mode |
+|--------|------|
+| New game concept, multiple features | **Full GDD** — index + per-feature files |
+| Single feature for an existing game | **Feature Spec** — one `FEATURE_NAME.md` |
+| Existing spec outdated after code changes | **Update** — diff codebase vs spec, patch |
 
-| Signal | Behavior |
-|--------|----------|
-| User describes a new game concept | **Full GDD** — all 12 sections |
-| User describes a feature for an existing game | **Feature Spec** — relevant sections only |
-| User provides partial spec, wants completion | **Fill** — complete remaining sections |
+When ambiguous, ask: "Full game spec or just one feature?"
 
-When ambiguous, ask: "Is this a full game spec or a feature-scoped spec?"
+## Output Rules (non-negotiable)
 
----
+- **Directory**: `Docs/Specs/`
+- **Feature files**: `Docs/Specs/FEATURE_NAME.md` (e.g., `Combat_System.md`, `Inventory.md`)
+- **Index file** (Full GDD only): `Docs/Specs/_INDEX.md`
+- **Naming**: PascalCase with underscores for multi-word features
+- One feature per file — never combine unrelated features
 
 ## Workflow
 
-Every spec session follows 5 steps. Step 4 is BLOCKING — do not proceed without user approval.
+After triage, load the mode workflow:
+`read_skill_file("unity-spec", "references/workflows.md")`
 
-### Step 1: Investigate
+Follow the steps for the selected mode exactly. Every mode shares these gates:
 
-If a Unity project exists, scan the codebase (max 5 tool calls) to understand existing architecture, naming conventions, and systems. Note what already exists vs what is new.
+1. **Scan** — check `Docs/Specs/` for existing specs
+2. **Investigate** — deep codebase scan before writing (cite `file:line`)
+3. **Draft** — fill templates completely, mark gaps `[ASSUMED]`
+4. **Review ⛔ BLOCK** — present to user, wait for approval
+5. **Save & Validate** — `run_skill_script("unity-spec", "scripts/validate_spec.py", arguments=[<path>])`
 
-### Step 2: Present Template
+### Templates
 
-Load the GDD template: `read_skill_file("unity-spec", "references/gdd-template.md")`. Present ALL section headers with brief descriptions. Ask the user to fill what they know — the skill completes the rest.
-
-### Step 3: Draft Spec
-
-Fill every section of the template. For sections the user did not provide:
-- Use codebase evidence if available, citing `file:line`
-- Make reasonable design decisions and mark with `[ASSUMED]`
-- Include mandatory Mermaid diagrams: architecture flowchart, at least 1 state diagram, data model class diagram (minimum 3 total for Full GDD, 1 for Feature Spec)
-
-### Step 4: Review ⛔ BLOCK
-
-**STOP. Present the completed spec to the user. Wait for user to approve, request changes, or discard.** Do NOT save until user approves.
-
-### Step 5: Save & Validate
-
-Save to `Documents/Specs/SPEC_{Name}.md`. Run validation:
-`run_skill_script("unity-spec", "scripts/validate_spec.py", arguments=[<path>])`
-
----
+- **Index**: `read_skill_file("unity-spec", "references/gdd-template.md")`
+- **Feature**: `read_skill_file("unity-spec", "references/feature-template.md")`
 
 ## Shared Rules
 
-- Investigate actual codebase before writing — no speculation about existing systems
-- Every reference to existing code must cite `file:line`
-- Mark assumptions with `[ASSUMED]` tag so user can verify
-- No TODO/TBD/FIXME in the output document
-- Use imperative language; avoid "we should" or "you could"
-- Full GDD requires at least 3 Mermaid diagrams; Feature Spec requires at least 1
+- Investigate actual codebase before writing — no speculation
+- Cite `file:line` for every reference to existing code
+- Mark assumptions `[ASSUMED]`, updates `[UPDATED: reason]`
+- No TODO/TBD/FIXME in output
+- Imperative language; no "we should" or "you could"
+- Full GDD: at least 3 Mermaid diagrams across all files
+- Feature Spec: at least 1 Mermaid diagram
 - No C# code stubs — architecture-level descriptions only
 
 ## Standards
 
-Load `unity-standards` for architecture context. Key references:
+Load `unity-standards` for architecture context:
 
-- `code-standards/architecture-systems.md` — architecture patterns, dependencies, events, project structure
+- `code-standards/architecture-systems.md` — patterns, dependencies, events
+- `plan/investigation-workflow.md` — file tracing, call chains
+- `other/mermaid-syntax.md` — diagram syntax
+- `other/unity-mcp-routing-matrix.md` — MCP tool routing
 
 Load via `read_skill_file("unity-standards", "references/<path>")`.

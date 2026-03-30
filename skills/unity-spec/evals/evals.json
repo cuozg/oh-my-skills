@@ -1,0 +1,53 @@
+{
+  "skill_name": "unity-spec",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm building a tower defense game in Unity. I need a full game spec covering the core tower placement mechanics, a wave management system, an upgrade/progression system, and a simple economy. The game targets mobile (iOS/Android) with a casual audience. Can you create the GDD for me?",
+      "expected_output": "Creates Docs/Specs/_INDEX.md with game overview, feature map, art/audio direction, platform targets. Creates individual feature spec files: Tower_Placement.md, Wave_Management.md, Upgrade_System.md, Economy.md. Each feature file follows the feature-template.md structure with at least 1 Mermaid diagram. All files pass validation.",
+      "files": [],
+      "expectations": [
+        "Creates Docs/Specs/_INDEX.md file",
+        "Creates at least 4 separate feature spec files in Docs/Specs/",
+        "Each feature file has sections 1-6 (Overview through Dependencies)",
+        "At least 3 total Mermaid diagrams across all files",
+        "_INDEX.md contains a Feature Map table linking to each feature file",
+        "No TODO/TBD/FIXME text in any output file",
+        "No unfilled {placeholder} text in any output file",
+        "validate_spec.py passes on the Docs/Specs/ directory"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have an existing Unity project with a combat system. The project has scripts in Assets/_Project/Features/Combat/ including DamageCalculator.cs, WeaponController.cs, and ComboSystem.cs. Write a feature spec for just the combat system based on what you find in the codebase.",
+      "expected_output": "Creates Docs/Specs/Combat_System.md following the feature-template.md. Investigates the codebase first, cites file:line references for existing implementations. Includes architecture class diagram and state diagram for combo system. Dependencies section maps integration points with other systems.",
+      "files": [],
+      "expectations": [
+        "Creates exactly one file: Docs/Specs/Combat_System.md",
+        "File follows the feature-template.md structure",
+        "Contains at least 1 Mermaid diagram (class or state diagram)",
+        "Cites file:line references from the codebase investigation",
+        "Has a Dependencies & Integration section with coupling levels",
+        "Overview section has Feature name, Status, and Summary filled",
+        "No TODO/TBD/FIXME text",
+        "validate_spec.py passes on the file"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The inventory spec at Docs/Specs/Inventory.md is outdated. I added a new crafting subsystem and changed how item stacking works. The ItemStack class now uses a quantity cap from ScriptableObject config instead of hardcoded values. Update the spec to match the current code.",
+      "expected_output": "Reads existing Docs/Specs/Inventory.md, investigates current codebase for inventory-related changes, produces an updated spec with [UPDATED] tags on changed sections. Preserves user-authored design intent. Updates data model section for new SO-based quantity cap. Adds crafting subsystem to systems design.",
+      "files": [],
+      "expectations": [
+        "Reads the existing Docs/Specs/Inventory.md before making changes",
+        "Investigates the codebase for inventory-related files",
+        "Output file contains [UPDATED] tags on changed sections",
+        "Preserves sections that haven't changed",
+        "Updates the Data Model section to reflect SO-based config",
+        "Adds crafting subsystem information to Systems Design",
+        "No TODO/TBD/FIXME text",
+        "validate_spec.py passes on the updated file"
+      ]
+    }
+  ]
+}
