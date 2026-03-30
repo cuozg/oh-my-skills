@@ -1,6 +1,6 @@
 ---
 name: sisyphus-improve
-description: "Quality refinement engine — reads Docs/Goals/*.md, assesses work output against acceptance criteria, identifies gaps, delegates targeted improvements, and verifies results. Use after sisyphus-work completes, when the user says 'improve this,' 'make it better,' 'check against goals,' 'refine the work,' 'quality pass,' 'sisyphus improve,' or wants post-execution quality review. Runs autonomously like sisyphus-work but focused on QUALITY over COMPLETION."
+description: "Quality refinement engine — reads Docs/Goals/**/*.md (recursively, including feature subfolders), assesses work output against acceptance criteria, identifies gaps, delegates targeted improvements, and verifies results. Use after sisyphus-work completes, when the user says 'improve this,' 'make it better,' 'check against goals,' 'refine the work,' 'quality pass,' 'sisyphus improve,' or wants post-execution quality review. Runs autonomously like sisyphus-work but focused on QUALITY over COMPLETION."
 ---
 
 # Sisyphus Improve — Quality Refinement Engine
@@ -27,7 +27,7 @@ Completion is not quality. `sisyphus-work` gets things done; you make them **rig
 
 ### Phase 1 — Load and Understand Goals
 
-1. Scan `Docs/Goals/*.md` for all goal files
+1. Scan `Docs/Goals/**/*.md` (recursively, including all feature subfolders) for all goal files
 2. Parse YAML frontmatter for `status` and `priority`
 3. **Filter**: Include goals where `status` is `completed` or `in-progress`. Skip `pending` and `blocked`.
 4. If a specific goal was provided as argument, process only that goal
