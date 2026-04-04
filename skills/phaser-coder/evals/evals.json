@@ -1,0 +1,20 @@
+{
+  "skill_name": "phaser-coder",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a simple Phaser 3 platformer with a player that can jump on platforms and collect coins. Use Arcade physics.",
+      "expected_output": "Complete game code with Game config, scene lifecycle, physics sprites, colliders, and coin collection logic using Phaser 3.60+ APIs"
+    },
+    {
+      "id": 2,
+      "prompt": "My player character falls through the tilemap ground layer. I'm using Tiled JSON export and Arcade physics. The tilemap loads and renders fine but there's no collision.",
+      "expected_output": "Diagnosis of missing setCollision call on tilemap layer, with correct usage of setCollisionByProperty or setCollisionByExclusion, and physics.add.collider between player and ground layer"
+    },
+    {
+      "id": 3,
+      "prompt": "How do I create a particle trail effect that follows the player in Phaser 3? I want dust particles when running.",
+      "expected_output": "v3.60+ particle emitter using this.add.particles() with follow option, appropriate speed/scale/lifespan config, and note about the v3.60 API change"
+    }
+  ]
+}
