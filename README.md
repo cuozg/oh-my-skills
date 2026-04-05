@@ -276,9 +276,9 @@ graph TD
 
 | Skill | What it does |
 |:---|:---|
-| **sisyphus-work** | Scan goal files, execute all autonomously |
-| **sisyphus-goal** | Interactive goal creation with acceptance criteria |
-| **sisyphus-improve** | Quality refinement &mdash; assess work against goals |
+| **plan-work** | Scan goal files, execute all autonomously |
+| **plan-goal** | Interactive goal creation with acceptance criteria |
+| **plan-improve** | Quality refinement &mdash; assess work against goals |
 | **session-retrospective** | Post-session learning &mdash; improve skills from experience |
 
 ### Shell & CLI
@@ -322,8 +322,8 @@ bash/              check   install   optimize
 flatbuffers/       coder
 git/               clear   comment   commit   description   squash
 mermaid/           create
-omo/               atlas   prometheus   sisyphus   sisyphus-goal
-                   sisyphus-improve   sisyphus-junior   sisyphus-work
+omo/               atlas   prometheus   sisyphus   goal
+                   improve   sisyphus-junior   work
 skill/             deep   quick
 visual-explainer/  diff-review   fact-check   generate-slides
                    generate-visual-plan   generate-web-diagram

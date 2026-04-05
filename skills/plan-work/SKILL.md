@@ -1,9 +1,9 @@
 ---
-name: sisyphus-work
-description: "Autonomous goal execution engine — scans Docs/Goals/**/*.md (recursively, including feature subfolders) for uncompleted goals and executes ALL of them without asking, stopping, or confirming. Checks Docs/Specs/ for related design specs before implementation and mandatorily updates specs after each goal completes via unity-spec. Thinks, decides, plans, delegates, and verifies entirely on its own. Creates task breakdowns, verifies with domain-specific checks (Unity console, build commands, static analysis), and performs a final goal review gate. Use when the user says 'execute goals,' 'run all goals,' 'autonomous mode,' 'sisyphus work,' 'just do everything,' 'do the goals,' 'start working,' 'execute the plan,' 'implement everything,' or invokes /omo/sisyphus-work. Also use when goal files exist in Docs/Goals/ and the user wants unattended execution. MUST use for any autonomous, no-questions-asked goal completion from goal documents."
+name: plan-work
+description: "Autonomous goal execution engine — scans Docs/Goals/**/*.md (recursively, including feature subfolders) for uncompleted goals and executes ALL of them without asking, stopping, or confirming. Checks Docs/Specs/ for related design specs before implementation and mandatorily updates specs after each goal completes via unity-spec. Thinks, decides, plans, delegates, and verifies entirely on its own. Creates task breakdowns, verifies with domain-specific checks (Unity console, build commands, static analysis), and performs a final goal review gate. Use when the user says 'execute goals,' 'run all goals,' 'autonomous mode,' 'plan work,' 'just do everything,' 'do the goals,' 'start working,' 'execute the plan,' 'implement everything,' or invokes /omo/work. Also use when goal files exist in Docs/Goals/ and the user wants unattended execution. MUST use for any autonomous, no-questions-asked goal completion from goal documents."
 ---
 
-# Sisyphus Work — Autonomous Goal Execution Engine
+# Plan Work — Autonomous Goal Execution Engine
 
 You are an autonomous execution engine. You read goals, make every decision yourself, and execute until every goal is complete. No questions. No stopping. No half-measures.
 
@@ -23,7 +23,7 @@ Claiming work is complete without verification is dishonesty, not efficiency. If
 
 ## Goal File Format
 
-Each goal file in `Docs/Goals/` (organized by feature subfolders) has YAML frontmatter (`status`, `priority`, `created`, optional `depends_on`) followed by sections: **Objective**, **Context**, **Acceptance Criteria** (checkboxes), **Constraints**, and **Notes**. Created by `sisyphus-goal`. Goal titles follow the `[Feature] Task` format.
+Each goal file in `Docs/Goals/` (organized by feature subfolders) has YAML frontmatter (`status`, `priority`, `created`, optional `depends_on`) followed by sections: **Objective**, **Context**, **Acceptance Criteria** (checkboxes), **Constraints**, and **Notes**. Created by `plan-goal`. Goal titles follow the `[Feature] Task` format.
 
 Status values: `pending` | `in-progress` | `completed` | `blocked`
 Priority values: `critical` | `high` | `medium` | `low`
@@ -218,7 +218,7 @@ Goals blocked: Z (if any, with reasons)
 - Tests: X/Y passed / N/A
 
 ### Next Step
-Run `sisyphus-improve` for quality refinement.
+Run `plan-improve` for quality refinement.
 ```
 
 ---

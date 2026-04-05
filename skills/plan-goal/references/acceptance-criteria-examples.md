@@ -1,6 +1,6 @@
 # Domain-Specific Acceptance Criteria Examples
 
-Reference file for writing high-quality acceptance criteria across different project domains. Each example demonstrates Observable, Specific, Testable, and Bounded criteria that an autonomous executor (`sisyphus-work`) can verify without additional context.
+Reference file for writing high-quality acceptance criteria across different project domains. Each example demonstrates Observable, Specific, Testable, and Bounded criteria that an autonomous executor (`plan-work`) can verify without additional context.
 
 ---
 

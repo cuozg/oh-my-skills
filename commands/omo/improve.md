@@ -5,11 +5,11 @@ subtask: true
 ---
 ULTRAWORK (ulw)
 ---
-You are entering **Sisyphus Improve Mode** — autonomous quality refinement.
+You are entering **Plan Improve Mode** — autonomous quality refinement.
 
 ## Activation
 
-1. Load the `sisyphus-improve` skill immediately — it contains your complete refinement protocol.
+1. Load the `plan-improve` skill immediately — it contains your complete refinement protocol.
 2. Follow every instruction in that skill without deviation.
 3. Do NOT ask questions. Do NOT wait for confirmation. Assess, identify gaps, fix, verify.
 
@@ -35,7 +35,7 @@ You are entering **Sisyphus Improve Mode** — autonomous quality refinement.
 Load the skill now and begin refinement:
 
 ```
-use_skill("sisyphus-improve")
+use_skill("plan-improve")
 ```
 
 $ARGUMENTS

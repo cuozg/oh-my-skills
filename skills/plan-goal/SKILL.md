@@ -1,11 +1,11 @@
 ---
-name: sisyphus-goal
-description: "Interactive goal creation and update skill — collaboratively defines structured goal files through clarifying questions and writes them to Docs/Goals/{feature-name}/{kebab-case-task}.md using the [Feature] Task title format. Every invocation MUST produce or update a goal document on disk. Always scans Docs/Goals/ and all subfolders to avoid duplicates and groups related goals by feature folder. Use when the user wants to create, update, or revise goals — 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' 'break this down into goals,' 'define acceptance criteria,' 'change the priority,' 'add a criterion,' 'bump priority.' Also triggers on 'I want to build X,' 'capture this as an executable plan,' 'write acceptance criteria,' 'scope this feature,' 'plan this,' 'spec this out,' or any work planned with verifiable criteria before coding starts. Produces one goal per file that sisyphus-work executes autonomously."
+name: plan-goal
+description: "Interactive goal creation and update skill — collaboratively defines structured goal files through clarifying questions and writes them to Docs/Goals/{feature-name}/{kebab-case-task}.md using the [Feature] Task title format. Every invocation MUST produce or update a goal document on disk. Always scans Docs/Goals/ and all subfolders to avoid duplicates and groups related goals by feature folder. Use when the user wants to create, update, or revise goals — 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' 'break this down into goals,' 'define acceptance criteria,' 'change the priority,' 'add a criterion,' 'bump priority.' Also triggers on 'I want to build X,' 'capture this as an executable plan,' 'write acceptance criteria,' 'scope this feature,' 'plan this,' 'spec this out,' or any work planned with verifiable criteria before coding starts. Produces one goal per file that plan-work executes autonomously."
 ---
 
-# Sisyphus Goal — Interactive Goal Creator
+# Plan Goal — Interactive Goal Creator
 
-You create structured goal files that `sisyphus-work` can execute autonomously. You are the **front door** to the Sisyphus pipeline: **`sisyphus-goal`** → `sisyphus-work` → `sisyphus-improve`. You make sure every goal is clear, actionable, and complete before writing it to disk.
+You create structured goal files that `plan-work` can execute autonomously. You are the **front door** to the planning pipeline: **`plan-goal`** → `plan-work` → `plan-improve`. You make sure every goal is clear, actionable, and complete before writing it to disk.
 
 ## Core Philosophy
 
@@ -17,7 +17,7 @@ The acceptance criteria you write will be executed by an autonomous agent with z
 
 ## Document Export Contract
 
-Every invocation of this skill MUST produce a goal file on disk. This is the skill's fundamental obligation — a goal that exists only in conversation is not a goal. It cannot be executed by `sisyphus-work`, cannot be tracked, and will be forgotten.
+Every invocation of this skill MUST produce a goal file on disk. This is the skill's fundamental obligation — a goal that exists only in conversation is not a goal. It cannot be executed by `plan-work`, cannot be tracked, and will be forgotten.
 
 The document export happens at Step 7 and is **non-negotiable**. The workflow cannot end, and you cannot offer next steps, until the file exists at `Docs/Goals/{feature-name}/{kebab-case-task}.md`. If the user wants changes after writing, edit the file in place — but the file must exist.
 
@@ -236,9 +236,9 @@ Before presenting the draft to the user, review it yourself against two lenses: 
 3. **Executor test** — imagine you're an autonomous agent reading this for the first time. Would you know exactly what to build? Would you know when you're done?
 4. **Scope check** — is this focused enough for a single execution cycle, or does it need decomposition?
 
-**Executor compatibility checks** (ensures `sisyphus-work` can execute this goal successfully):
+**Executor compatibility checks** (ensures `plan-work` can execute this goal successfully):
 
-5. **Verifiability** — can each criterion be checked by automated tools? `sisyphus-work` uses `lsp_diagnostics`, `Unity_ReadConsole`, `dart analyze`, or build commands. Criteria like "code is clean" are not automatable — rephrase as "lsp_diagnostics reports zero errors on modified files."
+5. **Verifiability** — can each criterion be checked by automated tools? `plan-work` uses `lsp_diagnostics`, `Unity_ReadConsole`, `dart analyze`, or build commands. Criteria like "code is clean" are not automatable — rephrase as "lsp_diagnostics reports zero errors on modified files."
 6. **File path specificity** — does the Context section include concrete file paths? The executor needs to know where to start. "Related files" should list actual paths discovered during exploration, not just module names.
 7. **Constraint clarity** — are constraints framed as verifiable boundaries? "Must be fast" is useless. "Response time under 200ms for list endpoints" is checkable.
 8. **Domain detection** — does the goal give enough signals for the executor to detect the project domain (Unity, Flutter, Web)? Include framework-specific file references when relevant.
@@ -254,7 +254,7 @@ Write the goal file immediately after self-review passes. Do not wait for explic
 3. **Create directory** `Docs/Goals/{feature-name}/` if it doesn't exist (also create `Docs/Goals/` if needed)
 4. **Write the file** to `Docs/Goals/{feature-name}/{kebab-case-task}.md`
 5. **Verify the write** — read back the file to confirm it exists and has the expected content. If the write failed, retry immediately.
-6. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Want to make any changes before execution? Run `/omo/sisyphus-work` to execute it."
+6. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Want to make any changes before execution? Run `/omo/work` to execute it."
 
 **Path derivation examples:**
 
@@ -272,7 +272,7 @@ If the user requests changes after writing, edit the file in place and re-verify
 After saving, ask:
 
 - "Want to create another goal?"
-- "Want to run `/omo/sisyphus-work` to execute this goal now?"
+- "Want to run `/omo/work` to execute this goal now?"
 - "Want to review existing goals in `Docs/Goals/`?"
 
 ---
@@ -384,7 +384,7 @@ The app uses Next.js App Router with Drizzle ORM. Login endpoint exists at `/api
 13. **Always set priority.** Default to `medium` if the user doesn't specify, but always ask.
 14. **Set `created` to today's date.** Use ISO 8601 format (YYYY-MM-DD).
 15. **Set dependencies.** Check existing goals (recursively in all feature folders) and populate `depends_on` when relationships exist. Use relative paths from `Docs/Goals/` (e.g., `authentication/add-jwt-token.md`).
-16. **Always export the document.** The goal file MUST be written to `Docs/Goals/{feature-name}/{task}.md` before the skill's workflow ends. A goal that lives only in chat is worthless — it can't be executed by `sisyphus-work`. Write first, revise later. This is non-negotiable.
+16. **Always export the document.** The goal file MUST be written to `Docs/Goals/{feature-name}/{task}.md` before the skill's workflow ends. A goal that lives only in chat is worthless — it can't be executed by `plan-work`. Write first, revise later. This is non-negotiable.
 17. **Verify after writing.** After writing the file, read it back to confirm it exists and has correct content. If the write failed, retry immediately.
 18. **Never delete without replacement.** If editing a goal file, edit in place. Never delete the file and leave the user with no goal on disk.
 19. **Scan recursively for duplicates.** Always check `Docs/Goals/` and ALL subfolders before creating a new goal. Match on title similarity, not just exact filenames.

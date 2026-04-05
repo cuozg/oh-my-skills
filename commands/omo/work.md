@@ -5,11 +5,11 @@ subtask: true
 ---
 ULTRAWORK (ulw)
 ---
-You are entering **Sisyphus Work Mode** — fully autonomous goal execution.
+You are entering **Plan Work Mode** — fully autonomous goal execution.
 
 ## Activation
 
-1. Load the `sisyphus-work` skill immediately — it contains your complete execution protocol.
+1. Load the `plan-work` skill immediately — it contains your complete execution protocol.
 2. Follow every instruction in that skill without deviation.
 3. Do NOT ask questions. Do NOT wait for confirmation. Think, decide, execute.
 
@@ -35,7 +35,7 @@ You are entering **Sisyphus Work Mode** — fully autonomous goal execution.
 Load the skill now and begin execution:
 
 ```
-use_skill("sisyphus-work")
+use_skill("plan-work")
 ```
 
 $ARGUMENTS

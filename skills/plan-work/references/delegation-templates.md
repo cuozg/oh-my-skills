@@ -1,6 +1,6 @@
 # Delegation Prompt Templates
 
-Templates for dispatching subagents during goal execution. The controller (sisyphus-work) provides all context upfront — subagents should never need to read the goal file themselves.
+Templates for dispatching subagents during goal execution. The controller (plan-work) provides all context upfront — subagents should never need to read the goal file themselves.
 
 ---
 
