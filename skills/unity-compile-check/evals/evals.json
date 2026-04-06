@@ -1,0 +1,44 @@
+{
+  "skill_name": "unity-compile-check",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I just refactored a bunch of scripts in my Unity project at /Users/cuongnp/Work/GearGames/WP_Unity_Live and I'm not sure if everything compiles. The Unity Editor isn't open right now. Can you check if there are any compile errors?",
+      "expected_output": "The agent should detect Unity Editor path, run batchmode compile check using compile_check.sh, parse the resulting log with parse_unity_log.py, and report results in structured markdown format with errors/warnings table",
+      "files": [],
+      "expectations": [
+        "The agent uses run_skill_script or Bash to execute compile_check.sh with the correct Unity Editor path and project path",
+        "The agent auto-detects the Unity Editor version from ProjectSettings/ProjectVersion.txt",
+        "The agent parses the log output using parse_unity_log.py",
+        "The output includes a structured report with PASS/FAIL status",
+        "If errors exist, they are listed with file, line, code, and message"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have a Unity compile log at /tmp/wp_unity_compile.log from a CI run that failed. Can you read it and tell me what went wrong? I need to know exactly which files have errors and what the error codes are.",
+      "expected_output": "The agent should use Parse mode — read the existing log file and extract errors/warnings in structured format without running a new compile",
+      "files": [],
+      "expectations": [
+        "The agent does NOT run a new Unity compile — it reads the existing log file",
+        "The agent uses parse_unity_log.py to extract errors",
+        "The output shows error codes (CS####) with file paths and line numbers",
+        "The agent provides fix suggestions based on error codes",
+        "The output includes both errors and warnings separately"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I changed a bunch of asmdef references in my Unity project and I'm worried I broke cross-assembly references. lsp_diagnostics shows clean but I know it sometimes misses asmdef issues. Can you do a full compile check? The project is at /Users/cuongnp/Work/GearGames/WP_Unity_Live",
+      "expected_output": "The agent should recognize this as a case where lsp_diagnostics is insufficient, run a full batchmode compile to check cross-assembly references, and report any assembly reference errors",
+      "files": [],
+      "expectations": [
+        "The agent acknowledges that lsp_diagnostics can miss cross-assembly errors",
+        "The agent runs the full batchmode compile check (not just lsp_diagnostics)",
+        "The agent specifically looks for assembly reference errors in the log",
+        "The output differentiates between compiler errors, assembly errors, and warnings",
+        "The agent provides the verification chain context (lsp_diagnostics → MCP → batchmode)"
+      ]
+    }
+  ]
+}

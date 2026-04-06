@@ -58,11 +58,12 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `plan/output-quick.md` - `plan/output-deep.md`
 - `plan/investigation-template.md` - markdown template for system investigation reports
 
-### Debug (5)
+### Debug (6)
 
 - `debug/diagnosis-workflow.md` - `common-unity-errors.md` - `log-format.md`
 - `debug/deep-investigation-checklist.md`
 - `debug/analysis-template.md` - structured report template for deep bug analysis output
+- `debug/compile-verification.md` - verification chain, Unity error line format regex, compile error codes, log section markers, batchmode exit code caveats
 
 ### Test (6)
 
