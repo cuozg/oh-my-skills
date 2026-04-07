@@ -60,6 +60,49 @@
         "The prototype looks polished enough for a business presentation",
         "Both light and dark mode support"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need a landing page for my AI writing assistant SaaS product called 'InkFlow'. It should have a hero section, feature highlights, pricing (free/pro/team tiers), testimonials from writers, an FAQ, and a footer. Make it look modern and professional, not generic.",
+      "expected_output": "A single-scroll landing page HTML file with: hero section (headline + subheading + CTA), feature grid (3-4 features with icons), pricing table (3 tiers with highlighted popular tier), testimonial cards, FAQ accordion, and footer with links. Modern SaaS palette (not generic blue). Scroll-triggered animations. Fixed nav that becomes solid on scroll. Responsive from mobile to desktop.",
+      "files": [],
+      "expectations": [
+        "Output is a single .html file",
+        "Page is a single-scroll landing page (not a multi-screen app)",
+        "Hero section has a compelling headline, subheading, and CTA button",
+        "Feature section shows at least 3 features with icons (SVG, not emoji) and descriptions",
+        "Pricing section has 3 tiers with prices and feature lists",
+        "One pricing tier is visually highlighted as 'popular' or 'recommended'",
+        "Testimonial section shows at least 2 quotes with author names and roles",
+        "FAQ section has at least 3 questions that expand/collapse on click",
+        "Fixed navigation bar at top with logo and CTA button",
+        "Footer with multiple link columns",
+        "Scroll animations (elements fade in as they enter viewport)",
+        "Color palette is NOT generic blue-on-white but a distinctive SaaS palette",
+        "Responsive layout works at 375px and 1440px",
+        "No emoji used as icons anywhere"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "build me a prototype for a meditation and wellness app. it should have daily meditation sessions, mood tracking, breathing exercises, sleep sounds, and a profile with stats. make it feel calming and premium, not clinical.",
+      "expected_output": "A mobile-first HTML prototype with: splash, login, home/dashboard (daily session, mood check, stats), meditation library (categories like Focus, Sleep, Anxiety), meditation player (timer, ambient background), mood tracker (emoji/slider selection + history), breathing exercise (animated circle), sleep sounds (ambient sound cards), and profile with wellness stats. Calming palette (lavender/sage/soft). Soft UI or neumorphic style. Soothing animations.",
+      "files": [],
+      "expectations": [
+        "Output is a single .html file",
+        "Contains at least 7 screens covering the wellness app flow",
+        "Home screen shows a daily meditation recommendation or greeting",
+        "Meditation library shows categories with session cards (title, duration, difficulty)",
+        "Color palette is calming - soft pastels, lavender, sage, or similar (not bright or corporate)",
+        "Visual style uses soft shadows or neumorphic elements (not flat/sharp design)",
+        "Font pairing feels premium and calming (serif or soft sans-serif, not generic Inter)",
+        "Mood tracking feature exists with some form of selection (not just text)",
+        "Breathing exercise or timer visualization is present",
+        "Bottom tab navigation with relevant tabs (Home, Meditate, Sleep, Profile or similar)",
+        "All icons are inline SVG, no emoji",
+        "Navigation transitions are smooth and gentle (not abrupt)",
+        "Fake data uses realistic meditation session names and durations"
+      ]
     }
   ]
 }

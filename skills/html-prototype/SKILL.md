@@ -1,21 +1,25 @@
 ---
 name: html-prototype
 description: >
-  Create interactive HTML app prototypes — full-screen layouts, multi-screen navigation
-  with smooth transitions, clickable buttons, fake auth/data, and beautiful visual design
-  in a single self-contained HTML file. MUST use this skill whenever the user describes
-  ANY app idea and wants to see it, prototype it, mockup screens, or build a clickable
-  demo — even if they don't say "prototype" explicitly. Triggers on: "prototype this app,"
-  "mockup," "clickable prototype," "UI mockup," "show me what this app looks like,"
-  "interactive wireframe," "app demo," "what would X app look like," "build me a demo,"
-  "make a quick app," or any request involving multiple connected screens with navigation.
-  Also use when user describes an app concept (recipe, fitness, dashboard,
-  e-commerce, social, chat, finance, booking) and wants to visualize the flow or test
-  screen transitions. Do not use for static diagrams (visual-explainer), actual code
-  implementation (flutter-code, nextjs-backend), or game prototypes (unity-prototype).
+  Create stunning interactive HTML app prototypes and landing pages — full-screen layouts,
+  multi-screen navigation with smooth transitions, clickable buttons, fake auth/data,
+  and beautiful visual design in a single self-contained HTML file. Includes design
+  intelligence that automatically selects the right visual style, color palette, typography,
+  and layout pattern based on the product type (fintech, health, SaaS, e-commerce, etc.).
+  MUST use this skill whenever the user describes ANY app idea and wants to see it,
+  prototype it, mockup screens, or build a clickable demo — even if they don't say
+  "prototype" explicitly. Triggers on: "prototype this app," "mockup," "clickable prototype,"
+  "UI mockup," "show me what this app looks like," "interactive wireframe," "app demo,"
+  "what would X app look like," "build me a demo," "make a quick app," "landing page,"
+  "marketing site," "product page," or any request involving multiple connected screens
+  with navigation. Also use when user describes an app concept (recipe, fitness, dashboard,
+  SaaS, e-commerce, social, chat, finance, booking, wellness, education) and wants to
+  visualize the flow or test screen transitions. Do not use for static diagrams
+  (visual-explainer), actual code implementation (flutter-code, nextjs-backend), or game
+  prototypes (unity-prototype).
 metadata:
   author: cuongnp
-  version: "1.0"
+  version: "2.0"
 ---
 
 # HTML Prototype
@@ -24,6 +28,10 @@ Generate a complete, interactive app prototype as a single self-contained HTML f
 
 The output is always a **single HTML file** that opens in any browser. No build tools, no dependencies beyond CDN fonts. The user clicks buttons, navigates between screens, and experiences the app flow exactly as it would work in production — except the data is fake and the backend doesn't exist.
 
+**Supports two modes:**
+- **App Prototype**: Multi-screen app with navigation, transitions, and fake data (mobile or desktop)
+- **Landing Page**: Single-scroll marketing site with sections, CTAs, and scroll animations
+
 ## Workflow
 
 ### 1. Analyze the Concept
@@ -31,14 +39,30 @@ The output is always a **single HTML file** that opens in any browser. No build 
 Extract from the user's description:
 
 - **App purpose**: What problem does it solve? Who uses it?
-- **Screen inventory**: Every screen the app needs — don't skip secondary screens (settings, profile, empty states, error states, onboarding)
+- **Product type**: What industry/category? (fintech, health, SaaS, e-commerce, social, etc.)
+- **Prototype mode**: Is this a multi-screen app or a landing page? If unclear, default to app prototype.
+- **Screen inventory**: Every screen the app needs — don't skip secondary screens (settings, profile, empty states, error states, onboarding). For landing pages: every section needed.
 - **Navigation flow**: How screens connect — which button leads where
 - **Key interactions**: Forms, toggles, search, filters, swipe gestures
 - **Data model**: What entities exist (users, posts, products, books, etc.)
 
 If the description is vague, ask ONE clarifying question about the core use case. But err toward assumptions — prototypes thrive on reasonable defaults.
 
-### 2. Map the Screens
+### 2. Design Intelligence — Choose the Visual System
+
+Before mapping screens, determine the visual identity based on the product type. Read `references/design-intelligence.md` and look up the user's product category to get:
+
+- **Recommended visual style** (Minimalism, Glassmorphism, Soft UI, Brutalism, etc.)
+- **Color palette** with specific hex values matched to the industry
+- **Font pairing** from Google Fonts that fits the app's personality
+- **Anti-patterns** specific to this product type (what to avoid)
+- **Navigation pattern** (bottom tabs, sidebar, top bar)
+
+This step prevents the common failure of defaulting to generic blue/white for every prototype. A fintech app should feel different from a wellness app — the design intelligence reference encodes those differences.
+
+If the product type doesn't match any category exactly, pick the closest one and adapt.
+
+### 3. Map the Screens
 
 Before writing HTML, map every screen. Each screen needs:
 
@@ -51,20 +75,22 @@ Before writing HTML, map every screen. Each screen needs:
 | **Exit points** | Which screens this one navigates TO |
 | **Data** | What fake data this screen displays |
 
-Read `references/app-archetypes.md` for common app types and their typical screen maps. This saves time — most apps share patterns (auth flow → home → list → detail → settings).
+Read `references/app-archetypes.md` for common app types and their typical screen maps. This saves time — most apps share patterns (auth flow → home → list → detail → settings). For landing pages, read `references/landing-patterns.md` instead.
 
-### 3. Choose the Visual Direction
+### 4. Apply the Visual Direction
 
-Pick a cohesive visual identity **before** writing CSS. Read `references/css-system.md` for the full design system.
+With the design intelligence recommendations in hand, make the final visual decisions. Read `references/css-system.md` for CSS implementations of each style.
 
-**Quick decisions to make:**
+**Decisions already made by design intelligence (step 2):**
+- Color palette (use the hex values from the lookup)
+- Font pairing (use the Google Fonts from the lookup)
+- Visual style (Minimalism, Glassmorphism, etc.)
 
-1. **Color palette** — Pick from curated palettes or derive from the app's domain (finance → navy/gold, health → teal/white, food → warm orange/cream)
-2. **Font pairing** — Match the app's personality (professional, playful, editorial)
-3. **Layout frame** — Mobile-first (390px viewport, bottom tab bar) or desktop-first (sidebar nav, wide content area)
-4. **Transition style** — Default: slide-left forward, slide-right back, fade for tabs, slide-up for modals
+**Decisions still needed:**
+1. **Layout frame** — Mobile-first (390px viewport, bottom tab bar) or desktop-first (sidebar nav, wide content area). For landing pages: always desktop-first with responsive stacking.
+2. **Transition style** — Default: slide-left forward, slide-right back, fade for tabs, slide-up for modals. For landing pages: scroll-triggered fade-in.
 
-### 4. Generate the Prototype
+### 5. Generate the Prototype
 
 **Read `templates/spa-shell.html` first** — it's a complete working BookShelf app that demonstrates every pattern. Use it as your reference architecture. Don't copy it verbatim; adapt its router, transitions, and data patterns for the user's app.
 
@@ -98,7 +124,7 @@ Pick a cohesive visual identity **before** writing CSS. Read `references/css-sys
 - Interactive form elements — inputs accept text, toggles switch visually, dropdowns open
 - Loading/empty states where appropriate
 
-### 5. Deliver
+### 6. Deliver
 
 **Output location:** Save to `~/.agent/prototypes/` with a descriptive filename based on the app concept: `book-reader-app.html`, `fitness-tracker.html`, `recipe-manager.html`.
 
@@ -248,19 +274,23 @@ Every prototype is a single self-contained `.html` file:
 
 ## Quality Checks
 
-Before delivering, verify:
+Before delivering, run through `references/ux-checklist.md` for the full checklist. At minimum, verify:
 
 - [ ] **Every screen** from the screen map is present and reachable
 - [ ] **Every navigation path** works — click button → correct screen with smooth transition
 - [ ] **Back navigation** works — browser back button or in-app back arrows
 - [ ] **Fake auth** works — login with any non-empty fields, protected screens redirect, logout works
 - [ ] **Fake data** looks real — no placeholders, no "Lorem ipsum"
-- [ ] **Forms are interactive** — text inputs accept typing, toggles switch, dropdowns open
-- [ ] **Transitions are smooth** — no flicker, no layout jump, correct direction
-- [ ] **Mobile layout** — works at 390px width with touch-friendly targets (44px minimum)
+- [ ] **Forms are interactive** — text inputs accept typing, toggles switch visually, dropdowns open
+- [ ] **Transitions are smooth** — no flicker, no layout jump, correct direction (forward=slide-left, back=slide-right)
+- [ ] **Mobile layout** — works at 375px width with touch-friendly targets (44px minimum)
 - [ ] **Desktop layout** — uses the extra space well (wider cards, sidebar nav, multi-column)
-- [ ] **Both themes** — light and dark mode both look intentional
+- [ ] **Both themes** — light and dark mode both look intentional, not broken
 - [ ] **Self-contained** — opens cleanly with no console errors, no broken fonts
+- [ ] **No emoji icons** — all icons use inline SVG, never emoji characters
+- [ ] **Cursor pointer** — every clickable element has cursor:pointer
+- [ ] **Hover states** — all interactive elements respond to hover with smooth transition
+- [ ] **Design coherence** — palette, typography, and style match the product type (use design intelligence reference)
 - [ ] **File is saved** to `~/.agent/prototypes/` and opened in browser
 
 ---
@@ -269,9 +299,12 @@ Before delivering, verify:
 
 Load on demand — don't read all at once:
 
-- `references/css-system.md` — Full design system: CSS variables, theme setup, transition CSS, component patterns, responsive breakpoints
-- `references/screen-patterns.md` — HTML/CSS patterns for common screens: auth, dashboard, list/detail, settings, onboarding, modals, empty states
-- `references/app-archetypes.md` — Screen maps for common app types: what screens each type needs, navigation flows, data models
+- `references/design-intelligence.md` — Industry-to-design mapping: 30+ product types with recommended style, palette, typography, anti-patterns, and navigation patterns. **Read this first** when building any prototype to make informed design decisions.
+- `references/css-system.md` — Full design system: CSS variables, theme setup, visual styles (glassmorphism, neumorphism, brutalism, bento grid, aurora), extended palettes (20+ industry-specific), transition CSS, component patterns, responsive breakpoints, scroll animations
+- `references/screen-patterns.md` — HTML/CSS patterns for common app screens: auth, dashboard, list/detail, settings, onboarding, modals, empty states
+- `references/app-archetypes.md` — Screen maps for common app types: what screens each type needs, navigation flows, data models. Covers 13 types including SaaS dashboards and landing pages.
+- `references/landing-patterns.md` — HTML/CSS patterns for landing page sections: hero variants, feature grids, testimonials, pricing tables, FAQ accordions, CTA sections, footers, scroll animations
+- `references/ux-checklist.md` — Pre-delivery UX quality checklist: accessibility, touch targets, hover states, transitions, form patterns. Run through this before delivering any prototype.
 
 Load via `read_skill_file("html-prototype", "references/<file>")`.
 
@@ -285,3 +318,5 @@ The template at `templates/spa-shell.html` is a complete working example demonst
 | html-prototype | nextjs-backend | User wants to build the actual backend |
 | html-prototype | visual-explainer | User needs a static diagram, not an interactive app |
 | html-prototype | frontend-design | User wants production-quality frontend code |
+| html-prototype | phaser-coder | User wants a game prototype |
+| html-prototype | unity-prototype | User wants a Unity game prototype |

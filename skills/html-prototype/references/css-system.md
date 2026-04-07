@@ -13,6 +13,10 @@ Interactive app prototype CSS reference. Mobile-first, Material 3 / iOS inspired
 8. [Safe Area](#safe-area)
 9. [Scrolling](#scrolling)
 10. [Dark Mode](#dark-mode)
+11. [Visual Styles](#visual-styles)
+12. [Extended Palettes](#extended-palettes)
+13. [Extended Font Pairings](#extended-font-pairings)
+14. [Scroll Animations](#scroll-animations)
 
 ---
 
@@ -249,4 +253,249 @@ Dark mode refinements.
   .btn-secondary { background: #334155; color: #f8fafc; }
   .input::placeholder { color: #475569; }
 }
+```
+
+## Visual Styles
+Popular visual style implementations. Pick one per prototype.
+
+### Glassmorphism
+Best for: modern SaaS, finance dashboards, data visualization overlays.
+
+```css
+.glass { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; }
+.glass-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 20px; }
+@media (prefers-color-scheme: dark) {
+  .glass { background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.1); }
+  .glass-card { background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.08); }
+}
+```
+
+### Neumorphism / Soft UI
+Best for: wellness apps, meditation, premium settings screens.
+
+```css
+.neu { background: var(--bg); border-radius: 16px; box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.8); }
+.neu-inset { box-shadow: inset 4px 4px 8px rgba(0,0,0,0.06), inset -4px -4px 8px rgba(255,255,255,0.7); }
+.neu-btn { background: var(--bg); border: none; border-radius: 12px; padding: 12px 24px; box-shadow: 4px 4px 8px rgba(0,0,0,0.08), -4px -4px 8px rgba(255,255,255,0.8); cursor: pointer; }
+.neu-btn:active { box-shadow: inset 2px 2px 5px rgba(0,0,0,0.06), inset -2px -2px 5px rgba(255,255,255,0.7); }
+```
+
+### Brutalism
+Best for: design portfolios, creative agencies, bold editorial.
+
+```css
+.brutal { border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); border-radius: 0; }
+.brutal-btn { background: var(--primary); color: #fff; border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); font-weight: 800; text-transform: uppercase; padding: 12px 24px; cursor: pointer; }
+.brutal-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--text); }
+.brutal-card { background: var(--surface); border: 3px solid var(--text); box-shadow: 6px 6px 0 var(--text); padding: 20px; }
+```
+
+### Bento Grid
+Best for: dashboards, feature showcases, Apple-style product pages.
+
+```css
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 12px; }
+.bento-item { background: var(--surface); border-radius: 20px; padding: 20px; min-height: 120px; }
+.bento-item.span-2 { grid-column: span 2; }
+.bento-item.span-2-row { grid-row: span 2; }
+.bento-item.span-full { grid-column: 1 / -1; }
+@media (max-width: 768px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+```
+
+### Aurora / Gradient Mesh
+Best for: hero backgrounds, creative SaaS, premium feature sections.
+
+```css
+.aurora-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; overflow: hidden; }
+.aurora-bg::before { content: ''; position: absolute; inset: -50%; background: radial-gradient(circle at 30% 40%, rgba(120,200,255,0.3), transparent 60%), radial-gradient(circle at 70% 60%, rgba(200,120,255,0.2), transparent 50%); animation: auroraMove 8s ease-in-out infinite alternate; }
+@keyframes auroraMove { to { transform: translate(5%, 3%) scale(1.05); } }
+```
+
+### Editorial / Magazine
+Best for: blog platforms, news apps, reading apps, recipe apps.
+
+```css
+.editorial { max-width: 680px; margin: 0 auto; }
+.editorial h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.1; letter-spacing: -0.02em; }
+.editorial .dropcap::first-letter { font-size: 3.5em; float: left; line-height: 0.8; padding-right: 8px; font-weight: 700; color: var(--primary); }
+.editorial blockquote { border-left: 4px solid var(--primary); padding-left: 20px; font-style: italic; color: var(--text-dim); margin: 32px 0; }
+.editorial .pull-quote { font-size: 1.4em; font-weight: 600; text-align: center; padding: 24px 40px; color: var(--primary); border-top: 2px solid var(--border); border-bottom: 2px solid var(--border); margin: 32px 0; }
+```
+
+## Extended Palettes
+14 additional industry-specific palettes. Complement the 6 base palettes (Slate, Ocean, Forest, Sunset, Berry, Rose).
+
+```css
+[data-theme="midnight"] {
+  --bg: #0f0d1a; --surface: #1a1726; --surface-elevated: #252036; --border: #2d2640;
+  --text: #e8e4f0; --text-dim: #9b8fc2; --primary: #6366f1; --primary-dim: #2e2464;
+  --accent: #a78bfa; --accent-dim: #2e1f5e; --danger: #f87171; --success: #4ade80;
+}
+[data-theme="copper"] {
+  --bg: #fffbeb; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fde68a;
+  --text: #78350f; --text-dim: #a16207; --primary: #92400e; --primary-dim: #fef3c7;
+  --accent: #f59e0b; --accent-dim: #fefce8; --danger: #dc2626; --success: #16a34a;
+}
+[data-theme="sage"] {
+  --bg: #f0fdf4; --surface: #ffffff; --surface-elevated: #ffffff; --border: #bbf7d0;
+  --text: #14532d; --text-dim: #16a34a; --primary: #166534; --primary-dim: #dcfce7;
+  --accent: #86efac; --accent-dim: #f0fdf4; --danger: #e11d48; --success: #22c55e;
+}
+[data-theme="indigo"] {
+  --bg: #eef2ff; --surface: #ffffff; --surface-elevated: #ffffff; --border: #c7d2fe;
+  --text: #1e1b4b; --text-dim: #6366f1; --primary: #312e81; --primary-dim: #e0e7ff;
+  --accent: #818cf8; --accent-dim: #eef2ff; --danger: #ef4444; --success: #10b981;
+}
+[data-theme="coral"] {
+  --bg: #fff7ed; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fed7aa;
+  --text: #7c2d12; --text-dim: #ea580c; --primary: #9f1239; --primary-dim: #ffe4e6;
+  --accent: #fb923c; --accent-dim: #fff7ed; --danger: #dc2626; --success: #16a34a;
+}
+[data-theme="charcoal"] {
+  --bg: #171717; --surface: #262626; --surface-elevated: #404040; --border: #404040;
+  --text: #f5f5f5; --text-dim: #a3a3a3; --primary: #a3a3a3; --primary-dim: #2a2a2a;
+  --accent: #22d3ee; --accent-dim: #164e63; --danger: #f87171; --success: #4ade80;
+}
+[data-theme="terracotta"] {
+  --bg: #fef3c7; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fde68a;
+  --text: #78350f; --text-dim: #a16207; --primary: #78350f; --primary-dim: #fef9c3;
+  --accent: #fbbf24; --accent-dim: #fefce8; --danger: #dc2626; --success: #16a34a;
+}
+[data-theme="mint"] {
+  --bg: #f0fdfa; --surface: #ffffff; --surface-elevated: #ffffff; --border: #99f6e4;
+  --text: #134e4a; --text-dim: #0d9488; --primary: #0d9488; --primary-dim: #ccfbf1;
+  --accent: #5eead4; --accent-dim: #f0fdfa; --danger: #e11d48; --success: #22c55e;
+}
+[data-theme="wine"] {
+  --bg: #fdf2f8; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fbcfe8;
+  --text: #4c0519; --text-dim: #be185d; --primary: #4c0519; --primary-dim: #fce7f3;
+  --accent: #be185d; --accent-dim: #fdf2f8; --danger: #e11d48; --success: #059669;
+}
+[data-theme="steel"] {
+  --bg: #f3f4f6; --surface: #ffffff; --surface-elevated: #ffffff; --border: #d1d5db;
+  --text: #111827; --text-dim: #6b7280; --primary: #374151; --primary-dim: #e5e7eb;
+  --accent: #3b82f6; --accent-dim: #eff6ff; --danger: #ef4444; --success: #22c55e;
+}
+[data-theme="amber"] {
+  --bg: #fffbeb; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fde68a;
+  --text: #78350f; --text-dim: #b45309; --primary: #78350f; --primary-dim: #fef3c7;
+  --accent: #d97706; --accent-dim: #fffbeb; --danger: #dc2626; --success: #16a34a;
+}
+[data-theme="lavender"] {
+  --bg: #faf5ff; --surface: #ffffff; --surface-elevated: #ffffff; --border: #e9d5ff;
+  --text: #3b0764; --text-dim: #7c3aed; --primary: #6b21a8; --primary-dim: #f3e8ff;
+  --accent: #c084fc; --accent-dim: #faf5ff; --danger: #e11d48; --success: #059669;
+}
+[data-theme="teal"] {
+  --bg: #f0fdfa; --surface: #ffffff; --surface-elevated: #ffffff; --border: #99f6e4;
+  --text: #134e4a; --text-dim: #14b8a6; --primary: #134e4a; --primary-dim: #ccfbf1;
+  --accent: #2dd4bf; --accent-dim: #f0fdfa; --danger: #ef4444; --success: #22c55e;
+}
+[data-theme="gold"] {
+  --bg: #fefce8; --surface: #ffffff; --surface-elevated: #ffffff; --border: #fef08a;
+  --text: #713f12; --text-dim: #a16207; --primary: #713f12; --primary-dim: #fef9c3;
+  --accent: #eab308; --accent-dim: #fefce8; --danger: #dc2626; --success: #16a34a;
+}
+
+/* Dark mode variants for extended palettes */
+@media (prefers-color-scheme: dark) {
+  [data-theme="copper"] { --bg: #1c1007; --surface: #2a1a0b; --border: #44300f; --text: #fef3c7; --text-dim: #d97706; --primary-dim: #451a03; --accent-dim: #422006; }
+  [data-theme="sage"] { --bg: #052e16; --surface: #0a3d1f; --border: #14532d; --text: #dcfce7; --text-dim: #4ade80; --primary-dim: #052e16; --accent-dim: #064e3b; }
+  [data-theme="indigo"] { --bg: #1e1b4b; --surface: #2a2668; --border: #312e81; --text: #e0e7ff; --text-dim: #a5b4fc; --primary-dim: #1e1b4b; --accent-dim: #2e2464; }
+  [data-theme="coral"] { --bg: #1c0a00; --surface: #2a1508; --border: #44260f; --text: #fff7ed; --text-dim: #fb923c; --primary-dim: #4c0519; --accent-dim: #431407; }
+  [data-theme="terracotta"] { --bg: #1c1007; --surface: #2a1a0b; --border: #44300f; --text: #fef3c7; --text-dim: #fbbf24; --primary-dim: #451a03; --accent-dim: #422006; }
+  [data-theme="mint"] { --bg: #042f2e; --surface: #083d3a; --border: #134e4a; --text: #ccfbf1; --text-dim: #5eead4; --primary-dim: #042f2e; --accent-dim: #064e3b; }
+  [data-theme="wine"] { --bg: #1a0010; --surface: #2a0820; --border: #4c0519; --text: #fce7f3; --text-dim: #f472b6; --primary-dim: #4c0519; --accent-dim: #500724; }
+  [data-theme="steel"] { --bg: #111827; --surface: #1f2937; --border: #374151; --text: #f3f4f6; --text-dim: #9ca3af; --primary-dim: #1f2937; --accent-dim: #1e3a5f; }
+  [data-theme="amber"] { --bg: #1c1007; --surface: #2a1a0b; --border: #44300f; --text: #fffbeb; --text-dim: #f59e0b; --primary-dim: #451a03; --accent-dim: #422006; }
+  [data-theme="lavender"] { --bg: #1a0030; --surface: #2a0848; --border: #3b0764; --text: #f3e8ff; --text-dim: #c084fc; --primary-dim: #3b0764; --accent-dim: #4c1d95; }
+  [data-theme="teal"] { --bg: #042f2e; --surface: #083d3a; --border: #134e4a; --text: #f0fdfa; --text-dim: #2dd4bf; --primary-dim: #042f2e; --accent-dim: #064e3b; }
+  [data-theme="gold"] { --bg: #1c1505; --surface: #2a200a; --border: #44360f; --text: #fefce8; --text-dim: #facc15; --primary-dim: #422006; --accent-dim: #3f3005; }
+}
+```
+
+## Extended Font Pairings
+8 additional pairings for specialized aesthetics.
+
+```html
+<!-- CDN Links -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+```
+
+```css
+/* Outfit + IBM Plex Mono -- SaaS, developer tools */
+.font-outfit { font-family: 'Outfit', sans-serif; --font-mono: 'IBM Plex Mono', monospace; }
+/* Sora + Inter -- modern startup, landing pages */
+.font-sora { font-family: 'Sora', sans-serif; --font-body: 'Inter', sans-serif; }
+/* Playfair Display + Lato -- editorial luxury, premium brands */
+.font-playfair { font-family: 'Playfair Display', serif; --font-body: 'Lato', sans-serif; }
+/* Rubik + Fira Code -- playful developer, creative coding */
+.font-rubik { font-family: 'Rubik', sans-serif; --font-mono: 'Fira Code', monospace; }
+/* Manrope + JetBrains Mono -- clean productivity, admin panels */
+.font-manrope { font-family: 'Manrope', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
+/* Cormorant Garamond + Montserrat -- elegant wellness, luxury lifestyle */
+.font-cormorant { font-family: 'Cormorant Garamond', serif; --font-body: 'Montserrat', sans-serif; }
+/* Archivo + Source Code Pro -- bold tech, engineering dashboards */
+.font-archivo { font-family: 'Archivo', sans-serif; --font-mono: 'Source Code Pro', monospace; }
+/* Crimson Pro + Work Sans -- literary, education platforms */
+.font-crimson { font-family: 'Crimson Pro', serif; --font-body: 'Work Sans', sans-serif; }
+```
+
+## Scroll Animations
+Lightweight scroll-driven animations for prototypes.
+
+### Fade-in on Scroll (IntersectionObserver)
+
+```html
+<script>
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+```
+
+```css
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-left { opacity: 0; transform: translateX(-24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal-left.visible { opacity: 1; transform: none; }
+.reveal-scale { opacity: 0; transform: scale(0.92); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal-scale.visible { opacity: 1; transform: none; }
+```
+
+### Counter Animation (Stats)
+
+```html
+<script>
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target, 10);
+  const dur = 1500;
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - start) / dur, 1);
+    el.textContent = Math.floor(p * target).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+const cio = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); cio.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => cio.observe(el));
+</script>
+```
+
+### Parallax (Subtle)
+
+```css
+.parallax-container { overflow-y: auto; perspective: 1px; height: 100vh; }
+.parallax-slow { transform: translateZ(-1px) scale(2); position: absolute; inset: 0; z-index: -1; }
+.parallax-normal { transform: translateZ(0); position: relative; z-index: 1; background: var(--bg); }
 ```

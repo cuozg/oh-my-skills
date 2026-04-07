@@ -13,6 +13,9 @@ This reference guide outlines the screen inventories, navigation structures, and
 8. [Messaging / Chat](#8-messaging--chat)
 9. [Music / Podcast](#9-music--podcast)
 10. [Travel / Booking](#10-travel--booking)
+11. [SaaS Dashboard / Admin Panel](#11-saas-dashboard--admin-panel)
+12. [Landing Page / Marketing Site](#12-landing-page--marketing-site)
+13. [Education / E-Learning](#13-education--e-learning)
 
 ---
 
@@ -75,3 +78,23 @@ This reference guide outlines the screen inventories, navigation structures, and
 - **Navigation**: Bottom Tabs (Explore, Favorites, Bookings, Profile). Floating "Book Now" button on Detail.
 - **Data Model**: `Listing { id, name, location, pricePerNight, rating, amenities[], images[] }`.
 - **Transitions**: `explore` → `results` (slide-left), `listing-detail` (hero-expand), Booking steps (horizontal-slide).
+
+## 11. SaaS Dashboard / Admin Panel
+- **Screens**: `login`, `dashboard`, `analytics`, `user-list`, `user-detail`, `settings`, `billing`, `team-management`, `notifications`, `profile`.
+- **Navigation**: Desktop: Persistent Sidebar (collapsible). Mobile: Hamburger → drawer. Top bar with search + notifications + avatar.
+- **Data Model**: `Metric { label, value, trend, change }`, `User { id, name, email, role, status, lastActive }`, `Activity { id, userId, action, timestamp }`.
+- **Transitions**: Sidebar items (instant/fade), content drill-down (slide-left), modals (fade + scale).
+- **Layout**: Desktop-first. Sidebar 240-280px. Main content area with card grid or data tables. Always show breadcrumbs.
+
+## 12. Landing Page / Marketing Site
+- **Sections**: `hero`, `features`, `how-it-works`, `testimonials`, `pricing`, `faq`, `cta`, `footer`.
+- **Navigation**: Fixed top bar (transparent on hero, solid on scroll). Logo + nav links + CTA button. Mobile: hamburger menu.
+- **Data Model**: `Feature { icon, title, description }`, `Testimonial { quote, name, role, company, avatar }`, `PricingTier { name, price, features[], isPopular }`.
+- **Transitions**: Scroll-triggered fade-in for each section. Staggered reveal for grid items. Counter animation for stats.
+- **Layout**: Single-scroll page. Max-width 1200px content. Full-bleed hero and CTA sections. Responsive: stack columns on mobile.
+
+## 13. Education / E-Learning
+- **Screens**: `splash`, `login`, `dashboard`, `course-list`, `course-detail`, `lesson-player`, `quiz`, `progress`, `certificates`, `profile`.
+- **Navigation**: Bottom Tabs (Home, Courses, Progress, Profile). Top bar with search on course screens.
+- **Data Model**: `Course { id, title, instructor, rating, lessons[], duration, progress, thumbnail }`, `Lesson { id, title, type: 'video'|'article'|'quiz', duration, isCompleted }`.
+- **Transitions**: `course-list` → `course-detail` (slide-left), `lesson-player` (slide-up/fullscreen), quiz answers (fade).
