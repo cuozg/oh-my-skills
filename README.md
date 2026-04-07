@@ -69,7 +69,7 @@ That's it. Skills auto-activate based on your requests.
 | Eval & refinement iterations | **53+** |
 | Unity standards reference files | **54** |
 | Flutter standards reference files | **12** |
-| Slash commands | **57** |
+| Slash commands | **74** |
 | Covered domains | **13** |
 
 ---
@@ -311,9 +311,9 @@ graph TD
 
 ---
 
-<a id="commands-57"></a>
+<a id="commands-74"></a>
 
-## Commands (57)
+## Commands (74)
 
 Slash commands for direct access to specific skill modes.
 
@@ -328,6 +328,13 @@ skill/             deep   quick
 visual-explainer/  diff-review   fact-check   generate-slides
                    generate-visual-plan   generate-web-diagram
                    plan-review   project-recap   share
+
+flutter/           init
+flutter/code/      deep   optimize   quick
+flutter/debug/     deep   fix   log   profiler   quick
+flutter/review/    audit   local   pr
+flutter/test/      integration   unit   widget
+flutter/ui/        deep   quick
 
 unity/code/        deep   optimize   quick
 unity/debug/       deep   fix   log   profiler   quick
