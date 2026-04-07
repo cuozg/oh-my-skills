@@ -62,12 +62,13 @@ Flutter & Dart shared reference hub for code, review, debug, testing, planning, 
 - `performance-optimization.md` — Rebuild profiling, RepaintBoundary, Impeller, memory, frame budget
 - `debug-logging.md` — package:logger, DevTools, PlatformDispatcher, structured logging
 
-## Downstream Skills (Planned)
+## Downstream Skills
 
-These future skills will load references from flutter-standards:
+These skills load references from flutter-standards:
 
 | Skill | Domain |
 |-------|--------|
+| flutter-init | Scaffold new Flutter projects with feature-first architecture |
 | flutter-code | Write, extend, refactor Flutter/Dart code |
 | flutter-ui | Build screens, widgets, responsive layouts |
 | flutter-debug | Diagnose and fix Flutter bugs |

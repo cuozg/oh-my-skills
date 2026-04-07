@@ -1,0 +1,71 @@
+{
+  "skill_name": "flutter-init",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a new Flutter e-commerce app with auth, products, and cart features. My org is com.shopify and the project should be called shop_app. Include test scaffolding.",
+      "expected_output": "Complete Flutter project structure with 3 features (auth, products, cart), pubspec.yaml with Riverpod/GoRouter/Dio/Freezed stack, analysis_options.yaml, .gitignore, main.dart with ProviderScope, app.dart with MaterialApp.router, router.dart with routes for all 3 features, theme.dart, core/ skeleton, shared/ skeleton, l10n/, test/ directories mirroring features, and README.md.",
+      "files": [],
+      "expectations": [
+        "pubspec.yaml name is 'shop_app'",
+        "pubspec.yaml contains flutter_riverpod, go_router, dio, freezed_annotation, json_annotation as dependencies",
+        "pubspec.yaml contains riverpod_generator, build_runner, freezed, json_serializable, mocktail as dev_dependencies",
+        "pubspec.yaml has sdk constraint '^3.5.0'",
+        "main.dart contains 'ProviderScope'",
+        "app.dart contains 'MaterialApp.router'",
+        "router.dart contains 'GoRouter' and routes for auth, products, cart",
+        "Three feature directories exist: features/auth/, features/products/, features/cart/",
+        "Each feature has data/, presentation/, providers/ subdirectories",
+        "Feature repository files follow naming: auth_repository.dart, products_repository.dart, cart_repository.dart",
+        "analysis_options.yaml includes 'package:flutter_lints/flutter.yaml'",
+        "analysis_options.yaml has prefer_const_constructors, avoid_print, prefer_single_quotes rules",
+        ".gitignore contains .dart_tool/, build/, .flutter-plugins patterns",
+        "test/ directory exists with feature subdirectories",
+        "No StatefulWidget appears in any generated Dart file",
+        "README.md contains 'shop_app' and setup instructions"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm starting a new Flutter project. Just give me the basic structure to get going. org is com.myapp, project name my_app.",
+      "expected_output": "Minimal but complete Flutter project with single 'home' feature (default), all standard boilerplate files, no test scaffolding.",
+      "files": [],
+      "expectations": [
+        "pubspec.yaml name is 'my_app'",
+        "Default feature 'home' is scaffolded with data/, presentation/, providers/",
+        "main.dart contains 'ProviderScope'",
+        "app.dart contains 'MaterialApp.router' and 'ConsumerWidget'",
+        "router.dart contains GoRouter with at least a '/' route",
+        "theme.dart contains 'ThemeData' and 'useMaterial3'",
+        "core/constants.dart exists",
+        "core/exceptions.dart exists",
+        "core/network/dio_client.dart exists",
+        "shared/widgets/ directory exists",
+        "shared/models/ directory exists",
+        "l10n/app_en.arb exists",
+        "No test/ directory (include_tests not requested)",
+        "All generated file names are snake_case"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Set up a Flutter project called fitness_tracker with org com.healthco. Features: workouts, profile, stats. Include tests please. No gitignore needed.",
+      "expected_output": "Complete Flutter project with 3 features, test scaffolding, but no .gitignore file.",
+      "files": [],
+      "expectations": [
+        "pubspec.yaml name is 'fitness_tracker'",
+        "Three features scaffolded: workouts, profile, stats",
+        "Each feature has data/, presentation/, providers/ with correctly named files",
+        "workouts_repository.dart, profile_repository.dart, stats_repository.dart exist",
+        "workouts_screen.dart, profile_screen.dart, stats_screen.dart exist",
+        "workouts_provider.dart, profile_provider.dart, stats_provider.dart exist",
+        "test/ directory exists with test files for each feature",
+        "mocktail is present in dev_dependencies",
+        "No .gitignore file exists (user said no gitignore)",
+        "router.dart has routes for workouts, profile, stats",
+        "README.md contains 'fitness_tracker'",
+        "l10n/app_en.arb has appTitle with 'FitnessTracker' or similar"
+      ]
+    }
+  ]
+}
