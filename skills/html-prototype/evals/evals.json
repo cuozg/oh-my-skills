@@ -1,0 +1,65 @@
+{
+  "skill_name": "html-prototype",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to build a book reading app. Users should be able to browse a library of books, read them, bookmark pages, and track their reading progress. It needs login/signup. Make me a clickable prototype so I can see all the screens and navigate between them.",
+      "expected_output": "A single self-contained HTML file with 6+ screens (splash, login, library/home, book detail, reader, profile/settings), working navigation between all screens, smooth transitions, fake book data with real titles/authors, fake auth that validates non-empty fields, and bottom tab navigation. Should look like a polished app when opened in a browser.",
+      "files": [],
+      "expectations": [
+        "Output is a single .html file saved to ~/.agent/prototypes/",
+        "File contains at least 6 distinct screens (section elements with data-screen attribute)",
+        "Login screen has email and password inputs with a sign-in button",
+        "Navigating from login to home screen works with a transition animation",
+        "Home screen shows a list of books with real titles and authors (not Lorem ipsum)",
+        "Clicking a book navigates to a detail screen with the book's information",
+        "Book detail screen has a 'Read' or 'Start Reading' button that navigates to a reader view",
+        "Bottom tab bar is present with at least 3 tabs (Home, Discover/Search, Profile)",
+        "Switching tabs navigates to different screens",
+        "Both light and dark mode are supported via CSS variables",
+        "The file opens without console errors in a browser",
+        "Screen transitions use CSS animations (not instant swaps)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "prototype a food delivery app like uber eats. i want to see the full flow - browsing restaurants, picking items, cart, checkout. needs to look good on mobile. auth flow too",
+      "expected_output": "A mobile-first HTML prototype with screens for: splash, login, home (restaurant list with categories), restaurant detail (menu items), item detail with add-to-cart, cart screen, checkout flow, order confirmation, order tracking, and profile. Should have warm food-themed colors (orange/amber palette), realistic restaurant and food item data, working cart state management, and smooth screen transitions.",
+      "files": [],
+      "expectations": [
+        "Output is a single .html file",
+        "Contains at least 8 screens covering the full food ordering flow",
+        "Home screen shows restaurant cards with names, ratings, delivery time, and cuisine type",
+        "Tapping a restaurant shows its menu with item names and prices",
+        "Cart functionality exists - items can be 'added' and the cart screen shows them",
+        "Checkout screen includes delivery address and payment section",
+        "Color palette is warm/food-themed (not cold blue or neon)",
+        "Layout is mobile-first (works well at 390px width)",
+        "Fake food data uses realistic names and prices (not placeholder text)",
+        "Navigation transitions are smooth and directional",
+        "Bottom navigation tabs are present",
+        "Auth flow (login) is implemented with fake validation"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm pitching a fintech app to investors next week. It's a personal finance dashboard that shows account balances, recent transactions, spending categories (pie chart or breakdown), and lets users set budgets. Need a professional-looking prototype with all screens connected. Desktop layout preferred.",
+      "expected_output": "A desktop-first HTML prototype with screens for: login (with PIN/passcode feel), dashboard (account balances, recent transactions, spending summary), transaction list (filterable), transaction detail, budget settings, transfer/pay screen, and account settings. Professional color palette (navy/gold or slate). Desktop layout with sidebar navigation. Realistic financial data (account numbers, transaction merchants, dollar amounts). Polished enough for an investor presentation.",
+      "files": [],
+      "expectations": [
+        "Output is a single .html file",
+        "Contains at least 6 screens covering the finance app flow",
+        "Dashboard shows account balance(s) with realistic dollar amounts",
+        "Transaction list shows recent transactions with merchant names, dates, and amounts",
+        "Spending breakdown is visualized (chart, bars, or categorized summary)",
+        "Layout uses a sidebar navigation pattern (desktop-first, not bottom tabs)",
+        "Color palette is professional - navy, slate, or similar (not playful/bright)",
+        "Financial data looks realistic (real merchant names like 'Starbucks', 'Amazon')",
+        "Navigation between all screens works with transitions",
+        "Budget or spending limit feature is present",
+        "The prototype looks polished enough for a business presentation",
+        "Both light and dark mode support"
+      ]
+    }
+  ]
+}
