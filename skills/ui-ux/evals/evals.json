@@ -1,0 +1,63 @@
+{
+  "skill_name": "ui-ux",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build me a landing page for a B2B SaaS analytics product called 'Metricflow'. It should feel premium and modern — think dark mode with subtle glassmorphism. The hero section needs a big headline, subtext, CTA button, and a dashboard preview mockup area. Below that: a features grid (3 columns), social proof section with logos, and a pricing section with 3 tiers. Use HTML + Tailwind CSS. Make it responsive. The brand color is deep indigo (#4F46E5).",
+      "expected_output": "A complete, responsive HTML file with Tailwind CSS using a cohesive design system — correct dark mode contrast, glassmorphism effects, proper font pairing, SVG icons (no emojis), smooth hover transitions, and all sections requested. Should feel like a real product page, not a template.",
+      "files": [],
+      "assertions": [
+        {"id": "a1", "text": "Output contains a complete HTML file with <!DOCTYPE html> and closing </html>", "type": "presence"},
+        {"id": "a2", "text": "Uses Tailwind CSS (CDN link or @import present)", "type": "presence"},
+        {"id": "a3", "text": "Contains hero section with headline, subtext, and CTA button", "type": "presence"},
+        {"id": "a4", "text": "Contains features grid section (3 columns or grid layout)", "type": "presence"},
+        {"id": "a5", "text": "Contains pricing section with 3 tiers", "type": "presence"},
+        {"id": "a6", "text": "Uses SVG icons — no emoji characters as UI icons", "type": "quality"},
+        {"id": "a7", "text": "Has hover states with smooth transitions (transition-colors, transition-all, or similar)", "type": "quality"},
+        {"id": "a8", "text": "Dark mode: text contrast ratio is adequate (uses light text on dark bg, not gray-400 on gray-800)", "type": "quality"},
+        {"id": "a9", "text": "Glassmorphism effect present (backdrop-blur or backdrop-filter with semi-transparent bg)", "type": "quality"},
+        {"id": "a10", "text": "Responsive: contains responsive breakpoints (sm:, md:, lg: or @media queries)", "type": "presence"},
+        {"id": "a11", "text": "Uses the brand color #4F46E5 or indigo-600 variant", "type": "presence"},
+        {"id": "a12", "text": "cursor-pointer on all clickable/interactive elements", "type": "quality"},
+        {"id": "a13", "text": "Google Fonts or system font stack specified (not just browser defaults)", "type": "quality"},
+        {"id": "a14", "text": "Social proof section with company logos present", "type": "presence"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I'm building a React dashboard for a project management tool. I need a sidebar navigation component and a main content area with a Kanban-style board. The sidebar should have: logo area, navigation links (Dashboard, Projects, Team, Settings), a user avatar at the bottom, and collapse/expand functionality. Use React + Tailwind + shadcn/ui patterns. Light mode. Make it accessible.",
+      "expected_output": "React component code with proper sidebar navigation, Kanban board layout, shadcn/ui-compatible patterns, accessible markup (aria labels, keyboard navigation, focus states), and clean component architecture.",
+      "files": [],
+      "assertions": [
+        {"id": "b1", "text": "Output contains React JSX component(s) with proper export", "type": "presence"},
+        {"id": "b2", "text": "Sidebar contains navigation links for Dashboard, Projects, Team, Settings", "type": "presence"},
+        {"id": "b3", "text": "Sidebar has collapse/expand mechanism (state toggle, width change, or similar)", "type": "presence"},
+        {"id": "b4", "text": "Kanban board structure present (columns with cards/items)", "type": "presence"},
+        {"id": "b5", "text": "Uses Tailwind CSS classes for styling", "type": "presence"},
+        {"id": "b6", "text": "Accessibility: aria-label or aria-* attributes present on interactive elements", "type": "quality"},
+        {"id": "b7", "text": "Focus states visible (focus:ring, focus-visible, or focus: styles)", "type": "quality"},
+        {"id": "b8", "text": "Hover states with smooth transitions on interactive elements", "type": "quality"},
+        {"id": "b9", "text": "SVG icons used (Lucide, Heroicons, or inline SVG) — no emoji icons", "type": "quality"},
+        {"id": "b10", "text": "Component uses cursor-pointer on clickable elements", "type": "quality"},
+        {"id": "b11", "text": "User avatar area present in sidebar", "type": "presence"},
+        {"id": "b12", "text": "Light mode contrast: text uses dark colors (slate-900, gray-900, or similar) on light bg", "type": "quality"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to pick the right visual style, color palette, and font pairing for a healthcare/telemedicine startup called 'Healix'. The app has a patient-facing booking portal and a doctor dashboard. It needs to feel trustworthy, clean, and calming — not cold or clinical. Target users are 30-65 year olds, mixed tech literacy. What would you recommend for the design system? Give me specific hex values, Google Fonts links, and the reasoning behind each choice.",
+      "expected_output": "A comprehensive design system recommendation with specific color hex values, Google Fonts URLs, style direction, reasoning for each choice grounded in healthcare UX best practices. Should reference accessibility concerns for older users and trust-building visual patterns.",
+      "files": [],
+      "assertions": [
+        {"id": "c1", "text": "Provides specific hex color values (e.g., #XXXXXX format) for primary, secondary, and accent colors", "type": "presence"},
+        {"id": "c2", "text": "Provides Google Fonts links or font family names for heading and body text", "type": "presence"},
+        {"id": "c3", "text": "Explains reasoning for color choices related to healthcare/trust/calm", "type": "quality"},
+        {"id": "c4", "text": "Mentions accessibility considerations (contrast ratio, font size for older users, or WCAG)", "type": "quality"},
+        {"id": "c5", "text": "Recommends a UI style direction (e.g., clean/minimal, soft/rounded, specific named style)", "type": "presence"},
+        {"id": "c6", "text": "Addresses both patient portal and doctor dashboard contexts", "type": "quality"},
+        {"id": "c7", "text": "Provides anti-patterns or things to avoid (e.g., don't use red heavily, avoid clinical feel)", "type": "quality"},
+        {"id": "c8", "text": "Output is structured with clear sections (not a wall of text)", "type": "quality"}
+      ]
+    }
+  ]
+}
