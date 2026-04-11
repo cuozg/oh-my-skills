@@ -306,7 +306,7 @@ graph TD
 | **mermaid** | Flowcharts, sequence diagrams, state machines |
 | **spreadsheet** | Create, edit, analyze .xlsx/.csv/.tsv files |
 | **pdf** | Read, create, review PDFs with layout fidelity |
-| **imagegen** | Generate + edit images via OpenAI API |
+| **imagegen** | Generate + edit images via Google Gemini Imagen API |
 | **screenshot** | Desktop/system screenshots (macOS, Linux, Windows) |
 
 ---

@@ -26,3 +26,4 @@ Documents/
 .logs/
 Docs
 .idea
+.env.local

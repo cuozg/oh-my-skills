@@ -15,7 +15,7 @@
 - `model`: image model
 - `config`: `GenerateImagesConfig` object with:
   - `number_of_images`: 1-4 (how many images to generate)
-  - `aspect_ratio`: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`
+  - `aspect_ratio`: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`
   - `negative_prompt`: what to avoid in the image
   - `person_generation`: `DONT_ALLOW` or `ALLOW_ADULT`
   - `safety_filter_level`: `BLOCK_LOW_AND_ABOVE`, `BLOCK_MEDIUM_AND_ABOVE`, `BLOCK_ONLY_HIGH`, `BLOCK_NONE`
@@ -39,6 +39,7 @@
 
 ## Limits & notes
 - Imagen 4 is generate-only; edits use Imagen 3.
+- **Edit operations (`edit_image`) require Vertex AI mode** — set `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` with ADC. API-key-only clients will fail for edits.
 - Multiple reference images supported for edits (compositing, style transfer).
 - Mask must be same dimensions as input image; alpha channel marks edit region.
 - Use `negative_prompt` to steer away from unwanted elements.

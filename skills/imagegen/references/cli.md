@@ -9,11 +9,33 @@ Command catalog for the bundled image generation CLI. See `SKILL.md` for overvie
 
 Real API calls require **network access** + `GEMINI_API_KEY`. `--dry-run` does not.
 
-## Quick start
-Set a stable path (default `CODEX_HOME` is `~/.codex`):
+## API key lookup
+The CLI automatically searches for API keys in `.env` files before falling back to OS environment variables. The search order is:
+1. `--env-file <path>` (explicit override)
+2. `<cwd>/.env.local`
+3. `<cwd>/.env`
+4. `~/.env.local`
+5. `~/.env`
+
+OS environment variables already set take precedence — `.env` files only fill in missing values.
 
 ```bash
-export IMAGE_GEN="~/.codex/skills/imagegen/scripts/image_gen.py"
+# Explicit .env file:
+python "$IMAGE_GEN" generate --prompt "Test" --env-file /path/to/.env
+
+# Or just have a .env.local in your project root:
+echo 'GEMINI_API_KEY=your-key-here' >> .env.local
+python "$IMAGE_GEN" generate --prompt "Test"
+```
+
+## Quick start
+Resolve the CLI path from the skill directory (do not hardcode):
+
+```bash
+# The script lives at scripts/image_gen.py relative to the imagegen skill directory.
+# In OpenCode, use run_skill_script or resolve the path dynamically.
+# Example with a variable:
+export IMAGE_GEN="<path-to-imagegen-skill>/scripts/image_gen.py"
 ```
 
 Dry-run (no API call; no key required):
@@ -36,7 +58,7 @@ python "$IMAGE_GEN" generate --prompt "A cozy alpine cabin at dawn" --aspect-rat
 - Output format: `png` (handled by CLI post-processing)
 
 ## Aspect ratio + generation options
-- `--aspect-ratio`: `1:1|16:9|9:16|4:3|3:4|3:2|2:3` (applies to generate/batch)
+- `--aspect-ratio`: `1:1|16:9|9:16|4:3|3:4` (applies to generate/batch)
 - `--negative-prompt`: what to avoid in the image
 - `--person-generation`: `DONT_ALLOW|ALLOW_ADULT`
 - `--safety-filter-level`: `BLOCK_LOW_AND_ABOVE|BLOCK_MEDIUM_AND_ABOVE|BLOCK_ONLY_HIGH|BLOCK_NONE`
@@ -81,7 +103,8 @@ python "$IMAGE_GEN" edit --image input.png --mask mask.png \
 ```
 
 ## Notes
-- Supported aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`
+- Supported aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`
+- **Edit operations require Vertex AI mode** — `GEMINI_API_KEY` alone is not sufficient for edits. Set `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` with ADC.
 - Default output: `output.png`; multiple images → `output-1.png`, `output-2.png`, etc.
 - Use `--no-augment` to skip prompt augmentation
 - `--n` generates multiple variants for a single prompt

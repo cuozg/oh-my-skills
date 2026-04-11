@@ -1,0 +1,52 @@
+{
+  "skill_name": "imagegen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate a hero image for my SaaS landing page. It should be a minimal abstract background with soft gradients — something premium looking, not stock-photo-y. I need space on the right side for headline text. Use cool tones, maybe blues and grays.",
+      "expected_output": "A single wide-aspect-ratio PNG image (16:9) with abstract gradient background, cool blue/gray tones, negative space on the right for text overlay. No text, no logos, no watermarks in the image.",
+      "files": [],
+      "expectations": [
+        "The agent uses the bundled CLI (scripts/image_gen.py) with the generate command",
+        "The prompt is augmented into a structured spec (has Use case, Primary request, etc.)",
+        "The aspect ratio is set to 16:9 (wide landscape, not 1:1)",
+        "The augmented prompt includes constraints about no text, no logos, no watermark",
+        "The augmented prompt mentions negative space on the right side for headline text",
+        "A negative prompt or Avoid line is included to prevent stock-photo or tacky effects",
+        "The output file is saved with a descriptive name, not just output.png",
+        "The final prompt and CLI flags used are reported to the user"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a set of 4 game UI icons for my RPG: a sword, a shield, a health potion, and a mana crystal. They should all be in the same painted/hand-drawn style, round icon format with transparent backgrounds. Save them in output/game-icons/",
+      "expected_output": "4 separate PNG images in output/game-icons/ directory, each depicting one icon (sword, shield, health potion, mana crystal) in consistent painted style, square 1:1 format.",
+      "files": [],
+      "expectations": [
+        "The agent uses generate-batch (JSONL batch) since there are 4 distinct prompts",
+        "A JSONL file is created with 4 jobs, one per icon",
+        "Each job prompt specifies painted/hand-drawn game UI icon style for consistency",
+        "The aspect ratio is 1:1 for icons",
+        "Output directory is set to output/game-icons/ via --out-dir",
+        "The JSONL temporary file is cleaned up after the batch completes",
+        "Each prompt includes constraints: transparent background, no text, no watermark",
+        "All 4 prompts share consistent style keywords for visual cohesion"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I have a product photo of a ceramic mug (it's at product-photos/mug.png). Can you remove the background and put it on a clean white studio backdrop instead? Keep the mug exactly as-is, just change what's behind it.",
+      "expected_output": "An edited version of the input image where only the background is replaced with a clean white studio gradient, while the ceramic mug remains unchanged in appearance, position, and lighting.",
+      "files": [],
+      "expectations": [
+        "The agent uses the edit command (not generate) since an input image is provided",
+        "The --image flag points to the input image path",
+        "The edit prompt explicitly states invariants: keep the mug unchanged, change only the background",
+        "The model used is imagen-3.0-capability-001 (the edit model, not the generate model)",
+        "The augmented prompt classifies this as precise-object-edit use case",
+        "A negative prompt or constraints line prevents unwanted changes to the product",
+        "The output is saved to a descriptive path (not just output.png)"
+      ]
+    }
+  ]
+}

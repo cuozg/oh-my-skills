@@ -124,6 +124,142 @@ class TestEnsureApiKey:
 
 
 # ---------------------------------------------------------------------------
+# 2b. _parse_dotenv
+# ---------------------------------------------------------------------------
+
+
+class TestParseDotenv:
+    def test_parses_key_value_pairs(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("GEMINI_API_KEY=abc123\n")
+        result = image_gen._parse_dotenv(f)
+        assert result == {"GEMINI_API_KEY": "abc123"}
+
+    def test_strips_double_quotes(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text('GEMINI_API_KEY="quoted-key"\n')
+        result = image_gen._parse_dotenv(f)
+        assert result["GEMINI_API_KEY"] == "quoted-key"
+
+    def test_strips_single_quotes(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("GEMINI_API_KEY='single-quoted'\n")
+        result = image_gen._parse_dotenv(f)
+        assert result["GEMINI_API_KEY"] == "single-quoted"
+
+    def test_ignores_comments_and_blanks(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("# comment\n\nGEMINI_API_KEY=val\n\n# another\n")
+        result = image_gen._parse_dotenv(f)
+        assert result == {"GEMINI_API_KEY": "val"}
+
+    def test_handles_export_prefix(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("export GEMINI_API_KEY=exported-val\n")
+        result = image_gen._parse_dotenv(f)
+        assert result["GEMINI_API_KEY"] == "exported-val"
+
+    def test_ignores_lines_without_equals(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("NOEQUALS\nGEMINI_API_KEY=ok\n")
+        result = image_gen._parse_dotenv(f)
+        assert "NOEQUALS" not in result
+        assert result["GEMINI_API_KEY"] == "ok"
+
+    def test_returns_empty_for_missing_file(self, tmp_path):
+        result = image_gen._parse_dotenv(tmp_path / "nonexistent")
+        assert result == {}
+
+    def test_multiple_keys(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("GEMINI_API_KEY=aaa\nGOOGLE_API_KEY=bbb\nOTHER=ccc\n")
+        result = image_gen._parse_dotenv(f)
+        assert result["GEMINI_API_KEY"] == "aaa"
+        assert result["GOOGLE_API_KEY"] == "bbb"
+        assert result["OTHER"] == "ccc"
+
+    def test_value_with_equals_sign(self, tmp_path):
+        f = tmp_path / ".env"
+        f.write_text("GEMINI_API_KEY=abc=def=ghi\n")
+        result = image_gen._parse_dotenv(f)
+        assert result["GEMINI_API_KEY"] == "abc=def=ghi"
+
+
+# ---------------------------------------------------------------------------
+# 2c. _load_dotenv
+# ---------------------------------------------------------------------------
+
+
+class TestLoadDotenv:
+    def _clear_api_keys(self, monkeypatch):
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+
+    def test_loads_from_cwd_env_local(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        env_file = tmp_path / ".env.local"
+        env_file.write_text("GEMINI_API_KEY=from-env-local\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") == "from-env-local"
+
+    def test_loads_from_cwd_env(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        env_file = tmp_path / ".env"
+        env_file.write_text("GEMINI_API_KEY=from-env\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") == "from-env"
+
+    def test_env_local_takes_priority_over_env(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        (tmp_path / ".env.local").write_text("GEMINI_API_KEY=local-wins\n")
+        (tmp_path / ".env").write_text("GEMINI_API_KEY=env-loses\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") == "local-wins"
+
+    def test_os_env_takes_precedence_over_dotenv(self, tmp_path, monkeypatch):
+        monkeypatch.setenv("GEMINI_API_KEY", "already-set")
+        (tmp_path / ".env.local").write_text("GEMINI_API_KEY=should-not-win\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") == "already-set"
+
+    def test_explicit_env_file_overrides_search(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        explicit = tmp_path / "custom.env"
+        explicit.write_text("GEMINI_API_KEY=from-custom\n")
+        (tmp_path / ".env.local").write_text("GEMINI_API_KEY=should-not-win\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv(env_file=str(explicit))
+        assert os.environ.get("GEMINI_API_KEY") == "from-custom"
+
+    def test_no_env_files_does_nothing(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") is None
+        assert os.environ.get("GOOGLE_API_KEY") is None
+
+    def test_loads_google_api_key(self, tmp_path, monkeypatch):
+        self._clear_api_keys(monkeypatch)
+        (tmp_path / ".env").write_text("GOOGLE_API_KEY=google-val\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GOOGLE_API_KEY") == "google-val"
+
+    def test_stops_after_first_file_with_key(self, tmp_path, monkeypatch, capsys):
+        self._clear_api_keys(monkeypatch)
+        (tmp_path / ".env.local").write_text("GEMINI_API_KEY=first\n")
+        (tmp_path / ".env").write_text("GOOGLE_API_KEY=second\n")
+        monkeypatch.chdir(tmp_path)
+        image_gen._load_dotenv()
+        assert os.environ.get("GEMINI_API_KEY") == "first"
+        assert os.environ.get("GOOGLE_API_KEY") is None
+
+
+# ---------------------------------------------------------------------------
 # 3. _read_prompt
 # ---------------------------------------------------------------------------
 
@@ -189,7 +325,7 @@ class TestNormalizeOutputFormat:
 
 class TestValidateAspectRatio:
     def test_valid_ratios_pass(self):
-        for r in ("1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"):
+        for r in ("1:1", "16:9", "9:16", "4:3", "3:4"):
             image_gen._validate_aspect_ratio(r)  # no exception
 
     def test_invalid_ratio_dies(self):
@@ -746,7 +882,7 @@ class TestEditMocked:
         )
 
         with (
-            patch("image_gen._create_client", return_value=mock_client),
+            patch("image_gen._create_vertex_client", return_value=mock_client),
             patch.dict(
                 "sys.modules",
                 {
@@ -928,10 +1064,10 @@ class TestHandleSizeDeprecation:
         image_gen._handle_size_deprecation(args)
         assert args.aspect_ratio == "1:1"
 
-    def test_size_1536x1024_maps_to_3_2(self):
+    def test_size_1536x1024_maps_to_4_3(self):
         args = _make_args(size="1536x1024", aspect_ratio="1:1")
         image_gen._handle_size_deprecation(args)
-        assert args.aspect_ratio == "3:2"
+        assert args.aspect_ratio == "4:3"
 
     def test_size_auto_does_not_change_aspect_ratio(self):
         args = _make_args(size="auto", aspect_ratio="1:1")
@@ -948,3 +1084,43 @@ class TestHandleSizeDeprecation:
         image_gen._handle_size_deprecation(args)
         captured = capsys.readouterr()
         assert "Unknown" in captured.err
+
+
+# ---------------------------------------------------------------------------
+# 22. Edit Vertex AI preflight
+# ---------------------------------------------------------------------------
+
+
+class TestEditVertexPreflight:
+    def test_edit_warns_when_no_vertex_project(self, tmp_path, monkeypatch, capsys):
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+        monkeypatch.delenv("GOOGLE_CLOUD_PROJECT", raising=False)
+        img = tmp_path / "img.png"
+        img.write_bytes(b"fake")
+
+        mock_image = MagicMock()
+        mock_image.image_bytes = b"edited"
+        mock_generated = MagicMock()
+        mock_generated.image = mock_image
+        mock_result = MagicMock()
+        mock_result.generated_images = [mock_generated]
+
+        mock_client = MagicMock()
+        mock_client.models.edit_image.return_value = mock_result
+
+        args = _make_args(
+            model=image_gen.DEFAULT_MODEL_EDIT,
+            prompt="edit it",
+            dry_run=False,
+            image=[str(img)],
+            mask=None,
+            out=str(tmp_path / "out.png"),
+            augment=False,
+        )
+
+        with patch("image_gen._create_vertex_client", return_value=mock_client):
+            with patch("image_gen.genai_types", create=True):
+                image_gen._edit(args)
+
+        captured = capsys.readouterr()
+        assert "Vertex AI" in captured.err

@@ -25,16 +25,19 @@ DEFAULT_OUTPUT_FORMAT = "png"
 DEFAULT_CONCURRENCY = 5
 DEFAULT_DOWNSCALE_SUFFIX = "-web"
 
-ALLOWED_ASPECT_RATIOS = {"1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"}
+ALLOWED_ASPECT_RATIOS = {"1:1", "16:9", "9:16", "4:3", "3:4"}
 
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 MAX_BATCH_JOBS = 500
 
+# Keys we look for when loading .env files.
+_API_KEY_NAMES = ("GEMINI_API_KEY", "GOOGLE_API_KEY")
+
 # Deprecated --size mapping to --aspect-ratio
 _SIZE_TO_ASPECT_RATIO = {
     "1024x1024": "1:1",
-    "1536x1024": "3:2",
-    "1024x1536": "2:3",
+    "1536x1024": "4:3",
+    "1024x1536": "3:4",
 }
 
 
@@ -45,6 +48,68 @@ def _die(message: str, code: int = 1) -> None:
 
 def _warn(message: str) -> None:
     print(f"Warning: {message}", file=sys.stderr)
+
+
+def _parse_dotenv(path: Path) -> Dict[str, str]:
+    """Parse KEY=VALUE pairs from a .env file, ignoring comments and blank lines."""
+    result: Dict[str, str] = {}
+    if not path.is_file():
+        return result
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].strip()
+        if "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        if not key:
+            continue
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            value = value[1:-1]
+        result[key] = value
+    return result
+
+
+def _load_dotenv(env_file: Optional[str] = None) -> None:
+    """Load API keys from .env files into os.environ (existing env vars take precedence).
+
+    Search order (first file containing a key wins):
+      1. Explicit --env-file path
+      2. <cwd>/.env.local
+      3. <cwd>/.env
+      4. ~/.env.local
+      5. ~/.env
+    """
+    candidates: List[Path] = []
+    if env_file:
+        candidates.append(Path(env_file))
+    cwd = Path.cwd()
+    home = Path.home()
+    candidates.extend(
+        [
+            cwd / ".env.local",
+            cwd / ".env",
+            home / ".env.local",
+            home / ".env",
+        ]
+    )
+
+    for candidate in candidates:
+        if not candidate.is_file():
+            continue
+        parsed = _parse_dotenv(candidate)
+        loaded_any = False
+        for key_name in _API_KEY_NAMES:
+            if key_name in parsed and not os.environ.get(key_name):
+                os.environ[key_name] = parsed[key_name]
+                print(f"Loaded {key_name} from {candidate}", file=sys.stderr)
+                loaded_any = True
+        if loaded_any:
+            break
 
 
 def _ensure_api_key(dry_run: bool) -> None:
@@ -303,6 +368,30 @@ def _create_client():
         _die(
             "google-genai SDK not installed. Install with `uv pip install google-genai`."
         )
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if api_key:
+        return genai.Client(api_key=api_key)
+    return genai.Client()
+
+
+def _create_vertex_client():
+    """Create a Vertex AI client for operations that require it (e.g., edit_image).
+
+    Vertex AI mode needs: GOOGLE_CLOUD_PROJECT, GOOGLE_CLOUD_LOCATION (or defaults),
+    and Application Default Credentials (ADC).
+    Falls back to a regular API-key client if Vertex env is not configured.
+    """
+    try:
+        from google import genai
+    except ImportError:
+        _die(
+            "google-genai SDK not installed. Install with `uv pip install google-genai`."
+        )
+    project = os.getenv("GOOGLE_CLOUD_PROJECT")
+    location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+    if project:
+        return genai.Client(vertexai=True, project=project, location=location)
+    # No Vertex config — try API key client (will fail for Vertex-only ops)
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if api_key:
         return genai.Client(api_key=api_key)
@@ -718,6 +807,13 @@ def _edit(args: argparse.Namespace) -> None:
         _print_request(payload_preview)
         return
 
+    if not os.getenv("GOOGLE_CLOUD_PROJECT"):
+        _warn(
+            "edit_image requires Vertex AI mode. Set GOOGLE_CLOUD_PROJECT and "
+            "GOOGLE_CLOUD_LOCATION (default: us-central1) with Application Default "
+            "Credentials. See: https://cloud.google.com/docs/authentication/application-default-credentials"
+        )
+
     print(
         f"Calling Imagen API (edit) with {len(image_paths)} image(s).", file=sys.stderr
     )
@@ -731,7 +827,7 @@ def _edit(args: argparse.Namespace) -> None:
         Image,
     )
 
-    client = _create_client()
+    client = _create_vertex_client()
 
     reference_images = []
     for idx, img_path in enumerate(image_paths):
@@ -797,7 +893,7 @@ def _add_shared_args(parser: argparse.ArgumentParser, *, default_model: str) -> 
     parser.add_argument(
         "--size",
         default=None,
-        help="[DEPRECATED] Use --aspect-ratio instead. Maps: 1024x1024→1:1, 1536x1024→3:2, 1024x1536→2:3",
+        help="[DEPRECATED] Use --aspect-ratio instead. Maps: 1024x1024→1:1, 1536x1024→4:3, 1024x1536→3:4",
     )
     parser.add_argument("--negative-prompt", default=None)
     parser.add_argument(
@@ -840,6 +936,11 @@ def _add_shared_args(parser: argparse.ArgumentParser, *, default_model: str) -> 
     # Post-processing (optional): generate an additional downscaled copy for fast web loading.
     parser.add_argument("--downscale-max-dim", type=int)
     parser.add_argument("--downscale-suffix", default=DEFAULT_DOWNSCALE_SUFFIX)
+    parser.add_argument(
+        "--env-file",
+        default=None,
+        help="Path to .env file for API key lookup (overrides default search order)",
+    )
 
 
 def main() -> int:
@@ -891,6 +992,7 @@ def main() -> int:
 
     _validate_aspect_ratio(args.aspect_ratio)
 
+    _load_dotenv(env_file=getattr(args, "env_file", None))
     _ensure_api_key(args.dry_run)
 
     args.func(args)

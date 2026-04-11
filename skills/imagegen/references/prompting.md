@@ -78,4 +78,11 @@ Edit:
 - sketch-to-render: Preserve layout, proportions, and perspective; add plausible materials, lighting, and environment; "do not add new elements or text."
 
 ## Where to find copy/paste recipes
-For copy/paste prompt specs (examples only), see `references/sample-prompts.md`. This file focuses on principles, structure, and iteration patterns.
+For copy/paste prompt specs (examples only), see:
+- `references/sample-prompts-generate.md` — Generation workflows
+- `references/sample-prompts-edit.md` — Edit workflows
+- `references/sample-prompts-website.md` — Website asset recipes
+- `references/sample-prompts-game.md` — Game asset recipes
+- `references/sample-prompts-asset-types.md` — Asset-type templates
+
+This file focuses on principles, structure, and iteration patterns.
