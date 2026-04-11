@@ -3,7 +3,7 @@
 This guidance is intentionally isolated from `SKILL.md` because it can vary by environment and may become stale. Prefer the defaults in your environment when in doubt.
 
 ## Why am I asked to approve every image generation call?
-Image generation uses the OpenAI Image API, so the CLI needs outbound network access. In many Codex setups, network access is disabled by default (especially under stricter sandbox modes), and/or the approval policy may require confirmation before networked commands run.
+Image generation uses the Google Gemini Imagen API, so the CLI needs outbound network access. In many Codex setups, network access is disabled by default (especially under stricter sandbox modes), and/or the approval policy may require confirmation before networked commands run.
 
 ## How do I reduce repeated approval prompts (network)?
 If you trust the repo and want fewer prompts, enable network access for the relevant sandbox mode and relax the approval policy.

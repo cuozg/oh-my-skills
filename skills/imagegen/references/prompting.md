@@ -1,4 +1,4 @@
-# Prompting best practices (gpt-image-1.5)
+# Prompting best practices (Imagen (Gemini))
 
 ## Contents
 - [Structure](#structure)
@@ -52,16 +52,16 @@
 - Re-specify critical constraints when you iterate.
 
 ## Quality vs latency
-- For latency-sensitive runs, start at `quality=low` and only raise it if needed.
-- Use `quality=high` for text-heavy or detail-critical images.
-- For strict edits (identity preservation, layout lock), consider `input_fidelity=high`.
+- For detail-critical images, use a descriptive prompt with specific material and lighting cues.
+- Use `negative_prompt` to steer away from unwanted stylistic elements (e.g. "blurry, overexposed, low detail").
+- For strict edits (identity preservation, layout lock), be explicit in the prompt and repeat invariants.
 
 ## Use-case tips
 Generate:
-- photorealistic-natural: Prompt as if a real photo is captured in the moment; use photography language (lens, lighting, framing); call for real texture (pores, wrinkles, fabric wear, imperfections); avoid studio polish or staging; use `quality=high` when detail matters.
+- photorealistic-natural: Prompt as if a real photo is captured in the moment; use photography language (lens, lighting, framing); call for real texture (pores, wrinkles, fabric wear, imperfections); avoid studio polish or staging; use detailed lighting and material descriptions for best results.
 - product-mockup: Describe the product/packaging and materials; ensure clean silhouette and label clarity; if in-image text is needed, require verbatim rendering and specify typography.
 - ui-mockup: Describe a real product; focus on layout, hierarchy, and common UI elements; avoid concept-art language so it looks shippable.
-- infographic-diagram: Define the audience and layout flow; label parts explicitly; require verbatim text; use `quality=high`.
+- infographic-diagram: Define the audience and layout flow; label parts explicitly; require verbatim text; use detailed prompts for best fidelity.
 - logo-brand: Keep it simple and scalable; ask for a strong silhouette and balanced negative space; avoid gradients and fine detail.
 - illustration-story: Define panels or scene beats; keep each action concrete; for continuity, restate character traits and outfit each time.
 - stylized-concept: Specify style cues, material finish, and rendering approach (3D, painterly, clay); add a short "Avoid" line to prevent tacky effects.
@@ -69,7 +69,7 @@ Generate:
 
 Edit:
 - text-localization: Change only the text; preserve layout, typography, spacing, and hierarchy; no extra words or reflow unless needed.
-- identity-preserve: Lock identity (face, body, pose, hair, expression); change only the specified elements; match lighting and shadows; use `input_fidelity=high` if likeness drifts.
+- identity-preserve: Lock identity (face, body, pose, hair, expression); change only the specified elements; match lighting and shadows; use explicit invariants in prompt if likeness drifts.
 - precise-object-edit: Specify exactly what to remove/replace; preserve surrounding texture and lighting; keep everything else unchanged.
 - lighting-weather: Change only environmental conditions (light, shadows, atmosphere, precipitation); keep geometry, framing, and subject identity.
 - background-extraction: Request transparent background; crisp silhouette; no halos; preserve label text exactly; optionally add a subtle contact shadow.

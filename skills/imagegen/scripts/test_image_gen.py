@@ -1,4 +1,4 @@
-"""Unit tests for image_gen.py.
+"""Unit tests for image_gen.py (Gemini Imagen backend).
 
 Run with:
     python3 -m pytest skills/imagegen/scripts/test_image_gen.py -v
@@ -7,13 +7,10 @@ Run with:
 from __future__ import annotations
 
 import argparse
-import base64
 import json
 import os
 import sys
-import tempfile
 from pathlib import Path
-from types import SimpleNamespace
 from typing import Optional
 from unittest.mock import MagicMock, patch
 
@@ -33,16 +30,16 @@ import image_gen  # noqa: E402  (after sys.path manipulation)
 def _make_args(**kwargs):
     """Return a minimal argparse.Namespace with sensible defaults for tests."""
     defaults = dict(
-        model=image_gen.DEFAULT_MODEL,
+        model=image_gen.DEFAULT_MODEL_GENERATE,
         prompt="a sunset over mountains",
         prompt_file=None,
         n=1,
-        size=image_gen.DEFAULT_SIZE,
-        quality=image_gen.DEFAULT_QUALITY,
-        background=None,
+        aspect_ratio=image_gen.DEFAULT_ASPECT_RATIO,
+        size=None,  # deprecated, None by default
+        negative_prompt=None,
+        person_generation=None,
+        safety_filter_level=None,
         output_format=None,
-        output_compression=None,
-        moderation=None,
         out="output.png",
         out_dir=None,
         force=False,
@@ -102,18 +99,26 @@ class TestWarn:
 
 
 class TestEnsureApiKey:
-    def test_key_present_does_not_raise(self, monkeypatch, capsys):
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    def test_gemini_key_present_does_not_raise(self, monkeypatch, capsys):
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+        image_gen._ensure_api_key(dry_run=False)  # no exception
+
+    def test_google_key_fallback_does_not_raise(self, monkeypatch, capsys):
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.setenv("GOOGLE_API_KEY", "test-google-key")
         image_gen._ensure_api_key(dry_run=False)  # no exception
 
     def test_missing_key_dry_run_warns(self, monkeypatch, capsys):
-        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
         image_gen._ensure_api_key(dry_run=True)
         captured = capsys.readouterr()
         assert "not set" in captured.err
 
     def test_missing_key_live_dies(self, monkeypatch):
-        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+        monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
         with pytest.raises(SystemExit):
             image_gen._ensure_api_key(dry_run=False)
 
@@ -182,87 +187,35 @@ class TestNormalizeOutputFormat:
 # ---------------------------------------------------------------------------
 
 
-class TestValidateSize:
-    def test_valid_sizes_pass(self):
-        for s in ("1024x1024", "1536x1024", "1024x1536", "auto"):
-            image_gen._validate_size(s)  # no exception
+class TestValidateAspectRatio:
+    def test_valid_ratios_pass(self):
+        for r in ("1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"):
+            image_gen._validate_aspect_ratio(r)  # no exception
 
-    def test_invalid_size_dies(self):
+    def test_invalid_ratio_dies(self):
         with pytest.raises(SystemExit):
-            image_gen._validate_size("512x512")
-
-
-class TestValidateQuality:
-    def test_valid_qualities_pass(self):
-        for q in ("low", "medium", "high", "auto"):
-            image_gen._validate_quality(q)
-
-    def test_invalid_quality_dies(self):
-        with pytest.raises(SystemExit):
-            image_gen._validate_quality("ultra")
-
-
-class TestValidateBackground:
-    def test_none_is_valid(self):
-        image_gen._validate_background(None)
-
-    def test_valid_backgrounds_pass(self):
-        for b in ("transparent", "opaque", "auto"):
-            image_gen._validate_background(b)
-
-    def test_invalid_background_dies(self):
-        with pytest.raises(SystemExit):
-            image_gen._validate_background("black")
-
-
-class TestValidateTransparency:
-    def test_transparent_with_png_passes(self):
-        image_gen._validate_transparency("transparent", "png")
-
-    def test_transparent_with_webp_passes(self):
-        image_gen._validate_transparency("transparent", "webp")
-
-    def test_transparent_with_jpeg_dies(self):
-        with pytest.raises(SystemExit):
-            image_gen._validate_transparency("transparent", "jpeg")
-
-    def test_opaque_with_jpeg_passes(self):
-        image_gen._validate_transparency("opaque", "jpeg")
+            image_gen._validate_aspect_ratio("5:4")
 
 
 class TestValidateGeneratePayload:
     def test_valid_payload_passes(self):
         image_gen._validate_generate_payload(
-            {"n": 1, "size": "1024x1024", "quality": "auto"}
+            {"number_of_images": 1, "aspect_ratio": "1:1"}
         )
 
     def test_n_zero_dies(self):
         with pytest.raises(SystemExit):
-            image_gen._validate_generate_payload(
-                {"n": 0, "size": "1024x1024", "quality": "auto"}
-            )
+            image_gen._validate_generate_payload({"number_of_images": 0})
 
-    def test_n_eleven_dies(self):
+    def test_n_five_dies(self):
+        with pytest.raises(SystemExit):
+            image_gen._validate_generate_payload({"number_of_images": 5})
+
+    def test_bad_aspect_ratio_dies(self):
         with pytest.raises(SystemExit):
             image_gen._validate_generate_payload(
-                {"n": 11, "size": "1024x1024", "quality": "auto"}
+                {"number_of_images": 1, "aspect_ratio": "5:4"}
             )
-
-    def test_bad_compression_dies(self):
-        with pytest.raises(SystemExit):
-            image_gen._validate_generate_payload(
-                {
-                    "n": 1,
-                    "size": "1024x1024",
-                    "quality": "auto",
-                    "output_compression": 101,
-                }
-            )
-
-    def test_valid_compression_passes(self):
-        image_gen._validate_generate_payload(
-            {"n": 1, "size": "1024x1024", "quality": "auto", "output_compression": 80}
-        )
 
 
 # ---------------------------------------------------------------------------
@@ -578,32 +531,29 @@ class TestDeriveDownscalePath:
 
 
 # ---------------------------------------------------------------------------
-# 13. _decode_and_write
+# 13. _write_images
 # ---------------------------------------------------------------------------
 
 
-class TestDecodeAndWrite:
-    def test_writes_decoded_bytes(self, tmp_path):
+class TestWriteImages:
+    def test_writes_raw_bytes(self, tmp_path):
         raw = b"fake-image-data"
-        b64 = base64.b64encode(raw).decode()
         out = tmp_path / "out.png"
-        image_gen._decode_and_write([b64], [out], force=False)
+        image_gen._write_images([raw], [out], force=False)
         assert out.read_bytes() == raw
 
     def test_existing_file_no_force_dies(self, tmp_path):
         raw = b"data"
-        b64 = base64.b64encode(raw).decode()
         out = tmp_path / "out.png"
         out.write_bytes(b"existing")
         with pytest.raises(SystemExit):
-            image_gen._decode_and_write([b64], [out], force=False)
+            image_gen._write_images([raw], [out], force=False)
 
     def test_existing_file_force_overwrites(self, tmp_path):
         raw = b"new-data"
-        b64 = base64.b64encode(raw).decode()
         out = tmp_path / "out.png"
         out.write_bytes(b"old")
-        image_gen._decode_and_write([b64], [out], force=True)
+        image_gen._write_images([raw], [out], force=True)
         assert out.read_bytes() == raw
 
 
@@ -688,7 +638,7 @@ class TestExtractRetryAfter:
 
 class TestGenerateMocked:
     def test_dry_run_prints_payload(self, tmp_path, monkeypatch, capsys):
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         args = _make_args(
             prompt="a sunset",
             dry_run=True,
@@ -698,18 +648,24 @@ class TestGenerateMocked:
         image_gen._generate(args)
         captured = capsys.readouterr()
         payload = json.loads(captured.out)
-        assert payload["endpoint"] == "/v1/images/generations"
+        assert payload["endpoint"] == "models.generate_images"
         assert payload["prompt"] == "a sunset"
 
     def test_generate_calls_api_and_writes_file(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         raw = b"fake-png-bytes"
-        b64 = base64.b64encode(raw).decode()
 
-        mock_item = SimpleNamespace(b64_json=b64)
-        mock_result = SimpleNamespace(data=[mock_item])
+        mock_image = MagicMock()
+        mock_image.image_bytes = raw
+        mock_generated = MagicMock()
+        mock_generated.image = mock_image
+        mock_result = MagicMock()
+        mock_result.generated_images = [mock_generated]
+
         mock_client = MagicMock()
-        mock_client.images.generate.return_value = mock_result
+        mock_client.models.generate_images.return_value = mock_result
+
+        mock_types = MagicMock()
 
         out_path = tmp_path / "output.png"
         args = _make_args(
@@ -719,14 +675,22 @@ class TestGenerateMocked:
             augment=False,
         )
 
-        with patch("image_gen._create_client", return_value=mock_client):
+        with (
+            patch("image_gen._create_client", return_value=mock_client),
+            patch.dict(
+                "sys.modules",
+                {
+                    "google": MagicMock(),
+                    "google.genai": MagicMock(),
+                    "google.genai.types": mock_types,
+                },
+            ),
+        ):
             image_gen._generate(args)
 
         assert out_path.exists()
         assert out_path.read_bytes() == raw
-        mock_client.images.generate.assert_called_once()
-        call_kwargs = mock_client.images.generate.call_args[1]
-        assert call_kwargs["prompt"] == "a cat"
+        mock_client.models.generate_images.assert_called_once()
 
 
 # ---------------------------------------------------------------------------
@@ -736,48 +700,62 @@ class TestGenerateMocked:
 
 class TestEditMocked:
     def test_edit_dry_run_prints_payload(self, tmp_path, monkeypatch, capsys):
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         img = tmp_path / "img.png"
         img.write_bytes(b"fake")
         args = _make_args(
+            model=image_gen.DEFAULT_MODEL_EDIT,
             prompt="make it blue",
             dry_run=True,
             image=[str(img)],
             mask=None,
-            input_fidelity=None,
             out=str(tmp_path / "out.png"),
             augment=False,
         )
         image_gen._edit(args)
         captured = capsys.readouterr()
         payload = json.loads(captured.out)
-        assert payload["endpoint"] == "/v1/images/edits"
+        assert payload["endpoint"] == "models.edit_image"
 
     def test_edit_calls_api_and_writes_file(self, tmp_path, monkeypatch):
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         raw = b"edited-png"
-        b64 = base64.b64encode(raw).decode()
 
         img = tmp_path / "source.png"
         img.write_bytes(b"original")
         out_path = tmp_path / "out.png"
 
-        mock_item = SimpleNamespace(b64_json=b64)
-        mock_result = SimpleNamespace(data=[mock_item])
+        mock_image = MagicMock()
+        mock_image.image_bytes = raw
+        mock_generated = MagicMock()
+        mock_generated.image = mock_image
+        mock_result = MagicMock()
+        mock_result.generated_images = [mock_generated]
+
         mock_client = MagicMock()
-        mock_client.images.edit.return_value = mock_result
+        mock_client.models.edit_image.return_value = mock_result
 
         args = _make_args(
+            model=image_gen.DEFAULT_MODEL_EDIT,
             prompt="add a hat",
             dry_run=False,
             image=[str(img)],
             mask=None,
-            input_fidelity=None,
             out=str(out_path),
             augment=False,
         )
 
-        with patch("image_gen._create_client", return_value=mock_client):
+        with (
+            patch("image_gen._create_client", return_value=mock_client),
+            patch.dict(
+                "sys.modules",
+                {
+                    "google": MagicMock(),
+                    "google.genai": MagicMock(),
+                    "google.genai.types": MagicMock(),
+                },
+            ),
+        ):
             image_gen._edit(args)
 
         assert out_path.exists()
@@ -795,7 +773,7 @@ class TestArgumentParsing:
     def _run_main_dry(self, argv, monkeypatch):
         """Helper: patch sys.argv and environment, assert no real API call."""
         monkeypatch.setattr(sys, "argv", argv)
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
 
     def test_generate_subcommand_dry_run(self, tmp_path, monkeypatch, capsys):
         out = str(tmp_path / "out.png")
@@ -812,11 +790,11 @@ class TestArgumentParsing:
                 out,
             ],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         rc = image_gen.main()
         assert rc == 0
         captured = capsys.readouterr()
-        assert "generations" in captured.out
+        assert "generate_images" in captured.out
 
     def test_edit_requires_image_flag(self, monkeypatch):
         monkeypatch.setattr(
@@ -824,7 +802,7 @@ class TestArgumentParsing:
             "argv",
             ["image_gen.py", "edit", "--prompt", "hello", "--dry-run"],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         with pytest.raises(SystemExit) as exc:
             image_gen.main()
         assert exc.value.code != 0
@@ -845,7 +823,7 @@ class TestArgumentParsing:
                 "--dry-run",
             ],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         with pytest.raises(SystemExit) as exc:
             image_gen.main()
         assert exc.value.code != 0
@@ -867,7 +845,7 @@ class TestArgumentParsing:
                 out,
             ],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         with pytest.raises(SystemExit):
             image_gen.main()
 
@@ -878,11 +856,11 @@ class TestArgumentParsing:
             "argv",
             ["image_gen.py", "generate", "--prompt", "x", "--dry-run", "--out", out],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         image_gen.main()
         captured = capsys.readouterr()
         payload = json.loads(captured.out)
-        assert payload["model"] == image_gen.DEFAULT_MODEL
+        assert payload["model"] == image_gen.DEFAULT_MODEL_GENERATE
 
     def test_no_augment_flag_skips_augmentation(self, tmp_path, monkeypatch, capsys):
         out = str(tmp_path / "out.png")
@@ -900,7 +878,7 @@ class TestArgumentParsing:
                 out,
             ],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         image_gen.main()
         captured = capsys.readouterr()
         payload = json.loads(captured.out)
@@ -930,10 +908,43 @@ class TestGenerateBatchDryRun:
                 "--dry-run",
             ],
         )
-        monkeypatch.setenv("OPENAI_API_KEY", "sk-fake")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-key")
         rc = image_gen.main()
         assert rc == 0
         captured = capsys.readouterr()
         lines = [l for l in captured.out.splitlines() if l.strip().startswith("{")]
         # Two JSON blocks expected (one per job)
         assert len(lines) >= 1
+
+
+# ---------------------------------------------------------------------------
+# 21. _handle_size_deprecation
+# ---------------------------------------------------------------------------
+
+
+class TestHandleSizeDeprecation:
+    def test_size_1024x1024_maps_to_1_1(self):
+        args = _make_args(size="1024x1024", aspect_ratio="1:1")
+        image_gen._handle_size_deprecation(args)
+        assert args.aspect_ratio == "1:1"
+
+    def test_size_1536x1024_maps_to_3_2(self):
+        args = _make_args(size="1536x1024", aspect_ratio="1:1")
+        image_gen._handle_size_deprecation(args)
+        assert args.aspect_ratio == "3:2"
+
+    def test_size_auto_does_not_change_aspect_ratio(self):
+        args = _make_args(size="auto", aspect_ratio="1:1")
+        image_gen._handle_size_deprecation(args)
+        assert args.aspect_ratio == "1:1"
+
+    def test_size_none_does_nothing(self):
+        args = _make_args(size=None, aspect_ratio="16:9")
+        image_gen._handle_size_deprecation(args)
+        assert args.aspect_ratio == "16:9"
+
+    def test_unknown_size_warns(self, capsys):
+        args = _make_args(size="512x512", aspect_ratio="1:1")
+        image_gen._handle_size_deprecation(args)
+        captured = capsys.readouterr()
+        assert "Unknown" in captured.err

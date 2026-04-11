@@ -7,7 +7,7 @@ Command catalog for the bundled image generation CLI. See `SKILL.md` for overvie
 - `edit`: edit an existing image (optionally with a mask)
 - `generate-batch`: run many jobs from a JSONL file
 
-Real API calls require **network access** + `OPENAI_API_KEY`. `--dry-run` does not.
+Real API calls require **network access** + `GEMINI_API_KEY`. `--dry-run` does not.
 
 ## Quick start
 Set a stable path (default `CODEX_HOME` is `~/.codex`):
@@ -21,35 +21,36 @@ Dry-run (no API call; no key required):
 python "$IMAGE_GEN" generate --prompt "Test" --dry-run
 ```
 
-Generate (requires `OPENAI_API_KEY` + network):
+Generate (requires `GEMINI_API_KEY` + network):
 ```bash
-python "$IMAGE_GEN" generate --prompt "A cozy alpine cabin at dawn" --size 1024x1024
+python "$IMAGE_GEN" generate --prompt "A cozy alpine cabin at dawn" --aspect-ratio 1:1
 ```
 
 ## Guardrails
 - Use full path: `python "$IMAGE_GEN" ...` for all CLI runs.
-- **Never modify** `scripts/image_gen.py`. Ask user if something is missing.
-- **Never** create one-off runners unless explicitly requested.
+- Prefer the bundled CLI; only create one-off runners if explicitly requested.
 
 ## Defaults (override with flags)
-- Model: `gpt-image-1.5`
-- Size: `1024x1024`
-- Quality: `auto`
-- Output format: `png`
+- Model: `imagen-4.0-generate-001` (generate), `imagen-3.0-capability-001` (edit)
+- Aspect ratio: `1:1`
+- Output format: `png` (handled by CLI post-processing)
 
-## Quality + input fidelity
-- `--quality`: `low|medium|high|auto` (applies to generate/edit/batch)
-- `--input-fidelity`: `low|high` (edit-only; use `high` for identity/layout lock)
+## Aspect ratio + generation options
+- `--aspect-ratio`: `1:1|16:9|9:16|4:3|3:4|3:2|2:3` (applies to generate/batch)
+- `--negative-prompt`: what to avoid in the image
+- `--person-generation`: `DONT_ALLOW|ALLOW_ADULT`
+- `--safety-filter-level`: `BLOCK_LOW_AND_ABOVE|BLOCK_MEDIUM_AND_ABOVE|BLOCK_ONLY_HIGH|BLOCK_NONE`
 
 Example:
 ```bash
 python "$IMAGE_GEN" edit --image input.png --prompt "Change only the background" \
-  --quality high --input-fidelity high
+  --negative-prompt "blurry, overexposed"
 ```
 
 ## Masks (edits)
 - Use **PNG** mask with alpha channel (recommended)
 - Mask must match input image dimensions
+- Gemini uses `MaskReferenceImage` with `reference_id` to associate mask with input image
 - In edit prompt, repeat invariants: "change only X; keep Y unchanged"
 
 ## Common recipes
@@ -58,15 +59,15 @@ Generate + downscale for web:
 ```bash
 python "$IMAGE_GEN" generate \
   --prompt "A cozy alpine cabin" \
-  --size 1024x1024 \
+  --aspect-ratio 1:1 \
   --downscale-max-dim 1024
 ```
 
 Batch (many prompts concurrently):
 ```bash
 cat > tmp/imagegen/prompts.jsonl << 'EOF'
-{"prompt":"Wolf in snowy forest","use_case":"wildlife","composition":"100mm, shallow DoF","size":"1024x1024"}
-{"prompt":"Hangar interior with shuttle","use_case":"concept art","composition":"wide-angle, cinematic","size":"1536x1024"}
+{"prompt":"Wolf in snowy forest","use_case":"wildlife","composition":"100mm, shallow DoF","aspect_ratio":"1:1"}
+{"prompt":"Hangar interior with shuttle","use_case":"concept art","composition":"wide-angle, cinematic","aspect_ratio":"16:9"}
 EOF
 
 python "$IMAGE_GEN" generate-batch --input tmp/imagegen/prompts.jsonl --out-dir out --concurrency 5
@@ -80,8 +81,7 @@ python "$IMAGE_GEN" edit --image input.png --mask mask.png \
 ```
 
 ## Notes
-- Supported sizes: `1024x1024`, `1536x1024`, `1024x1536`, `auto`
-- Transparent backgrounds require `output_format` png or webp
+- Supported aspect ratios: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`
 - Default output: `output.png`; multiple images → `output-1.png`, `output-2.png`, etc.
 - Use `--no-augment` to skip prompt augmentation
 - `--n` generates multiple variants for a single prompt

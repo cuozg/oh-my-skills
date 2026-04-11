@@ -42,8 +42,6 @@ Composition/framing: <wide/close/top-down; placement>
 Lighting/mood: <lighting + mood>
 Color palette: <palette notes>
 Materials/textures: <surface details>
-Quality: <low/medium/high/auto>
-Input fidelity (edits): <low/high>
 Text (verbatim): "<exact text>"
 Constraints: <must keep/must avoid>
 Avoid: <negative constraints>

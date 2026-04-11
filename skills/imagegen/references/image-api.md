@@ -1,36 +1,46 @@
 # Image API quick reference
 
 ## Endpoints
-- Generate: `POST /v1/images/generations` (`client.images.generate(...)`)
-- Edit: `POST /v1/images/edits` (`client.images.edit(...)`)
+- Generate: `client.models.generate_images(...)` (Imagen)
+- Edit: `client.models.edit_image(...)` (Imagen)
+- Generate (native): `client.models.generate_content(...)` with `response_modalities=[Modality.IMAGE]` (Gemini models)
 
 ## Models
-- Default: `gpt-image-1.5`
-- Alternatives: `gpt-image-1-mini` (for faster, lower-cost generation)
+- Generate: `imagen-4.0-generate-001` (default)
+- Edit: `imagen-3.0-capability-001` (default)
+- Native Gemini: `gemini-2.5-flash-image` (text+image mixed output)
 
-## Core parameters (generate + edit)
+## Core parameters (generate)
 - `prompt`: text prompt
 - `model`: image model
-- `n`: number of images (1-10)
-- `size`: `1024x1024`, `1536x1024`, `1024x1536`, or `auto`
-- `quality`: `low`, `medium`, `high`, or `auto`
-- `background`: `transparent`, `opaque`, or `auto` (transparent requires `png`/`webp`)
-- `output_format`: `png` (default), `jpeg`, `webp`
-- `output_compression`: 0-100 (jpeg/webp only)
-- `moderation`: `auto` (default) or `low`
+- `config`: `GenerateImagesConfig` object with:
+  - `number_of_images`: 1-4 (how many images to generate)
+  - `aspect_ratio`: `1:1`, `16:9`, `9:16`, `4:3`, `3:4`, `3:2`, `2:3`
+  - `negative_prompt`: what to avoid in the image
+  - `person_generation`: `DONT_ALLOW` or `ALLOW_ADULT`
+  - `safety_filter_level`: `BLOCK_LOW_AND_ABOVE`, `BLOCK_MEDIUM_AND_ABOVE`, `BLOCK_ONLY_HIGH`, `BLOCK_NONE`
+  - `image_size`: optional size hint (e.g. `"2K"`)
 
 ## Edit-specific parameters
-- `image`: one or more input images (first image is primary)
-- `mask`: optional mask image (same size, alpha channel required)
-- `input_fidelity`: `low` (default) or `high` (support varies by model) - set it to `high` if the user needs a very specific edit and you can't achieve it with the default `low` fidelity.
+- `reference_images`: list of reference image objects
+  - `RawReferenceImage`: input image with `reference_id` and `reference_image`
+  - `MaskReferenceImage`: mask with `reference_id`, `reference_image`, and `config`
+- `config`: `EditImageConfig` object with:
+  - `number_of_images`: 1-4
+
+## Reference image types for edits
+- `RawReferenceImage(reference_image=Image.from_file(location="input.png"), reference_id=0)`
+- `MaskReferenceImage(reference_image=Image.from_file(location="mask.png"), reference_id=0, config=MaskReferenceConfig(mask_mode="MASK_MODE_USER_PROVIDED"))`
 
 ## Output
-- `data[]` list with `b64_json` per image
+- `response.generated_images` — list of generated image objects
+- `response.generated_images[i].image.image_bytes` — raw bytes of the image
+- `response.generated_images[i].image.save("output.png")` — save directly to file
 
 ## Limits & notes
-- Input images and masks must be under 50MB.
-- Use edits endpoint when the user requests changes to an existing image.
-- Masking is prompt-guided; exact shapes are not guaranteed.
-- Large sizes and high quality increase latency and cost.
-- For fast iteration or latency-sensitive runs, start with `quality=low`; raise to `high` for text-heavy or detail-critical outputs.
-- Use `input_fidelity=high` for strict edits (identity preservation, layout lock, or precise compositing).
+- Imagen 4 is generate-only; edits use Imagen 3.
+- Multiple reference images supported for edits (compositing, style transfer).
+- Mask must be same dimensions as input image; alpha channel marks edit region.
+- Use `negative_prompt` to steer away from unwanted elements.
+- Aspect ratio is set via config, not pixel dimensions.
+- For async operations: `client.aio.models.generate_images(...)`.

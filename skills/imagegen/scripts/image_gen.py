@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Generate or edit images with the OpenAI Image API.
+"""Generate or edit images with the Google Gemini Imagen API.
 
-Defaults to gpt-image-1.5 and a structured prompt augmentation workflow.
+Defaults to imagen-4.0-generate-001 and a structured prompt augmentation workflow.
 """
 
 from __future__ import annotations
 
 import argparse
 import asyncio
-import base64
 import json
 import os
 from pathlib import Path
@@ -19,19 +18,24 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from io import BytesIO
 
-DEFAULT_MODEL = "gpt-image-1.5"
-DEFAULT_SIZE = "1024x1024"
-DEFAULT_QUALITY = "auto"
+DEFAULT_MODEL_GENERATE = "imagen-4.0-generate-001"
+DEFAULT_MODEL_EDIT = "imagen-3.0-capability-001"
+DEFAULT_ASPECT_RATIO = "1:1"
 DEFAULT_OUTPUT_FORMAT = "png"
 DEFAULT_CONCURRENCY = 5
 DEFAULT_DOWNSCALE_SUFFIX = "-web"
 
-ALLOWED_SIZES = {"1024x1024", "1536x1024", "1024x1536", "auto"}
-ALLOWED_QUALITIES = {"low", "medium", "high", "auto"}
-ALLOWED_BACKGROUNDS = {"transparent", "opaque", "auto", None}
+ALLOWED_ASPECT_RATIOS = {"1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"}
 
 MAX_IMAGE_BYTES = 50 * 1024 * 1024
 MAX_BATCH_JOBS = 500
+
+# Deprecated --size mapping to --aspect-ratio
+_SIZE_TO_ASPECT_RATIO = {
+    "1024x1024": "1:1",
+    "1536x1024": "3:2",
+    "1024x1536": "2:3",
+}
 
 
 def _die(message: str, code: int = 1) -> None:
@@ -44,13 +48,14 @@ def _warn(message: str) -> None:
 
 
 def _ensure_api_key(dry_run: bool) -> None:
-    if os.getenv("OPENAI_API_KEY"):
-        print("OPENAI_API_KEY is set.", file=sys.stderr)
+    if os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"):
+        key_name = "GEMINI_API_KEY" if os.getenv("GEMINI_API_KEY") else "GOOGLE_API_KEY"
+        print(f"{key_name} is set.", file=sys.stderr)
         return
     if dry_run:
-        _warn("OPENAI_API_KEY is not set; dry-run only.")
+        _warn("GEMINI_API_KEY is not set; dry-run only.")
         return
-    _die("OPENAI_API_KEY is not set. Export it before running.")
+    _die("GEMINI_API_KEY (or GOOGLE_API_KEY) is not set. Export it before running.")
 
 
 def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
@@ -88,41 +93,18 @@ def _normalize_output_format(fmt: Optional[str]) -> str:
     return "jpeg" if fmt == "jpg" else fmt
 
 
-def _validate_size(size: str) -> None:
-    if size not in ALLOWED_SIZES:
-        _die(
-            "size must be one of 1024x1024, 1536x1024, 1024x1536, or auto for GPT image models."
-        )
-
-
-def _validate_quality(quality: str) -> None:
-    if quality not in ALLOWED_QUALITIES:
-        _die("quality must be one of low, medium, high, or auto.")
-
-
-def _validate_background(background: Optional[str]) -> None:
-    if background not in ALLOWED_BACKGROUNDS:
-        _die("background must be one of transparent, opaque, or auto.")
-
-
-def _validate_transparency(background: Optional[str], output_format: str) -> None:
-    if background == "transparent" and output_format not in {"png", "webp"}:
-        _die("transparent background requires output-format png or webp.")
+def _validate_aspect_ratio(ratio: str) -> None:
+    if ratio not in ALLOWED_ASPECT_RATIOS:
+        _die(f"aspect-ratio must be one of {', '.join(sorted(ALLOWED_ASPECT_RATIOS))}.")
 
 
 def _validate_generate_payload(payload: Dict[str, Any]) -> None:
-    n = int(payload.get("n", 1))
-    if n < 1 or n > 10:
-        _die("n must be between 1 and 10")
-    size = str(payload.get("size", DEFAULT_SIZE))
-    quality = str(payload.get("quality", DEFAULT_QUALITY))
-    background = payload.get("background")
-    _validate_size(size)
-    _validate_quality(quality)
-    _validate_background(background)
-    oc = payload.get("output_compression")
-    if oc is not None and not (0 <= int(oc) <= 100):
-        _die("output_compression must be between 0 and 100")
+    n = int(payload.get("number_of_images", 1))
+    if n < 1 or n > 4:
+        _die("n must be between 1 and 4")
+    ratio = payload.get("aspect_ratio")
+    if ratio:
+        _validate_aspect_ratio(ratio)
 
 
 def _build_output_paths(
@@ -164,7 +146,9 @@ def _augment_prompt(args: argparse.Namespace, prompt: str) -> str:
     return _augment_prompt_fields(args.augment, prompt, fields)
 
 
-def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optional[str]]) -> str:
+def _augment_prompt_fields(
+    augment: bool, prompt: str, fields: Dict[str, Optional[str]]
+) -> str:
     if not augment:
         return prompt
 
@@ -187,7 +171,7 @@ def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optiona
     if fields.get("materials"):
         sections.append(f"Materials/textures: {fields['materials']}")
     if fields.get("text"):
-        sections.append(f"Text (verbatim): \"{fields['text']}\"")
+        sections.append(f'Text (verbatim): "{fields["text"]}"')
     if fields.get("constraints"):
         sections.append(f"Constraints: {fields['constraints']}")
     if fields.get("negative"):
@@ -216,15 +200,15 @@ def _print_request(payload: dict) -> None:
     print(json.dumps(payload, indent=2, sort_keys=True))
 
 
-def _decode_and_write(images: List[str], outputs: List[Path], force: bool) -> None:
-    for idx, image_b64 in enumerate(images):
+def _write_images(images: List[bytes], outputs: List[Path], force: bool) -> None:
+    for idx, image_bytes in enumerate(images):
         if idx >= len(outputs):
             break
         out_path = outputs[idx]
         if out_path.exists() and not force:
             _die(f"Output already exists: {out_path} (use --force to overwrite)")
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_bytes(base64.b64decode(image_b64))
+        out_path.write_bytes(image_bytes)
         print(f"Wrote {out_path}")
 
 
@@ -234,7 +218,9 @@ def _derive_downscale_path(path: Path, suffix: str) -> Path:
     return path.with_name(f"{path.stem}{suffix}{path.suffix}")
 
 
-def _downscale_image_bytes(image_bytes: bytes, *, max_dim: int, output_format: str) -> bytes:
+def _downscale_image_bytes(
+    image_bytes: bytes, *, max_dim: int, output_format: str
+) -> bytes:
     try:
         from PIL import Image
     except Exception:
@@ -251,16 +237,22 @@ def _downscale_image_bytes(image_bytes: bytes, *, max_dim: int, output_format: s
         scale = min(1.0, float(max_dim) / float(max(w, h)))
         target = (max(1, int(round(w * scale))), max(1, int(round(h * scale))))
 
-        resized = img if target == (w, h) else img.resize(target, Image.Resampling.LANCZOS)
+        resized = (
+            img if target == (w, h) else img.resize(target, Image.Resampling.LANCZOS)
+        )
 
         fmt = output_format.lower()
         if fmt == "jpg":
             fmt = "jpeg"
 
         if fmt == "jpeg":
-            if resized.mode in ("RGBA", "LA") or ("transparency" in getattr(resized, "info", {})):
+            if resized.mode in ("RGBA", "LA") or (
+                "transparency" in getattr(resized, "info", {})
+            ):
                 bg = Image.new("RGB", resized.size, (255, 255, 255))
-                bg.paste(resized.convert("RGBA"), mask=resized.convert("RGBA").split()[-1])
+                bg.paste(
+                    resized.convert("RGBA"), mask=resized.convert("RGBA").split()[-1]
+                )
                 resized = bg
             else:
                 resized = resized.convert("RGB")
@@ -270,8 +262,8 @@ def _downscale_image_bytes(image_bytes: bytes, *, max_dim: int, output_format: s
         return out.getvalue()
 
 
-def _decode_write_and_downscale(
-    images: List[str],
+def _write_and_downscale(
+    images: List[bytes],
     outputs: List[Path],
     *,
     force: bool,
@@ -279,7 +271,7 @@ def _decode_write_and_downscale(
     downscale_suffix: str,
     output_format: str,
 ) -> None:
-    for idx, image_b64 in enumerate(images):
+    for idx, image_bytes in enumerate(images):
         if idx >= len(outputs):
             break
         out_path = outputs[idx]
@@ -287,8 +279,7 @@ def _decode_write_and_downscale(
             _die(f"Output already exists: {out_path} (use --force to overwrite)")
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        raw = base64.b64decode(image_b64)
-        out_path.write_bytes(raw)
+        out_path.write_bytes(image_bytes)
         print(f"Wrote {out_path}")
 
         if downscale_max_dim is None:
@@ -298,31 +289,28 @@ def _decode_write_and_downscale(
         if derived.exists() and not force:
             _die(f"Output already exists: {derived} (use --force to overwrite)")
         derived.parent.mkdir(parents=True, exist_ok=True)
-        resized = _downscale_image_bytes(raw, max_dim=downscale_max_dim, output_format=output_format)
+        resized = _downscale_image_bytes(
+            image_bytes, max_dim=downscale_max_dim, output_format=output_format
+        )
         derived.write_bytes(resized)
         print(f"Wrote {derived}")
 
 
 def _create_client():
     try:
-        from openai import OpenAI
-    except ImportError as exc:
-        _die("openai SDK not installed. Install with `uv pip install openai`.")
-    return OpenAI()
+        from google import genai
+    except ImportError:
+        _die(
+            "google-genai SDK not installed. Install with `uv pip install google-genai`."
+        )
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if api_key:
+        return genai.Client(api_key=api_key)
+    return genai.Client()
 
 
 def _create_async_client():
-    try:
-        from openai import AsyncOpenAI
-    except ImportError:
-        try:
-            import openai as _openai  # noqa: F401
-        except ImportError:
-            _die("openai SDK not installed. Install with `uv pip install openai`.")
-        _die(
-            "AsyncOpenAI not available in this openai SDK version. Upgrade with `uv pip install -U openai`."
-        )
-    return AsyncOpenAI()
+    return _create_client()
 
 
 def _slugify(value: str) -> str:
@@ -406,14 +394,10 @@ def _job_output_paths(
 
     if n == 1:
         return [base]
-    return [
-        base.with_name(f"{base.stem}-{i}{base.suffix}")
-        for i in range(1, n + 1)
-    ]
+    return [base.with_name(f"{base.stem}-{i}{base.suffix}") for i in range(1, n + 1)]
 
 
 def _extract_retry_after_seconds(exc: Exception) -> Optional[float]:
-    # Best-effort: openai SDK errors vary by version. Prefer a conservative fallback.
     for attr in ("retry_after", "retry_after_seconds"):
         val = getattr(exc, attr, None)
         if isinstance(val, (int, float)) and val >= 0:
@@ -448,15 +432,21 @@ def _is_transient_error(exc: Exception) -> bool:
 
 async def _generate_one_with_retries(
     client: Any,
-    payload: Dict[str, Any],
     *,
+    model: str,
+    prompt: str,
+    config: Any,
     attempts: int,
     job_label: str,
 ) -> Any:
     last_exc: Optional[Exception] = None
     for attempt in range(1, attempts + 1):
         try:
-            return await client.images.generate(**payload)
+            return await client.aio.models.generate_images(
+                model=model,
+                prompt=prompt,
+                config=config,
+            )
         except Exception as exc:
             last_exc = exc
             if not _is_transient_error(exc):
@@ -479,37 +469,41 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
     out_dir = Path(args.out_dir)
 
     base_fields = _fields_from_args(args)
-    base_payload = {
-        "model": args.model,
-        "n": args.n,
-        "size": args.size,
-        "quality": args.quality,
-        "background": args.background,
-        "output_format": args.output_format,
-        "output_compression": args.output_compression,
-        "moderation": args.moderation,
+    base_config = {
+        "number_of_images": args.n,
+        "aspect_ratio": args.aspect_ratio,
     }
+    if args.negative_prompt:
+        base_config["negative_prompt"] = args.negative_prompt
+    if args.person_generation:
+        base_config["person_generation"] = args.person_generation
+    if args.safety_filter_level:
+        base_config["safety_filter_level"] = args.safety_filter_level
 
     if args.dry_run:
         for i, job in enumerate(jobs, start=1):
             prompt = str(job["prompt"]).strip()
             fields = _merge_non_null(base_fields, job.get("fields", {}))
-            # Allow flat job keys as well (use_case, scene, etc.)
-            fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields.keys()})
+            fields = _merge_non_null(
+                fields, {k: job.get(k) for k in base_fields.keys()}
+            )
             augmented = _augment_prompt_fields(args.augment, prompt, fields)
 
-            job_payload = dict(base_payload)
-            job_payload["prompt"] = augmented
-            job_payload = _merge_non_null(job_payload, {k: job.get(k) for k in base_payload.keys()})
-            job_payload = {k: v for k, v in job_payload.items() if v is not None}
+            job_config = dict(base_config)
+            # Allow per-job overrides for config keys
+            for k in list(base_config.keys()):
+                if k in job and job[k] is not None:
+                    job_config[k] = job[k]
+            # Allow per-job n override
+            if "n" in job:
+                job_config["number_of_images"] = int(job["n"])
 
-            _validate_generate_payload(job_payload)
-            effective_output_format = _normalize_output_format(job_payload.get("output_format"))
-            _validate_transparency(job_payload.get("background"), effective_output_format)
-            if "output_format" in job_payload:
-                job_payload["output_format"] = effective_output_format
+            _validate_generate_payload(job_config)
+            effective_output_format = _normalize_output_format(
+                job.get("output_format") or args.output_format
+            )
 
-            n = int(job_payload.get("n", 1))
+            n = int(job_config.get("number_of_images", 1))
             outputs = _job_output_paths(
                 out_dir=out_dir,
                 output_format=effective_output_format,
@@ -521,18 +515,23 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
             downscaled = None
             if args.downscale_max_dim is not None:
                 downscaled = [
-                    str(_derive_downscale_path(p, args.downscale_suffix)) for p in outputs
+                    str(_derive_downscale_path(p, args.downscale_suffix))
+                    for p in outputs
                 ]
             _print_request(
                 {
-                    "endpoint": "/v1/images/generations",
+                    "endpoint": "models.generate_images",
                     "job": i,
+                    "model": job.get("model", args.model),
+                    "prompt": augmented,
+                    "config": job_config,
                     "outputs": [str(p) for p in outputs],
                     "outputs_downscaled": downscaled,
-                    **job_payload,
                 }
             )
         return 0
+
+    from google.genai.types import GenerateImagesConfig
 
     client = _create_async_client()
     sem = asyncio.Semaphore(args.concurrency)
@@ -548,17 +547,21 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
         fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields.keys()})
         augmented = _augment_prompt_fields(args.augment, prompt, fields)
 
-        payload = dict(base_payload)
-        payload["prompt"] = augmented
-        payload = _merge_non_null(payload, {k: job.get(k) for k in base_payload.keys()})
-        payload = {k: v for k, v in payload.items() if v is not None}
+        job_config = dict(base_config)
+        for k in list(base_config.keys()):
+            if k in job and job[k] is not None:
+                job_config[k] = job[k]
+        if "n" in job:
+            job_config["number_of_images"] = int(job["n"])
 
-        n = int(payload.get("n", 1))
-        _validate_generate_payload(payload)
-        effective_output_format = _normalize_output_format(payload.get("output_format"))
-        _validate_transparency(payload.get("background"), effective_output_format)
-        if "output_format" in payload:
-            payload["output_format"] = effective_output_format
+        _validate_generate_payload(job_config)
+        effective_output_format = _normalize_output_format(
+            job.get("output_format") or args.output_format
+        )
+
+        n = int(job_config.get("number_of_images", 1))
+        job_model = job.get("model", args.model)
+
         outputs = _job_output_paths(
             out_dir=out_dir,
             output_format=effective_output_format,
@@ -573,14 +576,16 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
                 started = time.time()
                 result = await _generate_one_with_retries(
                     client,
-                    payload,
+                    model=job_model,
+                    prompt=augmented,
+                    config=GenerateImagesConfig(**job_config),
                     attempts=args.max_attempts,
                     job_label=job_label,
                 )
                 elapsed = time.time() - started
                 print(f"{job_label} completed in {elapsed:.1f}s", file=sys.stderr)
-            images = [item.b64_json for item in result.data]
-            _decode_write_and_downscale(
+            images = [img.image.image_bytes for img in result.generated_images]
+            _write_and_downscale(
                 images,
                 outputs,
                 force=args.force,
@@ -596,7 +601,9 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
                 raise
             return i, str(exc)
 
-    tasks = [asyncio.create_task(run_job(i, job)) for i, job in enumerate(jobs, start=1)]
+    tasks = [
+        asyncio.create_task(run_job(i, job)) for i, job in enumerate(jobs, start=1)
+    ]
 
     try:
         await asyncio.gather(*tasks)
@@ -619,41 +626,49 @@ def _generate(args: argparse.Namespace) -> None:
     prompt = _read_prompt(args.prompt, args.prompt_file)
     prompt = _augment_prompt(args, prompt)
 
+    config_kwargs = {
+        "number_of_images": args.n,
+        "aspect_ratio": args.aspect_ratio,
+    }
+    if args.negative_prompt:
+        config_kwargs["negative_prompt"] = args.negative_prompt
+    if args.person_generation:
+        config_kwargs["person_generation"] = args.person_generation
+    if args.safety_filter_level:
+        config_kwargs["safety_filter_level"] = args.safety_filter_level
+
     payload = {
         "model": args.model,
         "prompt": prompt,
-        "n": args.n,
-        "size": args.size,
-        "quality": args.quality,
-        "background": args.background,
-        "output_format": args.output_format,
-        "output_compression": args.output_compression,
-        "moderation": args.moderation,
+        "config": config_kwargs,
     }
-    payload = {k: v for k, v in payload.items() if v is not None}
 
     output_format = _normalize_output_format(args.output_format)
-    _validate_transparency(args.background, output_format)
-    if "output_format" in payload:
-        payload["output_format"] = output_format
     output_paths = _build_output_paths(args.out, output_format, args.n, args.out_dir)
 
     if args.dry_run:
-        _print_request({"endpoint": "/v1/images/generations", **payload})
+        _print_request({"endpoint": "models.generate_images", **payload})
         return
 
     print(
-        "Calling Image API (generation). This can take up to a couple of minutes.",
+        "Calling Imagen API (generation). This can take up to a couple of minutes.",
         file=sys.stderr,
     )
     started = time.time()
+
+    from google.genai.types import GenerateImagesConfig
+
     client = _create_client()
-    result = client.images.generate(**payload)
+    result = client.models.generate_images(
+        model=args.model,
+        prompt=prompt,
+        config=GenerateImagesConfig(**config_kwargs),
+    )
     elapsed = time.time() - started
     print(f"Generation completed in {elapsed:.1f}s.", file=sys.stderr)
 
-    images = [item.b64_json for item in result.data]
-    _decode_write_and_downscale(
+    images = [img.image.image_bytes for img in result.generated_images]
+    _write_and_downscale(
         images,
         output_paths,
         force=args.force,
@@ -677,52 +692,75 @@ def _edit(args: argparse.Namespace) -> None:
         if mask_path.stat().st_size > MAX_IMAGE_BYTES:
             _warn(f"Mask exceeds 50MB limit: {mask_path}")
 
-    payload = {
-        "model": args.model,
-        "prompt": prompt,
-        "n": args.n,
-        "size": args.size,
-        "quality": args.quality,
-        "background": args.background,
-        "output_format": args.output_format,
-        "output_compression": args.output_compression,
-        "input_fidelity": args.input_fidelity,
-        "moderation": args.moderation,
+    config_kwargs = {
+        "number_of_images": args.n,
     }
-    payload = {k: v for k, v in payload.items() if v is not None}
+    if args.negative_prompt:
+        config_kwargs["negative_prompt"] = args.negative_prompt
+    if args.person_generation:
+        config_kwargs["person_generation"] = args.person_generation
+    if args.safety_filter_level:
+        config_kwargs["safety_filter_level"] = args.safety_filter_level
 
     output_format = _normalize_output_format(args.output_format)
-    _validate_transparency(args.background, output_format)
-    if "output_format" in payload:
-        payload["output_format"] = output_format
     output_paths = _build_output_paths(args.out, output_format, args.n, args.out_dir)
 
     if args.dry_run:
-        payload_preview = dict(payload)
-        payload_preview["image"] = [str(p) for p in image_paths]
+        payload_preview = {
+            "endpoint": "models.edit_image",
+            "model": args.model,
+            "prompt": prompt,
+            "reference_images": [str(p) for p in image_paths],
+        }
         if mask_path:
             payload_preview["mask"] = str(mask_path)
-        _print_request({"endpoint": "/v1/images/edits", **payload_preview})
+        payload_preview["config"] = config_kwargs
+        _print_request(payload_preview)
         return
 
     print(
-        f"Calling Image API (edit) with {len(image_paths)} image(s).",
-        file=sys.stderr,
+        f"Calling Imagen API (edit) with {len(image_paths)} image(s).", file=sys.stderr
     )
     started = time.time()
+
+    from google.genai.types import (
+        RawReferenceImage,
+        MaskReferenceImage,
+        MaskReferenceConfig,
+        EditImageConfig,
+        Image,
+    )
+
     client = _create_client()
 
-    with _open_files(image_paths) as image_files, _open_mask(mask_path) as mask_file:
-        request = dict(payload)
-        request["image"] = image_files if len(image_files) > 1 else image_files[0]
-        if mask_file is not None:
-            request["mask"] = mask_file
-        result = client.images.edit(**request)
+    reference_images = []
+    for idx, img_path in enumerate(image_paths):
+        reference_images.append(
+            RawReferenceImage(
+                reference_image=Image.from_file(location=str(img_path)),
+                reference_id=idx,
+            )
+        )
+    if mask_path:
+        reference_images.append(
+            MaskReferenceImage(
+                reference_image=Image.from_file(location=str(mask_path)),
+                reference_id=0,
+                config=MaskReferenceConfig(mask_mode="MASK_MODE_USER_PROVIDED"),
+            )
+        )
+
+    result = client.models.edit_image(
+        model=args.model,
+        prompt=prompt,
+        reference_images=reference_images,
+        config=EditImageConfig(**config_kwargs),
+    )
 
     elapsed = time.time() - started
     print(f"Edit completed in {elapsed:.1f}s.", file=sys.stderr)
-    images = [item.b64_json for item in result.data]
-    _decode_write_and_downscale(
+    images = [img.image.image_bytes for img in result.generated_images]
+    _write_and_downscale(
         images,
         output_paths,
         force=args.force,
@@ -732,71 +770,52 @@ def _edit(args: argparse.Namespace) -> None:
     )
 
 
-def _open_files(paths: List[Path]):
-    return _FileBundle(paths)
+def _handle_size_deprecation(args: argparse.Namespace) -> None:
+    size = getattr(args, "size", None)
+    if size is None:
+        return
+    _warn(
+        f"--size is deprecated and will be removed in a future version. "
+        f"Use --aspect-ratio instead."
+    )
+    if size == "auto":
+        # 'auto' means don't set aspect_ratio — leave the default
+        return
+    mapped = _SIZE_TO_ASPECT_RATIO.get(size)
+    if mapped:
+        args.aspect_ratio = mapped
+    else:
+        _warn(f"Unknown --size value '{size}'; ignoring. Use --aspect-ratio directly.")
 
 
-def _open_mask(mask_path: Optional[Path]):
-    if mask_path is None:
-        return _NullContext()
-    return _SingleFile(mask_path)
-
-
-class _NullContext:
-    def __enter__(self):
-        return None
-
-    def __exit__(self, exc_type, exc, tb):
-        return False
-
-
-class _SingleFile:
-    def __init__(self, path: Path):
-        self._path = path
-        self._handle = None
-
-    def __enter__(self):
-        self._handle = self._path.open("rb")
-        return self._handle
-
-    def __exit__(self, exc_type, exc, tb):
-        if self._handle:
-            try:
-                self._handle.close()
-            except Exception:
-                pass
-        return False
-
-
-class _FileBundle:
-    def __init__(self, paths: List[Path]):
-        self._paths = paths
-        self._handles: List[object] = []
-
-    def __enter__(self):
-        self._handles = [p.open("rb") for p in self._paths]
-        return self._handles
-
-    def __exit__(self, exc_type, exc, tb):
-        for handle in self._handles:
-            try:
-                handle.close()
-            except Exception:
-                pass
-        return False
-
-
-def _add_shared_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--model", default=DEFAULT_MODEL)
+def _add_shared_args(parser: argparse.ArgumentParser, *, default_model: str) -> None:
+    parser.add_argument("--model", default=default_model)
     parser.add_argument("--prompt")
     parser.add_argument("--prompt-file")
     parser.add_argument("--n", type=int, default=1)
-    parser.add_argument("--size", default=DEFAULT_SIZE)
-    parser.add_argument("--quality", default=DEFAULT_QUALITY)
-    parser.add_argument("--background")
+    parser.add_argument("--aspect-ratio", default=DEFAULT_ASPECT_RATIO)
+    parser.add_argument(
+        "--size",
+        default=None,
+        help="[DEPRECATED] Use --aspect-ratio instead. Maps: 1024x1024→1:1, 1536x1024→3:2, 1024x1536→2:3",
+    )
+    parser.add_argument("--negative-prompt", default=None)
+    parser.add_argument(
+        "--person-generation",
+        default=None,
+        choices=["DONT_ALLOW", "ALLOW_ADULT"],
+    )
+    parser.add_argument(
+        "--safety-filter-level",
+        default=None,
+        choices=[
+            "BLOCK_LOW_AND_ABOVE",
+            "BLOCK_MEDIUM_AND_ABOVE",
+            "BLOCK_ONLY_HIGH",
+            "BLOCK_NONE",
+        ],
+    )
     parser.add_argument("--output-format")
-    parser.add_argument("--output-compression", type=int)
-    parser.add_argument("--moderation")
     parser.add_argument("--out", default="output.png")
     parser.add_argument("--out-dir")
     parser.add_argument("--force", action="store_true")
@@ -824,48 +843,54 @@ def _add_shared_args(parser: argparse.ArgumentParser) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate or edit images via the Image API")
+    parser = argparse.ArgumentParser(
+        description="Generate or edit images via the Gemini Imagen API"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     gen_parser = subparsers.add_parser("generate", help="Create a new image")
-    _add_shared_args(gen_parser)
+    _add_shared_args(gen_parser, default_model=DEFAULT_MODEL_GENERATE)
     gen_parser.set_defaults(func=_generate)
 
     batch_parser = subparsers.add_parser(
         "generate-batch",
         help="Generate multiple prompts concurrently (JSONL input)",
     )
-    _add_shared_args(batch_parser)
-    batch_parser.add_argument("--input", required=True, help="Path to JSONL file (one job per line)")
+    _add_shared_args(batch_parser, default_model=DEFAULT_MODEL_GENERATE)
+    batch_parser.add_argument(
+        "--input", required=True, help="Path to JSONL file (one job per line)"
+    )
     batch_parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY)
     batch_parser.add_argument("--max-attempts", type=int, default=3)
     batch_parser.add_argument("--fail-fast", action="store_true")
     batch_parser.set_defaults(func=_generate_batch)
 
     edit_parser = subparsers.add_parser("edit", help="Edit an existing image")
-    _add_shared_args(edit_parser)
+    _add_shared_args(edit_parser, default_model=DEFAULT_MODEL_EDIT)
     edit_parser.add_argument("--image", action="append", required=True)
     edit_parser.add_argument("--mask")
-    edit_parser.add_argument("--input-fidelity")
     edit_parser.set_defaults(func=_edit)
 
     args = parser.parse_args()
-    if args.n < 1 or args.n > 10:
-        _die("--n must be between 1 and 10")
+    if args.n < 1 or args.n > 4:
+        _die("--n must be between 1 and 4")
     if getattr(args, "concurrency", 1) < 1 or getattr(args, "concurrency", 1) > 25:
         _die("--concurrency must be between 1 and 25")
     if getattr(args, "max_attempts", 3) < 1 or getattr(args, "max_attempts", 3) > 10:
         _die("--max-attempts must be between 1 and 10")
-    if args.output_compression is not None and not (0 <= args.output_compression <= 100):
-        _die("--output-compression must be between 0 and 100")
     if args.command == "generate-batch" and not args.out_dir:
         _die("generate-batch requires --out-dir")
-    if getattr(args, "downscale_max_dim", None) is not None and args.downscale_max_dim < 1:
+    if (
+        getattr(args, "downscale_max_dim", None) is not None
+        and args.downscale_max_dim < 1
+    ):
         _die("--downscale-max-dim must be >= 1")
 
-    _validate_size(args.size)
-    _validate_quality(args.quality)
-    _validate_background(args.background)
+    if getattr(args, "size", None) is not None:
+        _handle_size_deprecation(args)
+
+    _validate_aspect_ratio(args.aspect_ratio)
+
     _ensure_api_key(args.dry_run)
 
     args.func(args)
