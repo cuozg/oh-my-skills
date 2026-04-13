@@ -3,44 +3,86 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Execute the goals in Docs/Goals/. There's a pending goal at Docs/Goals/combat/add-parry-mechanic.md with title '[Combat] Add parry mechanic'. The project is a Unity project with existing spec at Docs/Specs/Combat.md that defines the combat system architecture including class diagrams, state machines, and event definitions.",
-      "expected_output": "The skill reads the goal file, then checks Docs/Specs/ for a matching spec before exploring the codebase. It finds Combat.md, reads it, and uses it as architectural context when planning and delegating sub-tasks. After completing the goal and passing the Final Goal Review Gate, it delegates a spec update via unity-spec Update mode to reflect the new parry mechanic implementation. The updated spec is saved to Docs/Specs/Combat.md.",
+      "prompt": "Execute the goals in Docs/Goals/. Master.md lists one pending goal: Docs/Goals/combat/add-parry-mechanic.md with title '[Combat] Add parry mechanic' (priority: high, no dependencies). The project is a Unity project with existing spec at Docs/Specs/Combat.md. The repo is on branch 'main' with a clean working tree.",
+      "expected_output": "The skill reads Master.md, identifies the single pending goal, creates a git worktree with branch goal/combat-add-parry, spawns a subagent in that worktree with full goal text + spec content. The subagent implements, verifies (three gates), commits, pushes, and creates a PR. The controller verifies the PR, marks the goal complete, delegates a spec update, and cleans up the worktree.",
       "files": [],
       "expectations": [
-        "Step 2 checks Docs/Specs/ for a spec matching the [Combat] feature before exploring codebase",
-        "Reads Docs/Specs/Combat.md and uses its Systems Design and Events sections as implementation context",
-        "Includes spec content in delegation prompts to implementer subagents",
-        "After Step 7 passes, delegates a spec update using unity-spec with Update mode",
-        "The spec update delegation includes load_skills=['unity-spec', 'unity-standards']",
-        "The spec update delegation instructs the subagent to save without blocking for user review",
-        "Execution summary includes a 'Spec Updates' section mentioning Combat.md"
+        "Reads Docs/Goals/Master.md first as the source of truth for goals",
+        "Creates a git worktree with a goal/ prefixed branch (e.g., goal/combat-add-parry)",
+        "Worktree is created outside the repo root (e.g., ../.worktrees/)",
+        "Spawns a subagent with run_in_background=true for the goal",
+        "Subagent prompt includes the full goal text (objective, criteria, constraints)",
+        "Subagent prompt includes the Docs/Specs/Combat.md spec content as architectural blueprint",
+        "Subagent prompt includes the worktree path and branch name",
+        "Subagent performs three-gate verification (static analysis, domain check, spec compliance)",
+        "Subagent commits changes and pushes the branch",
+        "Subagent creates a PR via gh pr create with --base main --head goal/combat-add-parry",
+        "Controller delegates a spec update after goal completes",
+        "Controller cleans up the worktree after PR is confirmed",
+        "Execution summary includes Pull Requests Created section with PR URL"
       ]
     },
     {
       "id": 2,
-      "prompt": "Execute goals. There's a pending goal at Docs/Goals/crafting/implement-recipe-system.md with title '[Crafting] Implement recipe system'. This is a Unity project. No spec exists in Docs/Specs/ for Crafting — the directory has specs for other features but not this one.",
-      "expected_output": "The skill reads the goal, checks Docs/Specs/ for a Crafting spec, finds none, notes this and proceeds with implementation using only the goal file and codebase exploration. After completing the goal and passing the Final Goal Review Gate, it delegates a spec creation (Feature Spec mode, not Update mode) via unity-spec to create Docs/Specs/Crafting.md from the implementation.",
+      "prompt": "Execute goals. Master.md lists three pending goals with no dependencies between them: '[Combat] Add parry' (high), '[UI] Build health bar' (high), '[Audio] Add footstep sounds' (medium). The project is Unity. All three can execute in parallel (Wave 1). The repo is on branch 'main'.",
+      "expected_output": "The skill reads Master.md, identifies all three goals as independent (no depends_on), groups them into Wave 1. Creates three git worktrees in parallel with branches goal/combat-add-parry, goal/ui-build-health-bar, goal/audio-add-footstep-sounds. Spawns three subagents with run_in_background=true simultaneously. Each works independently. Controller collects results as agents complete, verifies PRs, updates Master.md, cleans up worktrees.",
       "files": [],
       "expectations": [
-        "Step 2 checks Docs/Specs/ for a Crafting spec and correctly determines none exists",
-        "Proceeds with implementation without a spec, using goal acceptance criteria and codebase exploration",
-        "After Step 7 passes, delegates a spec creation using unity-spec Feature Spec mode (not Update mode)",
-        "The spec creation results in a new Docs/Specs/Crafting.md file",
-        "Execution summary includes a 'Spec Updates' section mentioning Crafting.md was created"
+        "Reads Master.md and identifies all three goals as independent (Wave 1)",
+        "Creates three separate git worktrees — one per goal",
+        "Each worktree has a unique goal/-prefixed branch",
+        "Spawns three subagents in parallel (all with run_in_background=true)",
+        "No sequential waiting — all agents launched in the same turn",
+        "Each subagent receives its own worktree path and branch",
+        "Controller processes completion notifications as they arrive",
+        "Each goal gets its own PR created back to main",
+        "Master.md is updated with completed status for finished goals",
+        "Worktrees are cleaned up after PRs are confirmed"
       ]
     },
     {
       "id": 3,
-      "prompt": "Execute goals. There are two pending goals: Docs/Goals/inventory-system/add-sorting.md with title '[Inventory System] Add sorting' (priority: high) and Docs/Goals/inventory-system/add-filtering.md with title '[Inventory System] Add filtering' (priority: medium). The project is Unity. A spec exists at Docs/Specs/Inventory_System.md. Execute both goals in priority order.",
-      "expected_output": "The skill processes the high-priority sorting goal first, reads Docs/Specs/Inventory_System.md as architectural context, implements the goal, passes review gate, updates the spec. Then processes the filtering goal, re-reads the now-updated spec (which includes the sorting changes), implements, passes review gate, and updates the spec again. Both spec updates use Update mode since the spec exists.",
+      "prompt": "Execute goals. Master.md lists: '[Core] Add event system' (high, no deps) and '[Combat] Add parry mechanic' (high, depends_on: '[Core] Add event system'). The project is Unity. The second goal cannot start until the first completes.",
+      "expected_output": "The skill reads Master.md, builds a dependency graph. Wave 1 contains only '[Core] Add event system'. Wave 2 contains '[Combat] Add parry mechanic'. Creates worktree for Wave 1, spawns subagent. After Wave 1 completes and PR is created, creates worktree for Wave 2 branching from the updated base (or the Wave 1 branch), spawns second subagent. Sequential wave execution respecting dependencies.",
       "files": [],
       "expectations": [
-        "Processes [Inventory System] Add sorting first (high priority) before Add filtering (medium)",
-        "Reads Docs/Specs/Inventory_System.md before implementing the first goal",
-        "Updates the spec after completing the sorting goal via unity-spec Update mode",
-        "Re-reads the updated spec before implementing the filtering goal (captures sorting changes)",
-        "Updates the spec again after completing the filtering goal",
-        "Feature name mapping correctly converts '[Inventory System]' to 'Inventory_System.md' spec lookup"
+        "Reads Master.md and builds a dependency DAG",
+        "Identifies Wave 1: [Core] Add event system (no deps)",
+        "Identifies Wave 2: [Combat] Add parry mechanic (depends on Core)",
+        "Creates worktree and spawns subagent for Wave 1 only",
+        "Does NOT create Wave 2 worktree until Wave 1 completes",
+        "After Wave 1 PR is created, proceeds to Wave 2",
+        "Wave 2 worktree branches from updated base to include Wave 1 changes",
+        "Each wave gets its own worktree and subagent",
+        "Execution summary shows waves executed and dependency ordering"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Execute goals. Master.md lists one pending goal: '[Crafting] Implement recipe system' (high). No spec exists in Docs/Specs/ for Crafting. The project is Unity. Repo on branch 'main'.",
+      "expected_output": "The skill reads Master.md, creates worktree, spawns subagent. The subagent is told no spec exists. After the goal completes and PR is created, the controller delegates a spec CREATION (Feature Spec mode, not Update) via unity-spec to create Docs/Specs/Crafting.md from the implementation.",
+      "files": [],
+      "expectations": [
+        "Checks Docs/Specs/ for Crafting spec and correctly determines none exists",
+        "Subagent prompt says no spec exists — implement from acceptance criteria",
+        "After goal completes, delegates spec creation using Feature Spec mode (not Update)",
+        "Creates a worktree with goal/crafting-implement-recipe-system branch",
+        "Subagent creates PR after implementation",
+        "Spec creation results in new Docs/Specs/Crafting.md"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Execute goals. Master.md lists one pending goal but the subagent reports BLOCKED because the goal requires an API key that isn't configured. The controller must handle the blocked status.",
+      "expected_output": "The skill creates worktree, spawns subagent. When the subagent reports BLOCKED, the controller reads the blocker reason, marks the goal as blocked in Master.md and the goal file, cleans up the worktree, and reports the blocked goal with reason in the execution summary.",
+      "files": [],
+      "expectations": [
+        "Creates worktree and spawns subagent normally",
+        "When subagent reports BLOCKED, does not retry endlessly",
+        "Marks goal status as blocked in the goal file frontmatter",
+        "Updates Master.md with blocked status",
+        "Cleans up the worktree despite the goal being blocked",
+        "Execution summary reports the blocked goal with the blocker reason"
       ]
     }
   ]

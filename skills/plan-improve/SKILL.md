@@ -112,7 +112,8 @@ After all improvements:
 2. **Update goal files** — check off any newly completed criteria: `- [ ]` → `- [x]`
 3. **Run final diagnostics** — `lsp_diagnostics` on all modified files
 4. **Run build/tests** if applicable
-5. **Produce Improvement Report**:
+5. **Update Master.md** — if `Docs/Goals/Master.md` exists, sync any status changes from the improvement pass. If Master.md doesn't exist, create it from all goal files.
+6. **Produce Improvement Report**:
 
 ```
 ## Improvement Report

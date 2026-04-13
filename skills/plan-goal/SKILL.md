@@ -1,6 +1,6 @@
 ---
 name: plan-goal
-description: "Interactive goal creation and update skill — collaboratively defines structured goal files through clarifying questions and writes them to Docs/Goals/{feature-name}/{kebab-case-task}.md using the [Feature] Task title format. Every invocation MUST produce or update a goal document on disk. Always scans Docs/Goals/ and all subfolders to avoid duplicates and groups related goals by feature folder. Use when the user wants to create, update, or revise goals — 'new goal,' 'add a goal,' 'create a goal,' 'I want to achieve X,' 'plan this as a goal,' 'break this down into goals,' 'define acceptance criteria,' 'change the priority,' 'add a criterion,' 'bump priority.' Also triggers on 'I want to build X,' 'capture this as an executable plan,' 'write acceptance criteria,' 'scope this feature,' 'plan this,' 'spec this out,' or any work planned with verifiable criteria before coding starts. Produces one goal per file that plan-work executes autonomously."
+description: "Interactive goal creation, update, and tracking skill — write structured goal files to Docs/Goals/{feature-name}/{kebab-case-task}.md with acceptance criteria, and maintain Docs/Goals/Master.md as the central goals registry. Use for defining NEW goals, updating EXISTING goals (change priority, add criteria, mark complete/blocked), viewing goals dashboard, or scoping vague requests into concrete goals. Triggers: 'new goal,' 'create a goal,' 'plan this,' 'I want to build X,' 'break this down into goals,' 'scope this feature,' 'change the priority,' 'add a criterion,' 'mark as completed,' 'bump priority,' 'show me all goals,' 'goals dashboard,' 'what's the status.' Also use when the user describes a feature wish or improvement need that requires goal definition before implementation (e.g. 'make X faster,' 'we need Y,' 'add Z to the app'). Do NOT use for executing goals (plan-work) or reviewing completed work (plan-improve)."
 ---
 
 # Plan Goal — Interactive Goal Creator
@@ -22,6 +22,72 @@ Every invocation of this skill MUST produce a goal file on disk. This is the ski
 The document export happens at Step 7 and is **non-negotiable**. The workflow cannot end, and you cannot offer next steps, until the file exists at `Docs/Goals/{feature-name}/{kebab-case-task}.md`. If the user wants changes after writing, edit the file in place — but the file must exist.
 
 **Write first, revise later.** Don't wait for perfect confirmation to write. Write the goal as soon as your self-review passes (Step 6), then present it and offer revisions. A written draft that gets edited is infinitely more useful than a perfect draft that never gets saved.
+
+---
+
+## Master.md Contract — The Central Goal Registry
+
+Every time you create, update, or change the status of a goal, you MUST also create or update `Docs/Goals/Master.md`. This file is the single source of truth for all goals across all features — a bird's-eye view that `plan-work`, `plan-improve`, and humans all consult to understand the current state of the project's goals.
+
+Without Master.md, goals are scattered across feature folders with no overview. The user cannot quickly answer "what's pending?", "what blocks what?", or "how many goals do we have?" Master.md answers all of these instantly.
+
+### Master.md Format
+
+```markdown
+# Goals Master Registry
+
+> Auto-maintained by `plan-goal`. Last updated: {YYYY-MM-DD HH:MM}
+
+## Summary
+
+| Status | Count |
+|--------|-------|
+| pending | N |
+| in-progress | N |
+| completed | N |
+| blocked | N |
+| **Total** | **N** |
+
+## All Goals
+
+| # | Feature | Goal | Status | Priority | Dependencies | Path |
+|---|---------|------|--------|----------|--------------|------|
+| 1 | Authentication | Add JWT Token Validation | pending | high | — | `authentication/add-jwt-token-validation.md` |
+| 2 | Dark Mode | Implement Theme Switching | in-progress | medium | — | `dark-mode/implement-theme-switching.md` |
+| 3 | CI/CD | Set Up GitHub Actions | blocked | high | `authentication/add-jwt-token-validation.md` | `ci-cd/set-up-github-actions.md` |
+```
+
+**Valid statuses:** `pending`, `in-progress`, `completed`, `blocked`. A goal is `blocked` when its `depends_on` goals are not yet `completed`. When the blocking goal completes, update the blocked goal to `pending` (or `in-progress` if work can start immediately).
+
+**Table rules:**
+
+- **Rows are sorted**: `critical` → `high` → `medium` → `low`, then alphabetically by feature name within the same priority.
+- **`#` column**: Sequential row number, re-calculated on every update.
+- **Feature column**: Title-case feature name extracted from `[Feature]` in the goal title.
+- **Goal column**: The task portion of the `[Feature] Task` title.
+- **Status column**: Directly from the goal's YAML frontmatter (`pending`, `in-progress`, `completed`, `blocked`).
+- **Priority column**: Directly from the goal's YAML frontmatter.
+- **Dependencies column**: Comma-separated relative paths from `depends_on` field, or `—` if none.
+- **Path column**: Relative path from `Docs/Goals/` (e.g., `authentication/add-jwt-token.md`).
+- **Last updated timestamp**: Update the `> Auto-maintained by...` line with the current date and time on every write.
+
+### When to Update Master.md
+
+| Event | Action |
+|-------|--------|
+| New goal created (Step 7) | Add row to table, update summary counts |
+| Goal updated (Update Workflow) | Update the affected row (status, priority, dependencies, or title) |
+| Goal status changed | Update status in the affected row + summary counts |
+| Multiple goals created | Add all rows, update summary counts once at the end |
+| Goal deleted or removed | Remove the row, update summary counts |
+
+### How to Update Master.md
+
+1. **If `Docs/Goals/Master.md` does not exist**: Create it from scratch by scanning all `Docs/Goals/**/*.md` files (excluding `Master.md` itself), parsing their frontmatter and titles, and building the full table.
+2. **If `Docs/Goals/Master.md` already exists**: Read it, apply the specific change (add row, update row, remove row), recalculate summary counts, update the timestamp.
+3. **Always verify after writing**: Read Master.md back to confirm it's correct — same as the goal file verification.
+
+Master.md is a derived artifact — it reflects the goal files, never contradicts them. If a discrepancy is found between Master.md and the actual goal files, the goal files are the source of truth. Rebuild Master.md from scratch in this case.
 
 ---
 
@@ -161,9 +227,10 @@ Once you have enough clarity, draft the goal file and present it to the user for
 
 ```markdown
 ---
-status: pending
+status: pending          # pending | in-progress | completed | blocked
 priority: {critical|high|medium|low}
 created: {YYYY-MM-DD}
+updated: {YYYY-MM-DD}   # set to today on every edit
 depends_on: []
 ---
 
@@ -200,9 +267,21 @@ depends_on: []
 - Keep it clear and descriptive (not vague like `[Misc] Improve things`)
 
 **Critical format requirements (the goal file is useless without these):**
-- YAML frontmatter block (`---` delimiters) with `status`, `priority`, `created`, `depends_on`
+- YAML frontmatter block (`---` delimiters) with `status`, `priority`, `created`, `updated`, `depends_on`
 - All five sections present: `## Objective`, `## Context`, `## Acceptance Criteria`, `## Constraints`, `## Notes`
 - Feature folder MUST be kebab-case (e.g., `dark-mode/`, never `Dark Mode/`)
+
+**YAML frontmatter checklist — verify ALL fields before writing:**
+
+| Field | Required | Example | Notes |
+|-------|----------|---------|-------|
+| `status` | ✅ | `pending` | One of: pending, in-progress, completed, blocked |
+| `priority` | ✅ | `high` | One of: critical, high, medium, low |
+| `created` | ✅ | `2026-04-13` | ISO 8601, set once on creation |
+| `updated` | ✅ | `2026-04-13` | ISO 8601, set to today on EVERY write (creation or edit) |
+| `depends_on` | ✅ | `[]` or `[auth/add-jwt.md]` | Empty array if no dependencies |
+
+Every goal file MUST have all 5 fields. The `updated` field is especially important — it tells `plan-work` and humans when the goal was last touched. Omitting it is a format violation.
 
 **Acceptance criteria — the most important part:**
 
@@ -254,7 +333,8 @@ Write the goal file immediately after self-review passes. Do not wait for explic
 3. **Create directory** `Docs/Goals/{feature-name}/` if it doesn't exist (also create `Docs/Goals/` if needed)
 4. **Write the file** to `Docs/Goals/{feature-name}/{kebab-case-task}.md`
 5. **Verify the write** — read back the file to confirm it exists and has the expected content. If the write failed, retry immediately.
-6. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Want to make any changes before execution? Run `/omo/work` to execute it."
+6. **Update Master.md** — add this goal to `Docs/Goals/Master.md` following the Master.md Contract. If Master.md doesn't exist yet, create it by scanning all goal files. If it exists, add the new row and recalculate summary counts. Verify after writing.
+7. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Master.md updated. Want to make any changes before execution? Run `/omo/work` to execute it."
 
 **Path derivation examples:**
 
@@ -273,7 +353,26 @@ After saving, ask:
 
 - "Want to create another goal?"
 - "Want to run `/omo/work` to execute this goal now?"
-- "Want to review existing goals in `Docs/Goals/`?"
+- "Want to review the goals dashboard in `Docs/Goals/Master.md`?"
+
+---
+
+## Viewing the Goals Dashboard
+
+When the user says "show me all goals," "goals dashboard," "what's pending?", "what's the status?", or any request to view the overall goal state — this is a **read + reconcile** operation, not a create or update.
+
+### Dashboard Workflow
+
+1. **Scan all goal files** — read every `*.md` file under `Docs/Goals/` recursively (excluding `Master.md` itself). Parse YAML frontmatter and `# [Feature] Task` headings from each.
+2. **Reconcile with Master.md** — if `Docs/Goals/Master.md` exists, compare it against the scanned goal files. Check for:
+   - Missing rows (goal files that exist on disk but aren't in Master.md)
+   - Stale rows (rows in Master.md for goal files that no longer exist)
+   - Outdated data (status, priority, or dependencies that differ between the goal file and Master.md)
+3. **Rebuild if discrepancies found** — if ANY discrepancy exists, rebuild Master.md from scratch using the goal files as the source of truth. Write it to disk and verify.
+4. **Create if missing** — if `Docs/Goals/Master.md` doesn't exist, create it from scratch by scanning all goal files.
+5. **Present to the user** — show the Master.md content (summary table + full goals table). Highlight any changes made during reconciliation.
+
+This workflow ensures Master.md is always accurate before the user sees it. Stale data in the dashboard is worse than no dashboard — it creates false confidence.
 
 ---
 
@@ -297,11 +396,12 @@ Not every interaction creates a new goal. When the user wants to modify an exist
 2. **Understand the change** — what specifically needs to change? Frontmatter (status, priority, depends_on), objective, criteria, constraints?
 3. **Apply the change** — modify the goal file in-place. Preserve everything that isn't changing.
 4. **Self-review the change** — apply the same quality checks from Step 6 to any new or modified criteria.
-5. **Confirm** — show the user what changed (before/after for the modified section) and confirm.
+5. **Update Master.md** — reflect the change in `Docs/Goals/Master.md`. Update the affected row's status, priority, dependencies, or title as appropriate. Recalculate summary counts if status or priority changed. If Master.md doesn't exist, create it from all goal files.
+6. **Confirm** — show the user what changed (before/after for the modified section) and confirm.
 
 **Rules for updates:**
 
-- **Status changes** are simple: update the YAML frontmatter. No clarification needed for `pending → in-progress → completed`.
+- **Status changes** are simple: update the YAML frontmatter and the `updated` date. No clarification needed for `pending → in-progress → completed`. For `blocked`, verify that the blocking dependency exists and is not yet completed. When unblocking (blocked → pending), confirm the dependency was resolved.
 - **Priority changes** — ask "What's driving the priority change?" to catch scope changes hiding behind priority shifts.
 - **Adding criteria** — apply the same quality bar as creation. New criteria must be specific, testable, and bounded. Self-review them.
 - **Removing criteria** — confirm removal. Ask "Is this no longer needed, or should it become a separate goal?"
@@ -319,7 +419,8 @@ If the user describes multiple goals at once:
 3. **Identify the feature for each goal** — goals touching the same feature go into the same feature folder
 4. Clarify and write each as a separate file, starting with the one that has no dependencies
 5. Populate `depends_on` fields to establish execution order (use the full relative path, e.g., `authentication/add-jwt-token.md`)
-6. Report all created files at the end, grouped by feature folder
+6. **Update Master.md once** — after all goals are written, add all new rows to Master.md in a single update. Recalculate summary counts. This avoids repeated writes — batch the Master.md update for multi-goal sessions.
+7. Report all created files at the end, grouped by feature folder, and confirm Master.md is up to date
 
 **Example:** If a user says "I need authentication, a dashboard, and API rate limiting":
 - `Docs/Goals/authentication/add-user-auth.md` — `[Authentication] Add User Auth`
@@ -337,6 +438,7 @@ If the user describes multiple goals at once:
 status: pending
 priority: high
 created: 2026-03-17
+updated: 2026-03-17
 depends_on: []
 ---
 
@@ -382,9 +484,14 @@ The app uses Next.js App Router with Drizzle ORM. Login endpoint exists at `/api
 11. **Filename = kebab-case of task part.** Derived from the `Task` portion of the title only (not the `[Feature]` prefix). No creativity needed.
 12. **Feature folder = kebab-case of feature name.** The `[Feature]` prefix determines the subfolder under `Docs/Goals/`. Always create the feature folder.
 13. **Always set priority.** Default to `medium` if the user doesn't specify, but always ask.
-14. **Set `created` to today's date.** Use ISO 8601 format (YYYY-MM-DD).
+14. **Set `created` and `updated` to today's date.** Use ISO 8601 format (YYYY-MM-DD). On updates, only change `updated` — never modify `created`.
 15. **Set dependencies.** Check existing goals (recursively in all feature folders) and populate `depends_on` when relationships exist. Use relative paths from `Docs/Goals/` (e.g., `authentication/add-jwt-token.md`).
 16. **Always export the document.** The goal file MUST be written to `Docs/Goals/{feature-name}/{task}.md` before the skill's workflow ends. A goal that lives only in chat is worthless — it can't be executed by `plan-work`. Write first, revise later. This is non-negotiable.
 17. **Verify after writing.** After writing the file, read it back to confirm it exists and has correct content. If the write failed, retry immediately.
 18. **Never delete without replacement.** If editing a goal file, edit in place. Never delete the file and leave the user with no goal on disk.
 19. **Scan recursively for duplicates.** Always check `Docs/Goals/` and ALL subfolders before creating a new goal. Match on title similarity, not just exact filenames.
+20. **Always update Master.md.** Every goal creation, update, status change, or deletion MUST be reflected in `Docs/Goals/Master.md`. If Master.md doesn't exist, create it by scanning all goal files. If it exists, update the affected rows and recalculate summary counts. This is non-negotiable — Master.md is the central registry.
+21. **Master.md reflects goal files, never contradicts them.** If a discrepancy is found, the individual goal files are the source of truth. Rebuild Master.md from scratch.
+22. **Verify Master.md after writing.** Read it back after every update to confirm the table is correct, counts are accurate, and no rows are missing or duplicated.
+23. **Use `blocked` status for dependency chains.** When a goal's `depends_on` references a non-completed goal, set its status to `blocked`. When the blocking goal completes, transition blocked goals to `pending`.
+24. **Dashboard requests trigger reconciliation.** When the user asks to view goals ("show me all goals," "goals dashboard," "what's pending?"), always scan goal files and reconcile Master.md before presenting. Stale dashboards are worse than no dashboard.
