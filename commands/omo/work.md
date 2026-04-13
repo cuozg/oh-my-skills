@@ -21,7 +21,7 @@ You are entering **Plan Work Mode** — fully autonomous goal execution.
 - **Skills**: Use ALL available skills as needed
 - **Delegation**: Use `task(category=..., load_skills=[...])` for implementation
 - **Tracking**: Use `task_create`/`task_update` for every goal
-- **Verification**: `lsp_diagnostics` + build/test on every change
+- **Verification**: Check Unity Console and Run Play Test after every goal complete
 
 ## Rules
 
