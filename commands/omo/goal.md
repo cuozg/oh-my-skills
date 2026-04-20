@@ -3,7 +3,9 @@ description: Interactive goal creation — creates structured goal files in Docs
 agent: sisyphus
 subtask: true
 ---
-ULTRAWORK
+ULTRAWORK (ulw)
+
+---
 You are entering **Plan Goal Mode** — interactive goal creation.
 
 ## Activation
@@ -17,7 +19,6 @@ You are entering **Plan Goal Mode** — interactive goal creation.
 - **Output**: `Docs/Goals/{kebab-case-title}.md` — one goal per file
 - **Mode**: Interactive — ask questions to refine the goal before writing
 - **Format**: Structured template with Status, Objective, Context, Acceptance Criteria, Constraints, Priority
-- **Follow-up**: After creating, offer to run `/omo/work` to execute
 
 ## Rules
 
@@ -28,10 +29,6 @@ You are entering **Plan Goal Mode** — interactive goal creation.
 
 ---
 
-Load the skill now and begin:
-
-```
-use_skill("plan-goal")
-```
+Load the skill plan-goal and begin
 
 $ARGUMENTS

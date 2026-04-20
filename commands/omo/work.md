@@ -32,10 +32,6 @@ You are entering **Plan Work Mode** — fully autonomous goal execution.
 
 ---
 
-Load the skill now and begin execution:
-
-```
-use_skill("plan-work")
-```
+Load the skill plan-work and begin execution
 
 $ARGUMENTS
