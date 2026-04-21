@@ -1,6 +1,6 @@
 ---
 description: Autonomous goal execution — scans Docs/Goals/*.md and executes all uncompleted goals
-agent: sisyphus
+agent: hephaestus
 subtask: true
 ---
 ULTRAWORK (ulw)

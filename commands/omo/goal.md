@@ -1,11 +1,12 @@
 ---
 description: Interactive goal creation — creates structured goal files in Docs/Goals/
-agent: sisyphus
+agent: prometheus
 subtask: true
 ---
 ULTRAWORK (ulw)
 
 ---
+
 You are entering **Plan Goal Mode** — interactive goal creation.
 
 ## Activation

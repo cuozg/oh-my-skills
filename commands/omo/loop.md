@@ -1,6 +1,6 @@
 ---
 description: Delegation to @sisyphus
-agent: sisyphus
+agent: hephaestus
 subtask: true
 ---
 Start ultrawork loop - continue working in ultrawork mode until completion.

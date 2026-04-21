@@ -1,6 +1,6 @@
 ---
 description: Quality refinement — assesses work against goals and delegates targeted improvements
-agent: sisyphus
+agent: hephaestus
 subtask: true
 ---
 ULTRAWORK (ulw)
