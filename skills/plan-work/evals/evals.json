@@ -84,6 +84,25 @@
         "Cleans up the worktree despite the goal being blocked",
         "Execution summary reports the blocked goal with the blocker reason"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Execute goals. Master.md lists one pending goal: '[Inventory] Add item stacking' with 5 acceptance-criteria checkboxes. The subagent reports DONE claiming all criteria pass, but when the controller re-reads the code, criterion #3 ('stacking respects max stack size from item config') has no supporting code — the subagent only implemented stacking without the max-size check. Show how the controller must handle this.",
+      "expected_output": "The skill must NOT mark the goal complete just because the subagent reported DONE. Instead, it runs the Per-Criterion Verification Gate: creates one task_create per criterion up front, then iterates each criterion, gathers evidence from the worktree, classifies each (VERIFIED/UNMET/UNCLEAR), updates the criterion task individually, and when criterion #3 is UNMET it re-dispatches the subagent via session_id with the specific missing requirement. The goal stays in-progress until all 5 criterion tasks are completed with recorded evidence.",
+      "files": [],
+      "expectations": [
+        "Calls task_create once per acceptance-criteria checkbox (5 total) in addition to the parent goal task",
+        "Each criterion task stores the goal_file path and criterion text in metadata",
+        "After subagent reports DONE, controller re-parses the goal file to extract the fresh checkbox list",
+        "Controller iterates criteria one at a time — does not batch-complete them",
+        "For each criterion, controller gathers concrete evidence (file read, grep, command output) from the worktree",
+        "Criterion #3 is classified UNMET because no max-size check code exists",
+        "task_update for criterion #3 uses status='in_progress' with verification_status='unmet' in metadata — NOT completed",
+        "Goal is NOT marked completed while criterion #3 is UNMET",
+        "Controller re-dispatches the subagent via session_id citing criterion #3 specifically",
+        "Checkbox in goal file is ticked only for VERIFIED criteria, not for UNMET ones",
+        "Execution summary includes an Acceptance Criteria Verification section showing per-criterion status with evidence"
+      ]
     }
   ]
 }

@@ -54,9 +54,15 @@ Record the list of changed files — reuse this for Gate 3 instead of re-scannin
 - Web/Node: Run the build command (`npm run build` / `tsc --noEmit`). Fix failures.
 - General: lsp_diagnostics alone suffices.
 
-### Gate 3: Spec Compliance
+### Gate 3: Spec Compliance (Per-Criterion Evidence)
 Read your own implementation code against each acceptance criterion.
 Do NOT trust your memory. Open and read the files. Verify with evidence.
+
+**For EVERY acceptance-criteria checkbox, produce a `criterion → evidence` row** and record it in the PR body. Evidence must be one of:
+- `file:line` references pointing to the exact code that satisfies the criterion
+- A command + its output (e.g., `dart analyze` clean, `npm test` green, a specific test name passing)
+- An observed behavior confirmable by re-reading the file
+Vague claims like "implemented", "covered", or "should work" are NOT evidence and will be rejected by the controller's Per-Criterion Verification Gate. If you cannot produce concrete evidence for a criterion, mark it `UNMET` and describe the blocker — do not pretend it passed.
 
 ## Workflow
 1. **Explore**: Understand patterns and conventions in the codebase
@@ -92,7 +98,12 @@ Do NOT trust your memory. Open and read the files. Verify with evidence.
    {bullet list of what was implemented}
 
    ## Acceptance Criteria
-   {each criterion with PASS/FAIL status and evidence}
+   {each criterion on its own line, in the exact format below — the controller
+    parses this block to update per-criterion tracking tasks:
+       - [PASS] <criterion text> — evidence: <file:line or cmd output>
+       - [FAIL] <criterion text> — reason: <why unmet>
+    One row per checkbox in the goal's Acceptance Criteria section. No row may
+    be omitted. No row may use "should/probably/seems" language.}
 
    ## Verification
    - Static Analysis: PASS
@@ -250,6 +261,7 @@ Before reporting back, verify:
 
 **Completeness:**
 - Did I implement everything in the acceptance criteria?
+- Did I produce a concrete evidence row (file:line or command output) for **every** criterion checkbox — not just a subset?
 - Did I miss any requirements?
 - Are edge cases handled?
 

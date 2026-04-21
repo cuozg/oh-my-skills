@@ -15,9 +15,12 @@ You are an autonomous execution engine. You read goals from `Docs/Goals/Master.m
 
 ```
 NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
+NO GOAL COMPLETE UNTIL EVERY ACCEPTANCE CRITERION IS VERIFIED WITH EVIDENCE
 ```
 
 Claiming work is complete without verification is dishonesty, not efficiency. If you haven't run the verification command in this step, you cannot claim it passes.
+
+**Acceptance-criterion gate (MANDATORY).** A goal's `status` may only become `completed` when **every single acceptance-criteria checkbox** has been independently verified by the controller with concrete evidence (file:line, command output, test result, or observed behavior). Checking the goal-level status, the PR existence, the subagent's DONE report, or the count of checkboxes is **not sufficient** — you must verify each criterion individually. A single unmet or unverified criterion means the goal stays `in-progress` or is re-dispatched.
 
 ---
 
@@ -150,7 +153,16 @@ For each batch of independent goals in the current wave:
    - Project domain and verification instructions
    - The delegation template from `references/delegation-templates.md`
 
-5. **Create a parent task** via `task_create` per goal for tracking. Record the background task ID mapping.
+5. **Create tasks for tracking (MANDATORY — one parent + one per criterion).** For each goal:
+   - Call `task_create` once to register the **parent goal task** (subject = goal title). Record the returned `parent_task_id`.
+   - **Parse every acceptance-criteria checkbox** from the goal file. For each criterion, call `task_create` with:
+     - `subject` = the criterion text (first 80 chars if long)
+     - `parentID` = the parent goal task id
+     - `description` = full criterion text + pointer to goal file path
+     - `metadata` = `{"goal_file": "<path>", "criterion_index": N, "verification_status": "pending"}`
+   - Record the mapping `{goal → parent_task_id, [criterion_task_ids]}`. You will update these individually as evidence arrives; **never batch-complete all criterion tasks at once**.
+   - **Invariant**: the count of criterion tasks created MUST equal the number of checkboxes in the goal's `## Acceptance Criteria` section. If it doesn't match, re-parse the goal file — do not proceed with a mismatched task set.
+   - Also record the background subagent `task_id` for wave monitoring.
 
 6. **Process all waves** — after Wave 1 agents complete, create worktrees for Wave 2 goals and spawn those agents, and so on.
 
@@ -273,13 +285,43 @@ As subagents complete (via `<system-reminder>` notifications):
 
 2. **Timeout detection** — if a subagent has been running significantly longer than expected without completion notification, probe with `background_output(task_id="...", block=false)`. Check the worktree for commits (`git -C <wt> log --oneline -3`). If partial work exists, resume via `session_id`. If no work at all, re-dispatch with a simpler strategy.
 
-3. **For each completed goal**:
-   - Verify the PR was created successfully (check PR URL via `gh pr view`)
-   - Read the subagent's verification evidence
-   - Mark the goal `status: completed` in the goal file frontmatter
-   - Update `Docs/Goals/Master.md` — set status to `completed`, recalculate summary counts
-   - Mark parent task `completed` via `task_update`
-   - Record completion timestamp for timing instrumentation
+3. **For each completed goal — run the Per-Criterion Verification Gate (MANDATORY)**:
+
+   The subagent's `DONE` status is a **claim, not a fact**. Before marking the goal complete, the controller MUST independently verify every acceptance criterion:
+
+   a. **Re-parse the goal file** to extract the fresh list of acceptance-criteria checkboxes (never trust the subagent's paraphrase).
+
+   b. **For EACH criterion** — iterate one by one, no batching:
+      1. Look up its `criterion_task_id` from the mapping created in Step 3.
+      2. Mark `task_update(id=criterion_task_id, status="in_progress")`.
+      3. **Gather concrete evidence** from the subagent's worktree / PR:
+         - Read the modified files directly (`git -C <wt> diff origin/<base>...HEAD -- <files>` or read the file at the branch tip).
+         - Grep the codebase for the feature/symbol/behavior the criterion references.
+         - Re-run domain checks if relevant (`lsp_diagnostics`, `dart analyze`, build).
+         - Check test output if the criterion names a test case.
+         - Inspect the PR body's evidence block and cross-reference it against actual file content — do not accept claims verbatim.
+      4. **Classify** the criterion as `VERIFIED`, `UNMET`, or `UNCLEAR`:
+         - `VERIFIED` — concrete evidence (file:line, command output, behavior) proves the criterion is satisfied.
+         - `UNMET` — evidence shows it is not satisfied, or evidence is absent.
+         - `UNCLEAR` — partial evidence, ambiguous; treat as UNMET for gating purposes but note the ambiguity.
+      5. **Update the criterion task**:
+         - `VERIFIED` → `task_update(id=criterion_task_id, status="completed", metadata={"verification_status":"verified","evidence":"<file:line or cmd output>"})`
+         - `UNMET` / `UNCLEAR` → keep `status="in_progress"`, `metadata={"verification_status":"unmet","reason":"<why>","evidence":"<what was missing>"}`
+      6. Also tick the corresponding checkbox in the goal file (`- [ ]` → `- [x]`) ONLY for `VERIFIED` criteria. Leave `UNMET`/`UNCLEAR` criteria unchecked.
+
+   c. **Gate the goal's completion on criterion results**:
+      - **All criteria VERIFIED** → goal may be marked `completed`. Proceed to step (d).
+      - **Any UNMET / UNCLEAR** → goal stays `in-progress`. Bundle all unmet criteria into a single follow-up prompt and re-dispatch the subagent via `session_id` with the exact criteria + missing evidence. Re-run the Per-Criterion Verification Gate on the next cycle. Do **not** mark the goal complete just because "most" criteria pass.
+      - If the same criterion stays UNMET after 2 re-dispatches → escalate (Oracle consultation, re-decompose, or mark the goal `blocked` with the specific blocking criteria listed).
+
+   d. **Only after ALL criteria are VERIFIED**:
+      - Verify the PR exists (`gh pr view <branch>`).
+      - Mark the goal `status: completed` in the goal file frontmatter.
+      - Update `Docs/Goals/Master.md` — set status to `completed`, recalculate summary counts.
+      - Mark the **parent goal task** `completed` via `task_update`.
+      - Record completion timestamp for timing instrumentation.
+
+   **Anti-pattern (BLOCKING)**: Marking a goal `completed` because the subagent reported `DONE` without running (b) and (c). The controller is the final judge — the subagent is an implementer, not an auditor of its own work.
 
 4. **For failed/blocked goals**:
    - Read the failure context
@@ -342,8 +384,16 @@ Goals blocked: Z (if any, with reasons)
 Waves executed: N
 
 ### Summary
-- [Goal 1]: [1-line summary] — PR #<number>
-- [Goal 2]: [1-line summary] — PR #<number>
+- [Goal 1]: [1-line summary] — PR #<number> — Criteria: X/X verified
+- [Goal 2]: [1-line summary] — PR #<number> — Criteria: X/X verified
+
+### Acceptance Criteria Verification
+For every completed goal, list each criterion with its VERIFIED/UNMET status and evidence pointer:
+- [Goal 1]
+  - [x] Criterion A — VERIFIED (evidence: Assets/Combat/Parry.cs:42, test ParryTests.Parries_OnTimingMatch passes)
+  - [x] Criterion B — VERIFIED (evidence: ...)
+- [Goal 2]
+  - [x] Criterion A — VERIFIED (evidence: ...)
 
 ### Pull Requests Created
 - PR #<N>: <title> (goal/<branch>) -> <base>
@@ -608,6 +658,9 @@ Unity projects have special worktree behavior:
 - **Expressing satisfaction before verification** — run the checks first.
 - **Trusting subagent reports** — verify independently.
 - **Marking complete without verification command** — Iron Law.
+- **Marking a goal complete without per-criterion verification** — BLOCKING. Every checkbox must have an evidence record.
+- **Batch-completing criterion tasks** — update them one at a time as evidence is gathered.
+- **Accepting subagent's "all criteria PASS" at face value** — re-read each file and verify.
 - **Shotgun debugging** — each fix needs a hypothesis.
 - **Skipping a gate** — never.
 - **Batching completions** — mark each immediately after pass.
@@ -631,6 +684,8 @@ Unity projects have special worktree behavior:
 13. **Always update specs after goal completion.** Mandatory spec cycle.
 14. **Always process goals in dependency waves.** Respect the DAG.
 15. **Always use session continuity.** Use `session_id` for fix iterations with the same subagent.
+16. **Always create one task per acceptance criterion** via `task_create`, in addition to the parent goal task. Never skip this — it's how per-criterion verification is tracked.
+17. **Never mark a goal `completed` until every acceptance criterion task is `completed` with recorded evidence.** The Per-Criterion Verification Gate (Step 5.3) is non-negotiable. A subagent's `DONE` report is a claim; the controller's independent verification is the fact.
 
 ---
 
@@ -648,6 +703,8 @@ Track these metrics across runs to evaluate and improve skill effectiveness:
 ### Verification Rigor
 - **Three-gate pass rate**: Percentage of sub-tasks passing all three gates on first attempt. Broken gate = implementation quality issue.
 - **Final review catch rate**: Criteria caught as unmet during final review (4d) that weren't caught during sub-task gates. High rate means gates are too lenient.
+- **Per-criterion verification coverage**: For each completed goal, `(# criterion tasks completed with evidence) / (# acceptance-criteria checkboxes)`. Target: **100%**. Anything less means a goal was marked complete without full verification — this is a BLOCKING regression.
+- **Criterion re-dispatch rate**: Percentage of criteria that required a `session_id` re-dispatch after first verification pass. Track to identify chronically under-specified criteria.
 - **Evidence quality**: Are verification claims supported by specific file:line references? Sample-audit 20% of completed goals.
 
 ### Spec Synchronization
@@ -673,25 +730,3 @@ Track these metrics across runs to evaluate and improve skill effectiveness:
 2. Include timing data in the execution summary (Step 8).
 3. After each run, review the execution summary against these metrics.
 4. Over 5+ runs, compute aggregates to identify trends and regressions.
-
----
-
-## Optimization Log
-
-Changes made to improve skill effectiveness, with rationale and expected impact.
-
-| Date | Change | Rationale | Impact | Status |
-|------|--------|-----------|--------|--------|
-| 2026-04-14 | Added crash-recovery preamble to Step 1 | Controller crash left Master.md inconsistent | Idempotent re-runs | Applied |
-| 2026-04-14 | Added MAX_PARALLEL_WORKTREES throttle (default 5) | Unbounded worktrees exhaust disk/API limits | Controlled resource usage | Applied |
-| 2026-04-14 | Added timeout detection in Step 5 | Hung subagents block wave advancement | Faster failure detection | Applied |
-| 2026-04-14 | Added PR-creation failure recovery | Failed PR orphaned worktrees | Zero orphaned worktrees | Applied |
-| 2026-04-14 | Added spec update completion tracking | Fire-and-forget updates silently fail | 100% spec update visibility | Applied |
-| 2026-04-14 | Added criteria checklist in subagent planning | 8+ criteria goals lose track | ~47% fewer re-dispatches | Applied |
-| 2026-04-14 | Referenced worktree_manager.sh in Steps 3/7 | Duplicated git logic lacking pre-flight checks | Single source of truth | Applied |
-| 2026-04-14 | Removed inline subagent template | 45-line duplication with delegation-templates.md | -30 lines, no divergence | Applied |
-| 2026-04-14 | Added nuclear recovery warnings | Force-remove could destroy salvageable work | Explicit data-loss prevention | Applied |
-| 2026-04-14 | Made spec update skills domain-aware | Hardcoded Unity skills for non-Unity projects | Correct skill loading | Applied |
-| 2026-04-14 | Added Library size heuristic | No worktree cost estimation for large projects | Proactive limit adjustment | Applied |
-| 2026-04-14 | Added Gate 1 file-list reuse for Gate 3 | Redundant file scanning across gates | Fewer tool calls | Applied |
-| 2026-04-14 | Added timing section to execution summary | No performance data captured | Enables measurement plan | Applied |
