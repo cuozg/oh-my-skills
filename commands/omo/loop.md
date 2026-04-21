@@ -3,6 +3,8 @@ description: Delegation to @sisyphus
 agent: sisyphus
 subtask: true
 ---
+Start ultrawork loop - continue working in ultrawork mode until completion.
+
 **MANDATORY**: This is non-negotiable.
 - This task will never end, never stop, run infinity
 - Every 30s, If the agent is in Idle state,  Read the Docs/Goals and check 
