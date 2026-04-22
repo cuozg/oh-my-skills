@@ -1,9 +1,6 @@
 ---
 name: plan-work
 description: "Autonomous single-goal execution pipeline — one goal per invocation, six specialist phases. If no goal file is given, spawns an `explore` agent that stops at the FIRST incomplete goal under Docs/Goals/. Then drives that goal through a fixed pipeline: explore → plan (Prometheus) → review (Momus) → implement (Sisyphus, in an isolated git worktree with PR) → verify (Hephaestus) → update docs (goal file + Master.md + README + Docs/Specs). The orchestrator never plans, implements, reviews, or tests itself — every phase is delegated to its specialist and cross-verified. Triggers: 'execute goal', 'run goal', 'plan work', 'do the goal', 'start working', 'execute the plan', 'implement everything', 'autonomous mode', 'just do everything', or `/omo/work`. Also triggers when goal files exist under Docs/Goals/ and the user wants unattended end-to-end completion of one goal. Do NOT use for creating goals — use plan-goal. Do NOT use for quality refinement of completed work — use plan-improve. Do NOT use for verification-only (read-only acceptance-criteria report) — use plan-test."
-agent: hephaestus
-subtask: true
-context: fork
 ---
 
 # Plan Work — Single-Goal Autonomous Execution Pipeline

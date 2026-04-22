@@ -1,6 +1,6 @@
 ---
 name: plan-test
-description: Walk through acceptance criteria from goal files, verify implementation against the codebase, and generate structured test reports. Use when the user says "test this goal", "verify implementation", "check acceptance criteria", "plan test", "generate test report", "did we finish the goal", "is this goal done", "validate against goal", or after plan-work has landed changes and before plan-improve kicks in. Operates on any `Docs/Goals/**/*.md` file created by plan-goal, extracts YAML frontmatter and the `## Acceptance Criteria` checklist, searches the repo for code/path/test evidence, and writes a verdict document to `Docs/Goals/<goal_name>-test.md`. Auto-triages Quick (≤5 criteria) vs Deep (≥10 criteria) mode. Do NOT use for writing tests (use flutter-test / unity-test-unit), for running test suites (use the project's own test runner), for creating new goals (use plan-goal), or for executing goals (use plan-work).
+description: Walk through acceptance criteria from goal files, verify implementation against the codebase, and generate structured test reports. Use when the user says "test this goal", "verify implementation", "check acceptance criteria", "plan test", "generate test report", "did we finish the goal", "is this goal done", "validate against goal", or after plan-work has landed changes and before plan-improve kicks in. Operates on any `Docs/Goals/**/*.md` file created by plan-goal, extracts YAML frontmatter and the `## Acceptance Criteria` checklist, searches the repo for code/path/test evidence, and writes a verdict document to `Docs/Goals/{feature-name}/{kebab-case-test}.md`. Auto-triages Quick (≤5 criteria) vs Deep (≥10 criteria) mode. Do NOT use for writing tests (use flutter-test / unity-test-unit), for running test suites (use the project's own test runner), for creating new goals (use plan-goal), or for executing goals (use plan-work).
 compatibility: Python 3.8+ · stdlib only · ripgrep optional (grep fallback) · integrates with plan-goal → plan-work → plan-improve
 ---
 
@@ -44,7 +44,7 @@ repo scan.
 2. Extract YAML frontmatter (`status`, `priority`, `created`, `updated`,
    `depends_on`) and the `## Acceptance Criteria` checklist.
 3. For each criterion, produce a verdict and evidence.
-4. Write the report to `Docs/Goals/<feature>-<task>-test.md` (path stem
+4. Write the report to `Docs/Goals/{feature-name}/{kebab-case-test}.md` (path
    derived from the goal's location under `Docs/Goals/`).
 5. Return the counts `{total, met, partial, unmet}` on stdout.
 
@@ -114,7 +114,7 @@ python skills/plan-test/scripts/run_tests.py \
     --mode quick
 ```
 
-Writes `Docs/Goals/search-add-full-text-search-test.md` with:
+Writes `Docs/Goals/search/add-full-text-search-test.md` with:
 
 - YAML frontmatter (`kind: test-report`, `pass_rate`, `test_coverage`, …)
 - Echoed **Objective**
@@ -170,7 +170,7 @@ python skills/plan-test/scripts/run_tests.py Docs/Goals/auth/add-jwt-auth.md
 Output (excerpt):
 
 ```
-✓ report: Docs/Goals/auth-add-jwt-auth-test.md
+✓ report: Docs/Goals/auth/add-jwt-auth-test.md
   2 met · 1 partial · 1 unmet · 4 total
 ```
 
@@ -204,7 +204,7 @@ The generated report includes:
 
 1. `plan-goal` creates `Docs/Goals/search/add-full-text-search.md`.
 2. `plan-work` lands commits on a feature branch.
-3. `plan-test` writes `Docs/Goals/search-add-full-text-search-test.md`.
+3. `plan-test` writes `Docs/Goals/search/add-full-text-search-test.md`.
 4. User reads the report. If any `❌`/`⚠️`, run `plan-improve`.
 5. `plan-improve` closes gaps → re-run `plan-test` → repeat until all `✅`.
 
@@ -241,8 +241,8 @@ python skills/plan-test/scripts/generate_report.py <goal.json> <results.json> <o
 
 1. **One goal per run.** Never batch-test multiple goals in a single
    invocation; each gets its own report for clean diffing.
-2. **Report path is deterministic.** `Docs/Goals/<feature>/<task>.md` →
-   `Docs/Goals/<feature>-<task>-test.md`. Never write anywhere else
+2. **Report path is deterministic.** `Docs/Goals/{feature-name}/{task}.md` →
+   `Docs/Goals/{feature-name}/{task}-test.md`. Never write anywhere else
    unless `--out` is explicit.
 3. **Never edit the goal file.** Even if a criterion is obviously
    satisfied, `plan-test` does not mark it `- [x]`. Author attestation

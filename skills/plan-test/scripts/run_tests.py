@@ -6,7 +6,7 @@ Pipeline:
     1. parse_goal(goal.md)              → structured dict
     2. verify_criteria(criteria, root)  → per-criterion results
     3. render_report(goal, results)     → Markdown
-    4. write to Docs/Goals/<goal_name>-test.md
+    4. write to Docs/Goals/{feature-name}/{kebab-case-test}.md
 
 Usage:
     python run_tests.py <path_to_goal.md> [--root <repo>] [--mode quick|deep]
@@ -44,16 +44,24 @@ def _pick_mode(explicit: str | None, n: int) -> str:
 
 
 def _default_out(goal_path: Path, repo_root: Path) -> Path:
-    """Derive Docs/Goals/<goal_name>-test.md."""
+    """Derive Docs/Goals/{feature-name}/{task}-test.md."""
     goals_root = repo_root / "Docs" / "Goals"
     goals_root.mkdir(parents=True, exist_ok=True)
 
     try:
         rel = goal_path.resolve().relative_to(goals_root.resolve())
-        stem = rel.with_suffix("").as_posix().replace("/", "-")
+        parts = rel.with_suffix("").parts
+        if len(parts) >= 2:
+            feature = parts[0]
+            task_stem = parts[-1]
+            out_dir = goals_root / feature
+            out_dir.mkdir(parents=True, exist_ok=True)
+            return out_dir / f"{task_stem}-test.md"
+        stem = rel.with_suffix("").as_posix()
+        return goals_root / f"{stem}-test.md"
     except ValueError:
         stem = goal_path.stem
-    return goals_root / f"{stem}-test.md"
+        return goals_root / f"{stem}-test.md"
 
 
 def run(
@@ -96,7 +104,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--mode", choices=("quick", "deep"), default=None,
                         help="verification depth (auto by default)")
     parser.add_argument("--out", default=None,
-                        help="output path (default: Docs/Goals/<goal_name>-test.md)")
+                        help="output path (default: Docs/Goals/{feature-name}/{task}-test.md)")
     parser.add_argument("--print", action="store_true",
                         help="print report to stdout in addition to writing")
     args = parser.parse_args(argv[1:])
