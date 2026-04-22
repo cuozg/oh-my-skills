@@ -1,10 +1,11 @@
 ---
 description: Autonomous single-goal execution — runs one incomplete goal through the explore→plan→momus→sisyphus→hephaestus→docs pipeline
-agent: hephaestus
+agent: sisyphus
 subtask: true
 ---
 ULTRAWORK (ulw)
----
+---------------
+
 You are entering **Plan Work Mode** — autonomous single-goal execution via specialist pipeline.
 
 ## Activation
@@ -17,15 +18,15 @@ You are entering **Plan Work Mode** — autonomous single-goal execution via spe
 
 One goal per invocation. Fixed order, specialist per phase:
 
-| Step | Agent | Purpose |
-|---|---|---|
-| 0 | `explore` (if no goal file given) | Find ONE incomplete goal under `Docs/Goals/` and stop at first match |
-| 1 | orchestrator | Create isolated worktree + goal/ branch, read goal + spec, create tracking tasks |
-| 2 | `plan` (Prometheus) | Produce executable plan with criterion↔sub-task mapping |
-| 3 | `momus` | Review plan; APPROVE or REQUEST_CHANGES (loop via plan session_id, max 3) |
-| 4 | `sisyphus` | Implement inside worktree, three-gate verify, commit, push, `gh pr create` |
-| 5 | `hephaestus` | Re-verify each criterion independently; PASS or loop Sisyphus (max 3 cycles) |
-| 6 | orchestrator | Update goal file + Master.md + README (if impacted) + delegate spec update |
+| Step | Agent                               | Purpose                                                                          |
+| ---- | ----------------------------------- | -------------------------------------------------------------------------------- |
+| 0    | `explore` (if no goal file given) | Find ONE incomplete goal under `Docs/Goals/` and stop at first match           |
+| 1    | orchestrator                        | Create isolated worktree + goal/ branch, read goal + spec, create tracking tasks |
+| 2    | `plan` (Prometheus)               | Produce executable plan with criterion↔sub-task mapping                         |
+| 3    | `momus`                           | Review plan; APPROVE or REQUEST_CHANGES (loop via plan session_id, max 3)        |
+| 4    | `sisyphus-junior`                 | Implement inside worktree, three-gate verify, commit, push,`gh pr create`      |
+| 5    | `hephaestus`                      | Re-verify each criterion independently; PASS or loop Sisyphus (max 3 cycles)     |
+| 6    | orchestrator                        | Update goal file + Master.md + README (if impacted) + delegate spec update       |
 
 ## Inputs
 
