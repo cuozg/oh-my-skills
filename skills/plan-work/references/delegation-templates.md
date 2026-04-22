@@ -1,27 +1,150 @@
-# Delegation Prompt Templates
+# Delegation Prompt Templates — plan-work Pipeline
 
-Templates for dispatching subagents during parallel goal execution via git worktrees. The controller (plan-work) provides all context upfront — subagents should never need to read the goal file themselves.
+Templates for the 6 specialist handoffs in the single-goal pipeline. The orchestrator fills in `{placeholders}` from the goal file and worktree context.
+
+All prompts follow one contract: **the orchestrator provides all context upfront**, the specialist does its one job and returns a structured result.
 
 ---
 
-## Worktree Subagent Prompt Template
+## 1. Goal Discovery — `explore` agent (Step 0b)
 
-The primary template for spawning a subagent that works in an isolated git worktree. Each subagent implements one goal end-to-end: explore → plan → implement → verify → commit → push → PR.
+Use when no goal file is provided. Runs **blocking** (`run_in_background=false`) because Step 1 depends on the result.
 
 ```
-You are an autonomous implementer working in an isolated git worktree.
-Your job: implement one goal completely, verify it, commit, push, and create a PR.
+I'm the plan-work orchestrator and need ONE incomplete goal to execute.
 
-## Your Environment
+Search Docs/Goals/ recursively for the FIRST goal file where:
+  1. YAML frontmatter 'status' is 'pending' OR 'in-progress'
+     (NOT 'completed', NOT 'blocked')
+  2. AND the '## Acceptance Criteria' section has at least one unchecked '- [ ]' checkbox
+
+Stop at the first match — do NOT enumerate all goals.
+
+Prefer 'critical' > 'high' > 'medium' > 'low' priority if multiple candidates are
+obvious from directory listing, but do NOT spend tokens sorting — first viable
+match wins.
+
+Return EXACTLY this block and nothing else:
+  GOAL_FILE: <absolute or repo-relative path>
+  GOAL_TITLE: <the '# [Feature] Task' heading>
+  PRIORITY: <from frontmatter>
+  UNCHECKED_COUNT: <number of unchecked criteria>
+
+If NO incomplete goal exists anywhere under Docs/Goals/, return exactly:
+  NO_INCOMPLETE_GOAL
+```
+
+---
+
+## 2. Plan — `plan` agent / Prometheus (Step 2)
+
+Blocking. The orchestrator records the returned `session_id` for revision loops.
+
+```
+You are producing an executable plan for ONE goal.
+
+## Goal file
+Path: {goal_file}
+Title: {goal_title}
+Priority: {priority}
+
+## Objective
+{goal_objective verbatim}
+
+## Context
+{goal_context verbatim}
+
+## Acceptance Criteria (do NOT drop any)
+{full checkbox list, one per line, numbered 1..N}
+
+## Constraints
+{goal_constraints verbatim}
+
+## Spec (architectural blueprint, may be empty)
+{spec_content OR "No spec exists — plan from criteria + codebase conventions."}
+
+## Working environment
 - Worktree path: {worktree_path}
-- Branch: {branch_name}
+- Branch: {branch}
 - Base branch: {base_branch}
-- Project type: {domain} ({unity|flutter|web|general})
-- Repository: {repo_owner}/{repo_name}
+- Domain: {domain}  // unity | flutter | web | general
 
-ALL file operations happen in your worktree at {worktree_path}.
-Use `workdir="{worktree_path}"` for all bash commands.
-Do NOT modify files outside your worktree.
+## Deliverable
+Produce a work plan with:
+  1. Ordered sub-tasks (atomic, verifiable) with file paths / modules to touch
+  2. A table mapping EVERY acceptance criterion → sub-task(s) → verification method
+     Format (required):
+       | # | Criterion (verbatim) | Sub-task(s) | Verification (cmd, file:line, test name) |
+  3. Risks and unknowns (if any)
+  4. Suggested category + skills for the Sisyphus implementation call
+     (e.g. category="deep", load_skills=["unity-code","unity-standards"])
+
+## Rules
+- NEVER drop or merge acceptance criteria. N criteria in → N rows in the mapping table.
+- NEVER write code. Planning only.
+- Return the plan as a single markdown document. The orchestrator will hand it to
+  Momus for review before any implementation starts.
+```
+
+### Revision follow-up (via `session_id=plan_session_id`)
+
+```
+Momus requested changes to your plan. Revise it addressing each point:
+
+{momus.required_changes as bullet list}
+
+Return the full updated plan (not a diff). Keep the mapping table complete.
+```
+
+---
+
+## 3. Plan Review — `momus` (Step 3)
+
+Blocking. Fresh session each review.
+
+```
+Review the following work plan against the goal and its acceptance criteria.
+
+## Goal acceptance criteria (authoritative)
+{checkbox list verbatim}
+
+## Plan to review
+{full plan text from Step 2}
+
+## Evaluation checklist
+1. Every acceptance criterion appears in the plan's mapping table exactly once.
+2. Every sub-task lists concrete files/modules — no vague "update the system".
+3. Every criterion has a concrete verification method
+   (runnable command, specific file:line, or named test).
+4. Risks are identified or explicitly declared "none".
+5. Proposed category + skills for Sisyphus are sensible for the domain.
+
+## Output format (strict)
+Verdict: APPROVE | REQUEST_CHANGES
+Reasons: <bullet list — required even for APPROVE, listing what passed>
+Required changes (only if REQUEST_CHANGES): <bullet list, each item actionable>
+
+Do not rewrite the plan. Only review.
+```
+
+---
+
+## 4. Implement — `sisyphus` (Step 4)
+
+Blocking. The orchestrator records `sisyphus_session_id` for verify-loop re-dispatch.
+
+```
+You are implementing ONE goal in an isolated git worktree.
+
+## Environment
+- Worktree path: {worktree_path}
+- Branch: {branch}
+- Base branch: {base_branch}
+- Domain: {domain}
+- Repo: {repo_owner}/{repo_name}
+
+Use workdir="{worktree_path}" for ALL bash/git commands.
+Do NOT modify files outside the worktree.
 
 ## Goal
 ### Objective
@@ -31,251 +154,243 @@ Do NOT modify files outside your worktree.
 {goal_context}
 
 ### Acceptance Criteria
-{goal_acceptance_criteria — each criterion as a checkbox line}
+{checkbox list verbatim}
 
 ### Constraints
 {goal_constraints}
 
-## Feature Spec (Architectural Blueprint)
-{spec_content — full text of the relevant Docs/Specs/ file, OR:
-"No spec exists for this feature. Implement based on acceptance criteria and codebase conventions. A spec will be created from your implementation after completion."}
+## Spec (blueprint, may be empty)
+{spec_content OR "No spec — implement from criteria."}
 
-## Verification Protocol
-After EVERY sub-task, run these gates in order:
+## Approved plan (FOLLOW THIS — do NOT replan from scratch)
+{final approved plan from Step 3}
 
-### Gate 1: Static Analysis (always)
-Run lsp_diagnostics on all changed files. Fix all errors before proceeding.
-Record the list of changed files — reuse this for Gate 3 instead of re-scanning.
+## Three-gate verification protocol (MANDATORY per sub-task)
+Gate 1 — Static Analysis: lsp_diagnostics clean on every changed file.
+Gate 2 — Domain check:
+  - Unity:  Unity_ReadConsole (no CS### or assembly errors)
+  - Flutter: dart analyze clean
+  - Web/Node: build / tsc --noEmit clean
+  - General: lsp_diagnostics alone suffices
+Gate 3 — Spec compliance: re-read the code vs. each acceptance criterion.
+  Produce a criterion → evidence row for EVERY checkbox:
+    - [PASS] <criterion verbatim> — evidence: <file:line | cmd output | test name>
+    - [FAIL] <criterion verbatim> — reason: <why>
 
-### Gate 2: Domain-Specific ({domain})
-{One of:}
-- Unity: Check Unity Editor console via Unity_ReadConsole MCP tool. Fix any `error CS####` or assembly errors.
-- Flutter: Run `dart analyze` in the worktree. Fix all errors.
-- Web/Node: Run the build command (`npm run build` / `tsc --noEmit`). Fix failures.
-- General: lsp_diagnostics alone suffices.
+Maintain a running criteria checklist and update it after each sub-task:
+  [ ] Criterion 1 → Sub-task A
+  [x] Criterion 2 → Sub-task B (verified)
 
-### Gate 3: Spec Compliance (Per-Criterion Evidence)
-Read your own implementation code against each acceptance criterion.
-Do NOT trust your memory. Open and read the files. Verify with evidence.
-
-**For EVERY acceptance-criteria checkbox, produce a `criterion → evidence` row** and record it in the PR body. Evidence must be one of:
-- `file:line` references pointing to the exact code that satisfies the criterion
-- A command + its output (e.g., `dart analyze` clean, `npm test` green, a specific test name passing)
-- An observed behavior confirmable by re-reading the file
-Vague claims like "implemented", "covered", or "should work" are NOT evidence and will be rejected by the controller's Per-Criterion Verification Gate. If you cannot produce concrete evidence for a criterion, mark it `UNMET` and describe the blocker — do not pretend it passed.
-
-## Workflow
-1. **Explore**: Understand patterns and conventions in the codebase
-2. **Plan**: Decompose goal into sub-tasks. Map every acceptance criterion to a sub-task.
-   Maintain a running criteria checklist — update it after each sub-task:
-   ```
-   [ ] Criterion 1 → Sub-task A
-   [x] Criterion 2 → Sub-task B (verified)
-   ```
-3. **Implement**: For each sub-task, implement then run all three gates.
-4. **Final Review**: Re-read ALL acceptance criteria. For each, cite specific evidence (file:line, behavior).
-5. **Commit**: Stage and commit with meaningful messages.
-   ```bash
-   git -C {worktree_path} add .
-   git -C {worktree_path} commit -m "feat({feature}): {summary}"
-   ```
-6. **Push**:
-   ```bash
-   git -C {worktree_path} push -u origin {branch_name}
-   ```
-7. **Create PR**:
-   ```bash
+## Commit + PR
+1. Commit (conventional): `feat({feature}): {summary}` — multi-commit OK for logical units.
+2. Push: `git -C {worktree_path} push -u origin {branch}`
+3. PR:
    gh pr create \
      --repo {repo_owner}/{repo_name} \
      --base {base_branch} \
-     --head {branch_name} \
+     --head {branch} \
      --title "{goal_title}" \
      --body-file - <<'EOF'
    ## Goal
    {goal_objective}
-
    ## Changes
-   {bullet list of what was implemented}
-
+   <bullets>
    ## Acceptance Criteria
-   {each criterion on its own line, in the exact format below — the controller
-    parses this block to update per-criterion tracking tasks:
-       - [PASS] <criterion text> — evidence: <file:line or cmd output>
-       - [FAIL] <criterion text> — reason: <why unmet>
-    One row per checkbox in the goal's Acceptance Criteria section. No row may
-    be omitted. No row may use "should/probably/seems" language.}
-
+   <one [PASS]/[FAIL] row per checkbox, in order — no row omitted>
    ## Verification
    - Static Analysis: PASS
    - Domain Check ({domain}): PASS/N/A
    - Spec Compliance: PASS
-
    ## Files Modified
-   {list of modified files}
+   <list>
    EOF
-   ```
+
+## Report (final message)
+STATUS: DONE | DONE_WITH_CONCERNS | BLOCKED
+PR_URL: <url>
+FILES_MODIFIED: <list>
+EVIDENCE_TABLE: <the criterion → evidence rows from Gate 3>
+CONCERNS/BLOCKER: <if applicable>
 
 ## Rules
-- NEVER ask questions. Think, decide, execute.
-- NEVER modify files outside your worktree path.
-- NEVER suppress type errors (no `as any`, `@ts-ignore`, empty catches).
-- NEVER skip verification gates. All three gates per sub-task.
-- ALWAYS verify before claiming completion. Evidence before assertions.
-- ALWAYS commit and push BEFORE creating the PR.
-- ALWAYS maintain a running criteria checklist — update after each sub-task completes.
-- Report final status: DONE | DONE_WITH_CONCERNS | BLOCKED
-  - DONE: All criteria met with evidence. PR created.
-  - DONE_WITH_CONCERNS: PR created but has doubts. Describe concerns.
-  - BLOCKED: Cannot complete. Describe the blocker.
+- NEVER ask. Think, decide, execute.
+- NEVER modify files outside your worktree.
+- NEVER suppress type errors (`as any`, `@ts-ignore`, empty catches, deleted tests).
+- NEVER skip gates.
+- NEVER claim PASS without evidence.
+- Commit + push BEFORE `gh pr create`.
+- Report exactly one status: DONE | DONE_WITH_CONCERNS | BLOCKED.
+```
+
+### Re-dispatch follow-up (via `session_id=sisyphus_session_id`)
+
+```
+Hephaestus found gaps. Fix the specific issues below, re-run the three gates,
+and update the PR with a fresh evidence table.
+
+GAPS (from Hephaestus):
+{hephaestus.gaps as bullet list, each item: "Criterion N — <what's missing>"}
+
+Do NOT open a new PR — amend the existing branch {branch}.
+After pushing, report STATUS + updated EVIDENCE_TABLE.
 ```
 
 ---
 
-## Worktree Creation Template
+## 5. Verify — `hephaestus` (Step 5)
 
-Shell commands for the controller to create a worktree for a goal.
+Blocking. Fresh session per verify round — Hephaestus re-derives evidence independently.
 
-```bash
-# Variables
-BASE_BRANCH="main"  # or "develop", detected in Step 2
-FEATURE_SLUG="{kebab-case-feature}"  # e.g., "combat-add-parry"
-BRANCH="goal/${FEATURE_SLUG}"
-WORKTREE_DIR="../.worktrees/${FEATURE_SLUG}"
+```
+You are the verifier for ONE goal. You do NOT implement. You only test.
 
-# Ensure clean state
-git fetch origin
+## Environment
+- Worktree path: {worktree_path}
+- Branch: {branch} (already pushed)
+- PR: {pr_url}
+- Domain: {domain}
 
-# Create worktree with new branch from base
-git worktree add -b "$BRANCH" "$WORKTREE_DIR" "origin/${BASE_BRANCH}"
+## Goal acceptance criteria (authoritative — verify each one)
+{checkbox list verbatim, numbered 1..N}
 
-echo "Worktree created at $WORKTREE_DIR on branch $BRANCH"
+## Sisyphus evidence table (CLAIMS — do not trust; re-verify)
+{evidence table from Step 4}
+
+## Your job
+For EACH criterion, independently gather evidence from the worktree:
+  - Read the files cited by Sisyphus and confirm the claim.
+  - Grep the worktree for the feature/symbol/behavior the criterion names.
+  - Re-run the relevant gate command (lsp_diagnostics / dart analyze / build).
+  - If the criterion names a test, run it and capture output.
+
+Classify each criterion:
+  VERIFIED — concrete evidence in this session confirms it.
+  UNMET    — no supporting code, or evidence contradicts the claim.
+  UNCLEAR  — ambiguous; treat as UNMET for gating.
+
+## Output format (strict)
+OVERALL: PASS | FAIL
+PER_CRITERION:
+  1. [VERIFIED|UNMET|UNCLEAR] <criterion verbatim> — evidence: <file:line | cmd output>
+  2. ...
+SUMMARY: <1-2 sentences>
+GAPS (if any): <what Sisyphus must fix, concrete and criterion-indexed>
+
+## Rules
+- NEVER mark VERIFIED without first-hand evidence (you read the file or ran
+  the command in THIS session).
+- NEVER paraphrase Sisyphus's evidence as your own — re-derive it.
+- If a cited file:line does not contain what it claims, mark UNMET.
+- OVERALL is PASS only when every criterion is VERIFIED.
 ```
 
 ---
 
-## Worktree Cleanup Template
+## 6. Spec Update — `unspecified-high` category (Step 6d)
 
-Shell commands for the controller after a goal's PR is created.
-
-```bash
-WORKTREE_DIR="{worktree_path}"
-BRANCH="{branch_name}"
-
-# 1. Verify worktree is clean (should be after commit+push)
-if [ -n "$(git -C "$WORKTREE_DIR" status --porcelain 2>/dev/null)" ]; then
-  echo "WARNING: Worktree has uncommitted changes. Investigate before removing."
-else
-  # 2. Remove the worktree
-  git worktree remove "$WORKTREE_DIR"
-
-  # 3. Prune stale metadata
-  git worktree prune
-
-  echo "Worktree removed: $WORKTREE_DIR"
-fi
-
-# 4. Branch cleanup (only after PR is merged — not before)
-# git branch -d "$BRANCH" 2>/dev/null || true
-```
-
----
-
-## Subagent Status Protocol
-
-Subagents MUST report one of these statuses:
-
-| Status | Meaning | Controller Action |
-|--------|---------|-------------------|
-| **DONE** | All criteria met, PR created | Verify PR exists, mark goal complete |
-| **DONE_WITH_CONCERNS** | PR created but has doubts | Read concerns, fix via `session_id` if needed |
-| **BLOCKED** | Cannot complete the goal | Assess blocker, re-dispatch or mark blocked |
-
-### Handling Each Status
-
-**DONE** — Verify the PR URL is valid. Check that the subagent's evidence is credible. Mark goal complete in Master.md and goal file.
-
-**DONE_WITH_CONCERNS** — Read concerns carefully:
-- Correctness/scope concerns → fix via `session_id` continuation before accepting
-- Observations (e.g., "file growing large") → note and accept
-
-**BLOCKED** — Escalate based on blocker type:
-1. Context problem → provide more context via `session_id`
-2. Task too complex → re-dispatch with `deep` or `ultrabrain` category
-3. Task too large → break into smaller goals
-4. Approach wrong → re-plan, consult Oracle if needed
-
-**Never** ignore a BLOCKED status or force the same approach without changes.
-
----
-
-## Spec Update Delegation Template
-
-Dispatched by the controller after a goal completes.
+Non-blocking (run_in_background=true). Does not gate goal completion.
 
 ```
 task(
   category="unspecified-high",
-  load_skills=["unity-spec", "unity-standards"],
+  load_skills=["{domain-spec-skill}", "{domain-standards-skill}"],
   run_in_background=true,
-  description="Update spec for {Feature}",
+  description="Update spec for {feature_name}",
   prompt="
-    1. TASK: Update the feature spec for {Feature} to reflect the completed implementation.
-       Mode: {Update if spec exists, Feature Spec if creating new}.
+    1. TASK: {Update existing | Create new} spec for {feature_name}
+       reflecting completed goal '{goal_title}'.
 
-    2. EXPECTED OUTCOME: Docs/Specs/{Feature_Name}.md accurately reflects the current
-       codebase — architecture, components, events, data models, state machines all match
-       what was actually built.
+    2. EXPECTED OUTCOME: Docs/Specs/{feature_name}.md matches the codebase
+       in the {branch} worktree. Architecture, components, events, data models
+       and state machines all reflect what was actually built.
 
     3. REQUIRED TOOLS: read, write, edit, glob, grep, lsp tools
 
     4. MUST DO:
-       - Use unity-spec {Update|Feature Spec} mode workflow
-       - Load the feature template: read_skill_file('unity-spec', 'references/feature-template.md')
-       - Investigate the actual codebase — cite file:line for every reference
-       - Preserve user-authored design intent — only change sections where code diverges
-       - Add [UPDATED: reason] tags next to changed sections (Update mode only)
-       - Run validation: run_skill_script('unity-spec', 'scripts/validate_spec.py', arguments=[spec_path])
-       - Save directly — do NOT block for user review
+       - Use the {unity-spec | equivalent} {Update | Feature Spec} workflow.
+       - Investigate actual code in {worktree_path}; cite file:line for every reference.
+       - Preserve existing design intent; only revise where code diverges.
+       - Add [UPDATED: reason] tags next to changed sections (Update mode only).
+       - Run validation (if the spec skill provides one).
+       - Save directly; do NOT request approval.
 
     5. MUST NOT DO:
-       - Do not block or ask for user approval
-       - Do not rewrite sections that are still accurate
-       - Do not add speculative future features
-       - Do not remove sections — only update or add
+       - Do not block or ask for user input.
+       - Do not rewrite sections still accurate.
+       - Do not add speculative future features.
+       - Do not delete sections — only update or add.
 
     6. CONTEXT:
        - Feature: {feature_name}
-       - Spec path: Docs/Specs/{Feature_Name}.md (or 'create new' if none exists)
+       - Spec path: Docs/Specs/{feature_name}.md (create if missing)
        - Goal completed: {goal_title}
-       - Implementation summary: {brief summary of what was built}
-       - Files modified: {list of files changed during this goal}
+       - Implementation summary: {brief}
+       - Files modified: {list from Step 4}
   "
 )
 ```
 
 ---
 
-## Self-Review Checklist (Included in Subagent Prompts)
+## Worktree Shell Helpers (orchestrator, Step 1 & cleanup)
 
-Before reporting back, verify:
+```bash
+# Create (Step 1)
+run_skill_script('plan-work', 'scripts/worktree_manager.sh',
+                 arguments=['create', '{feature-slug}', '{base-branch}'])
 
-**Completeness:**
-- Did I implement everything in the acceptance criteria?
-- Did I produce a concrete evidence row (file:line or command output) for **every** criterion checkbox — not just a subset?
-- Did I miss any requirements?
-- Are edge cases handled?
+# Or manually:
+git fetch origin
+BRANCH="goal/{feature-slug}"
+WT="../.worktrees/{feature-slug}"
+git worktree add -b "$BRANCH" "$WT" "origin/{base-branch}"
 
-**Quality:**
-- Names are clear and accurate?
-- Code is clean and maintainable?
-- Follows existing codebase patterns?
+# Remove (cleanup)
+run_skill_script('plan-work', 'scripts/worktree_manager.sh',
+                 arguments=['remove', '{feature-slug}'])
 
-**Discipline:**
-- Avoided overbuilding (YAGNI)?
-- Only built what was requested?
-- No files modified outside worktree?
+# Or manually:
+git -C "$WT" status --porcelain  # must be empty
+git worktree remove "$WT"
+git worktree prune
+# Branch: leave until PR is merged. Do NOT delete here.
+```
 
-**Git:**
-- All changes committed?
-- Branch pushed to remote?
-- PR created with proper title and body?
+---
+
+## Status Protocol Summary
+
+| Source | Status | Orchestrator action |
+|---|---|---|
+| explore | `NO_INCOMPLETE_GOAL` | Stop pipeline, report |
+| explore | GOAL block | Proceed to Step 1 |
+| momus | `APPROVE` | Proceed to Step 4 |
+| momus | `REQUEST_CHANGES` (rev ≤ 3) | Re-run Prometheus via plan `session_id` |
+| momus | `REQUEST_CHANGES` (rev = 4) | Consult Oracle / escalate |
+| sisyphus | `DONE` | Proceed to Step 5 |
+| sisyphus | `DONE_WITH_CONCERNS` | Log, proceed to Step 5 |
+| sisyphus | `BLOCKED` | Recoverable → re-dispatch via session; else block goal |
+| hephaestus | `PASS` (all VERIFIED) | Proceed to Step 6 |
+| hephaestus | `FAIL` (any UNMET, cycle ≤ 3) | Re-dispatch Sisyphus via session with GAPS |
+| hephaestus | `FAIL` (cycle = 4) | Oracle → user escalation or block goal |
+
+---
+
+## Self-Review Checklist for Sisyphus (included in its prompt)
+
+Before reporting STATUS, Sisyphus must confirm:
+
+**Completeness**
+- Every acceptance-criteria checkbox has a concrete evidence row (file:line or cmd output).
+- No criterion was merged, paraphrased, or silently dropped.
+- Edge cases named in constraints are handled.
+
+**Quality**
+- Names are clear and match codebase conventions.
+- No suppressed errors.
+- No deleted or skipped tests.
+
+**Git**
+- All changes committed.
+- Branch pushed to remote.
+- PR created with full acceptance-criteria block in the body.

@@ -1,732 +1,543 @@
 ---
 name: plan-work
-description: "Autonomous goal execution engine with parallel git worktree isolation. Reads Docs/Goals/Master.md to discover all goals, then spawns one subagent per goal — each working in its own git worktree and branch. Subagents implement, verify, commit, and create PRs independently. The controller orchestrates worktree lifecycle, monitors progress, and handles merge-back. Use when the user says 'execute goals,' 'run all goals,' 'autonomous mode,' 'plan work,' 'just do everything,' 'do the goals,' 'start working,' 'execute the plan,' 'implement everything,' or invokes /omo/work. Also use when goal files exist in Docs/Goals/ and the user wants unattended parallel execution. MUST use for any autonomous, no-questions-asked goal completion from goal documents. This skill parallelizes goal execution using git worktrees — each goal is fully isolated so multiple goals execute simultaneously without file conflicts."
+description: "Autonomous single-goal execution pipeline — one goal per invocation, six specialist phases. If no goal file is given, spawns an `explore` agent that stops at the FIRST incomplete goal under Docs/Goals/. Then drives that goal through a fixed pipeline: explore → plan (Prometheus) → review (Momus) → implement (Sisyphus, in an isolated git worktree with PR) → verify (Hephaestus) → update docs (goal file + Master.md + README + Docs/Specs). The orchestrator never plans, implements, reviews, or tests itself — every phase is delegated to its specialist and cross-verified. Triggers: 'execute goal', 'run goal', 'plan work', 'do the goal', 'start working', 'execute the plan', 'implement everything', 'autonomous mode', 'just do everything', or `/omo/work`. Also triggers when goal files exist under Docs/Goals/ and the user wants unattended end-to-end completion of one goal. Do NOT use for creating goals — use plan-goal. Do NOT use for quality refinement of completed work — use plan-improve. Do NOT use for verification-only (read-only acceptance-criteria report) — use plan-test."
 ---
 
-# Plan Work — Parallel Goal Execution via Git Worktrees
+# Plan Work — Single-Goal Autonomous Execution Pipeline
 
-You are an autonomous execution engine. You read goals from `Docs/Goals/Master.md`, create isolated git worktrees, and spawn parallel subagents — one per goal. Each subagent works independently in its own worktree: exploring, implementing, verifying, committing, and creating a PR. You orchestrate everything, verify results, and clean up.
+You are the **orchestrator**. You do not plan, implement, review, or test the work yourself — you route it through specialists. Your job is to drive **one** goal end-to-end through a fixed 6-step pipeline, verifying each handoff with independent evidence, then updating every affected document.
 
-**You are NOT an assistant.** You are an orchestrator. You think, decide, delegate in parallel, verify relentlessly, and loop until every goal is complete or blocked.
+**You are NOT an assistant.** You are a conductor. You think, decide, delegate, verify, and only claim completion when the specialists' evidence agrees with your own cross-check.
+
+---
+
+## Position in the Planning Pipeline
+
+```
+plan-goal   →   plan-work   →   plan-test   →   plan-improve
+  write          execute          verify          refine
+```
+
+`plan-goal` produces `Docs/Goals/<feature>/<task>.md` with acceptance criteria. **`plan-work` (this skill)** executes one such goal end-to-end: plan, review, implement on an isolated branch, verify each criterion, open a PR, and sync docs. `plan-test` provides a read-only verdict report. `plan-improve` closes remaining quality gaps.
+
+---
+
+## Core Philosophy
+
+1. **One goal per invocation.** Multi-goal parallelism is out of scope — if multiple goals need running, invoke this pipeline once per goal, sequentially. This single-goal architecture naturally satisfies **G7** (`MAX_PARALLEL_WORKTREES=1`) — there is never parallel goal contention, no worktree throttling to configure.
+2. **Specialist per phase.** Each step has exactly one subagent role. The orchestrator never does the specialist's job.
+3. **Cross-verify every claim.** Sisyphus's "DONE" is a claim. Hephaestus re-derives evidence independently. Only their agreement grants `completed`.
+4. **Git enforces isolation.** Sisyphus runs inside a dedicated worktree on a `goal/<slug>` branch outside the repo root. The VCS itself prevents bleed between goals.
+5. **Documents are source of truth.** The goal file, Master.md, README, and Docs/Specs are all synced **before** the pipeline returns — a goal is not "done" until its paper trail agrees.
 
 ---
 
 ## The Iron Law
 
 ```
-NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
-NO GOAL COMPLETE UNTIL EVERY ACCEPTANCE CRITERION IS VERIFIED WITH EVIDENCE
+NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE.
+EVERY ACCEPTANCE CRITERION MUST BE VERIFIED WITH CONCRETE EVIDENCE
+BEFORE THE GOAL IS MARKED `completed`.
 ```
 
-Claiming work is complete without verification is dishonesty, not efficiency. If you haven't run the verification command in this step, you cannot claim it passes.
-
-**Acceptance-criterion gate (MANDATORY).** A goal's `status` may only become `completed` when **every single acceptance-criteria checkbox** has been independently verified by the controller with concrete evidence (file:line, command output, test result, or observed behavior). Checking the goal-level status, the PR existence, the subagent's DONE report, or the count of checkboxes is **not sufficient** — you must verify each criterion individually. A single unmet or unverified criterion means the goal stays `in-progress` or is re-dispatched.
+A goal's `status` may only become `completed` when **every** acceptance-criteria checkbox has been independently verified by Hephaestus with a `file:line`, command output, test result, or observed behavior. Neither Sisyphus's self-report nor Hephaestus's summary line alone is sufficient — the orchestrator cross-checks the per-criterion block.
 
 ---
 
-## Architecture Overview
+## Non-Negotiable Rules (15)
 
-```
-Controller (you)
-  ├── Reads Master.md → discovers goals, priorities, dependencies
-  ├── Creates dependency graph → determines execution waves
-  ├── For each executable goal:
-  │     ├── git worktree add -b goal/<slug> <path> origin/<base>
-  │     ├── Spawns subagent (run_in_background=true)
-  │     │     ├── Reads goal (provided by controller)
-  │     │     ├── Checks for feature spec in Docs/Specs/
-  │     │     ├── Explores codebase within worktree
-  │     │     ├── Plans sub-tasks
-  │     │     ├── Implements with three-gate verification
-  │     │     ├── Commits all changes
-  │     │     ├── Pushes branch
-  │     │     └── Creates PR to base branch
-  │     └── Controller monitors completion
-  ├── On subagent completion: verifies PR, runs final review gate
-  ├── Cleans up worktree + branch after merge
-  └── Outputs execution summary
-```
-
-**Key principle**: Goals that share no dependencies execute simultaneously. Goals with dependencies execute in waves — each wave is a set of independent goals.
-
----
-
-## Goal File Format
-
-Each goal file in `Docs/Goals/` (organized by feature subfolders) has YAML frontmatter (`status`, `priority`, `created`, optional `depends_on`) followed by sections: **Objective**, **Context**, **Acceptance Criteria** (checkboxes), **Constraints**, and **Notes**. Created by `plan-goal`. Goal titles follow the `[Feature] Task` format.
-
-Status values: `pending` | `in-progress` | `completed` | `blocked`
-Priority values: `critical` | `high` | `medium` | `low`
-
----
-
-## Execution Loop
-
-### Step 1 — Load Master.md and Build Dependency Graph
-
-1. **Crash recovery check** — before anything else, scan for existing `goal/*` branches that already have open/merged PRs. If a branch has a PR but the corresponding goal file still says `pending`, auto-reconcile: mark the goal `completed` (if PR merged) or `in-progress` (if PR open). This makes re-runs idempotent after controller crashes.
-2. **Read `Docs/Goals/Master.md`** — this is the central registry of all goals with status, priority, and dependencies. Parse the table to extract each goal's file path, status, priority, and `depends_on` list.
-3. If `Master.md` doesn't exist, fall back to scanning `Docs/Goals/**/*.md` recursively and parsing YAML frontmatter. But prefer Master.md — it's the source of truth.
-4. **Filter** to `pending` or `in-progress` goals only. If a specific goal file was given, process only that file.
-4. **Build dependency graph**: Create a DAG (directed acyclic graph) of goals based on `depends_on` fields. Identify execution waves:
-   - **Wave 1**: All goals with no pending dependencies (can execute immediately)
-   - **Wave 2**: Goals whose dependencies are all in Wave 1
-   - **Wave N**: Goals whose dependencies are all in prior waves
-5. Within each wave, sort by priority: `critical` > `high` > `medium` > `low`. Same priority = alphabetical.
-6. If a dependency is `blocked`, mark the dependent as `blocked` too and skip it.
-7. No uncompleted goals? Report "No uncompleted goals found" and stop.
-
-### Step 2 — Detect Project Domain and Base Branch
-
-Before creating worktrees, understand the project:
-
-1. **Detect project domain** — identify the project type for verification strategy:
-
-| Project Type | Detection Signals | Verification Tools |
-|---|---|---|
-| Unity | `.unity`, `.cs` files, `Assets/` folder, `.asmdef` files | `lsp_diagnostics` + `Unity_ReadConsole` (MCP) |
-| Flutter | `pubspec.yaml`, `.dart` files, `lib/` folder | `lsp_diagnostics` + `dart analyze` |
-| Web/Node | `package.json`, `tsconfig.json`, `.ts`/`.tsx` files | `lsp_diagnostics` + build command |
-| General | Any other project | `lsp_diagnostics` only |
-
-2. **Determine base branch** — check what branch the repo is currently on (usually `main` or `develop`). All worktrees will branch from this.
-3. **Check submodule presence** — if the repo has submodules, log a warning. Git worktrees have incomplete submodule support. Proceed with caution.
-
-### Step 3 — Create Worktrees and Spawn Parallel Agents
-
-**Concurrency limit**: Process at most `MAX_PARALLEL_WORKTREES` goals simultaneously (default: 5). If a wave has more goals than the limit, batch them into sub-waves. This prevents disk exhaustion (Unity Library folders can be 2-5GB each) and API rate limit pressure.
-
-For each batch of independent goals in the current wave:
-
-1. **Create worktrees** — use the bundled worktree manager for consistency:
-
-   ```bash
-   # Use worktree_manager.sh for standardized creation with pre-flight checks
-   run_skill_script('plan-work', 'scripts/worktree_manager.sh', arguments=['create', '<feature-slug>', '<base-branch>'])
-   # Returns: worktree_path, branch, base_branch
-   ```
-
-   Or manually:
-   ```bash
-   BRANCH="goal/<feature-slug>-<goal-id-short>"
-   WORKTREE_DIR="../.worktrees/<feature-slug>-<goal-id-short>"
-   git fetch origin
-   git worktree add -b "$BRANCH" "$WORKTREE_DIR" origin/<base-branch>
-   ```
-
-   **Branch naming rules:**
-   - Prefix: `goal/` — keeps automation branches separate from human branches
-   - Slug: derived from goal title, kebab-case (e.g., `[Combat] Add parry` → `combat-add-parry`)
-   - Keep branch names deterministic and unique
-
-   **Worktree location rules:**
-   - Place worktrees **outside** the main repo root (e.g., `../.worktrees/`)
-   - Never inside the repo tree — avoids gitignore issues, tool scanning, and Unity Library conflicts
-   - Each worktree is a complete working copy of the project
-
-2. **Read each goal file** before spawning — extract full text of objective, context, acceptance criteria, constraints. The controller provides this text to the subagent; subagents never read goal files themselves.
-
-3. **Check for related spec documents** — for each goal:
-   - Extract feature name from goal title (`[Feature] Task` format)
-   - Check `Docs/Specs/` for matching spec: `Docs/Specs/{Feature_Name}.md`
-   - If found, read it and include in subagent context
-   - If not found, note this — spec will be created after completion
-
-4. **Spawn one subagent per goal** using `task(run_in_background=true)`:
-
-   ```
-   task(
-     category="<domain-appropriate>",
-     load_skills=["<domain-skills>", "<standards-skill>"],
-     run_in_background=true,
-     description="Goal: <goal-title>",
-     prompt="<see Subagent Prompt Template below>"
-   )
-   ```
-
-   Each subagent receives:
-   - The goal text (objective, criteria, constraints)
-   - The feature spec content (if exists)
-   - The worktree path (their working directory)
-   - The branch name
-   - The base branch to PR against
-   - Project domain and verification instructions
-   - The delegation template from `references/delegation-templates.md`
-
-5. **Create tasks for tracking (MANDATORY — one parent + one per criterion).** For each goal:
-   - Call `task_create` once to register the **parent goal task** (subject = goal title). Record the returned `parent_task_id`.
-   - **Parse every acceptance-criteria checkbox** from the goal file. For each criterion, call `task_create` with:
-     - `subject` = the criterion text (first 80 chars if long)
-     - `parentID` = the parent goal task id
-     - `description` = full criterion text + pointer to goal file path
-     - `metadata` = `{"goal_file": "<path>", "criterion_index": N, "verification_status": "pending"}`
-   - Record the mapping `{goal → parent_task_id, [criterion_task_ids]}`. You will update these individually as evidence arrives; **never batch-complete all criterion tasks at once**.
-   - **Invariant**: the count of criterion tasks created MUST equal the number of checkboxes in the goal's `## Acceptance Criteria` section. If it doesn't match, re-parse the goal file — do not proceed with a mismatched task set.
-   - Also record the background subagent `task_id` for wave monitoring.
-
-6. **Process all waves** — after Wave 1 agents complete, create worktrees for Wave 2 goals and spawn those agents, and so on.
-
-### Step 4 — Subagent Execution (What Each Subagent Does)
-
-Each subagent operates autonomously within its worktree. The subagent's complete lifecycle:
-
-#### 4a. Orient
-
-1. **Verify worktree** — confirm the working directory is the assigned worktree path, and the branch is correct.
-2. **Internalize the goal** — read the provided goal text, acceptance criteria, and constraints.
-3. **Read the spec** (if provided) — use it as the architectural blueprint.
-4. **Explore the codebase** — fire `explore` agents to understand existing patterns, related files, conventions within the worktree.
-
-#### 4b. Plan
-
-1. **Decompose into sub-tasks** — break the goal into atomic, verifiable work units.
-2. **Map every acceptance criterion** to at least one sub-task. Create a running checklist:
-   ```
-   [ ] Criterion 1 → Sub-task A
-   [ ] Criterion 2 → Sub-task B, C
-   [ ] Criterion 3 → Sub-task C
-   ```
-   Update this checklist after each sub-task completes. This prevents criteria from being lost during implementation of complex goals with many acceptance criteria.
-3. **Order by dependency** — foundational work first (interfaces, models), then implementation (logic, UI).
-
-#### 4c. Implement with Three-Gate Verification
-
-For each sub-task:
-
-1. **Implement** — write the code, following codebase conventions and spec architecture.
-
-2. **Gate 1: Static Analysis**
-   - Run `lsp_diagnostics` on all changed files.
-   - Fix any errors.
-   - **Record the list of changed files** — reuse this for Gate 3 instead of re-scanning.
-
-3. **Gate 2: Domain-Specific Verification**
-   - **Unity**: Check Unity Editor console for compilation errors (if Unity MCP available)
-   - **Flutter**: Run `dart analyze`. Fix errors.
-   - **Web/Node**: Run build command. Fix failures.
-   - **General**: `lsp_diagnostics` alone suffices.
-
-4. **Gate 3: Spec Compliance**
-   - Review the actual code against acceptance criteria.
-   - Read files directly — do not trust your own claims.
-   - Verify every requirement independently.
-
-5. All three gates must pass before moving to next sub-task.
-
-#### 4d. Final Goal Review
-
-After all sub-tasks pass:
-
-1. **Re-read acceptance criteria** from the provided goal text.
-2. **Cross-reference** every criterion against implementation — collect specific evidence (file:line, test output, behavior).
-3. **Run final verification** — `lsp_diagnostics` on all modified files, plus domain-specific checks.
-4. **Assess each criterion**: Met (with evidence) or Unmet.
-5. If any Unmet → fix, re-verify. Loop until all criteria pass.
-
-#### 4e. Commit and Create PR
-
-Once all criteria are verified:
-
-1. **Stage and commit** all changes in the worktree:
-
-   ```bash
-   git -C <worktree-path> add .
-   git -C <worktree-path> commit -m "<commit-message>"
-   ```
-
-   Commit message format: `feat(<feature>): <goal-summary>`
-
-   For multi-commit goals, use meaningful commits per logical unit — not one giant commit.
-
-2. **Push the branch**:
-
-   ```bash
-   git -C <worktree-path> push -u origin <branch-name>
-   ```
-
-3. **Create a Pull Request**:
-
-   ```bash
-   gh pr create \
-     --base <base-branch> \
-     --head <branch-name> \
-     --title "<goal-title>" \
-     --body-file - <<'EOF'
-   ## Goal
-   <goal-objective>
-
-   ## Changes
-   <summary of what was implemented>
-
-   ## Acceptance Criteria
-   <list of criteria with pass/fail status>
-
-   ## Verification
-   - Static Analysis: PASS
-   - Domain Check: PASS/N/A
-   - Spec Compliance: PASS
-
-   ## Files Modified
-   <list>
-   EOF
-   ```
-
-4. **Report completion** back to controller with:
-   - Status: `DONE` | `DONE_WITH_CONCERNS` | `BLOCKED`
-   - PR URL
-   - List of files modified
-   - Verification evidence summary
-
-### Step 5 — Controller Monitors and Collects Results
-
-As subagents complete (via `<system-reminder>` notifications):
-
-1. **Collect results** via `background_output(task_id="...")`.
-
-2. **Timeout detection** — if a subagent has been running significantly longer than expected without completion notification, probe with `background_output(task_id="...", block=false)`. Check the worktree for commits (`git -C <wt> log --oneline -3`). If partial work exists, resume via `session_id`. If no work at all, re-dispatch with a simpler strategy.
-
-3. **For each completed goal — run the Per-Criterion Verification Gate (MANDATORY)**:
-
-   The subagent's `DONE` status is a **claim, not a fact**. Before marking the goal complete, the controller MUST independently verify every acceptance criterion:
-
-   a. **Re-parse the goal file** to extract the fresh list of acceptance-criteria checkboxes (never trust the subagent's paraphrase).
-
-   b. **For EACH criterion** — iterate one by one, no batching:
-      1. Look up its `criterion_task_id` from the mapping created in Step 3.
-      2. Mark `task_update(id=criterion_task_id, status="in_progress")`.
-      3. **Gather concrete evidence** from the subagent's worktree / PR:
-         - Read the modified files directly (`git -C <wt> diff origin/<base>...HEAD -- <files>` or read the file at the branch tip).
-         - Grep the codebase for the feature/symbol/behavior the criterion references.
-         - Re-run domain checks if relevant (`lsp_diagnostics`, `dart analyze`, build).
-         - Check test output if the criterion names a test case.
-         - Inspect the PR body's evidence block and cross-reference it against actual file content — do not accept claims verbatim.
-      4. **Classify** the criterion as `VERIFIED`, `UNMET`, or `UNCLEAR`:
-         - `VERIFIED` — concrete evidence (file:line, command output, behavior) proves the criterion is satisfied.
-         - `UNMET` — evidence shows it is not satisfied, or evidence is absent.
-         - `UNCLEAR` — partial evidence, ambiguous; treat as UNMET for gating purposes but note the ambiguity.
-      5. **Update the criterion task**:
-         - `VERIFIED` → `task_update(id=criterion_task_id, status="completed", metadata={"verification_status":"verified","evidence":"<file:line or cmd output>"})`
-         - `UNMET` / `UNCLEAR` → keep `status="in_progress"`, `metadata={"verification_status":"unmet","reason":"<why>","evidence":"<what was missing>"}`
-      6. Also tick the corresponding checkbox in the goal file (`- [ ]` → `- [x]`) ONLY for `VERIFIED` criteria. Leave `UNMET`/`UNCLEAR` criteria unchecked.
-
-   c. **Gate the goal's completion on criterion results**:
-      - **All criteria VERIFIED** → goal may be marked `completed`. Proceed to step (d).
-      - **Any UNMET / UNCLEAR** → goal stays `in-progress`. Bundle all unmet criteria into a single follow-up prompt and re-dispatch the subagent via `session_id` with the exact criteria + missing evidence. Re-run the Per-Criterion Verification Gate on the next cycle. Do **not** mark the goal complete just because "most" criteria pass.
-      - If the same criterion stays UNMET after 2 re-dispatches → escalate (Oracle consultation, re-decompose, or mark the goal `blocked` with the specific blocking criteria listed).
-
-   d. **Only after ALL criteria are VERIFIED**:
-      - Verify the PR exists (`gh pr view <branch>`).
-      - Mark the goal `status: completed` in the goal file frontmatter.
-      - Update `Docs/Goals/Master.md` — set status to `completed`, recalculate summary counts.
-      - Mark the **parent goal task** `completed` via `task_update`.
-      - Record completion timestamp for timing instrumentation.
-
-   **Anti-pattern (BLOCKING)**: Marking a goal `completed` because the subagent reported `DONE` without running (b) and (c). The controller is the final judge — the subagent is an implementer, not an auditor of its own work.
-
-4. **For failed/blocked goals**:
-   - Read the failure context
-   - Attempt recovery (see Failure Recovery below)
-   - If genuinely blocked, mark `status: blocked` with reason
-
-5. **If PR creation failed** — check if the branch was pushed successfully. If yes, the branch is preserved on the remote; clean up the worktree but log the orphaned branch in the execution summary for manual PR creation. Do not leave worktrees orphaned just because PR creation failed.
-
-6. **Process next wave** — after all Wave N agents complete, check if Wave N+1 goals are now unblocked. Create worktrees and spawn agents for them.
-
-### Step 6 — Spec Update (Post-Completion)
-
-After each goal completes:
-
-1. **Delegate a spec update** using the appropriate spec skill:
-   - If spec existed: Update mode (reflect new implementation)
-   - If no spec: Feature Spec mode (create from implementation)
-   - Run in background — this is autonomous documentation
-   - See Spec Integration section for the delegation template
-   - **Match skills to project domain** — use `unity-spec`/`unity-standards` for Unity, or equivalent for other domains. Do not hardcode Unity skills for non-Unity projects.
-
-2. **Track spec update tasks** — record each spec update task_id. In Step 8, batch-verify all spec updates completed. Report failures as "SPEC_UPDATE_PENDING" in the execution summary rather than silently dropping them.
-
-### Step 7 — Cleanup Worktrees
-
-After a goal's PR is created and verified:
-
-```bash
-# Use worktree_manager.sh for safe removal with dirty-check guards
-run_skill_script('plan-work', 'scripts/worktree_manager.sh', arguments=['remove', '<feature-slug>'])
-
-# Or manually:
-git -C <worktree-path> status --porcelain  # Verify clean
-git worktree remove <worktree-path>
-git branch -d <branch-name> 2>/dev/null || true  # Only after PR merge
-git worktree prune
-```
-
-**Cleanup rules:**
-- Remove worktrees only after PR is confirmed created
-- Don't force-remove — if unclean, investigate first
-- Prune stale metadata periodically
-- Delete branches only after PR merge (not before)
-
-### Step 8 — Execution Summary
-
-After all waves are processed:
-
-1. Re-read all goal files — verify every targeted goal has appropriate status.
-2. Run final `lsp_diagnostics` on the main worktree.
-3. **Batch-verify spec update completions** — check all spec update task_ids. Log any failures as SPEC_UPDATE_PENDING.
-4. **Update Master.md** — final sync of all status changes.
-5. Output:
-
-```
-## Execution Complete
-
-Goals completed: X/Y
-Goals blocked: Z (if any, with reasons)
-Waves executed: N
-
-### Summary
-- [Goal 1]: [1-line summary] — PR #<number> — Criteria: X/X verified
-- [Goal 2]: [1-line summary] — PR #<number> — Criteria: X/X verified
-
-### Acceptance Criteria Verification
-For every completed goal, list each criterion with its VERIFIED/UNMET status and evidence pointer:
-- [Goal 1]
-  - [x] Criterion A — VERIFIED (evidence: Assets/Combat/Parry.cs:42, test ParryTests.Parries_OnTimingMatch passes)
-  - [x] Criterion B — VERIFIED (evidence: ...)
-- [Goal 2]
-  - [x] Criterion A — VERIFIED (evidence: ...)
-
-### Pull Requests Created
-- PR #<N>: <title> (goal/<branch>) -> <base>
-- PR #<N>: <title> (goal/<branch>) -> <base>
-
-### Worktree Status
-- Created: X worktrees
-- Cleaned up: Y worktrees
-- Remaining: Z (if any, with reason)
-- Orphaned branches: [list, if PR creation failed but branch pushed]
-
-### Spec Updates
-- [Feature 1]: Updated/Created Docs/Specs/Feature_1.md — STATUS
-- [Feature 2]: SPEC_UPDATE_PENDING (reason)
-
-### Timing
-- Total execution time: HH:MM:SS
-- Average goal completion: MM:SS
-- Fastest goal: <name> (MM:SS)
-- Slowest goal: <name> (MM:SS)
-- Worktree setup overhead: ~MM:SS per worktree
-
-### Verification
-- Build: PASS/FAIL/N/A
-- Diagnostics: PASS/N errors
-- Console (Unity): CLEAN/N errors/N/A
-- Analyzer (Flutter): PASS/N errors/N/A
-- Tests: X/Y passed / N/A
-
-### Next Step
-Review and merge the PRs, then run `plan-improve` for quality refinement.
-```
-
----
-
-## Subagent Prompt Template
-
-Read `references/delegation-templates.md` and use the **Worktree Subagent Prompt Template** when spawning each goal's subagent. The template provides the complete prompt structure including environment setup, goal injection, verification protocol, workflow steps, and rules. Fill in all `{placeholders}` with values from the controller's context.
-
-Key subagent rules (also in the template):
-- NEVER ask questions. Think, decide, execute.
-- NEVER modify files outside the assigned worktree path.
-- NEVER suppress type errors (no `as any`, `@ts-ignore`, empty catches).
-- NEVER skip verification gates. All three gates per sub-task.
-- ALWAYS verify before claiming completion. Evidence before assertions.
-- ALWAYS commit and push BEFORE creating the PR.
-- ALWAYS maintain a running criteria checklist — update it after each sub-task.
-- Report status: `DONE` | `DONE_WITH_CONCERNS` | `BLOCKED`
-
----
-
-## Failure Recovery
-
-### Subagent Failures
-
-| Failure Type | Action |
+| # | Rule |
 |---|---|
-| Subagent reports `DONE_WITH_CONCERNS` | Read concerns, fix via `session_id` if needed |
-| Subagent reports `BLOCKED` | Assess blocker. Re-dispatch with different strategy, or mark goal blocked. |
-| Subagent times out | Check worktree state. Resume via `session_id` or re-dispatch. |
-| PR creation fails | Check if branch was pushed. Fix and retry. |
-| Merge conflicts | Rebase worktree branch onto latest base: `git -C <wt> fetch origin && git -C <wt> rebase origin/<base>` |
-
-### Escalation Protocol
-
-| Failure Count | Action |
-|---|---|
-| 1-2 failures | Fix via `session_id` continuation |
-| 3 failures (same approach) | Switch strategy: re-decompose, different category/skills |
-| After strategy switch fails | Consult Oracle with full context |
-| Genuinely impossible | Mark `blocked`, document reason, continue other goals |
-
-### Worktree Recovery
-
-If a worktree is in a bad state:
-
-```bash
-# Check state first — always diagnose before acting
-git -C <wt> status
-git -C <wt> log --oneline -5
-
-# Reset to clean state (preserves commits, discards uncommitted changes)
-git -C <wt> reset --hard origin/<base>
-
-# Nuclear option: remove and recreate
-# WARNING: --force discards ALL uncommitted changes — check for salvageable work first
-# WARNING: -b will fail if the branch already exists — delete it first: git branch -D <branch>
-git worktree remove --force <wt>
-git branch -D <branch> 2>/dev/null || true
-git worktree add -b <branch> <wt> origin/<base>
-```
+| 1 | **Never ask.** Think, decide, execute. |
+| 2 | **Never stop early.** Run the pipeline to completion or to an explicit `blocked` terminal. |
+| 3 | **Never deliver partial work.** A goal is either fully verified and `completed`, or it is `blocked` with a documented reason. |
+| 4 | **Never suppress errors.** No `as any`, `@ts-ignore`, deleted tests, or empty catches — enforced in Sisyphus prompt. |
+| 5 | **Never skip any of the three verification gates** (static analysis, domain check, spec compliance) inside Sisyphus, nor the fresh Hephaestus re-verify in Step 5. |
+| 6 | **Never trust subagent claims without independent verification.** Hephaestus re-derives evidence in a fresh session. |
+| 7 | **Always read Docs/Goals/Master.md for context** before starting — even though only one goal runs, Master.md tells you dependency status and sibling goals. |
+| 8 | **Always create worktrees outside the repo root** (default `../.worktrees/<slug>`). |
+| 9 | **Always enforce one-branch-per-worktree** (`goal/<slug>`). Git will block dual checkouts — do not fight it. |
+| 10 | **Always commit and push BEFORE `gh pr create`.** |
+| 11 | **Always provide full context to every subagent.** Goal text, spec, criteria, worktree env, domain, constraints — no "go figure it out". |
+| 12 | **Always clean up worktrees after successful merge or PR creation.** On failure (PR creation failed), run the cleanup-on-failure path: remove the worktree but preserve the remote branch for manual recovery. |
+| 13 | **Always keep specs in sync.** Step 6d delegates a spec update (Update if spec exists, Create if not). Skills are chosen by domain, not hardcoded. |
+| 14 | **Always execute in fixed pipeline order.** 0 → 1 → 2 → 3 → 4 → 5 → 6. No phase may be skipped or reordered. |
+| 15 | **Always use `session_id` for revision loops.** Plan↔Momus revisions reuse `plan_session_id`. Sisyphus re-dispatch after Hephaestus FAIL reuses `sisyphus_session_id`. Hephaestus itself always runs in a **fresh session** per verify round. |
 
 ---
 
-## Spec Integration (Mandatory)
+## Pipeline Overview
 
-The spec cycle ensures design documents and implementation stay synchronized:
+| Step | Specialist | Purpose | Blocking? | Session continuation? |
+|---|---|---|---|---|
+| 0 | `explore` (if no goal file given) | Find ONE incomplete goal — stop at first match | Yes | No (one-shot) |
+| 1 | orchestrator | Read goal + spec, detect domain, create worktree + branch, create tracking tasks | n/a | n/a |
+| 2 | `plan` (Prometheus) | Produce executable plan with criterion↔sub-task mapping | Yes | `plan_session_id` reused for revisions |
+| 3 | `momus` | APPROVE / REQUEST_CHANGES on the plan (max 3 revisions) | Yes | Fresh session each review |
+| 4 | `sisyphus` | Implement inside worktree, three-gate verify, commit, push, `gh pr create` | Yes | `sisyphus_session_id` reused on Hephaestus FAIL |
+| 5 | `hephaestus` | Re-verify every acceptance criterion independently (max 3 cycles with Sisyphus) | Yes | **Fresh session per verify round** |
+| 6 | orchestrator + `unspecified-high` | Update goal file, Master.md, README (if impacted), delegate spec update | Mostly sync; spec update async | n/a |
+
+---
+
+## Step 0 — Goal Discovery
+
+### 0a. User-provided goal
+
+If the user passed a goal file path (e.g., `Docs/Goals/combat/add-parry.md`), verify the file exists, read it, and skip to Step 1. **Do not spawn the explore agent** in this branch.
+
+### 0b. Auto-discover (no goal given)
+
+Spawn the `explore` agent using the prompt in `references/delegation-templates.md` §1. Contract:
+
+- `subagent_type="explore"`, `run_in_background=false` (blocking).
+- The prompt explicitly instructs **stop at first match** — no token spend on full enumeration.
+- Filter: `status ∈ {pending, in-progress}` AND at least one unchecked `- [ ]` criterion.
+- Priority preference is a soft hint (`critical > high > medium > low`) — first viable match wins.
+
+Explore returns exactly one of:
+- `GOAL_FILE / GOAL_TITLE / PRIORITY / UNCHECKED_COUNT` block → adopt this goal, proceed to Step 1.
+- `NO_INCOMPLETE_GOAL` → **halt the pipeline cleanly**. Report: "No incomplete goals found under Docs/Goals/." Do NOT create a worktree, do NOT spawn any other specialist, do NOT fabricate work.
+
+### Hard rules for Step 0
+1. One goal, not many.
+2. "Incomplete" = `status != completed` AND ≥ 1 unchecked checkbox. A goal marked `in-progress` with every box ticked is **not** a target.
+3. Never invent a goal when none is found.
+
+---
+
+## Step 1 — Orchestration Bootstrap
+
+1. **Read Docs/Goals/Master.md** (Rule 7). It tells you dependency status and sibling goals for context — even though you only execute one.
+2. **Crash-recovery scan.** Before creating anything, check for an existing `goal/<slug>*` worktree or remote branch with an open PR for this goal. If present, resume that branch/worktree instead of re-branching.
+3. **Parse the goal file** completely: `## Objective`, `## Context`, `## Acceptance Criteria` (every checkbox), `## Constraints`, `## Notes`, full YAML frontmatter. The checkbox count is the anchor for every downstream step.
+4. **Domain detection** using the table below. Record `domain` and the Gate-2 verification command.
+
+### Domain Detection Table
+
+| Signal in repo | Domain | Gate 2 command (Sisyphus) | Sisyphus `load_skills` (typical) | Spec skill (Step 6d) |
+|---|---|---|---|---|
+| `ProjectSettings/`, `Assets/`, `.asmdef`, `.cs` | `unity` | `Unity_ReadConsole` (no CS### / assembly errors) | `unity-code`, `unity-standards`, `unity-compile-check` | `unity-spec`, `unity-standards` |
+| `pubspec.yaml`, `lib/`, `.dart` | `flutter` | `dart analyze` clean | `flutter-code`, `flutter-standards` | `flutter-code`, `flutter-standards` (or any available flutter doc skill) |
+| `package.json`, `tsconfig.json`, `.ts/.tsx` | `web` | `tsc --noEmit` or `npm run build` clean | `nextjs-backend` / `ui-ux` / project's frontend skill | matching doc/spec skill for the stack |
+| Anything else | `general` | `lsp_diagnostics` alone suffices | bash, docs, scripting skills as relevant | `visual-explainer` or whatever doc skill fits |
+
+5. **Create the worktree** using the bundled helper (Rule 12, Optimization O1):
 
 ```
-Docs/Specs/Feature.md  ──read──>  Implementation  ──update──>  Docs/Specs/Feature.md
-     (blueprint)                   (goal work)                   (living doc)
-```
-
-### Pre-Implementation: Spec as Blueprint
-
-When a feature spec exists in `Docs/Specs/`, it serves as the architectural blueprint. The spec's Systems Design, Data Model, Events, and State Machines define the intended structure. Pass spec content to subagents so implementation follows the blueprint.
-
-If acceptance criteria conflict with the spec, criteria take priority (latest requirements).
-
-### Post-Implementation: Spec Update
-
-After every goal completes, the feature spec **must** be updated. Delegation template:
-
-```
-task(
-  category="unspecified-high",
-  load_skills=["unity-spec", "unity-standards"],
-  run_in_background=true,
-  description="Update spec for {Feature}",
-  prompt="
-    1. TASK: Update the feature spec for {Feature} to reflect completed implementation.
-       Mode: {Update if spec exists, Feature Spec if creating new}.
-
-    2. EXPECTED OUTCOME: Docs/Specs/{Feature_Name}.md accurately reflects the codebase.
-
-    3. REQUIRED TOOLS: read, write, edit, glob, grep
-
-    4. MUST DO:
-       - Use unity-spec workflow
-       - Investigate actual codebase — cite file:line
-       - Preserve user-authored design intent
-       - Save directly — do NOT block for user review
-
-    5. MUST NOT DO:
-       - Do not ask for approval
-       - Do not add speculative features
-       - Do not remove sections — only update or add
-
-    6. CONTEXT:
-       - Feature: {feature_name}
-       - Spec path: Docs/Specs/{Feature_Name}.md
-       - Goal completed: {goal_title}
-       - Files modified: {list}
-  "
+run_skill_script(
+  skill="plan-work",
+  script="scripts/worktree_manager.sh",
+  arguments=["create", "<feature-slug>", "<base-branch>"]
 )
 ```
 
-### Feature Name Mapping
+- Slug = kebab-case of the goal title with `[Feature]` stripped (`[Combat] Add parry` → `combat-add-parry`).
+- Helper creates branch `goal/<slug>` and worktree at `../.worktrees/<slug>` (both env-overridable). It pre-flights branch/dir collisions, fetches origin, and fails loudly rather than silently.
+- Record: `worktree_path`, `branch`, `base_branch`.
 
-| Goal Title | Spec File |
-|---|---|
-| `[Combat] Add parry mechanic` | `Combat.md` |
-| `[Inventory System] Add sorting` | `Inventory_System.md` |
-| `[UI] Build health bar` | `UI.md` |
+6. **Read the spec.** Derive feature name from the goal title. Check `Docs/Specs/<Feature>.md`. If present, read it. If absent, note "no spec — Step 6d will create".
+7. **Create tracking tasks** (orchestrator-owned, so progress is inspectable — G6 fix):
+   - `task_create` once for the parent goal (subject = goal title, `metadata={"goal_file": "...", "worktree_path": "...", "branch": "..."}`).
+   - `task_create` once per acceptance-criteria checkbox: subject = criterion text verbatim, `parentID` = parent task id, `metadata = {"criterion_index": N, "verification_status": "pending"}`. **Count must equal the number of checkboxes** — if mismatch, re-parse.
 
----
-
-## Model Selection
-
-| Task Complexity | Category |
-|---|---|
-| Mechanical (1-2 files, clear spec) | `quick` |
-| Standard (multi-file, some judgment) | `unspecified-high` or domain-specific |
-| Complex (architecture, broad understanding) | `deep` or `ultrabrain` |
-
-Domain categories:
-- Frontend/UI → `visual-engineering`
-- Hard logic/algorithms → `ultrabrain`
-- Autonomous research + implementation → `deep`
+Orchestrator scratchpad after Step 1:
+```
+goal_file, goal_title, feature_name, worktree_path, branch, base_branch,
+domain, gate2_cmd, spec_path_or_null, parent_task_id, criterion_task_ids[]
+```
 
 ---
 
-## Skill Selection Guide
+## Step 2 — Plan (Prometheus)
 
-| Goal Domain | Primary Skills | Standards |
+Delegate planning. **Do not plan yourself.** Use the exact prompt template in `references/delegation-templates.md` §2.
+
+- `subagent_type="plan"`, `run_in_background=false`.
+- Prompt carries: full goal (objective, context, criteria verbatim numbered 1..N, constraints), spec content (or "no spec"), worktree env, domain.
+- The plan MUST include a **criterion↔sub-task mapping table** — one row per checkbox, each row citing a concrete verification method (runnable command, `file:line`, or named test). Dropping, merging, or paraphrasing criteria is forbidden.
+- Record the returned `session_id` as `plan_session_id` — reused for revisions in Step 3.
+
+---
+
+## Step 3 — Plan Review (Momus)
+
+Use the template in `references/delegation-templates.md` §3. **Fresh session each review** — Momus does not retain state across rounds.
+
+- `subagent_type="momus"`, `run_in_background=false`.
+- Momus returns exactly: `Verdict: APPROVE | REQUEST_CHANGES`, reason bullets, and (if REQUEST_CHANGES) actionable required-changes bullets.
+
+### Revision loop
+
+| Verdict | Action |
+|---|---|
+| `APPROVE` | Record the final plan text verbatim. Proceed to Step 4. |
+| `REQUEST_CHANGES` (cycle ≤ 3) | Re-invoke Prometheus via `session_id=plan_session_id` with Momus's required-changes bullets. Then invoke a **fresh Momus** on the revised plan. |
+| `REQUEST_CHANGES` (cycle = 4) | Do NOT loop. Consult `oracle` with plan + Momus history, surface the impasse to the user. |
+
+Never proceed to Sisyphus while Momus's verdict is `REQUEST_CHANGES`.
+
+---
+
+## Step 4 — Implement (Sisyphus)
+
+Sisyphus runs inside the worktree, executes the approved plan, and creates the PR. Use the template in `references/delegation-templates.md` §4.
+
+- `subagent_type="sisyphus"`, `run_in_background=false`.
+- `load_skills` from the plan's suggested list (domain-appropriate: see Domain Detection Table).
+- Prompt carries: worktree env, full goal, spec, **approved plan verbatim**, three-gate protocol, commit+push+PR instructions, self-review checklist.
+- Record `sisyphus_session_id` for potential re-dispatch after Hephaestus.
+
+### Three verification gates (mandatory per sub-task)
+
+1. **Gate 1 — Static Analysis.** `lsp_diagnostics` clean on every changed file.
+2. **Gate 2 — Domain check.** Run the command from the Domain Detection Table (`Unity_ReadConsole` / `dart analyze` / `tsc --noEmit` / lsp-only).
+3. **Gate 3 — Spec compliance.** Emit a `[PASS] / [FAIL]` row for **every acceptance criterion**, each with concrete evidence (`file:line | cmd output | test name`).
+
+### Running-criteria checklist (G6)
+
+Sisyphus maintains a running checklist throughout implementation and includes it in every interim/final report:
+
+```
+[ ] Criterion 1 → Sub-task A (pending)
+[x] Criterion 2 → Sub-task B (verified: src/auth.ts:45)
+[ ] Criterion 3 → Sub-task C (in progress)
+```
+
+This replaces from-scratch re-derivation at the end and prevents criteria from silently slipping.
+
+### Commit + push + PR (enforcement of Rule 10)
+
+1. Conventional commits (`feat(feature): summary`), multi-commit for logical units is fine.
+2. `git -C <worktree> push -u origin <branch>`.
+3. `gh pr create --repo <owner>/<repo> --base <base_branch> --head <branch> --title "<goal_title>" --body-file -` with a body including Goal, Changes, Acceptance Criteria (one `[PASS]/[FAIL]` row per checkbox), Verification summary, Files Modified.
+
+### Status protocol
+
+Sisyphus reports one of:
+
+| Status | Meaning | Orchestrator action |
 |---|---|---|
-| Unity C# | `unity-code`, `unity-debug` | `unity-standards` |
-| Unity Editor | `unity-editor` | `unity-standards` |
-| Unity UI | `unity-uitoolkit` | `unity-standards` |
-| Unity Tests | `unity-test-unit` | `unity-standards` |
-| Flutter/Dart | `flutter-code`, `flutter-debug` | `flutter-standards` |
-| Flutter UI | `flutter-ui` | `flutter-standards` |
-| Flutter Tests | `flutter-test` | `flutter-standards` |
-| Frontend/web | `frontend-design` | — |
-| Next.js | `nextjs-backend` | — |
-| Database | `database-design` | — |
-| Cloud infra | `cloud-infra` | — |
-| Shell scripts | `bash-check`, `bash-optimize` | — |
-| Documentation | `unity-document`, `visual-explainer` | — |
-| Spec updates | `unity-spec` | `unity-standards` |
-
-Always include the relevant standards skill when delegating domain work.
+| `DONE` | All gates pass, every criterion has `[PASS]` evidence, PR opened | Proceed to Step 5 |
+| `DONE_WITH_CONCERNS` | PR opened but Sisyphus flagged non-blocking issues | Log concerns, proceed to Step 5 (Hephaestus is the judge) |
+| `BLOCKED` | Genuine blocker hit (missing dep, broken tooling, design contradiction) | Recoverable → re-dispatch via `session_id=sisyphus_session_id` with diagnosis; else take Step 6 blocked path |
 
 ---
 
-## Concurrency Safety
+## Step 5 — Verify (Hephaestus)
 
-### Invariants
+Hephaestus re-tests every acceptance criterion **independently** against the worktree. This is the authoritative verification — Sisyphus's self-report is a claim. Use the template in `references/delegation-templates.md` §5.
 
-1. **One branch per worktree** — git enforces this; never override with `--force`
-2. **One goal per worktree** — never share worktrees between goals
-3. **Worktrees are outside repo root** — prevents tool scanning and gitignore conflicts
-4. **No shared mutable state** — each subagent works in complete isolation
-5. **Base branch is read-only** — subagents branch from it but never push to it directly
+- `subagent_type="hephaestus"`, `run_in_background=false`.
+- **Fresh session every verify round** (Rule 15). Hephaestus re-derives evidence without carrying over state.
+- `load_skills` = domain verification skills (e.g. `unity-compile-check` + `unity-standards`, or `flutter-standards` + a dart-analyze-capable skill).
+- Prompt provides: criteria verbatim numbered 1..N, Sisyphus's evidence table (as claims, not truth), worktree + PR refs, explicit instruction to re-read cited `file:line` rows and re-run gate commands in this session.
 
-### What's Shared (Read-Only)
+### Return format
 
-- Git objects and refs (via `.git` common dir)
-- The base branch state at worktree creation time
+```
+OVERALL: PASS | FAIL
+PER_CRITERION:
+  1. [VERIFIED|UNMET|UNCLEAR] <criterion verbatim> — evidence: <file:line | cmd output>
+  2. ...
+SUMMARY: <1-2 sentences>
+GAPS (if any): <criterion-indexed, concrete>
+```
 
-### What's Isolated (Per Worktree)
+`OVERALL: PASS` iff every criterion is `VERIFIED`. `UNCLEAR` counts as `UNMET` for gating.
 
-- Working directory
-- Index (staging area)
-- HEAD
-- Branch
-- Uncommitted changes
-- Unity Library/Temp (if Unity project)
+### Gating and re-dispatch
 
-### Conflict Handling
-
-When multiple goals modify overlapping files, conflicts resolve at PR merge time — not during execution. This is intentional:
-
-1. Each goal implements independently against the base branch
-2. PRs are reviewed and merged sequentially or in dependency order
-3. If PR B conflicts with already-merged PR A, rebase B onto the updated base
-4. The controller handles this during the monitoring phase
-
----
-
-## Unity-Specific Considerations
-
-Unity projects have special worktree behavior:
-
-- **Library folder**: Each worktree gets its own `Library/`. This means cold imports (~2-10 min depending on project size). Budget for this startup cost. **Heuristic**: check `Library/` size in the main worktree (`du -sh Library/`). If >5GB, limit concurrent Unity worktrees to 2-3 and log a warning about extended setup time.
-- **Temp/UserSettings**: Also per-worktree. Always gitignored.
-- **Unity Editor**: Only one Unity Editor instance can have a project open at a time. Worktree-based execution works for code changes verified via MCP/CLI, but not for simultaneous Unity Editor sessions.
-- **Submodules**: If the Unity project uses submodules, worktree support is degraded. Log a warning and consider sequential execution instead.
-
----
-
-## Decision-Making Framework
-
-1. **Codebase conventions first** — match existing patterns
-2. **Best practices second** — if no convention, use industry standards
-3. **Reasonable default third** — choose the simplest correct approach
-4. **Document non-obvious choices** — brief comment or note
-
-| Ambiguity | Resolution |
+| Hephaestus result | Orchestrator action |
 |---|---|
-| "Improve X" without specifics | Implement 2-3 highest-impact improvements |
-| Referenced file doesn't exist | Create with sensible defaults |
-| Goals conflict | Both if possible; else prefer higher-priority |
-| Requires external API key | Implement code, add TODO for configuration |
-| Vague goal | Interpret most usefully and execute |
+| `PASS` (all VERIFIED) | For each criterion task (one at a time, never batched): `task_update(id=criterion_task_id, status="completed", metadata={"verification_status":"verified","evidence":"<text>"})`. Proceed to Step 6. |
+| `FAIL`, cycle ≤ 3 | Keep UNMET criterion tasks `in_progress` with `verification_status="unmet"` and the GAP text in metadata. Re-dispatch **Sisyphus** via `session_id=sisyphus_session_id` passing the specific `GAPS` block. When Sisyphus returns, invoke a **fresh Hephaestus** (new task, not session-continued). |
+| `FAIL`, cycle = 4 | Do NOT loop further. Consult `oracle` with the full Sisyphus+Hephaestus history; escalate to user or take Step 6 blocked path. |
+
+### Anti-patterns (blocking)
+- Marking the goal `completed` because Sisyphus said DONE without running Hephaestus.
+- Treating Hephaestus's `SUMMARY` line as authoritative while ignoring `UNMET` items in `PER_CRITERION`.
+- Session-continuing Hephaestus across verify rounds (evidence becomes contaminated).
+
+---
+
+## Step 6 — Documentation Sync
+
+Only runs after Hephaestus `PASS` (or takes the blocked path after escalation).
+
+### 6a. Goal file
+- Tick **only the criteria Hephaestus VERIFIED** `- [ ]` → `- [x]`. Never tick based on Sisyphus claims.
+- Frontmatter: `status: completed`, add `completed: YYYY-MM-DD` (and update `updated`).
+- Preserve all other content verbatim.
+
+### 6b. Docs/Goals/Master.md
+- Update this goal's row: status → `completed`, add completion date.
+- Recompute top-of-file summary counts (pending/in-progress/completed/blocked/total).
+- Touch no other rows.
+
+### 6c. README.md — conditional (Rule 13)
+Update **only if** the goal touched user-facing impact:
+- Sisyphus's `FILES_MODIFIED` included `README.md` or `docs/` outside `Docs/Goals/`; OR
+- The change surfaces in a public entry point (CLI, public API, UI entry widget, installer, setup doc).
+
+Otherwise log exactly `README: not impacted` in the summary and move on — no speculative edits.
+
+### 6d. Docs/Specs/&lt;Feature&gt;.md — dynamic domain skills (G8 fix)
+
+Delegate the spec update using the template in `references/delegation-templates.md` §6. Contract:
+
+- `run_in_background=true` (async — does not gate goal completion).
+- `category="unspecified-high"`.
+- **`load_skills` chosen from the Domain Detection Table row** — never hardcoded. Unity goals get `unity-spec` + `unity-standards`; Flutter/web/general goals get their equivalents; if a domain has no dedicated spec skill, use `visual-explainer` + the domain's standards skill.
+- Mode: **Update** if `Docs/Specs/<Feature>.md` exists, **Feature Spec (Create)** if not.
+
+Record the returned `task_id` as `spec_update_task_id`.
+
+### 6e. Batch-verify spec updates (G2 fix)
+
+Before emitting the execution summary, do one non-blocking check on the spec update task:
+
+```
+background_output(task_id=spec_update_task_id, block=false, timeout=1000)
+```
+
+Record the status as one of:
+- `SPEC_UPDATE_DONE` — task completed successfully.
+- `SPEC_UPDATE_PENDING` — still running. Include `task_id` in summary so the user can follow up.
+- `SPEC_UPDATE_FAILED` — task errored. Include the error in summary. **Do not silently drop it.**
+
+### 6f. Mark parent task complete
+`task_update(id=parent_task_id, status="completed")`.
+
+### Blocked path (if Step 5 escalation terminated in `blocked`)
+- Goal file: frontmatter `status: blocked`. Append a `## Blocker` section with the reason and the specific UNMET criteria.
+- Master.md: row status → `blocked`, recompute counts.
+- Do NOT tick unverified checkboxes. Do NOT update README. Do NOT trigger spec update.
+- Parent task: `task_update(status="pending", metadata={"blocked_reason": "..."})`.
+
+---
+
+## Worktree Management
+
+The bundled `scripts/worktree_manager.sh` is the canonical path for all worktree lifecycle operations (Optimization O1). **Prefer it over inline git commands.**
+
+### Create (Step 1)
+```
+run_skill_script('plan-work', 'scripts/worktree_manager.sh',
+                 arguments=['create', '<slug>', '<base-branch>'])
+```
+Output on success:
+```
+CREATED
+worktree_path=<abs path>
+branch=goal/<slug>
+base_branch=<base>
+```
+
+### Cleanup on success
+After the PR is confirmed on remote:
+```
+run_skill_script('plan-work', 'scripts/worktree_manager.sh',
+                 arguments=['remove', '<slug>'])
+```
+This verifies the worktree is clean (fails otherwise — override with `PLAN_WORK_FORCE_REMOVE=1`), removes it, and prunes stale metadata. The branch is **not** deleted — it stays until the PR merges.
+
+### Cleanup on failure (G3 fix)
+
+If `gh pr create` failed **but the branch was pushed**, the worktree may be orphaned. Take the fallback path:
+
+1. Confirm the branch is pushed: `git -C <worktree> rev-parse @{u}`.
+2. Remove the worktree directory only: `run_skill_script('plan-work', 'scripts/worktree_manager.sh', arguments=['remove', '<slug>'])` with `PLAN_WORK_FORCE_REMOVE=1` if needed.
+3. **Preserve the remote branch** for manual PR creation — do NOT delete the remote branch.
+4. Log `PR_CREATION_FAILED: branch goal/<slug> pushed, create PR manually` in the execution summary.
+
+If `gh pr create` failed **and** the branch was not pushed, keep the worktree in place for diagnosis, log the orphan, and surface it to the user.
+
+### Other helper commands
+- `list` — show all `goal/`-prefixed worktrees.
+- `cleanup` — remove **all** plan-work worktrees (use sparingly, for disaster recovery).
+- `status <slug>` — dirty/clean, commit count, uncommitted file count.
+
+---
+
+## Timing Instrumentation (O5)
+
+Record timestamps at every phase boundary so the execution summary reports genuine timing:
+
+| Marker | When captured |
+|---|---|
+| `t_start` | Orchestrator entry |
+| `t_goal_selected` | After Step 0 (explore or direct) |
+| `t_worktree_created` | After Step 1 worktree helper returns CREATED |
+| `t_plan_produced` | Prometheus returned plan |
+| `t_plan_approved` | Momus returned APPROVE |
+| `t_sisyphus_done` | Sisyphus returned DONE / DONE_WITH_CONCERNS |
+| `t_hephaestus_verdict` | Each Hephaestus verdict (keep all, report last + cycle count) |
+| `t_pr_created` | PR URL available |
+| `t_docs_synced` | After Step 6e |
+| `t_worktree_cleaned` | After cleanup (success or failure path) |
+| `t_end` | Final summary emitted |
+
+Include per-phase deltas in the execution summary.
+
+---
+
+## Status Protocol Summary (authoritative)
+
+Same table as `references/delegation-templates.md` §"Status Protocol Summary". Reproduced here for quick orchestrator reference:
+
+| Source | Status | Orchestrator action |
+|---|---|---|
+| `explore` | `NO_INCOMPLETE_GOAL` | Stop pipeline, report |
+| `explore` | GOAL_FILE block | Proceed to Step 1 |
+| `momus` | `APPROVE` | Proceed to Step 4 |
+| `momus` | `REQUEST_CHANGES` (rev ≤ 3) | Re-run Prometheus via `plan_session_id` |
+| `momus` | `REQUEST_CHANGES` (rev = 4) | Consult `oracle` / escalate |
+| `sisyphus` | `DONE` | Proceed to Step 5 |
+| `sisyphus` | `DONE_WITH_CONCERNS` | Log, proceed to Step 5 |
+| `sisyphus` | `BLOCKED` | Recoverable → session re-dispatch; else blocked path |
+| `hephaestus` | `PASS` (all VERIFIED) | Proceed to Step 6 |
+| `hephaestus` | `FAIL` (any UNMET, cycle ≤ 3) | Re-dispatch Sisyphus via `sisyphus_session_id` with GAPS |
+| `hephaestus` | `FAIL` (cycle = 4) | `oracle` → escalate or blocked path |
+
+---
+
+## Failure Recovery & Escalation
+
+| Failures | Response |
+|---|---|
+| 1 failure (plan rejection, gate regression, UNMET criterion) | **Session continuation.** Re-dispatch the relevant specialist with the specific diagnosis (Momus's required-changes list, Hephaestus's GAPS, Sisyphus's error trace). No strategy change. |
+| 2 failures on the same concern | **Session continuation + targeted hint.** Re-dispatch with explicit guidance: "Cycle 1 missed X. Cycle 2 still missed X because Y. Try approach Z." |
+| 3 failures | **Strategy switch.** Fresh session with the specialist, different approach (change load_skills, refine prompt, split sub-task). |
+| 4th failure | **Oracle consultation.** Present full history to `oracle` for a plan-of-attack. Surface to user if Oracle declines. |
+| Genuine impossibility (spec contradiction, missing dep, hardware blocker) | **Terminal.** Mark goal `status: blocked`, add `## Blocker` section to goal file, update Master.md, do NOT tick checkboxes, do NOT update spec. Stop. |
+
+No silent retries. Every escalation writes a line in the execution summary.
+
+### Subagent Timeout Handling (G1)
+
+If a blocking specialist (`plan` / `momus` / `sisyphus` / `hephaestus`) has not returned within a reasonable wall-clock budget, do **not** wait indefinitely:
+
+1. **Probe for partial output** — `background_output(task_id=<specialist_task_id>, block=false, timeout=1000)`. If any output is present, harvest it and decide whether it is a complete result or mid-stream.
+2. **Check the worktree for progress** — if the stuck specialist was Sisyphus, run `run_skill_script('plan-work', 'scripts/worktree_manager.sh', arguments=['status', '<slug>'])`. Commits or a dirty tree mean real progress was made.
+3. **Resume on partial progress** — re-dispatch via `session_id` (plan → `plan_session_id`, sisyphus → `sisyphus_session_id`) with the prompt "Continue from where you left off" plus any gathered context.
+4. **Fresh task on zero progress** — no output and no worktree changes? Re-dispatch a fresh task. Keep the same `session_id` only if there is context worth preserving; otherwise start clean.
+5. **Cap at 2 timeouts per specialist per goal.** After the 2nd timeout on the same specialist, escalate per the standard 3-cycle cap (Oracle consultation → escalate to user or blocked path).
+
+---
+
+## Execution Summary Template
+
+Final message emitted at pipeline end:
+
+```
+## Plan-Work Complete
+
+Goal: {goal_title}
+File: {goal_file}
+Status: completed | blocked
+PR:    {pr_url or "—"}
+
+### Acceptance Criteria Verification (Hephaestus evidence)
+1. [VERIFIED] <criterion> — evidence: <file:line | cmd output>
+2. [VERIFIED] <criterion> — evidence: <file:line | cmd output>
+...
+
+### Pipeline Timing
+- Step 0 (goal select):   MM:SS
+- Step 1 (bootstrap):     MM:SS
+- Step 2 (plan):          MM:SS
+- Step 3 (review):        MM:SS   ({N} revisions)
+- Step 4 (implement):     MM:SS
+- Step 5 (verify):        MM:SS   ({N} Sisyphus↔Hephaestus cycles)
+- Step 6 (docs):          MM:SS
+- Total:                  MM:SS
+
+### Document Updates
+- Goal file:           updated (status={completed|blocked}, {N} checkboxes ticked)
+- Master.md:           updated (counts recomputed)
+- README.md:           updated | not impacted
+- Docs/Specs/{Feature}.md: SPEC_UPDATE_DONE | SPEC_UPDATE_PENDING ({task_id}) | SPEC_UPDATE_FAILED ({error})
+
+### Worktree
+- Path:   {worktree_path}
+- Status: removed | kept ({reason}) | orphaned-on-pr-failure (branch preserved: goal/{slug})
+
+### Next Step
+Review and merge PR {pr_url}, then re-run /omo/work for the next incomplete goal.
+```
+
+For `blocked` runs, replace the criteria block with:
+```
+### Blocker
+Reason: {blocker_reason}
+UNMET criteria (not ticked):
+  - Criterion N: <text>
+  - Criterion M: <text>
+```
+
+---
+
+## Decision Table (Orchestrator Quick Reference)
+
+| Situation | Action |
+|---|---|
+| User gave a goal file path | Skip 0b, go to Step 1 |
+| No goal file, explore returns `NO_INCOMPLETE_GOAL` | Stop. Report and exit. |
+| Explore returns a goal with 0 unchecked criteria | Filter was wrong. Re-run Step 0b. |
+| Crash recovery finds existing `goal/<slug>` with open PR | Resume on that branch/worktree |
+| Momus `REQUEST_CHANGES` (rev ≤ 3) | Re-run Prometheus via `plan_session_id` with change list |
+| Momus `REQUEST_CHANGES` (rev = 4) | Consult Oracle, escalate |
+| Sisyphus `BLOCKED` | Assess; recoverable → session re-dispatch; else blocked path |
+| Hephaestus any `UNMET` (cycle ≤ 3) | Re-run Sisyphus via `sisyphus_session_id` with `GAPS` |
+| Hephaestus still fails after 3 cycles | Oracle → escalate or blocked |
+| Spec update task returns PENDING at summary time | Log `SPEC_UPDATE_PENDING` with `task_id` — do not block completion |
+| Spec update task failed | Log `SPEC_UPDATE_FAILED` with error — do not drop silently |
+| PR creation failed, branch pushed | Cleanup-on-failure path: remove worktree, preserve remote branch, log orphan |
 
 ---
 
 ## Red Flags — Stop and Reassess
 
-- **Using "should", "probably", "seems to"** — not evidence. Run verification.
-- **Expressing satisfaction before verification** — run the checks first.
-- **Trusting subagent reports** — verify independently.
-- **Marking complete without verification command** — Iron Law.
-- **Marking a goal complete without per-criterion verification** — BLOCKING. Every checkbox must have an evidence record.
-- **Batch-completing criterion tasks** — update them one at a time as evidence is gathered.
-- **Accepting subagent's "all criteria PASS" at face value** — re-read each file and verify.
-- **Shotgun debugging** — each fix needs a hypothesis.
-- **Skipping a gate** — never.
-- **Batching completions** — mark each immediately after pass.
-
----
-
-## Rules (Non-Negotiable)
-
-1. **Never ask.** Think, decide, execute.
-2. **Never stop early.** Process every uncompleted goal across all waves.
-3. **Never deliver partial work.** Every acceptance criterion must be verified with evidence.
-4. **Never suppress errors.** No `as any`, `@ts-ignore`, empty catch blocks.
-5. **Never skip verification gates.** Three gates per sub-task, final review per goal.
-6. **Never trust without verifying.** Verify subagent claims independently.
-7. **Always read Master.md first.** It's the source of truth for goals.
-8. **Always create worktrees outside repo root.** Isolation is non-negotiable.
-9. **Always use one branch per worktree.** Never share branches.
-10. **Always push before creating PR.** `gh pr create` requires the branch to exist remotely.
-11. **Always provide full context to subagents.** Goal text, spec, domain, verification protocol.
-12. **Always clean up worktrees after completion.** Remove worktree, prune metadata.
-13. **Always update specs after goal completion.** Mandatory spec cycle.
-14. **Always process goals in dependency waves.** Respect the DAG.
-15. **Always use session continuity.** Use `session_id` for fix iterations with the same subagent.
-16. **Always create one task per acceptance criterion** via `task_create`, in addition to the parent goal task. Never skip this — it's how per-criterion verification is tracked.
-17. **Never mark a goal `completed` until every acceptance criterion task is `completed` with recorded evidence.** The Per-Criterion Verification Gate (Step 5.3) is non-negotiable. A subagent's `DONE` report is a claim; the controller's independent verification is the fact.
+- Using "should", "probably", "seems" in completion claims — run the real check.
+- Skipping Hephaestus because Sisyphus reported DONE — **forbidden by Iron Law**.
+- Ticking a criterion's checkbox before its criterion task is `completed` with `evidence` metadata.
+- Batching `task_update(status="completed")` across multiple criteria in one call — update one at a time.
+- Running more than 3 plan revisions or 3 implement/verify cycles — escalate instead.
+- Selecting more than one goal per pipeline run — wrong skill, wrong flow.
+- Modifying files outside the worktree (from orchestrator or Sisyphus) while the pipeline is running.
+- Hardcoding `unity-spec` for a Flutter or web goal (G8) — use the Domain Detection Table.
 
 ---
 
 ## Measurement Plan
 
-Track these metrics across runs to evaluate and improve skill effectiveness:
+Track across runs to spot regressions:
 
-### Execution Efficiency
-- **Goals completed per wave**: Count of DONE vs total per wave. Target: >90% first-pass completion.
-- **Re-dispatch rate**: Percentage of goals requiring re-dispatch. Target: <10%.
-- **Total execution time**: Wall-clock from first worktree creation to final summary. Track per-goal and aggregate.
-- **Worktree setup overhead**: Time from `git worktree add` to subagent spawn. For Unity, includes Library import time.
-- **Parallelization utilization**: Actual concurrent agents / MAX_PARALLEL_WORKTREES. Target: >80% utilization within waves.
+| Metric | Target |
+|---|---|
+| Step 0b returns valid goal on first call | ≥ 95 % |
+| Plan revisions per run (avg) | ≤ 1 |
+| Sisyphus↔Hephaestus cycles per run (avg) | ≤ 1 |
+| First-pass Hephaestus PASS rate | ≥ 80 % |
+| Escalation rate (Oracle + blocked) | < 10 % |
+| Per-criterion evidence coverage on `completed` runs | **100 %** |
+| Evidence specificity (file:line or cmd, sampled) | ≥ 80 % |
+| Master.md sync within the run | 100 % |
+| Spec update completion before summary | ≥ 70 % (rest PENDING is acceptable) |
+| Orphaned worktrees | 0 |
+| Orphaned branches without PR (not flagged in summary) | 0 |
 
-### Verification Rigor
-- **Three-gate pass rate**: Percentage of sub-tasks passing all three gates on first attempt. Broken gate = implementation quality issue.
-- **Final review catch rate**: Criteria caught as unmet during final review (4d) that weren't caught during sub-task gates. High rate means gates are too lenient.
-- **Per-criterion verification coverage**: For each completed goal, `(# criterion tasks completed with evidence) / (# acceptance-criteria checkboxes)`. Target: **100%**. Anything less means a goal was marked complete without full verification — this is a BLOCKING regression.
-- **Criterion re-dispatch rate**: Percentage of criteria that required a `session_id` re-dispatch after first verification pass. Track to identify chronically under-specified criteria.
-- **Evidence quality**: Are verification claims supported by specific file:line references? Sample-audit 20% of completed goals.
+Aggregate across ≥ 5 runs before acting on trends.
 
-### Spec Synchronization
-- **Spec update completion rate**: Percentage of spec updates that completed successfully (not PENDING). Target: 100%.
-- **Spec freshness**: After execution, do specs reflect the implementation? Spot-check by reading spec and comparing to code.
+---
 
-### Error Recovery
-- **Failure root causes**: Categorize failures (timeout, blocked, context-missing, too-complex). Track distribution to identify systemic issues.
-- **Escalation depth**: How many escalation levels were needed per failure. Lower is better.
-- **Session continuation success rate**: Percentage of fix-via-session_id attempts that resolved the issue. Target: >70%.
+## Integration References
 
-### Worktree Hygiene
-- **Orphaned worktrees**: Count of worktrees remaining after execution. Target: 0.
-- **Orphaned branches**: Count of remote branches without corresponding PRs. Target: 0.
-- **Stale metadata**: Run `git worktree prune --dry-run` after execution. Target: no stale entries.
+This skill is deliberately **lean**. The detailed delegation prompts and worktree plumbing live in dedicated files — **read them, do not inline-duplicate**:
 
-### PR Quality
-- **PR creation success rate**: PRs created / goals completed. Target: 100%.
-- **PR body completeness**: Does PR include Goal, Changes, Acceptance Criteria, Verification, Files Modified? Sample-audit.
+- **`references/delegation-templates.md`** — canonical prompt templates for every specialist handoff (explore §1, Prometheus §2, Momus §3, Sisyphus §4, Hephaestus §5, spec update §6). The Sisyphus self-review checklist and Status Protocol Summary live here too. Use these verbatim; fill in `{placeholders}` from the orchestrator scratchpad. (Optimization O2.)
+- **`scripts/worktree_manager.sh`** — the canonical helper for create / remove / list / cleanup / status. Always prefer it over inline `git worktree` commands. (Optimization O1.)
+- **`evals/evals.json`** — the six pinned scenarios this skill is validated against (goal discovery, user-provided goal, no-incomplete case, Momus revision loop, Hephaestus FAIL loop, spec creation).
 
-### How to Collect
-1. Record timestamps at: worktree creation, subagent spawn, subagent completion, PR creation, cleanup.
-2. Include timing data in the execution summary (Step 8).
-3. After each run, review the execution summary against these metrics.
-4. Over 5+ runs, compute aggregates to identify trends and regressions.
+When in doubt about a prompt, open `references/delegation-templates.md` and use it. Do not paraphrase.

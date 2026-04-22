@@ -3,105 +3,93 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Execute the goals in Docs/Goals/. Master.md lists one pending goal: Docs/Goals/combat/add-parry-mechanic.md with title '[Combat] Add parry mechanic' (priority: high, no dependencies). The project is a Unity project with existing spec at Docs/Specs/Combat.md. The repo is on branch 'main' with a clean working tree.",
-      "expected_output": "The skill reads Master.md, identifies the single pending goal, creates a git worktree with branch goal/combat-add-parry, spawns a subagent in that worktree with full goal text + spec content. The subagent implements, verifies (three gates), commits, pushes, and creates a PR. The controller verifies the PR, marks the goal complete, delegates a spec update, and cleans up the worktree.",
+      "prompt": "Run plan-work. No goal file was provided. Docs/Goals/ contains several goal files; Docs/Goals/combat/add-parry.md has status: pending and 3 unchecked acceptance criteria (others are either completed or have every checkbox ticked). The project is Unity on branch main.",
+      "expected_output": "The orchestrator spawns an explore agent (Step 0b) that returns GOAL_FILE=Docs/Goals/combat/add-parry.md, GOAL_TITLE='[Combat] Add parry', UNCHECKED_COUNT=3. The orchestrator creates a worktree goal/combat-add-parry at ../.worktrees/combat-add-parry, reads the goal + any Docs/Specs/Combat.md, then runs the 6-step pipeline: plan (Prometheus), momus review, sisyphus implementation in the worktree, hephaestus verification, and doc updates. Final execution summary names all six specialists and reports PASS with per-criterion evidence.",
       "files": [],
       "expectations": [
-        "Reads Docs/Goals/Master.md first as the source of truth for goals",
-        "Creates a git worktree with a goal/ prefixed branch (e.g., goal/combat-add-parry)",
-        "Worktree is created outside the repo root (e.g., ../.worktrees/)",
-        "Spawns a subagent with run_in_background=true for the goal",
-        "Subagent prompt includes the full goal text (objective, criteria, constraints)",
-        "Subagent prompt includes the Docs/Specs/Combat.md spec content as architectural blueprint",
-        "Subagent prompt includes the worktree path and branch name",
-        "Subagent performs three-gate verification (static analysis, domain check, spec compliance)",
-        "Subagent commits changes and pushes the branch",
-        "Subagent creates a PR via gh pr create with --base main --head goal/combat-add-parry",
-        "Controller delegates a spec update after goal completes",
-        "Controller cleans up the worktree after PR is confirmed",
-        "Execution summary includes Pull Requests Created section with PR URL"
+        "Step 0b: spawns task(subagent_type='explore', run_in_background=false) with a prompt that instructs 'stop at first match'",
+        "Explore prompt explicitly filters status != completed AND at least one unchecked checkbox",
+        "Explore return contract uses the exact tokens GOAL_FILE / GOAL_TITLE / PRIORITY / UNCHECKED_COUNT or NO_INCOMPLETE_GOAL",
+        "Creates worktree outside the main repo root (../.worktrees/ or similar)",
+        "Branch is goal/-prefixed (e.g. goal/combat-add-parry)",
+        "Reads Docs/Specs/Combat.md if present and passes it to downstream agents",
+        "Step 2: delegates to subagent_type='plan' with full goal text + criteria list + worktree env",
+        "Step 3: delegates to subagent_type='momus' with the plan + criteria and expects APPROVE / REQUEST_CHANGES",
+        "Step 4: delegates to subagent_type='sisyphus' inside the worktree with the approved plan and three-gate protocol",
+        "Step 5: delegates to subagent_type='hephaestus' to re-verify each criterion with independent evidence",
+        "Step 6: updates goal file (tick boxes, status=completed), Master.md counts, and delegates spec update",
+        "Execution summary includes per-criterion VERIFIED evidence and the PR URL"
       ]
     },
     {
       "id": 2,
-      "prompt": "Execute goals. Master.md lists three pending goals with no dependencies between them: '[Combat] Add parry' (high), '[UI] Build health bar' (high), '[Audio] Add footstep sounds' (medium). The project is Unity. All three can execute in parallel (Wave 1). The repo is on branch 'main'.",
-      "expected_output": "The skill reads Master.md, identifies all three goals as independent (no depends_on), groups them into Wave 1. Creates three git worktrees in parallel with branches goal/combat-add-parry, goal/ui-build-health-bar, goal/audio-add-footstep-sounds. Spawns three subagents with run_in_background=true simultaneously. Each works independently. Controller collects results as agents complete, verifies PRs, updates Master.md, cleans up worktrees.",
+      "prompt": "Run plan-work. The user provided Docs/Goals/inventory/add-sorting.md as the goal file. It has 4 acceptance criteria, all unchecked, status: pending. Flutter project on branch main.",
+      "expected_output": "The orchestrator skips Step 0b (explore) because the goal file was provided. It creates goal/inventory-add-sorting worktree, runs plan→momus→sisyphus→hephaestus→docs. The delegation skills reflect Flutter domain (flutter-code, flutter-standards for Sisyphus; dart analyze for the Gate 2 check).",
       "files": [],
       "expectations": [
-        "Reads Master.md and identifies all three goals as independent (Wave 1)",
-        "Creates three separate git worktrees — one per goal",
-        "Each worktree has a unique goal/-prefixed branch",
-        "Spawns three subagents in parallel (all with run_in_background=true)",
-        "No sequential waiting — all agents launched in the same turn",
-        "Each subagent receives its own worktree path and branch",
-        "Controller processes completion notifications as they arrive",
-        "Each goal gets its own PR created back to main",
-        "Master.md is updated with completed status for finished goals",
-        "Worktrees are cleaned up after PRs are confirmed"
+        "Does NOT spawn the explore agent because a goal file path was provided",
+        "Detects Flutter domain (pubspec.yaml, lib/, .dart signals) and passes domain='flutter' to subagents",
+        "Sisyphus prompt includes 'dart analyze' as the Gate 2 verification command",
+        "Skill selection for Sisyphus includes flutter-code / flutter-standards (not unity skills)",
+        "Hephaestus independently re-runs dart analyze and re-reads files to verify criteria",
+        "Spec update delegation uses a flutter-appropriate category + skills (not unity-spec for a Flutter project)"
       ]
     },
     {
       "id": 3,
-      "prompt": "Execute goals. Master.md lists: '[Core] Add event system' (high, no deps) and '[Combat] Add parry mechanic' (high, depends_on: '[Core] Add event system'). The project is Unity. The second goal cannot start until the first completes.",
-      "expected_output": "The skill reads Master.md, builds a dependency graph. Wave 1 contains only '[Core] Add event system'. Wave 2 contains '[Combat] Add parry mechanic'. Creates worktree for Wave 1, spawns subagent. After Wave 1 completes and PR is created, creates worktree for Wave 2 branching from the updated base (or the Wave 1 branch), spawns second subagent. Sequential wave execution respecting dependencies.",
+      "prompt": "Run plan-work. Docs/Goals/ exists but every goal file is either status: completed OR has all checkboxes already ticked.",
+      "expected_output": "The explore agent returns NO_INCOMPLETE_GOAL. The orchestrator stops immediately, reports 'No incomplete goals found under Docs/Goals/.', and does NOT create a worktree, does NOT spawn plan/momus/sisyphus/hephaestus, and does NOT invent a goal.",
       "files": [],
       "expectations": [
-        "Reads Master.md and builds a dependency DAG",
-        "Identifies Wave 1: [Core] Add event system (no deps)",
-        "Identifies Wave 2: [Combat] Add parry mechanic (depends on Core)",
-        "Creates worktree and spawns subagent for Wave 1 only",
-        "Does NOT create Wave 2 worktree until Wave 1 completes",
-        "After Wave 1 PR is created, proceeds to Wave 2",
-        "Wave 2 worktree branches from updated base to include Wave 1 changes",
-        "Each wave gets its own worktree and subagent",
-        "Execution summary shows waves executed and dependency ordering"
+        "Orchestrator receives NO_INCOMPLETE_GOAL and halts before Step 1",
+        "No git worktree is created",
+        "No plan, momus, sisyphus, or hephaestus agent is spawned",
+        "No goal file is fabricated or modified",
+        "Output contains an explicit 'no incomplete goals' message"
       ]
     },
     {
       "id": 4,
-      "prompt": "Execute goals. Master.md lists one pending goal: '[Crafting] Implement recipe system' (high). No spec exists in Docs/Specs/ for Crafting. The project is Unity. Repo on branch 'main'.",
-      "expected_output": "The skill reads Master.md, creates worktree, spawns subagent. The subagent is told no spec exists. After the goal completes and PR is created, the controller delegates a spec CREATION (Feature Spec mode, not Update) via unity-spec to create Docs/Specs/Crafting.md from the implementation.",
+      "prompt": "Run plan-work with Docs/Goals/combat/add-parry.md (5 acceptance criteria, 1 in particular: 'Parry window respects ParryConfig.windowMs'). Prometheus produces a plan. Momus replies REQUEST_CHANGES because criterion 3 has no corresponding sub-task and criterion 5 has no verification method listed.",
+      "expected_output": "The orchestrator reads Momus's REQUEST_CHANGES output, does NOT proceed to Sisyphus, and re-invokes the plan agent via the stored plan session_id with Momus's required-changes list. After Prometheus returns a revised plan, Momus re-reviews it. Only after APPROVE does the pipeline move to Sisyphus. If Momus rejects three revisions in a row, the orchestrator consults Oracle instead of looping forever.",
       "files": [],
       "expectations": [
-        "Checks Docs/Specs/ for Crafting spec and correctly determines none exists",
-        "Subagent prompt says no spec exists — implement from acceptance criteria",
-        "After goal completes, delegates spec creation using Feature Spec mode (not Update)",
-        "Creates a worktree with goal/crafting-implement-recipe-system branch",
-        "Subagent creates PR after implementation",
-        "Spec creation results in new Docs/Specs/Crafting.md"
+        "Does NOT spawn Sisyphus while Momus's verdict is REQUEST_CHANGES",
+        "Re-dispatches the plan agent with session_id (continuation, not a fresh task)",
+        "The follow-up plan prompt includes Momus's specific required-changes bullets",
+        "Fresh Momus invocation reviews the revised plan (new task, not session-continued)",
+        "After 3 failed revision cycles, Oracle is consulted or the impasse is surfaced — orchestrator does not loop indefinitely"
       ]
     },
     {
       "id": 5,
-      "prompt": "Execute goals. Master.md lists one pending goal but the subagent reports BLOCKED because the goal requires an API key that isn't configured. The controller must handle the blocked status.",
-      "expected_output": "The skill creates worktree, spawns subagent. When the subagent reports BLOCKED, the controller reads the blocker reason, marks the goal as blocked in Master.md and the goal file, cleans up the worktree, and reports the blocked goal with reason in the execution summary.",
+      "prompt": "Run plan-work on Docs/Goals/ui/build-hud.md (3 acceptance criteria). Sisyphus reports STATUS: DONE with an evidence table claiming all three criteria PASS. Hephaestus re-verifies and finds criterion 2 ('HUD hides on pause') has no code changes in the PauseController — it is UNMET. Hephaestus returns OVERALL: FAIL with GAPS: 'Criterion 2 — no handler in PauseController for HUD hide'.",
+      "expected_output": "The orchestrator does NOT mark the goal completed. It leaves criterion task 2 as status='in_progress' with metadata.verification_status='unmet'. It re-dispatches Sisyphus via the stored sisyphus session_id with the Hephaestus GAPS block. After Sisyphus pushes the fix, a FRESH Hephaestus invocation re-verifies. Only when Hephaestus returns PASS with all three VERIFIED does the orchestrator tick the criterion checkboxes, set goal status=completed, and update Master.md.",
       "files": [],
       "expectations": [
-        "Creates worktree and spawns subagent normally",
-        "When subagent reports BLOCKED, does not retry endlessly",
-        "Marks goal status as blocked in the goal file frontmatter",
-        "Updates Master.md with blocked status",
-        "Cleans up the worktree despite the goal being blocked",
-        "Execution summary reports the blocked goal with the blocker reason"
+        "Does NOT mark goal completed while Hephaestus returns FAIL",
+        "Does NOT tick criterion 2's checkbox while it is UNMET",
+        "Re-dispatches Sisyphus with session_id (continuation), passing the specific GAPS list",
+        "Runs a FRESH Hephaestus invocation (new task) after Sisyphus reports the fix — Hephaestus is not session-continued across verify rounds",
+        "Updates criterion tasks one at a time via task_update (never batch-completes)",
+        "Only after all criteria are VERIFIED does the goal file get status=completed and the checkboxes ticked",
+        "Retries cap at 3 Sisyphus↔Hephaestus cycles before escalating to Oracle or blocking the goal"
       ]
     },
     {
       "id": 6,
-      "prompt": "Execute goals. Master.md lists one pending goal: '[Inventory] Add item stacking' with 5 acceptance-criteria checkboxes. The subagent reports DONE claiming all criteria pass, but when the controller re-reads the code, criterion #3 ('stacking respects max stack size from item config') has no supporting code — the subagent only implemented stacking without the max-size check. Show how the controller must handle this.",
-      "expected_output": "The skill must NOT mark the goal complete just because the subagent reported DONE. Instead, it runs the Per-Criterion Verification Gate: creates one task_create per criterion up front, then iterates each criterion, gathers evidence from the worktree, classifies each (VERIFIED/UNMET/UNCLEAR), updates the criterion task individually, and when criterion #3 is UNMET it re-dispatches the subagent via session_id with the specific missing requirement. The goal stays in-progress until all 5 criterion tasks are completed with recorded evidence.",
+      "prompt": "Run plan-work on Docs/Goals/crafting/add-recipes.md. No Docs/Specs/Crafting.md exists. Pipeline completes successfully (Hephaestus PASS). Now the orchestrator runs Step 6.",
+      "expected_output": "The orchestrator ticks every acceptance-criteria checkbox in the goal file, sets status=completed with a completion date, updates Master.md (row status + recomputed counts), updates README.md only if the change touches user-facing features (otherwise logs 'README: not impacted'), and delegates a Docs/Specs/Crafting.md CREATION (not Update) task in the background. Worktree is cleaned up. The final summary lists per-criterion VERIFIED evidence, PR URL, and the spec update task status.",
       "files": [],
       "expectations": [
-        "Calls task_create once per acceptance-criteria checkbox (5 total) in addition to the parent goal task",
-        "Each criterion task stores the goal_file path and criterion text in metadata",
-        "After subagent reports DONE, controller re-parses the goal file to extract the fresh checkbox list",
-        "Controller iterates criteria one at a time — does not batch-complete them",
-        "For each criterion, controller gathers concrete evidence (file read, grep, command output) from the worktree",
-        "Criterion #3 is classified UNMET because no max-size check code exists",
-        "task_update for criterion #3 uses status='in_progress' with verification_status='unmet' in metadata — NOT completed",
-        "Goal is NOT marked completed while criterion #3 is UNMET",
-        "Controller re-dispatches the subagent via session_id citing criterion #3 specifically",
-        "Checkbox in goal file is ticked only for VERIFIED criteria, not for UNMET ones",
-        "Execution summary includes an Acceptance Criteria Verification section showing per-criterion status with evidence"
+        "Ticks every verified checkbox (- [ ] → - [x]) in the goal file",
+        "Sets frontmatter status=completed and adds a completion date",
+        "Updates Docs/Goals/Master.md row and recomputes the top-level counts",
+        "README update is conditional on user-facing impact — skipped with a log line if not impacted",
+        "Spec delegation uses CREATE mode (Feature Spec) because Docs/Specs/Crafting.md does not exist",
+        "Spec delegation runs with run_in_background=true (non-blocking) and its task_id is recorded",
+        "Worktree is cleaned up after PR is confirmed (goal/crafting-add-recipes worktree removed)",
+        "Final summary includes PR URL, per-criterion evidence, and spec update status (DONE or PENDING)"
       ]
     }
   ]
