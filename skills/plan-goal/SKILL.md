@@ -334,7 +334,7 @@ Write the goal file immediately after self-review passes. Do not wait for explic
 4. **Write the file** to `Docs/Goals/{feature-name}/{kebab-case-task}.md`
 5. **Verify the write** — read back the file to confirm it exists and has the expected content. If the write failed, retry immediately.
 6. **Update Master.md** — add this goal to `Docs/Goals/Master.md` following the Master.md Contract. If Master.md doesn't exist yet, create it by scanning all goal files. If it exists, add the new row and recalculate summary counts. Verify after writing.
-7. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Master.md updated. Want to make any changes before execution? Run `/omo/work` to execute it."
+7. **Present to the user**: Show the goal content and confirm: "Goal saved to `Docs/Goals/{feature-name}/{filename}`. Master.md updated. Want to make any changes?"
 
 **Path derivation examples:**
 
@@ -352,7 +352,6 @@ If the user requests changes after writing, edit the file in place and re-verify
 After saving, ask:
 
 - "Want to create another goal?"
-- "Want to run `/omo/work` to execute this goal now?"
 - "Want to review the goals dashboard in `Docs/Goals/Master.md`?"
 
 ---
