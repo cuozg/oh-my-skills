@@ -1,20 +1,15 @@
 ---
 name: flutter-init
 description: >
-  Use this skill to initialize a Flutter project structure based on user requests —
-  scaffolding folder layout with feature-first organization, pubspec.yaml with
-  Riverpod/GoRouter/Dio/Freezed stack, analysis_options.yaml, .gitignore, and
-  boilerplate Dart files under lib/.
-  Use whenever a user wants to start a new Flutter project, set up folder structure,
-  initialize or scaffold a project, create a project template, or organize their
-  Flutter project from scratch — even if they just say "I'm starting a new Flutter
-  app" or describe an app concept and ask for the project setup. Also triggers on
+  Initialize Flutter project structure from user requests: feature-first folders,
+  pubspec.yaml with Riverpod/GoRouter/Dio/Freezed, analysis_options.yaml, .gitignore,
+  and boilerplate Dart files under lib/. Use when starting a new Flutter project,
+  setting up folder structure, creating a template, organizing a project from scratch,
+  or when the user gives an org name, project name, and feature list. Triggers include
   "folder layout," "project organization," "directory structure," "project template,"
   "pubspec setup," "best folder structure for Flutter," "flutter create with
-  architecture," or "set up a Flutter project with Riverpod." Always use this skill
-  when the user provides an org name, project name, and feature list for a new Flutter
-  project. Do not use for adding features to an existing project — use flutter-code
-  for that.
+  architecture," and "set up a Flutter project with Riverpod." Do not use for adding
+  features to an existing project; use flutter-code for that.
 metadata:
   author: kuozg
   version: "1.0"

@@ -1,22 +1,16 @@
 ---
 name: html-prototype
 description: >
-  Create stunning interactive HTML app prototypes and landing pages — full-screen layouts,
-  multi-screen navigation with smooth transitions, clickable buttons, fake auth/data,
-  and beautiful visual design in a single self-contained HTML file. Includes design
-  intelligence that automatically selects the right visual style, color palette, typography,
-  and layout pattern based on the product type (fintech, health, SaaS, e-commerce, etc.).
-  MUST use this skill whenever the user describes ANY app idea and wants to see it,
-  prototype it, mockup screens, or build a clickable demo — even if they don't say
-  "prototype" explicitly. Triggers on: "prototype this app," "mockup," "clickable prototype,"
-  "UI mockup," "show me what this app looks like," "interactive wireframe," "app demo,"
-  "what would X app look like," "build me a demo," "make a quick app," "landing page,"
-  "marketing site," "product page," or any request involving multiple connected screens
-  with navigation. Also use when user describes an app concept (recipe, fitness, dashboard,
-  SaaS, e-commerce, social, chat, finance, booking, wellness, education) and wants to
-  visualize the flow or test screen transitions. Do not use for static diagrams
-  (visual-explainer), actual code implementation (flutter-code, nextjs-backend), or game
-  prototypes (unity-prototype).
+  Create interactive HTML app prototypes and landing pages as a single self-contained
+  HTML file with full-screen layouts, multi-screen navigation, smooth transitions,
+  clickable controls, fake auth/data, and product-aware visual design. MUST use when
+  the user describes an app idea and wants to see it, prototype it, mock up screens,
+  build a clickable demo, landing page, marketing site, product page, interactive
+  wireframe, app demo, or any multi-screen flow with navigation. Also use for app
+  concepts like recipe, fitness, dashboard, SaaS, e-commerce, social, chat, finance,
+  booking, wellness, or education when the user wants to visualize the flow or test
+  screen transitions. Do not use for static diagrams, production code, or game
+  prototypes.
 metadata:
   author: cuongnp
   version: "2.0"

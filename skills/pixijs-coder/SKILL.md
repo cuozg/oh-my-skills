@@ -1,17 +1,14 @@
 ---
 name: pixijs-coder
 description: >
-  Write, review, debug, or explain PixiJS v8 code — applications, scenes, rendering, assets,
-  shaders, filters, particles, animations, and performance optimization. Auto-triages: Quick
-  (single object, one feature, API question), Deep (multi-system apps, custom renderers,
-  shader pipelines, performance audits). MUST use for ANY PixiJS request — setting up an app,
-  loading textures, drawing with Graphics, animating sprites, writing custom filters/shaders,
-  optimizing draw calls, migrating from v7/v6, debugging WebGL/WebGPU issues, or any question
-  about how PixiJS works internally. Triggers: "PixiJS," "pixi.js," "PIXI.Application,"
-  "sprite," "Graphics," "Container," "Ticker," "Assets.load," "WebGL canvas," "game loop,"
-  "2D renderer," "particle system," "filter effect," "custom shader," "GlProgram," "v7 to v8
-  migration," "pixi filters," "RenderGroup," even when user just says "I'm using PixiJS" or
-  "help me with my pixi app." Always use v8 APIs — never suggest v6/v7 patterns.
+  Write, review, debug, or explain PixiJS v8 code: applications, scenes, rendering,
+  assets, shaders, filters, particles, animations, and performance. Auto-triages
+  Quick tasks like one object, feature, or API question, and Deep tasks like
+  multi-system apps, custom renderers, shader pipelines, or performance audits.
+  MUST use for any PixiJS request: app setup, textures, Graphics, sprites, filters,
+  shaders, draw-call optimization, v7/v6 migration, WebGL/WebGPU issues, PixiJS,
+  PIXI.Application, Container, Ticker, Assets.load, particle systems, RenderGroup,
+  or help with a pixi app. Always use v8 APIs unless explicitly asked otherwise.
 metadata:
   author: cuongnp
   version: "1.0"

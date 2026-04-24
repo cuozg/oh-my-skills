@@ -1,20 +1,15 @@
 ---
 name: cloud-infra
 description: >
-  Unified cloud infrastructure skill — Cloudflare R2 storage, Vercel deployment,
-  signed URLs, CDN caching, and file upload patterns for Next.js applications.
-  Auto-triages: Quick (single config, one upload endpoint, cache header fix) or
-  Deep (full upload pipeline, multi-zone CDN strategy, R2+Workers integration).
-  MUST use for ANY cloud infrastructure request — R2 bucket setup, presigned URLs,
-  Vercel configuration, CDN caching strategy, file uploads, image optimization,
-  edge caching, cache invalidation, or storage integration.
-  Triggers: "R2 bucket," "presigned URL," "signed URL," "Vercel config," "vercel.json,"
-  "CDN caching," "cache headers," "file upload," "multipart upload," "image CDN,"
-  "edge caching," "cache invalidation," "Cloudflare Workers," "S3 compatible,"
-  "upload to R2," "serve files from CDN," "Cache-Control," "ISR revalidation,"
-  "stale-while-revalidate," "wrangler," "R2 binding."
-  Do not use for database design (database-design), API routes (nextjs-backend),
-  or frontend components (visual-engineering).
+  Unified cloud infrastructure skill for Cloudflare R2 storage, Vercel deployment,
+  signed URLs, CDN caching, and file upload patterns for Next.js apps. Auto-triages
+  Quick work like one config, upload endpoint, or cache header fix, and Deep work
+  like full upload pipelines, CDN strategy, or R2+Workers integration. MUST use for
+  cloud infrastructure requests: R2 bucket setup, presigned URLs, Vercel config,
+  CDN caching, file uploads, image optimization, edge caching, cache invalidation,
+  storage integration, Cloudflare Workers, S3-compatible storage, Cache-Control,
+  ISR revalidation, stale-while-revalidate, wrangler, or R2 bindings. Do not use
+  for database design, API route logic, or frontend components.
 metadata:
   author: cuongnp
   version: "1.1"

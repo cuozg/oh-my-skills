@@ -1,17 +1,15 @@
 ---
 name: phaser-coder
 description: >
-  Write, review, debug, or explain Phaser 3 code — game config, scenes, sprites, physics
-  (Arcade/Matter), tilemaps, animations, audio, input, cameras, tweens, particles, groups,
-  and performance optimization. Auto-triages: Quick (single feature, API question, one bug fix),
-  Deep (full game scaffolds, multi-scene architectures, physics-heavy gameplay, performance audits).
-  MUST use for ANY Phaser request — creating a game, loading assets, setting up physics, animating
-  sprites, handling input, building tilemaps, debugging collisions, scene management, or any
-  question about how Phaser works internally. Triggers: "Phaser," "phaser.js," "Phaser.Game,"
-  "Phaser.Scene," "this.add.sprite," "this.physics," "Arcade physics," "Matter.js," "tilemap,"
-  "this.tweens," "this.cameras," "this.input," "this.anims," "this.load," "preload/create/update,"
-  "game config," "scene lifecycle," even when user just says "I'm using Phaser" or "help me with
-  my Phaser game." Always target Phaser 3.60+ APIs unless explicitly asked about Phaser 2/CE.
+  Write, review, debug, or explain Phaser 3 code: game config, scenes, sprites,
+  Arcade or Matter physics, tilemaps, animations, audio, input, cameras, tweens,
+  particles, groups, and performance. Auto-triages Quick tasks like one feature,
+  API question, or bug fix, and Deep tasks like full game scaffolds, multi-scene
+  architecture, physics-heavy gameplay, or performance audits. MUST use for any
+  Phaser request: creating a game, loading assets, physics, sprites, input,
+  tilemaps, collisions, scene management, Phaser.Game, Phaser.Scene, this.physics,
+  this.anims, preload/create/update, or help with a Phaser game. Target Phaser
+  3.60+ unless Phaser 2/CE is explicitly requested.
 metadata:
   author: cuongnp
   version: "1.0"

@@ -1,91 +1,131 @@
 ---
 name: unity-plan
 description: >
-  Plan any Unity feature with scope confirmation workflow. Auto-detects scope (XS/S/M/L/XL)
-  with confidence + reasoning, then blocks for user confirmation before planning.
-  Quick (XS/S: 0-8h, inline report) or Deep (M/L: 1-10 days, markdown plan).
-  XL (10+ days) gets scope reduction or phasing guidance before planning.
-  Use when the user says "plan this," "how long will this take," "estimate this task,"
-  "I need a feature plan," "break this down," or describes any feature needing scoping
-  before implementation.
+  Use this skill for Unity cost estimation. Make sure to use it whenever the user asks what a
+  Unity feature, refactor, migration, or integration will cost, how long it will take, how much
+  work it is, wants an estimate, effort breakdown, risky parts, or phased delivery for pricing —
+  even if they never say "costing". Investigate the codebase first with parallel `explore`
+  subagents, use a `librarian` subagent only when external packages, SDKs, or services affect the
+  estimate, then return evidence-backed hour ranges, task breakdowns, assumptions, risks, and
+  confidence. Do not use it for implementation, design docs, or generic Unity planning without
+  estimate intent.
 metadata:
   author: kuozg
-  version: "2.1"
+  version: "3.1"
 ---
 
 # unity-plan
 
-Plan any Unity feature — auto-detect scope, confirm with user, then generate the right plan.
+Produce evidence-backed Unity costing after investigation. This skill is for answering
+"what will this cost?" rather than "please implement this".
+
+## When to Use
+
+- User asks for costing, effort, hours, scope, timeline, breakdown, estimate, or delivery phases
+- Team needs a detailed estimate before starting a Unity feature, refactor, migration, or integration
+- Request is too large or ambiguous to price without codebase investigation first
 
 ## Workflow
 
-Every planning session follows 5 steps. Steps 2 and 4 are BLOCKING — do not proceed without user input.
+### Step 1: Define the costing target
 
-### Step 1: Scope Detection
+Restate the feature or refactor in one line, then identify:
+- goal of the estimate
+- relevant constraints (platform, package, backwards compatibility, performance)
+- what would materially change the price
 
-Analyze the request and investigate briefly (max 3 tool calls) to determine size.
-Investigation targets: entry points, similar existing patterns, system boundaries, file count.
-Read `scope-detection-guide.md` for signal analysis. Present scope with reasoning, confidence, hours, and risk using the template from `scope-confirmation.md`.
+If the request is underspecified, resolve as much ambiguity as possible from the codebase before asking anything.
 
-### Step 2: Confirm Scope ⛔ BLOCK
+### Step 2: Investigate in parallel
 
-**STOP. Wait for user to confirm or adjust scope.**
-Read `confirmation-flow.md` for response handling. If user adjusts, re-present updated scope. Do NOT proceed until user explicitly confirms.
+Launch background subagents before estimating.
 
-### Step 3: Generate Plan
+Fire **3-5 `explore` agents in parallel**, each with a different angle:
+1. entry points, public APIs, module boundaries
+2. cross-system dependencies, events, shared state
+3. existing patterns, lifecycle hooks, data flow
+4. tests, coverage gaps, fragile areas
+5. hot paths, allocation-sensitive or platform-sensitive code
 
-| Scope | Mode | Output |
-|-------|------|--------|
-| XS/S | Quick | Inline report (no file) |
-| M/L | Deep | `Documents/Plans/PLAN_{Name}.md` |
-| XL | — | Too large — suggest phasing into M/L chunks or scope reduction |
+Fire **1 `librarian` agent in parallel** when external packages, SDKs, services, or unfamiliar APIs influence scope.
+Use it for migration notes, official constraints, version-specific setup cost, and known pitfalls.
 
-**XL Scope (40+h, 25+ files):** Do NOT plan XL directly. Recommend the user either:
-1. Phase the work into 2-3 milestone chunks (each M or L), or
-2. Reduce scope by deferring non-essential parts, or
-3. Run an investigation spike first to reduce unknowns.
-Re-present adjusted scope for confirmation.
+Collect all background results before costing. Do not estimate from memory or from one file.
 
-**Quick Mode:** Report inline using format from `output-quick.md`.
+### Step 3: Turn findings into scope
 
-**Deep Mode:**
-1. Scan entry points, relevant modules, define in/out of scope
-2. Trace dependencies, flag integration risks
-3. Break into ordered tasks with sizes and skills
-4. Write plan using `output-deep.md` template
+Load shared planning references from `unity-standards`:
+- `unity-standards/references/plan/investigation-workflow.md`
+- `unity-standards/references/plan/sizing-guide.md`
+- `unity-standards/references/plan/risk-assessment.md`
 
-### Step 4: Plan Review ⛔ BLOCK
+Use them to map:
+- affected files and systems
+- dependency chains and side effects
+- tests that reduce or increase risk
+- migration or compatibility work
+- unknowns that justify lower confidence or a spike
 
-**STOP. Wait for user to approve, adjust, or discard.**
-Present follow-up options from `confirmation-flow.md`. Do NOT create tasks until user approves.
+### Step 4: Build the costing model
 
-### Step 5: Create Tasks
+Break the work into **epics first, then tasks**.
 
-After user approves, call `task_create` per task with `blockedBy` for max parallelism. Print task IDs. Validate all blockers reference real task IDs.
+For each task, include:
+- ID
+- Epic
+- Task title
+- Type (`Logic`, `UI`, `Data`, `API`, `Asset`, `Test`, `Config`, or `Spike`)
+- Cost size
+- Hour range
+- Affected files or systems
+- Dependency or sequencing note when relevant
 
-## Triage
+Use `unity-standards/references/plan/sizing-guide.md` for size bands.
+Use ranges instead of fake precision.
+Apply a risk multiplier only when the evidence supports it, and say why.
 
-| Signal | Mode |
-|--------|------|
-| Single-file change, isolated fix, "quick plan," "how long" | **Quick** (XS/S) |
-| Feature spans 2+ systems/files, "plan this feature," "break this down" | **Deep** (M/L) |
-| New architecture, multi-sprint, 25+ files, "massive refactor" | **XL** → phase or reduce scope |
+### Step 5: Deliver detailed costing
 
-When scope is unclear, investigate briefly (max 3 tool calls) then present for confirmation.
+Default to concise markdown with these sections:
 
-## Shared Rules
+1. **Costing Summary** — overall size, total hour range, confidence
+2. **Assumptions** — what the estimate depends on
+3. **Evidence** — `file:line` citations backing architecture or risk claims
+4. **Epic Costing** — epic name, purpose, hours, dependencies
+5. **Task Costing** — task-by-task breakdown with sizes and hour ranges
+6. **Risks** — level, impact, mitigation, multiplier if used
+7. **Critical Path** — what must happen in sequence
+8. **Recommended Phases** — suggested delivery waves or spike-first plan
 
-- Investigate actual codebase before planning — no guesswork
-- All estimates must be evidence-based; cite file paths for every claim
-- Use imperative mood for task subjects (e.g., "Add health component")
-- NEVER create tasks before user confirms the plan
-- NEVER proceed past a BLOCKING step without user input
+If confidence is low, explicitly price a discovery spike before the main work.
+
+Epics, tasks, phases, and critical path are **estimation artifacts only**. They exist to explain
+cost, sequencing pressure, and uncertainty — not to create an execution plan or authorize work.
+
+## Rules
+
+- Investigate first, estimate second
+- Use parallel `explore` agents for internal codebase discovery
+- Use `librarian` when external dependencies affect the estimate
+- Cite `file:line` for every architectural, dependency, or risk claim
+- Keep estimates evidence-based and expressed as ranges
+- Surface assumptions, out-of-scope items, and unknowns clearly
+- Never call `task_create` from this skill
+- Never implement, refactor, or silently switch into execution mode
+- If the request is not actually about costing, do not use this skill
+
+## Output Heuristics
+
+- Small costing request: inline estimate with scoped task table
+- Large or architectural costing request: fuller phased breakdown with critical path and spike recommendation
+- External SDK or service integration: include setup, migration, and verification cost explicitly
+- Low-confidence estimate: include a discovery spike instead of pretending certainty
 
 ## Standards
 
-Load `unity-standards` for planning methodology. Key references in `plan/`:
-`sizing-guide.md`, `scope-detection-guide.md`, `scope-confirmation.md`, `confirmation-flow.md`,
-`risk-assessment.md`, `dependency-mapping.md`, `task-structure.md`, `output-quick.md`, `output-deep.md`,
-`investigation-workflow.md`, `investigation-template.md`.
+Load shared references from `unity-standards`:
+- `read_skill_file("unity-standards", "references/plan/investigation-workflow.md")`
+- `read_skill_file("unity-standards", "references/plan/sizing-guide.md")`
+- `read_skill_file("unity-standards", "references/plan/risk-assessment.md")`
 
-Load via `read_skill_file("unity-standards", "references/plan/<file>")`.
+Use those shared documents instead of duplicating sizing, investigation, or risk logic locally.

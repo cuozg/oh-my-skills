@@ -1,18 +1,14 @@
 ---
 name: unity-spec
 description: >
-  Investigate Unity projects and generate per-feature Game Design Specification documents.
-  Splits specs into one file per feature (FEATURE_NAME.md) in Docs/Specs/. Three modes:
-  Full GDD (index + per-feature files), Feature Spec (single feature), Update (diff
-  existing spec against codebase). MUST use when the user says "write a game spec,"
-  "create a GDD," "game design document," "spec out this game," "feature specification,"
-  "spec this feature," "update the spec," "spec is stale," "split into per-feature files,"
-  or describes a game concept needing structured design documentation. Also use when the
-  user wants to document game mechanics, systems design, progression, UX/UI flows, or
-  technical constraints — even if they say "document this feature" without saying "spec."
-  Do not use for technical design docs or system documentation (unity-document), task
-  planning (unity-plan), codebase investigation without spec output (unity-investigate),
-  or project scaffolding (unity-init).
+  Investigate Unity projects and generate per-feature Game Design Specification docs
+  in Docs/Specs/. Supports Full GDD, single Feature Spec, and Update mode that diffs
+  existing specs against the codebase. MUST use when the user asks for a game spec,
+  GDD, game design document, feature specification, stale spec update, per-feature
+  spec split, or structured design documentation for a game concept. Also use to
+  document mechanics, systems design, progression, UX/UI flows, or technical constraints.
+  Do not use for technical design docs or system docs (unity-document), task planning
+  (unity-plan), codebase investigation without spec output, or project scaffolding.
 metadata:
   author: kuozg
   version: "2.0"

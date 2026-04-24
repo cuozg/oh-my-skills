@@ -1,0 +1,74 @@
+{
+  "skill_name": "unity-plan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a detailed cost breakdown for adding cross-save to our Unity game. Saves currently live in a custom JSON system, and we want Steam Cloud on PC plus a migration path for existing local saves. Please investigate the repo first and give me the effort, risks, and phased work rather than implementation.",
+      "expected_output": "An evidence-backed costing report that investigates the codebase first, accounts for migration risk and external service setup, and produces phased estimates instead of implementation work.",
+      "files": [],
+      "expectations": [
+        "Triggers on costing-oriented Unity planning request",
+        "Launches multiple parallel explore agents before estimating",
+        "Uses a librarian agent because Steam Cloud or external service setup affects scope",
+        "Loads investigation-workflow.md, sizing-guide.md, and risk-assessment.md from unity-standards",
+        "Produces an overall size, total hour range, and confidence level",
+        "Breaks work into epics and tasks with cost sizes and hour ranges",
+        "Includes assumptions, risks, and migration considerations",
+        "Cites file:line evidence for architecture or risk claims",
+        "Does not call task_create",
+        "Does not implement the feature"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you price a major refactor of our Unity inventory system? I want a detailed estimate for moving from tightly coupled MonoBehaviours to a cleaner event-driven setup, including test work, rollout order, and what the critical path looks like.",
+      "expected_output": "A detailed costing report for a cross-system refactor with investigation, risk analysis, task sequencing, and critical path guidance.",
+      "files": [],
+      "expectations": [
+        "Focuses on costing only, not implementation planning for execution",
+        "Investigates boundaries, dependencies, side effects, and tests before estimating",
+        "Uses shared sizing guidance instead of ad hoc size labels",
+        "Identifies critical path and sequencing dependencies",
+        "Prices test and stabilization work explicitly",
+        "Uses ranges rather than false precision",
+        "Surfaces out-of-scope items or assumptions when needed"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What would it cost to add ranked matchmaking to our Unity project? We already use FishNet for networking and are considering PlayFab for backend services. I need a proper effort estimate with discovery work if the unknowns are too large.",
+      "expected_output": "A costing report that investigates the local networking architecture, accounts for PlayFab/FishNet external uncertainty, and recommends a discovery spike if confidence is low.",
+      "files": [],
+      "expectations": [
+        "Triggers on Unity effort-estimate request even without the word costing plan",
+        "Uses explore agents to inspect the local networking codebase",
+        "Uses librarian for FishNet or PlayFab constraints and setup overhead",
+        "Includes a low-confidence path with a priced discovery spike when justified",
+        "Provides epic and task costing rather than a single total",
+        "Includes risks, assumptions, and recommended phases"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Estimate the work to add invincibility frames and a hit-flash effect to enemies in our Unity action game. This should stay inside the local combat code; no new SDKs or third-party services are involved. I want hours, risks, and a short task breakdown.",
+      "expected_output": "A local-only Unity costing report that investigates the combat codebase, produces evidence-backed hours and risks, and does not involve external-doc research.",
+      "files": [],
+      "expectations": [
+        "Triggers on Unity estimate request without requiring the word costing",
+        "Uses explore agents to inspect the local combat-related code",
+        "Does not use librarian because no external package, SDK, or service affects the estimate",
+        "Provides a task breakdown with hour ranges and confidence",
+        "Includes risks and assumptions without switching into implementation"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Plan the architecture for our new Unity dialogue system and suggest a clean folder structure. I do not need an estimate yet; I just want the design approach.",
+      "expected_output": "The skill should not trigger because this is a design/planning request without estimate intent.",
+      "files": [],
+      "expectations": [
+        "Does not trigger on generic Unity planning without estimate intent"
+      ]
+    }
+  ]
+}

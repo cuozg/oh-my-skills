@@ -1,17 +1,14 @@
 ---
 name: unity-webgl
 description: >
-  Unified Unity WebGL skill — write JavaScript interop plugins, optimize WebGL builds, configure
-  deployment, and customize HTML templates. Auto-triages: JSLib (.jslib plugins + C# bridge for
-  browser API access), Build (build size, compression, memory, linker.xml, Player Settings),
-  Template (HTML shell, loading screen, responsive canvas). MUST use for ANY Unity WebGL work —
-  JavaScript plugins, browser API, WebGL build optimization, deployment, server MIME types,
-  template customization, platform-conditional code (#if UNITY_WEBGL). Triggers: "jslib,"
-  "JavaScript plugin," "call JS from Unity," "browser API," "WebGL build," "reduce build size,"
-  "WebGL deployment," "loading screen," "WebGL template," "linker.xml," "localStorage from Unity,"
-  "WebGL memory," "Brotli compression," "works in editor but not WebGL," "responsive WebGL canvas,"
-  "embed Unity in iframe." Do not use for runtime C# (unity-code), editor scripts (unity-editor),
-  or debugging (unity-debug).
+  Unified Unity WebGL skill for JavaScript interop plugins, WebGL build optimization,
+  deployment, and custom HTML templates. Auto-triages JSLib, Build, and Template work.
+  MUST use for Unity WebGL requests: .jslib plugins, calling JS from Unity, browser
+  APIs, build size, compression, memory, linker.xml, Player Settings, deployment,
+  server MIME types, loading screens, templates, responsive canvas, iframe embedding,
+  localStorage, Brotli, platform-conditional code, or issues that work in Editor but
+  fail in WebGL. Do not use for general runtime C#, editor scripts, or non-WebGL
+  debugging.
 metadata:
   author: kuozg
   version: "1.1"
