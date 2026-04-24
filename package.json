@@ -1,0 +1,15 @@
+{
+  "name": "oh-my-skills",
+  "version": "1.0.0",
+  "description": "Reusable skill pack with tested search service modules.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "vitest": "^3.2.4"
+  }
+}

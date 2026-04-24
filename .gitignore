@@ -12,6 +12,8 @@ opencode.jsonc
 dcp.jsonc
 tasks
 package-lock.json
+!package.json
+!package-lock.json
 __pycache__/
 *.pyc
 .sisyphus

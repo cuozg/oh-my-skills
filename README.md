@@ -59,6 +59,34 @@ That's it. Skills auto-activate based on your requests.
 
 ---
 
+## Search Service
+
+This repository exposes a reusable Node search service for apps that need one search entry point across published articles and public user profiles.
+
+```js
+import {
+  createInMemorySearchProviders,
+  createSearchService
+} from "./src/index.js";
+
+const search = createSearchService({
+  providers: createInMemorySearchProviders({
+    articles,
+    profiles
+  })
+});
+
+const response = await search("full text search");
+```
+
+The response contains `results`, `articles`, and `profiles`. Every result has a `type` field of either `article` or `profile`, plus a destination `url`, relevance `score`, and `matchedFields`.
+
+The default in-memory providers only expose articles with `status: "published"` and `visibility: "public"`, and profiles with `visibility: "public"`. Applications with database-backed repositories should keep the same provider contract: return only records the current user is allowed to search, then let the search service handle validation, full-text matching, ranking, and response shape.
+
+Blank or whitespace-only queries return an `invalid-query` response without calling providers. Queries with no matches return a `no-results` response instead of throwing.
+
+---
+
 ## The Numbers
 
 | Metric | Count |
