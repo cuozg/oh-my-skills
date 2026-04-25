@@ -1,6 +1,11 @@
 ---
 name: plan-loop
-description: Automatically pick incomplete goals one-by-one, implement and test each until all are complete. Orchestrator that loops through Docs/Goals/**, calling plan-work to execute each incomplete goal, then plan-test to verify acceptance criteria, detecting and fixing issues in a continuous cycle. Use when the user says "run all goals", "complete all goals", "plan loop", "autonomous completion", "keep going until done", "loop until complete", or when you want unattended end-to-end goal completion with automatic error detection and retries. For each cycle: picks next incomplete goal (status != completed OR has unchecked checkboxes) → runs plan-work → runs plan-test → if gaps found, annotates for plan-improve or auto-fixes simple issues → repeats. Stops when all goals are marked completed with every criterion verified. Generates a loop summary report with total goals, completed count, failed/blocked count, and per-goal status. Do NOT use for single-goal execution (use plan-work). Do NOT use for manual testing (use plan-test directly). Do NOT use for creating goals (use plan-goal).
+description: >
+  Autonomous orchestrator for batch goal completion. Loops through all incomplete
+  goals, executing plan-work → plan-test → plan-improve cycles until all goals are
+  verified complete. Picks one goal per cycle deterministically by priority. Detects
+  gaps, invokes fixes, re-tests, and repeats. Generates completion report. Use for
+  unattended batch workflows ("run all goals", "autonomous completion", "loop until done").
 compatibility: Python 3.8+ · orchestrates plan-work, plan-test, plan-improve · integrates with Docs/Goals/ pipeline · suitable for batch completion workflows
 ---
 
