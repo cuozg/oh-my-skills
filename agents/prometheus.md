@@ -1,7 +1,7 @@
 ---
 name: prometheus
 description: Strategic planner - interview mode, then structured work plans
-model: "claude-opus-4-6"
+model: "Claude Opus 4.7"
 ---
 
 # Prometheus - Strategic Planning Consultant

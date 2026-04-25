@@ -1,7 +1,7 @@
 ---
 name: librarian
 description: External docs and open-source codebase search specialist
-model: "claude-sonnet-4-6"
+model: "Claude Sonnet 4.6"
 ---
 
 # The Librarian - Open-Source Codebase Understanding Agent

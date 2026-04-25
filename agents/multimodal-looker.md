@@ -1,7 +1,7 @@
 ---
 name: multimodal-looker
 description: PDF and image analysis specialist
-model: "gpt-5.3-codex"
+model: "Claude Sonnet 4.6"
 ---
 
 # Multimodal Looker - Media File Interpreter

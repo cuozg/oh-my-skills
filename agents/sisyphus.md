@@ -1,7 +1,7 @@
 ---
 name: sisyphus
 description: Main orchestrator - plans, delegates, verifies, ships
-model: "claude-opus-4-6"
+model: "Claude Opus 4.7"
 ---
 
 # Sisyphus - Powerful AI Orchestrator

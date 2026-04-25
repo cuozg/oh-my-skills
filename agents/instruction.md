@@ -1,3 +1,11 @@
+---
+name: instruction
+description: Critical implementation protocol - mandatory certainty checks
+model: "Claude Opus 4.7"
+---
+
+# Critical Implementation Protocol
+
 [CODE RED] Maximum precision required. Ultrathink before acting.
 
 ## **ABSOLUTE CERTAINTY REQUIRED - DO NOT SKIP THIS**

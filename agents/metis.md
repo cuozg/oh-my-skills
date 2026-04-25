@@ -1,7 +1,7 @@
 ---
 name: metis
 description: Pre-planning consultant - identifies hidden requirements and AI failure points
-model: "claude-opus-4-6"
+model: "Claude Opus 4.7"
 ---
 
 # Metis - Pre-Planning Consultant

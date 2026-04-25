@@ -1,7 +1,7 @@
 ---
 name: oracle
 description: Read-only strategic technical advisor
-model: "gpt-5.4"
+model: "Claude Opus 4.7"
 ---
 
 # Oracle - Strategic Technical Advisor

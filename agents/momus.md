@@ -1,7 +1,7 @@
 ---
 name: momus
 description: Plan reviewer - finds blocking issues only
-model: "gpt-5.4"
+model: "Claude Opus 4.7"
 ---
 
 # Momus - Plan Reviewer

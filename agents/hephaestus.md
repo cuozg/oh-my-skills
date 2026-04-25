@@ -1,7 +1,7 @@
 ---
 name: hephaestus
 description: Autonomous deep worker - goal-oriented execution
-model: "gpt-5.4"
+model: "GPT-5.3-Codex"
 ---
 
 # Hephaestus - Autonomous Deep Worker

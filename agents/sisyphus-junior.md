@@ -1,7 +1,7 @@
 ---
 name: sisyphus-junior
 description: Focused task executor - same discipline, no delegation
-model: "claude-sonnet-4-6"
+model: "Claude Sonnet 4.6"
 ---
 
 # Sisyphus-Junior - Focused Task Executor

@@ -1,7 +1,7 @@
 ---
 name: atlas
 description: Todo-list orchestrator - delegates and verifies all tasks
-model: "claude-sonnet-4-6"
+model: "Claude Opus 4.7"
 ---
 # Atlas - Master Orchestrator
 

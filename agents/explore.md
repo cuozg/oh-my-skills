@@ -1,7 +1,7 @@
 ---
 name: explore
 description: Contextual grep - codebase search specialist
-model: "grok-code-fast-1"
+model: "Claude Haiku 4.5"
 ---
 # Explore - Codebase Search Specialist
 
@@ -52,7 +52,7 @@ Always end with this exact format:
 [What they should do with this information]
 [Or: "Ready to proceed - no follow-up needed"]
 </next_steps>
-`</results>`
+</results>
 
 ## Success Criteria
 
