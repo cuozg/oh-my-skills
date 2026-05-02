@@ -18,6 +18,12 @@
 | `TypeLoadException` | Missing assembly reference | Check asmdef references, ensure assembly is included |
 | `PlatformNotSupportedException` | API not available on target | Guard with `#if UNITY_[PLATFORM]` or runtime check |
 | `EntryPointNotFoundException` | Native plugin missing function | Verify plugin architecture (x86/ARM) matches target |
+| `InvalidOperationException: The NativeArray has been deallocated` | NativeContainer disposed before job/read completed | Complete dependencies before disposal; use `Dispose(JobHandle)` |
+| `InvalidOperationException: The previously scheduled job writes to...` | Job dependency chain missing | Pass producer handle to consumer schedule or assign `state.Dependency` |
+| `InvalidOperationException: The container does not support parallel writing` | Parallel job writes without `ParallelWriter` or unique indices | Use `AsParallelWriter()`, unique index writes, or dependency serialization |
+| Burst compile error: managed type not supported | Burst job references `string`, `class`, `List<T>`, `GameObject`, `Transform` | Convert to unmanaged data, entity refs, NativeContainers, or fixed strings |
+| Entity query matches 0 unexpectedly | Missing component/tag, excluded tag, disabled enableable component, wrong world | Inspect Entities window, query filters, Baker output, and world |
+| Entity structural change exception | Add/remove/create/destroy during iteration or job | Use `EntityCommandBuffer` and choose correct playback system |
 
 ## Quick Diagnostic Patterns
 

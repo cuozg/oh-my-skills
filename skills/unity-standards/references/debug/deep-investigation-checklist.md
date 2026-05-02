@@ -17,11 +17,12 @@ Multi-angle bug analysis using targeted investigation angles. Use this checklist
 - **Key file pattern:** every writer and every reader of the target value
 - **Grep:** variable name, assignment sites, conditional reads, and logging sites
 
-### 3. Threading Angle
+### 3. Threading / Jobs Angle
 - Identify coroutines, async and await, Jobs, callbacks from non-main systems, and any explicit thread-pool work
 - Check whether data is accessed from multiple threads, crosses a frame boundary, or re-enters Unity API from a worker thread
-- **Key file pattern:** `yield`, `async`, `Awaitable.BackgroundThreadAsync`, `Task.Run`, `IJob`, `IJobParallelFor`, `OnAudioFilterRead`
-- **Grep:** `yield|async|Awaitable|Task|Job|Parallel|OnAudioFilterRead`
+- For Jobs/Burst, verify `JobHandle` dependencies, `state.Dependency`, `Complete()` timing, NativeContainer ownership, `[ReadOnly]`, and parallel writers
+- **Key file pattern:** `yield`, `async`, `Awaitable.BackgroundThreadAsync`, `Task.Run`, `IJob`, `IJobEntity`, `IJobParallelFor`, `ScheduleParallel`, `Complete`, `OnAudioFilterRead`
+- **Grep:** `yield|async|Awaitable|Task|IJob|Schedule|Complete|NativeArray|NativeList|OnAudioFilterRead`
 
 ### 4. State Transitions Angle
 - Map every state variable and valid transition path
@@ -48,6 +49,14 @@ Multi-angle bug analysis using targeted investigation angles. Use this checklist
 - Validate prefab overrides and managed-reference usage where relevant
 - **Key file pattern:** `[SerializeField]`, `[SerializeReference]`, `[FormerlySerializedAs]`, property declarations, ScriptableObject refs
 - **Grep:** target field name, type definition, rename attributes
+
+### 8. ECS Data / Query Angle (If Applicable)
+- Identify the world, system group, and entity query responsible for processing the entity
+- Check whether the entity has every required component and none of the excluded tags
+- Check enableable component state, dynamic buffer contents, shared component filters, and query change filters
+- Verify Baker output, subscene baking state, and ECB playback timing before assuming runtime logic is wrong
+- **Key file pattern:** `ISystem`, `SystemAPI.Query`, `QueryBuilder`, `IComponentData`, `IBufferElementData`, `Baker`, `EntityCommandBuffer`
+- **Grep:** `ISystem|SystemAPI|IComponentData|IBufferElementData|Baker|EntityCommandBuffer|WithAll|WithNone|RequireForUpdate`
 
 ## Confidence Scoring
 

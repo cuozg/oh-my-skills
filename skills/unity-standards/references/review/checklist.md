@@ -100,10 +100,13 @@ Check every item against changed code. Report as severity: CRITICAL > HIGH > MED
 - [ ] Addressable handles released after use
 - [ ] Canvas split: static vs dynamic UI when rebuild cost matters
 
-### Burst / Jobs (if present)
-- [ ] `NativeArray` / `NativeList` disposed after use
-- [ ] No managed types in Jobs (no class refs, strings, List)
-- [ ] `[ReadOnly]` on input NativeArrays
+### ECS / Burst / Jobs (if present)
+- [ ] ECS changes also reviewed against `review/ecs-burst-review.md`
+- [ ] `NativeArray` / `NativeList` / NativeContainers disposed after use
+- [ ] No managed types in Burst jobs or unmanaged components (no class refs, strings, `List<T>`)
+- [ ] `[ReadOnly]` on input NativeArrays and `RefRO<T>` for read-only component access
+- [ ] Structural changes batched through `EntityCommandBuffer`, not direct add/remove in hot loops
+- [ ] System queries match intended components/tags and do not silently skip enableable components
 - [ ] `ProfilerMarker` as `static readonly`, not local `new`
 
 ---
@@ -155,16 +158,19 @@ Check every item against changed code. Report as severity: CRITICAL > HIGH > MED
 - [ ] `destroyCancellationToken` or lifetime token forwarded through long-lived async methods
 - [ ] Same `Awaitable` instance not awaited multiple times
 
-### Jobs / Burst (if present)
-- [ ] Job dependencies chained: `jobB.Schedule(jobA_handle)`
-- [ ] `Complete()` called before reading results
-- [ ] No shared mutable state without `lock` / `Interlocked` / concurrent collection
+### Jobs / Burst / ECS (if present)
+- [ ] Job dependencies chained: `jobB.Schedule(jobA_handle)` or assigned through `state.Dependency`
+- [ ] `Complete()` called before main-thread reads or disposal of job-written data
+- [ ] No shared mutable state without `lock` / `Interlocked` / concurrent collection / `ParallelWriter`
+- [ ] Safety-disabling attributes are justified and do not hide real races
+- [ ] ECB playback timing is compatible with later systems reading created/modified entities
 
 ---
 
 ## 7. Architecture
 
 - [ ] MonoBehaviour handles Unity lifecycle only — business logic in plain C# classes
+- [ ] ECS systems separate authoring, data components, and stateless processing logic
 - [ ] No God objects (one class doing input + UI + save + audio) — split at ~300 lines
 - [ ] Dependencies flow inward: UI → Logic → Data (inner layers never reference outer)
 - [ ] No `FindObjectOfType` for runtime wiring — inject or use SO events

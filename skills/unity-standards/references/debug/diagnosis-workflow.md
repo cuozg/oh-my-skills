@@ -16,6 +16,7 @@ Extract from report:
 | Runtime | exception at play, null ref, missing ref |
 | Logic | wrong behavior, no error, "it just doesn't work" |
 | Performance | frame drops, GC spikes, hitch on action |
+| ECS / Jobs / Burst | entity not processed, Burst compile error, NativeContainer safety error, race-like behavior |
 
 ## 3. Investigation Angles (pick ≥3)
 
@@ -28,6 +29,7 @@ Extract from report:
 | Timing | execution order, race conditions, async gaps |
 | Data | serialized values, SO references, prefab overrides |
 | Environment | editor vs build, platform, Unity version |
+| ECS/Burst | world, query shape, system update group, job dependency, ECB playback timing, Burst compatibility |
 
 ## 4. Multi-Angle Rule
 

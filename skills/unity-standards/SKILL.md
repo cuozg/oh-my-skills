@@ -7,10 +7,10 @@ description: >
   debugging, testing, or planning Unity C# code. Contains 80+ reference files across 9 categories that
   other skills pull from on demand. Includes editor patterns for CustomEditor, EditorWindow,
   PropertyDrawer, Gizmos, and Handles. Also covers optimization settings for build, rendering,
-  memory, physics, mobile, startup, and Jobs/Burst migration.
+  memory, physics, mobile, startup, ECS, Jobs, Burst compiler, and DOTS review/debug patterns.
 metadata:
   author: kuozg
-  version: "1.3"
+  version: "1.5"
 ---
 
 # unity-standards
@@ -33,17 +33,19 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 
 ## Reference Catalog
 
-### Code Standards (4 consolidated files)
+### Code Standards (5 consolidated files)
 
 - `code-standards/core-conventions.md` - naming, formatting, comments, access modifiers, null safety, unity attributes, code patterns
 - `code-standards/lifecycle-async-errors.md` - lifecycle, async patterns, error handling, security/validation
 - `code-standards/performance-data.md` - collections, LINQ, object pooling, serialization
 - `code-standards/architecture-systems.md` - project structure, dependencies, events, architecture patterns, refactoring, workflows, editor patterns, gizmos, WebGL
+- `code-standards/ecs-burst-standards.md` - ECS, Jobs, Burst, NativeContainers, Bakers, structural changes, migration strategy
 
-### Review (4)
+### Review (5)
 
 - `review/checklist.md` — unified checklist: logic, lifecycle, serialization, performance, security, concurrency, architecture, assets/prefabs
 - `review/comment-format.md` - `pr-submission.md` - `parallel-review-criteria.md`
+- `review/ecs-burst-review.md` - ECS, Jobs, Burst, NativeContainer, ECB, query, and performance review checklist
 
 ### Quality (6)
 
@@ -58,12 +60,13 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `plan/output-quick.md` - `plan/output-deep.md`
 - `plan/investigation-template.md` - markdown template for system investigation reports
 
-### Debug (6)
+### Debug (7)
 
 - `debug/diagnosis-workflow.md` - `common-unity-errors.md` - `log-format.md`
 - `debug/deep-investigation-checklist.md`
 - `debug/analysis-template.md` - structured report template for deep bug analysis output
 - `debug/compile-verification.md` - verification chain, Unity error line format regex, compile error codes, log section markers, batchmode exit code caveats
+- `debug/ecs-burst-debugging.md` - ECS query/world debugging, Burst isolation, job dependency, NativeContainer, Baker, and ECB diagnostics
 
 ### Test (6)
 
@@ -82,7 +85,7 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `ui-toolkit/setup.md` - `performance.md` - `uxml-patterns.md`
 - `ui-toolkit/uss-styling.md` - `csharp-bindings.md` - `custom-controls.md`
 
-### Optimization (7)
+### Optimization (8)
 
 - `optimization/build-settings.md` - code stripping, IL2CPP, compression, texture/audio/mesh settings
 - `optimization/rendering-settings.md` - SRP Batcher, GPU instancing, batching, shader variants, LOD, occlusion culling
@@ -90,4 +93,5 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - `optimization/physics-settings.md` - layer collision matrix, fixed timestep, collision shapes, auto sync transforms
 - `optimization/mobile-settings.md` - target frame rate, thermal throttling, resolution scaling, battery-conscious design
 - `optimization/startup-settings.md` - Enter Play Mode settings, domain reload, preloading, script execution order
-- `optimization/jobs-burst-migration.md` - Jobs system, Burst compiler, data layout, migration checklist
+- `optimization/jobs-burst-migration.md` - Jobs system, Burst compiler, data layout, migration checklist, SIMD intrinsics
+- `optimization/ecs-data-oriented-design.md` - Entity Component System, IJobEntity, archetypes, chunks, queries, ECB

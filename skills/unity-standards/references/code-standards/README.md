@@ -1,6 +1,6 @@
 # Code Standards — Consolidation Map
 
-33 reference files consolidated into 4 comprehensive files for faster AI agent loading.
+33 reference files consolidated into 5 comprehensive files for faster AI agent loading.
 
 ## New Files
 
@@ -10,6 +10,7 @@
 | `lifecycle-async-errors.md` | Lifecycle, async patterns, error handling, security/validation | ~700 |
 | `performance-data.md` | Collections, LINQ, object pooling, serialization | ~720 |
 | `architecture-systems.md` | Project structure, dependencies, events, architecture patterns, refactoring, workflows, editor patterns, gizmos, WebGL | ~1050 |
+| `ecs-burst-standards.md` | ECS, Jobs, Burst, NativeContainers, Bakers, structural changes, migration strategy | ~450 |
 
 ## Old → New Mapping
 
