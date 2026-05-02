@@ -269,7 +269,7 @@ graph TD
 | **git-commit** | Stage + commit with clean imperative messages |
 | **git-comment** | Rewrite last commit message |
 | **git-squash** | Squash commits into clean logical units |
-| **git-description** | Generate + apply PR descriptions |
+| **git-pr** | Generate + apply PR titles and descriptions |
 | **git-clear** | Delete all comments from a GitHub PR |
 
 ### Autonomous Execution
