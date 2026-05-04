@@ -6,7 +6,6 @@ description: >
   verified complete. Picks one goal per cycle deterministically by priority. Detects
   gaps, invokes fixes, re-tests, and repeats. Generates completion report. Use for
   unattended batch workflows ("run all goals", "autonomous completion", "loop until done").
-compatibility: Python 3.8+ · orchestrates plan-work, plan-test, plan-improve · integrates with Docs/Goals/ pipeline · suitable for batch completion workflows
 ---
 
 # Plan Loop — Autonomous Continuous Goal Completion

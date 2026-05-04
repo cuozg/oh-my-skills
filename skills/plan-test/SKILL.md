@@ -4,7 +4,6 @@ description: >
   Verify if goals have been implemented by checking acceptance criteria against codebase.
   Searches repo for code/test evidence, generates structured test reports with verdicts.
   Use after plan-work to validate implementation. Auto-triages quick vs deep mode.
-compatibility: Python 3.8+ · stdlib only · ripgrep optional (grep fallback) · integrates with plan-goal → plan-work → plan-improve
 ---
 
 # plan-test

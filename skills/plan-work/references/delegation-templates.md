@@ -1,6 +1,6 @@
 # Delegation Prompt Templates — plan-work Pipeline
 
-Templates for the 6 specialist handoffs in the single-goal pipeline. The orchestrator fills in `{placeholders}` from the goal file and worktree context.
+Templates for the 6 specialist handoffs in the single-goal pipeline. The orchestrator fills in `{placeholders}` from the goal file and execution context. No-worktree mode is the default; worktree mode is used only when explicitly requested.
 
 All prompts follow one contract: **the orchestrator provides all context upfront**, the specialist does its one job and returns a structured result.
 
@@ -64,10 +64,11 @@ Priority: {priority}
 {spec_content OR "No spec exists — plan from criteria + codebase conventions."}
 
 ## Working environment
-- Worktree path: {worktree_path}
+- Working path: {worktree_path}  // repo root by default; worktree path only in worktree mode
 - Branch: {branch}
 - Base branch: {base_branch}
 - Domain: {domain}  // unity | flutter | web | general
+- No-worktree mode: {no_worktree_mode}  // true by default = repo root, false = isolated worktree
 
 ## Deliverable
 Produce a work plan with:
@@ -134,17 +135,24 @@ Do not rewrite the plan. Only review.
 Blocking. The orchestrator records `sisyphus_session_id` for verify-loop re-dispatch.
 
 ```
-You are implementing ONE goal in an isolated git worktree.
+You are implementing ONE goal.
 
 ## Environment
-- Worktree path: {worktree_path}
+- Working path: {worktree_path}
 - Branch: {branch}
 - Base branch: {base_branch}
 - Domain: {domain}
 - Repo: {repo_owner}/{repo_name}
+- No-worktree mode: {no_worktree_mode}  // true by default unless worktree mode was explicitly requested
 
+{IF no_worktree_mode == true}
+You are working DIRECTLY in the repo root (no separate worktree directory).
+Use plain `git` commands — do NOT use `git -C <path>`.
+All file reads/writes target the repo root. The `goal/{branch-slug}` branch IS your isolation.
+{ELSE}
 Use workdir="{worktree_path}" for ALL bash/git commands.
 Do NOT modify files outside the worktree.
+{END IF}
 
 ## Goal
 ### Objective
@@ -183,7 +191,9 @@ Maintain a running criteria checklist and update it after each sub-task:
 
 ## Commit + PR
 1. Commit (conventional): `feat({feature}): {summary}` — multi-commit OK for logical units.
-2. Push: `git -C {worktree_path} push -u origin {branch}`
+2. Push:
+   - Worktree mode: `git -C {worktree_path} push -u origin {branch}`
+   - No-worktree mode: `git push -u origin {branch}`
 3. PR:
    gh pr create \
      --repo {repo_owner}/{repo_name} \
@@ -214,7 +224,8 @@ CONCERNS/BLOCKER: <if applicable>
 
 ## Rules
 - NEVER ask. Think, decide, execute.
-- NEVER modify files outside your worktree.
+- In no-worktree mode, NEVER modify files while on the wrong branch.
+- In worktree mode, NEVER modify files outside your worktree.
 - NEVER suppress type errors (`as any`, `@ts-ignore`, empty catches, deleted tests).
 - NEVER skip gates.
 - NEVER claim PASS without evidence.
@@ -245,10 +256,11 @@ Blocking. Fresh session per verify round — Hephaestus re-derives evidence inde
 You are the verifier for ONE goal. You do NOT implement. You only test.
 
 ## Environment
-- Worktree path: {worktree_path}
+- Working path: {worktree_path}  // repo root by default; worktree path only in worktree mode
 - Branch: {branch} (already pushed)
 - PR: {pr_url}
 - Domain: {domain}
+- No-worktree mode: {no_worktree_mode}  // if true, files are in repo root, not a separate worktree dir
 
 ## Goal acceptance criteria (authoritative — verify each one)
 {checkbox list verbatim, numbered 1..N}
@@ -257,7 +269,7 @@ You are the verifier for ONE goal. You do NOT implement. You only test.
 {evidence table from Step 4}
 
 ## Your job
-For EACH criterion, independently gather evidence from the worktree:
+For EACH criterion, independently gather evidence from {worktree_path}:
   - Read the files cited by Sisyphus and confirm the claim.
   - Grep the worktree for the feature/symbol/behavior the criterion names.
   - Re-run the relevant gate command (lsp_diagnostics / dart analyze / build).
@@ -301,7 +313,7 @@ task(
        reflecting completed goal '{goal_title}'.
 
     2. EXPECTED OUTCOME: Docs/Specs/{feature_name}.md matches the codebase
-       in the {branch} worktree. Architecture, components, events, data models
+       in the {branch} execution context. Architecture, components, events, data models
        and state machines all reflect what was actually built.
 
     3. REQUIRED TOOLS: read, write, edit, glob, grep, lsp tools
@@ -333,6 +345,8 @@ task(
 ---
 
 ## Worktree Shell Helpers (orchestrator, Step 1 & cleanup)
+
+Use these helpers only when worktree mode is explicitly active. The default no-worktree path uses plain `git switch -c goal/{feature-slug} origin/{base-branch}` in the repo root, then `git switch {base-branch}` after PR creation.
 
 ```bash
 # Create (Step 1)
