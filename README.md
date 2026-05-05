@@ -7,13 +7,13 @@
 <h1 align="center">Oh My Skills</h1>
 
 <p align="center">
-  <strong>50 battle-tested AI agent skills. 252 reference docs. 322 commits of relentless refinement.</strong>
+  <strong>51 battle-tested AI agent skills. 253 reference docs. 322 commits of relentless refinement.</strong>
   <br />
   Built for Unity, Flutter, and full-stack development &mdash; evaluated, iterated, and hardened until they actually work.
 </p>
 
 <p align="center">
-  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-50">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-57">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
+  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-51">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-57">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
 </p>
 
 ---
@@ -27,7 +27,7 @@ Most AI agent skills are written once and abandoned. They hallucinate patterns, 
 - **Written** from real-world project experience, not hypotheticals
 - **Evaluated** against concrete test scenarios with pass/fail criteria
 - **Refined** across 50+ iteration cycles &mdash; rewrite, eval, fix, re-eval
-- **Hardened** with 252 reference documents that ground the agent in real conventions
+- **Hardened** with 253 reference documents that ground the agent in real conventions
 
 The result: skills that produce **senior-engineer-quality output** &mdash; code that follows your project's actual patterns, reviews that catch real bugs, plans that map to your real codebase.
 
@@ -63,8 +63,8 @@ That's it. Skills auto-activate based on your requests.
 
 | Metric | Count |
 |:---|---:|
-| Specialized skills | **50** |
-| Reference documents | **252** |
+| Specialized skills | **51** |
+| Reference documents | **253** |
 | Commits of refinement | **322+** |
 | Eval & refinement iterations | **53+** |
 | Unity standards reference files | **54** |
@@ -158,6 +158,7 @@ graph TD
     US --> UTU[unity-test-unit]
     US --> UTC[unity-test-case]
     US --> UUI[unity-uitoolkit]
+    US --> UApp[unity-app-ui]
     US --> UPI[unity-init]
     US --> USpec[unity-spec]
     US --> UOpt[unity-optimize]
@@ -203,11 +204,11 @@ graph TD
 
 ---
 
-<a id="skills-50"></a>
+<a id="skills-51"></a>
 
-## Skills (50)
+## Skills (51)
 
-50 skills across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
+51 skills across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
 ### Unity &mdash; Runtime Code
 
@@ -217,6 +218,7 @@ graph TD
 | **unity-optimize** | Performance &mdash; code hot paths, build settings, audits | Code / Settings / Audit |
 | **unity-editor** | Custom inspectors, windows, drawers, gizmos, handles | Quick / Deep |
 | **unity-uitoolkit** | Runtime UI &mdash; UXML, USS, C# bindings, custom controls | &mdash; |
+| **unity-app-ui** | App UI package screens, MVVM, navigation, themes, Storybook | Component / App Shell / MVVM |
 | **unity-webgl** | JSLib plugins, WebGL builds, templates, deployment | JSLib / Build / Template |
 | **unity-prototype** | Playable prototypes from game ideas | &mdash; |
 
