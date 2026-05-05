@@ -278,9 +278,11 @@ graph TD
 
 | Skill | What it does |
 |:---|:---|
-| **plan-work** | Scan goal files, execute all autonomously |
-| **plan-goal** | Interactive goal creation with acceptance criteria |
-| **plan-improve** | Quality refinement &mdash; assess work against goals |
+| **goal-create** | Create structured goals with acceptance criteria |
+| **goal-execute** | Execute one goal end-to-end with criterion evidence |
+| **goal-verify** | Verify one goal criterion by criterion |
+| **goal-loop** | Loop incomplete goals through execute and verify cycles |
+| **goal-improve** | Critique and improve goal usefulness, design, and agent-readiness |
 | **session-retrospective** | Post-session learning &mdash; improve skills from experience |
 
 ### Shell & CLI

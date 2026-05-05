@@ -1,6 +1,6 @@
 # Acceptance Criteria Verification
 
-Shared reference for the `plan-test` skill. Defines **how** to parse Acceptance
+Shared reference for the `goal-verify` skill. Defines **how** to parse Acceptance
 Criteria (ACs) from a goal file, **which** test mode (Edit vs Play) to use for
 each AC, and **what** shape the resulting verification report must take.
 
@@ -14,7 +14,7 @@ does not duplicate test-writing patterns — cross-link to the sibling files:
 - [naming-conventions.md](./naming-conventions.md) — test naming rules
 - [test-case-format.md](./test-case-format.md) — the HTML QA template (different skill)
 
-The `plan-test` skill reads a goal file, runs the parser in Section A, classifies
+The `goal-verify` skill reads a goal file, runs the parser in Section A, classifies
 each AC using the matrix in Section B, and emits a markdown report using the
 template in Section C.
 
@@ -25,14 +25,14 @@ template in Section C.
 ### A.1 Goal File Location
 
 Goal files live at `Docs/Goals/{feature-name}/{kebab-case-task}.md`, produced by
-the `plan-goal` skill. Every goal file has two machine-readable blocks:
+the `goal-create` skill. Every goal file has two machine-readable blocks:
 
 1. **YAML frontmatter** — status, priority, and dependency metadata.
 2. **`## Acceptance Criteria` section** — a GitHub-style task list.
 
 ### A.2 Required Frontmatter Fields
 
-Per `plan-goal` Rule 14, these five fields MUST be present:
+Per `goal-create` Rule 14, these five fields MUST be present:
 
 | Field         | Type       | Example                          |
 | ------------- | ---------- | -------------------------------- |
@@ -193,7 +193,7 @@ Run the AC text through these questions in order; stop at the first **Yes**:
 
 ## Section C — Markdown Report Template
 
-The `plan-test` skill writes the report to
+The `goal-verify` skill writes the report to
 `Docs/Goals/{feature-name}/{kebab-case-task}-test.md`. Use the exact structure
 below. Status icons: ✅ Pass · ❌ Fail · ⏭️ Skip · ⚠️ Partial.
 
@@ -201,7 +201,7 @@ below. Status icons: ✅ Pass · ❌ Fail · ⏭️ Skip · ⚠️ Partial.
 ---
 goal: {feature}/{task}
 generated: {ISO-8601 timestamp}
-verifier: plan-test
+verifier: goal-verify
 total_acs: {n}
 passed: {n}
 failed: {n}
@@ -246,7 +246,7 @@ skipped: {n}
 3. For ❌ and ⚠️ blocks, include a **Fix hint** with the smallest next step.
 4. Never rewrite the AC text — copy it verbatim from the goal file so diffs
    stay grep-able.
-5. Report is idempotent: re-running `plan-test` overwrites the file but keeps
+5. Report is idempotent: re-running `goal-verify` overwrites the file but keeps
    the filename stable.
 
 ## Verification Metadata

@@ -1,0 +1,84 @@
+{
+  "skill_name": "goal-execute",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run goal-execute. The user provided Docs/Goals/inventory/add-sorting.md. It has status: pending and four unchecked acceptance criteria.",
+      "expected_output": "The agent reads the provided goal file in full, preserves all four criteria verbatim, creates a plan with one criterion-to-work mapping row per criterion, implements the goal, independently verifies all four criteria with concrete evidence, then updates the goal file, Master.md, README if impacted, and relevant specs before reporting completion.",
+      "files": [],
+      "expectations": [
+        "Does not search for a different goal when a path was provided",
+        "Reads all frontmatter and acceptance criteria before planning",
+        "Plans before editing files",
+        "Maps every criterion to implementation work and verification evidence",
+        "Does not mark status completed until every criterion is VERIFIED",
+        "Final report includes one evidence row per criterion"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Run goal-execute. No goal file was provided. Docs/Goals/Master.md exists and Docs/Goals/combat/add-parry.md is the first goal with status: in-progress and two unchecked criteria.",
+      "expected_output": "The agent reads Master.md, discovers Docs/Goals/combat/add-parry.md as the selected goal, reads it fully, then runs the fixed pipeline: discover goal, plan, implement, independently verify every criterion, sync docs, and report evidence.",
+      "files": [],
+      "expectations": [
+        "Reads Docs/Goals/Master.md when present",
+        "Selects exactly one incomplete goal",
+        "Filters out completed goals and goals with no unchecked criteria",
+        "Does not fabricate a goal",
+        "Runs the fixed pipeline in order"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Run goal-execute. Docs/Goals/ exists, but every goal is either completed or has all acceptance criteria already checked.",
+      "expected_output": "The agent stops with NO_INCOMPLETE_GOAL and does not implement, edit docs, or invent new work.",
+      "files": [],
+      "expectations": [
+        "Reports NO_INCOMPLETE_GOAL",
+        "Does not run implementation",
+        "Does not edit goal files",
+        "Does not create a replacement goal"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Run goal-execute on Docs/Goals/ui/build-hud.md. The implementation summary claims every criterion is done, but independent verification finds criterion 2 has no concrete evidence.",
+      "expected_output": "The agent treats criterion 2 as UNMET or UNCLEAR, does not tick its checkbox, does not set the goal status to completed, fixes or blocks the goal, and only completes after fresh evidence verifies every criterion.",
+      "files": [],
+      "expectations": [
+        "Does not trust implementation claims as verification",
+        "Re-reads files or re-runs checks for independent evidence",
+        "Treats UNCLEAR as not complete",
+        "Does not update completed status while any criterion lacks evidence",
+        "Records criterion-indexed gaps"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Run goal-execute on Docs/Goals/crafting/add-recipes.md. All criteria verify successfully and no Docs/Specs/Crafting.md exists.",
+      "expected_output": "The agent ticks all verified checkboxes, sets the goal status to completed, updates Master.md counts and row state, conditionally updates README.md only if impacted, creates or updates the relevant spec from the actual implementation, and reports all verification evidence.",
+      "files": [],
+      "expectations": [
+        "Ticks only verified criteria",
+        "Sets frontmatter status to completed only after verification",
+        "Updates Docs/Goals/Master.md consistently",
+        "Updates README.md only for user-facing impact",
+        "Creates or updates relevant Docs/Specs content from actual implementation evidence",
+        "Final report summarizes document sync state"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Run goal-execute on Docs/Goals/auth/add-sso.md. A required provider credential and sandbox are unavailable, so one acceptance criterion cannot be implemented or verified.",
+      "expected_output": "The agent takes the blocked path: leaves unverified checkboxes unchecked, does not mark the goal completed, records the blocker with the unmet criterion and evidence, updates Master.md to blocked, and does not update specs as if the feature shipped.",
+      "files": [],
+      "expectations": [
+        "Identifies the real blocker",
+        "Does not tick unverified criteria",
+        "Sets blocked status only when the blocker is current and concrete",
+        "Updates Master.md to match the blocked status",
+        "Does not create shipped-feature spec updates for incomplete work"
+      ]
+    }
+  ]
+}
