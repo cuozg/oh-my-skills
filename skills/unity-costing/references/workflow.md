@@ -5,7 +5,7 @@
 1 HTML file.
 
 ```
-Documents/Plans/{Name}/
+Docs/Plans/{Name}/
 └── PLAN.html   — Vercel-themed plan with summary, architecture, tasks, risks, acceptance
 ```
 
@@ -43,6 +43,7 @@ out-of-scope items. Ask user if anything is unclear.
 ## Step 5: Generate PLAN.html
 
 Fill template sections in order:
+
 1. **Header** — feature name (▲ logo rendered via CSS)
 2. **Summary** — 1-5 bullet points: what, why, key constraints
 3. **Architecture Overview** — side-by-side current vs proposed + what changes
@@ -58,7 +59,7 @@ Fill template sections in order:
 ## Step 6: Create Output + Summary
 
 ```bash
-mkdir -p Documents/Plans/{Name}
+mkdir -p Docs/Plans/{Name}
 ```
 
 Write PLAN.html. Report: location, total effort, top risks, critical path.

@@ -1,77 +1,221 @@
 ---
 name: unity-costing
 description: >
-  Use this skill to create a detailed HTML plan for XL Unity features (10+ days) or major refactors —
-  deep codebase investigation, full epic/task tree with dependencies, architecture analysis, and risk
-  assessment. Use when the user says "I need a full breakdown," "detailed plan for this feature,"
-  "costing plan," or describes a very large feature that needs thorough analysis before work begins. Does
-  not auto-create tasks — the user decides when to register them. For smaller features, use
-  unity-plan-deep (M/L) or unity-plan-quick (XS/S).
+  Create detailed Unity feature or task costing plans as self-contained HTML reports. MUST use when the user asks for
+  feature costing, task breakdown, estimate, effort sizing, implementation plan with hours/days, epic/task decomposition,
+  technical approach, architecture overview, risk assessment, acceptance criteria, compatibility impact, or a detailed
+  Unity delivery plan before implementation. Use for small-to-XL Unity work when a costed task tree is the deliverable;
+  investigate the codebase first and fire subagents when scope touches multiple systems or evidence is needed.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "2.0"
 ---
 # unity-costing
 
-Produce a comprehensive HTML plan for very large features — deep codebase investigation,
-architecture analysis, full epic/task tree with dependencies, waves, and risk assessment.
+Create a detailed Unity costing report for a feature, refactor, integration, or task set. The output is an HTML plan that summarizes the change, explains architecture and technical approach, decomposes work into epics and detailed tasks, estimates effort, and lists risks, acceptance criteria, and compatibility impacts.
 
-## When to Use
+## Core Deliverable
 
-- Feature is XL (10+ days) or a major refactor/new system
-- Team needs a detailed plan with epics, tasks, dependencies before any work
-- Deep cross-system investigation required before scoping
+Write one self-contained HTML file using the exact section structure from:
+
+`references/output-template.html`
+
+Default output path:
+
+`Docs/Plans/{FeatureName}_costing/PLAN.html`
+
+If the repo already uses a different planning folder, follow the repo convention and state the path.
+
+## Required Sections
+
+Follow the template order and preserve its visual structure:
+
+1. **Summary** — what changes, why it matters, scope/constraints, total estimate.
+2. **Architecture Overview** — current architecture vs proposed architecture, plus concrete component changes.
+3. **Technical Approach** — ordered implementation strategy with code references.
+4. **Epics** — high-level work streams with one-line purpose.
+5. **Tasks Breakdown** — primary section: task ID, epic, title, action steps, type, cost, files.
+6. **Risks** — risk, severity, impact, mitigation.
+7. **Backward Compatibility** — affected area, impact, migration/guardrail.
+8. **Acceptance Criteria** — grouped checklist covering behavior, tests, compatibility, release readiness.
 
 ## Workflow
 
-Read `references/workflow.md` for the full step-by-step process with parallel execution strategy.
+### 1. Clarify only blocking ambiguity
 
-Summary:
-1. **Investigate** — Parallel subagent exploration of affected modules, dependencies, patterns
-2. **Scope** — Define phases, epics, boundaries, and out-of-scope items
-3. **Plan** — Decompose into epics → tasks with cost/type/wave per node
-4. **Generate** — Write `PLAN.html` using the HTML template
-5. **Save** — Write to `Documents/Plans/{Name}/`
-6. **Summary** — Report effort, risks, critical path, and output folder
+Ask concise questions before investigating only when missing info changes the estimate materially:
 
-## Rules
+- target platform or Unity version is unknown and platform constraints matter
+- feature boundaries are unclear
+- quality bar is ambiguous (prototype vs production)
+- required integrations, SDKs, backend contracts, or design assets are unknown
+- estimate unit is unclear (hours, days, story points) and user did not imply one
 
-- Never call `task_create` — user decides when to register tasks
-- Cite `file:line` for every risk, dependency, or architectural claim
-- All estimates must be evidence-based from investigation — no guesswork
-- Use parallel subagents (`run_in_background=true`) for investigation phase
-- Every epic must have 2+ tasks; every task must have type, cost, and affected files
-- **Tasks Breakdown table is the primary deliverable** — invest most effort here
-- Keep text minimal — tables over prose, bullets over paragraphs
-- No JavaScript in HTML output — CSS-only, self-contained
+Do not ask if a reasonable assumption can be stated in the report.
 
-## Output
+### 2. Investigate before estimating
 
-`Documents/Plans/{Name}/` containing:
-- `PLAN.html` — Vercel-themed HTML with summary, architecture, tasks, risks, acceptance
+Read enough code and project files to ground the plan. Look for:
 
-### PLAN.html Sections (8)
+- entry points and affected scenes/prefabs/scripts
+- current architecture, ownership boundaries, events, services, data flow
+- existing patterns for DI, lifecycle, serialization, Addressables, UI, input, tests
+- platform constraints and package dependencies
+- tests and validation infrastructure
 
-1. **Summary** — 1-5 bullet points (what, why, scope)
-2. **Architecture Overview** — current vs proposed side-by-side, what changes
-3. **Technical Approach** — numbered steps with code references
-4. **Epics** — table: name + 1-line purpose
-5. **Tasks Breakdown** — table: ID, Epic, Title, Description, Type (badge), Cost (badge), Files
-6. **Risks** — table: risk, severity badge (HIGH/MED/LOW), impact, mitigation
-7. **Backward Compatibility** — table: area, impact, migration steps
-8. **Acceptance Criteria** — styled checkbox list by category
+For cross-system or uncertain work, fire parallel subagents. Use different investigation angles, for example:
 
-## Template
+- existing feature/module boundaries and entry points
+- data flow, events, save/load, networking, or backend dependencies
+- UI/scene/prefab/asset impact
+- test coverage and validation strategy
+- performance, platform, build, or compatibility risk
 
-Read `references/output-template.html` before generating. Replace `[PLACEHOLDER]` tokens.
-Use badge CSS classes for types (`badge-logic`, `badge-ui`, etc.) and costs (`badge-cost-s`, etc.).
+Every architectural claim, risk, dependency, or compatibility concern should cite evidence as `path:line` when available. If no code exists yet, mark the item as assumption.
 
-## Standards
+### 3. Scope the change
 
-Load `unity-standards` for planning methodology:
-- `plan/sizing-guide.md` — XS/S/M/L/XL definitions, hour ranges
-- `plan/risk-assessment.md` — risk levels, mitigation strategies
-- `plan/dependency-mapping.md` — blockedBy, parallel vs sequential
-- `plan/task-structure.md` — subject/description format, skill routing
+Define:
 
-Load via `read_skill_file("unity-standards", "references/<path>")`.
+- **In scope** — what the estimate covers
+- **Out of scope** — what it explicitly excludes
+- **Assumptions** — unknowns that affect confidence
+- **Dependencies** — assets, packages, services, design, backend, approvals
+- **Confidence** — High / Medium / Low with reason
+
+Keep this concise; put long detail in tables.
+
+### 4. Build epics
+
+Create epics as delivery slices, not vague categories. Good epics produce shippable progress:
+
+- Foundation / integration setup
+- Runtime logic / systems
+- UI / scene / prefab wiring
+- Data / persistence / migration
+- Assets / content setup
+- Tests / validation / release readiness
+
+Each epic needs:
+
+- short name
+- one-line purpose
+- dependency notes if blocked by another epic
+
+### 5. Break epics into detailed tasks
+
+The task table is the main deliverable. Each task must include:
+
+- stable ID: `T-1`, `T-2`, ...
+- epic name
+- short imperative title
+- 2-5 concrete action steps
+- type badge
+- cost badge and hour range
+- affected files or likely file paths
+- dependency/blocker note when relevant
+
+Prefer many clear tasks over one broad task. Split any task larger than XL unless it is intentionally a research spike.
+
+## Costing Model
+
+Use this default scale unless the user specifies another:
+
+| Size | Effort | Use when |
+| --- | --- | --- |
+| XS | < 1h | trivial config, small code edit, tiny validation |
+| S | 1-2h | single-file or simple prefab/UI work |
+| M | 2-4h | focused task with tests or limited wiring |
+| L | 4-8h | multi-file change, significant integration, complex validation |
+| XL | 1-2d | broad slice, uncertain integration, cross-system task |
+| Spike | timeboxed | investigation needed before reliable estimate |
+
+The provided template has CSS cost badges for `S`, `M`, `L`, `XL`. If using `XS` or `Spike`, either map visually to the nearest existing class and label clearly, or add minimal CSS only if needed. Do not invent complex styling.
+
+Always include:
+
+- per-task size
+- per-task hour range
+- total low/high estimate
+- confidence level
+- critical path or sequencing note
+
+## Task Types
+
+Use template badge classes:
+
+- `Logic` — runtime C# behavior, systems, gameplay, services
+- `UI` — UI Toolkit/uGUI/screens/HUD/menu work
+- `Data` — save data, schemas, configs, ScriptableObjects, migrations
+- `API` — SDK/backend/service integration boundaries
+- `Asset` — prefabs, scenes, Addressables, audio, sprites, materials
+- `Test` — EditMode/PlayMode tests, smoke checks, QA validation
+- `Config` — project settings, packages, build/player settings, asmdefs
+
+## Risk Rules
+
+List concrete risks only. For each risk include:
+
+- severity: HIGH / MED / LOW
+- why it matters
+- affected area
+- mitigation
+- evidence or assumption marker
+
+Common Unity risks to check:
+
+- scene/prefab reference breakage
+- serialized data migration
+- platform-specific behavior
+- Addressables/catalog compatibility
+- input/backend/SDK contract mismatch
+- performance/GC/frame budget
+- package or Unity version constraints
+- missing tests or hard-to-automate validation
+
+## Compatibility Rules
+
+Always include compatibility, even if impact is low. Cover:
+
+- existing save data and serialized fields
+- public APIs and assembly definitions
+- scenes/prefabs/assets already in use
+- platform/build settings
+- Addressables or remote content
+- analytics/liveops/backend contracts when relevant
+
+If no migration is needed, say why.
+
+## Template Use
+
+Before writing `PLAN.html`, read `references/output-template.html` and replace all placeholder rows/tokens with real content. Preserve:
+
+- section IDs and order
+- CSS-only, self-contained HTML
+- badge class names from the template
+- dark Vercel-style layout
+
+Do not leave `[PLACEHOLDER]` tokens in output.
+Do not add JavaScript.
+Do not create project tasks or tickets automatically; the user decides after reviewing the costing.
+
+## Output Quality Bar
+
+A good report is:
+
+- evidence-backed, with code/file references where possible
+- compact but specific
+- task-heavy, not prose-heavy
+- clear about assumptions and confidence
+- useful for a lead developer to approve, sequence, and assign work
+- safe for Unity projects: no destructive changes, no unapproved package/settings edits
+
+## Final Response
+
+After creating the report, answer with:
+
+- output file path
+- total estimate range
+- confidence level
+- top 2-3 risks
+- any questions or assumptions that still affect estimate
