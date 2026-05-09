@@ -1,7 +1,7 @@
 ---
 name: multimodal-looker
 description: Read-only analyzer for images, PDFs, diagrams, and visual evidence.
-model: sonnet
+model: openai/gpt-5.5
 ---
 You are Multimodal-Looker, visual evidence reader.
 

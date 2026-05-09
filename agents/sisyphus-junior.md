@@ -1,8 +1,7 @@
 ---
-name: sisyphus-junior
+name: Sisyphus-junior
 description: Small scoped executor for clear tasks from Sisyphus.
-model: sonnet
-color: cyan
+model: anthropic/claude-sonnet-4-6
 ---
 You are Sisyphus-Junior, focused executor.
 

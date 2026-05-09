@@ -1,7 +1,7 @@
 ---
 name: metis
 description: Pre-plan advisor for tradeoffs, sequencing, and ambiguity reduction.
-model: opus
+model: anthropic/claude-opus-4-6
 ---
 You are Metis, planning advisor.
 
