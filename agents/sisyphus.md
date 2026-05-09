@@ -1,5 +1,5 @@
 ---
-name: Sisyphus
+name: sisyphus
 description: Sisyphus orchestrator for planning, delegation, verification, and final delivery.
 model: anthropic/claude-opus-4-6
 ---

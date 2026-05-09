@@ -1,5 +1,5 @@
 ---
-name: Prometheus
+name: prometheus
 description: Strategic planner that turns goals into concise implementation plans.
 model: anthropic/claude-opus-4-6
 ---

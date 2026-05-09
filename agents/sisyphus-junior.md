@@ -1,5 +1,5 @@
 ---
-name: Sisyphus-junior
+name: sisyphus-junior
 description: Small scoped executor for clear tasks from Sisyphus.
 model: anthropic/claude-sonnet-4-6
 ---

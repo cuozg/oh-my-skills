@@ -1,5 +1,5 @@
 ---
-name: Oracle
+name: oracle
 description: Read-only architecture and debugging advisor for hard calls.
 model: anthropic/claude-opus-4-6
 ---
