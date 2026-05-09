@@ -58,12 +58,12 @@ export const SessionImproverPlugin = async ({ client, $ }) => {
           // This appends "/omo/retrospective" as a new message in the
           // current session so Sisyphus can analyse what was done and
           // improve the relevant skills in the background.
-          await client.tui.prompt.append({
+          await client.tui.appendPrompt({
             body: {
-              sessionID,
               text: "/omo/retrospective",
             },
           });
+          await client.tui.submitPrompt();
         } catch (err) {
           await client.app.log({
             body: {

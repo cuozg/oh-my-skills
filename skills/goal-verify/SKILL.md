@@ -30,9 +30,9 @@ complete, never updates `Master.md`. Those actions belong to other skills.
 > "no evidence found" note. No verdict is handwaved.**
 
 If you cannot produce evidence for a criterion, it is `❌ Unmet`. Period.
-A criterion marked `- [x]` in the goal file is trusted as `✅ Met` (the
-author attested to it) but the evidence columns still populate from the
-repo scan.
+Do not trust a checked goal checkbox as proof. `- [x]` means the goal author
+claimed completion, but `goal-verify` must independently verify implementation
+or test evidence before returning `✅ Met`.
 
 ---
 
@@ -95,15 +95,15 @@ For each criterion, the verifier:
    literals**, **symbols** (CamelCase or `snake_case` identifiers), and
    fallback **keywords**.
 2. Checks path existence inside the repo.
-3. Searches source via `rg` (falls back to `grep -rn`).
-4. Scans `tests/`, `test/`, `__tests__/` for files mentioning any symbol.
+3. Searches implementation files in the active project while excluding goal docs, generated eval workspaces, backups, dependency folders, and skill/reference artifacts.
+4. Scans test files anywhere under the repo for files mentioning any extracted symbol.
 5. Emits a verdict:
 
 | Verdict | When |
 |---------|------|
-| `✅ Met` | Criterion is `- [x]` **OR** (code hit(s) **AND** test file(s)) |
-| `⚠️ Partial` | Code/path evidence exists but tests are missing or paths are partially absent |
-| `❌ Unmet` | No referenced path exists, or no code/test evidence at all |
+| `✅ Met` | Relevant implementation evidence exists **AND** matching test file(s) exist |
+| `⚠️ Partial` | Relevant implementation/path evidence exists but tests are missing or paths are partially absent |
+| `❌ Unmet` | No referenced path exists, or no relevant code/test evidence exists |
 
 ### Phase 3 · Report
 
@@ -257,9 +257,14 @@ python skills/goal-verify/scripts/generate_report.py <goal.json> <results.json> 
 7. **Warn loudly on malformed goals.** Missing frontmatter keys, invalid
    `status` or `priority` values, or zero checkboxes surface as
    `warnings` in the parser output.
-8. **Stdlib only.** Scripts must not import third-party packages. YAML
+8. **Relevant evidence only.** Exclude `Docs/Goals`, generated `*-workspace` folders,
+   backups, dependency folders, and unrelated skill/reference artifacts from proof. Broad
+   words such as `Search`, `Results`, or `implementation` are not sufficient evidence
+   unless they appear in implementation or test files tied to the criterion. Documentation
+   files can support path checks, but they are not implementation proof by themselves.
+9. **Stdlib only.** Scripts must not import third-party packages. YAML
    frontmatter is parsed by hand; ripgrep is optional.
-9. **Deterministic output.** Running `goal-verify` twice on an unchanged
+10. **Deterministic output.** Running `goal-verify` twice on an unchanged
    repo yields byte-identical reports, modulo the `generated` timestamp.
 
 ---

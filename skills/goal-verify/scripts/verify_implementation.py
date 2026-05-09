@@ -54,8 +54,12 @@ def extract_terms(criterion: str) -> dict[str, list[str]]:
         tok for tok in IDENT_RE.findall(criterion)
         if tok.lower() not in STOPWORDS and not tok.isdigit()
     ]
-    # Prefer multi-case or underscore identifiers (likely code symbols)
-    symbols = [t for t in idents if any(c.isupper() for c in t) or "_" in t]
+    # Treat only code-shaped identifiers as symbols. Title-cased English words at
+    # the start of a sentence are too broad and cause false positives.
+    symbols = [
+        t for t in idents
+        if "_" in t or any(c.isupper() for c in t[1:])
+    ]
     keywords = [t for t in idents if t not in symbols][:6]
 
     return {
@@ -65,6 +69,40 @@ def extract_terms(criterion: str) -> dict[str, list[str]]:
         "symbols": list(dict.fromkeys(symbols))[:6],
         "keywords": list(dict.fromkeys(keywords)),
     }
+
+
+REPO_EXCLUDES = [
+    ".git", "node_modules", "__pycache__", ".venv", "venv",
+    "dist", "build", "target", ".next", ".nuxt",
+    "Docs/Goals", "*-workspace", "backup", "claude", "skills", "agents",
+    "commands", "instructions",
+]
+
+CODE_EXTENSIONS = {
+    ".c", ".cc", ".cpp", ".cs", ".css", ".dart", ".go", ".h", ".hpp",
+    ".html", ".java", ".js", ".jsx", ".json", ".kt", ".lua", ".m",
+    ".mm", ".php", ".py", ".rb", ".rs", ".scss", ".sh", ".sql",
+    ".swift", ".ts", ".tsx", ".vue", ".xml", ".yaml", ".yml",
+}
+
+
+def _is_test_path(path: str) -> bool:
+    parts = Path(path).parts
+    name = Path(path).name.lower()
+    return (
+        any(part in {"tests", "test", "__tests__"} for part in parts)
+        or name.startswith("test_")
+        or name.endswith("_test.py")
+        or ".test." in name
+        or ".spec." in name
+    )
+
+
+def _is_candidate_evidence_file(path: str) -> bool:
+    p = Path(path)
+    if _is_test_path(path):
+        return False
+    return p.suffix.lower() in CODE_EXTENSIONS
 
 
 # --- Search ------------------------------------------------------------------
@@ -88,11 +126,7 @@ def search_code(term: str, root: Path, max_hits: int = 5) -> list[dict[str, Any]
     if not term or len(term) < 2:
         return []
 
-    excludes = [
-        ".git", "node_modules", "__pycache__", ".venv", "venv",
-        "dist", "build", "target", ".next", ".nuxt",
-        "Docs/Goals", "*-workspace",
-    ]
+    excludes = REPO_EXCLUDES
     if _rg_available():
         cmd = ["rg", "--no-heading", "--line-number", "--color", "never",
                "--max-count", str(max_hits), "-F", term]
@@ -118,6 +152,8 @@ def search_code(term: str, root: Path, max_hits: int = 5) -> list[dict[str, Any]
         try:
             lineno_int = int(lineno)
         except ValueError:
+            continue
+        if not _is_candidate_evidence_file(file_):
             continue
         hits.append({
             "file": file_.lstrip("./"),
@@ -147,25 +183,54 @@ def find_tests(symbols: list[str], root: Path) -> list[str]:
     """Look for test files that mention any of the given symbols."""
     if not symbols:
         return []
-    candidate_dirs = [root / "tests", root / "test", root / "__tests__"]
     test_files: set[str] = set()
-    for d in candidate_dirs:
-        if not d.exists() or not d.is_dir():
+    for p in root.rglob("*"):
+        if not p.is_file():
             continue
-        for p in d.rglob("*"):
-            if not p.is_file():
-                continue
-            name = p.name.lower()
-            if not (name.startswith("test_") or name.endswith("_test.py")
-                    or ".test." in name or ".spec." in name):
-                continue
-            try:
-                blob = p.read_text(encoding="utf-8", errors="ignore")
-            except OSError:
-                continue
-            if any(sym in blob for sym in symbols):
-                test_files.add(str(p.relative_to(root)))
+        try:
+            rel = p.relative_to(root).as_posix()
+        except ValueError:
+            continue
+        if any(part in REPO_EXCLUDES for part in Path(rel).parts):
+            continue
+        if not _is_test_path(rel):
+            continue
+        try:
+            blob = p.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        if any(sym in blob for sym in symbols):
+            test_files.add(rel)
     return sorted(test_files)
+
+
+def _file_term_count(path: str, terms: list[str], root: Path) -> int:
+    try:
+        blob = (root / path).read_text(encoding="utf-8", errors="ignore").lower()
+    except OSError:
+        return 0
+    return sum(1 for term in dict.fromkeys(terms) if term and term.lower() in blob)
+
+
+def _term_frequency(path: str, term: str, root: Path) -> int:
+    try:
+        blob = (root / path).read_text(encoding="utf-8", errors="ignore").lower()
+    except OSError:
+        return 0
+    return blob.count(term.lower())
+
+
+def _relevant_hit(hit: dict[str, Any], term: str, terms: dict[str, list[str]], root: Path) -> bool:
+    explicit = terms["code_spans"] + terms["quoted"] + terms["symbols"]
+    if len(explicit) >= 2:
+        return _file_term_count(hit["file"], explicit, root) >= 2
+    if explicit:
+        return _file_term_count(hit["file"], explicit + terms["keywords"], root) >= 2
+
+    broad_terms = terms["keywords"]
+    return _file_term_count(hit["file"], broad_terms, root) >= 3 and _term_frequency(
+        hit["file"], term, root
+    ) >= 2
 
 
 # --- Verdict -----------------------------------------------------------------
@@ -178,9 +243,6 @@ def verdict_for(
     test_files: list[str],
 ) -> tuple[str, str]:
     """Decide met / partial / unmet. Returns (status, reasoning)."""
-    if criterion["checked"]:
-        return "met", "criterion marked complete in goal file"
-
     missing_paths = [p for p in path_checks if not p["exists"]]
     present_paths = [p for p in path_checks if p["exists"]]
 
@@ -230,6 +292,8 @@ def verify_criterion(
             if key in seen:
                 continue
             seen.add(key)
+            if not _relevant_hit(hit, term, terms, root):
+                continue
             code_hits.append({**hit, "matched": term})
             if len(code_hits) >= 8:
                 break
