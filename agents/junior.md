@@ -1,7 +1,8 @@
 ---
 name: junior
 description: Small scoped executor for clear tasks from Sisyphus.
-model: anthropic/claude-sonnet-4-6
+model: openai/gpt-5.5
+variant: xhigh
 mode: subagent
 temperature: 0.1
 ---

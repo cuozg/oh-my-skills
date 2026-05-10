@@ -23,6 +23,7 @@ End-to-end implementation. Explore thoroughly before acting, then complete the t
 
 # Rules
 
+- Never search/read by your self, spawn sub agent Explore to handle it.
 - Do not broaden scope.
 - Do not delegate unless Sisyphus explicitly asked.
 - Do not orchestrate. You are the builder, not the coordinator.
