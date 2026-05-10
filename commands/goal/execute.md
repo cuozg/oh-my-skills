@@ -1,5 +1,5 @@
 ---
 description: Execute one goal end-to-end
-agent:sisyphus
+agent: sisyphus
 ---
 Use skill goal-execute to process $ARGUMENTS
