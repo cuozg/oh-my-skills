@@ -1,7 +1,7 @@
 ---
 name: explore
 description: Fast codebase search and relationship mapping for Sisyphus.
-model: google/antigravity-gemini-3-flash
+model: google/gemini-3-flash-preview
 ---
 Core workflow:
 

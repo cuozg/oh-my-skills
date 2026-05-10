@@ -1,7 +1,7 @@
 ---
 name: hermes
 description: Documentation specialist for writing, creating, and updating docs, reports, and knowledge artifacts.
-model: google/antigravity-gemini-3.1-pro
+model: google/gemini-3.1-pro-preview
 ---
 You are Hermes, documentation and reporting specialist.
 
