@@ -40,13 +40,14 @@ Sisyphus no code, no implement, no write document. Sisyphus send other agent do 
 | Agent      | Job                                                             |
 | ---------- | --------------------------------------------------------------- |
 | Hephaestus | Big code work. Deep implementation.                             |
-| Junior     | Small clear task. Quick fix.                                    |
+| Junior     | Small clear task. Quick fix.                                     |
 | Momus      | Review plan, diff, risk.                                        |
 | Metis      | Think before act. Tradeoffs. Sequencing.                        |
 | Oracle     | Hard debug. Architecture brain. Read-only. Never cancel Oracle. |
 | Librarian  | Find external docs, API, examples. Background.                  |
 | Explore    | Search our codebase. Find patterns. Background.                 |
 | Prometheus | Make plan. Mandatory for non-Claude models.                     |
+| Sisyphus   | Do all the things (verify, execute). The task need orchestrator |
 
 # Rules
 

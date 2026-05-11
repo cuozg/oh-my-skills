@@ -15,90 +15,65 @@ metadata:
 ---
 # unity-webgl
 
-Detect what the user needs for their WebGL target, select the right mode, and deliver complete platform-specific code.
+Detect what the user needs for WebGL, select mode, deliver complete platform-specific code.
 
 ## Step 1 — Detect Mode
 
 | Signal | Mode |
 |--------|------|
-| `.jslib`, JavaScript plugin, call JS from C#, browser API (clipboard, localStorage, URL params, fullscreen) | **JSLib** |
-| Build size, compression, linker.xml, memory settings, code stripping, Player Settings, deployment, server config, MIME types | **Build** |
-| HTML template, loading screen, responsive canvas, iframe embedding, custom shell, progress bar | **Template** |
+| `.jslib`, call JS from C#, browser API (clipboard, localStorage, URL params, fullscreen) | **JSLib** |
+| Build size, compression, linker.xml, memory, Player Settings, deployment, server MIME types | **Build** |
+| HTML template, loading screen, responsive canvas, iframe, custom shell, progress bar | **Template** |
 
 State triage: "This is [mode] — [reason]."
 
 ## Step 2 — Execute
 
-### JSLib Mode
+**JSLib Mode:**
+1. Check existing `Assets/Plugins/WebGL/` for `.jslib` files and patterns; read any C# bridge classes
+2. Implement both sides: `.jslib` using `mergeInto(LibraryManager.library, {...})` + C# class with `[DllImport("__Internal")]` extern methods + `#if UNITY_WEBGL && !UNITY_EDITOR` guards on call sites
+3. Load `references/jslib-patterns.md` for marshalling rules
+4. `lsp_diagnostics` on C# files; validate `.jslib` has valid JS syntax
+5. Handoff: file paths, what each side does, testing guidance (must test in browser build)
 
-1. **Qualify** — confirm user needs JS↔C# interop; if it's pure C# runtime logic, escalate to unity-code
-2. **Discover** — check existing `Assets/Plugins/WebGL/` for `.jslib` files and naming patterns; read any existing C# bridge classes
-3. **Implement** — create both sides of the bridge:
-   - `.jslib` file using `mergeInto(LibraryManager.library, {...})` pattern
-   - C# class with `[DllImport("__Internal")]` extern methods
-   - `#if UNITY_WEBGL && !UNITY_EDITOR` guards on call sites
-   - Load `references/jslib-patterns.md` for marshalling rules and examples
-4. **Verify** — `lsp_diagnostics` on C# files; validate `.jslib` has valid JS syntax
-5. **Handoff** — file paths, what each side does, platform guard notes, testing guidance (must test in browser build)
+**Build Mode:**
+1. Check existing `ProjectSettings/`, `linker.xml`, build scripts, compression settings
+2. Load `references/build-optimization.md` for settings reference
+3. For code stripping: create/update `linker.xml` · For compression: recommend Brotli (HTTPS) or Gzip + server config · For memory: configure heap size
+4. Validate XML syntax; confirm no conflicting settings
+5. Handoff: changed files, expected build size impact, server setup instructions
 
-### Build Mode
-
-1. **Qualify** — confirm this is about WebGL build pipeline, not runtime code
-2. **Discover** — check existing `ProjectSettings/`, `linker.xml`, build scripts, current compression settings
-3. **Implement** — apply the requested optimization:
-   - Load `references/build-optimization.md` for settings reference
-   - For code stripping: create/update `linker.xml` with type preservation
-   - For compression: recommend Brotli (HTTPS) or Gzip (fallback) and output server config
-   - For memory: configure initial/max heap size based on target platform
-   - For deployment: generate server configuration (nginx/Apache/IIS headers)
-4. **Verify** — validate XML syntax for linker.xml; confirm no conflicting settings
-5. **Handoff** — changed files, expected build size impact, server setup instructions
-
-### Template Mode
-
-1. **Qualify** — confirm user wants HTML template changes, not runtime UI (→ unity-uitoolkit)
-2. **Discover** — check `Assets/WebGLTemplates/` for existing custom templates; read current index.html
-3. **Implement** — create or modify template files:
-   - Load `references/template-customization.md` for variable reference and patterns
-   - Custom `index.html` with Unity template variables (`{{{ PRODUCT_NAME }}}`, etc.)
-   - CSS for responsive canvas, loading bar, progress events
-   - JavaScript for error handling, mobile detection, fullscreen toggle
-4. **Verify** — validate HTML structure; ensure all Unity template variables are present
-5. **Handoff** — file paths, how to select template in Build Settings, browser testing notes
+**Template Mode:**
+1. Check `Assets/WebGLTemplates/` for existing templates; read current `index.html`
+2. Load `references/template-customization.md` for variables and patterns
+3. Create/modify: `index.html` with Unity template variables (`{{{ PRODUCT_NAME }}}`) · responsive CSS · JS for error handling, mobile detection, fullscreen
+4. Validate HTML structure; ensure all Unity template variables present
+5. Handoff: file paths, how to select template in Build Settings, browser testing notes
 
 ## Rules
 
-- Always wrap WebGL-only C# calls in `#if UNITY_WEBGL && !UNITY_EDITOR` — code must compile on all platforms
-- `.jslib` files go in `Assets/Plugins/WebGL/` — this path matters for the build pipeline
-- String marshalling in JSLib requires `UTF8ToString()` for incoming strings and `_malloc` + `stringToUTF8` for return strings — never skip the buffer allocation
+- Wrap WebGL-only C# calls in `#if UNITY_WEBGL && !UNITY_EDITOR` — must compile on all platforms
+- `.jslib` files go in `Assets/Plugins/WebGL/` — path matters for build pipeline
+- String marshalling in JSLib: `UTF8ToString()` for incoming strings; `_malloc` + `stringToUTF8` for return strings — never skip buffer allocation
 - `SendMessage` is legacy — prefer `[DllImport("__Internal")]` for C#→JS calls
-- For JS→C# callbacks, use `SendMessage` only when no better option exists (it's single-string, slow, and requires a GameObject name)
-- Never use `System.Threading`, `System.IO.File`, or raw `System.Net.Sockets` in WebGL code paths — they don't exist in the browser
-- Always provide fallback behavior for non-WebGL platforms when writing platform-conditional code
+- Never use `System.Threading`, `System.IO.File`, raw `System.Net.Sockets` in WebGL paths
+- Always provide fallback behavior for non-WebGL platforms
 - `lsp_diagnostics` after every code change
 
 ## Escalation
 
-| From | To | When |
-|------|----|------|
-| JSLib | unity-code | Work is pure C# with no JS interop needed |
-| Build | unity-debug | Build fails with compile errors, not config issues |
-| Template | unity-uitoolkit | User actually wants runtime UI, not HTML shell |
-| Any | unity-debug | "Works in editor but not in WebGL build" with runtime errors |
-
-Carry forward context; tell user why you're switching.
+| To | When |
+|----|------|
+| `unity-code` | Work is pure C# with no JS interop |
+| `unity-debug` | Build fails with compile errors |
+| `unity-uitoolkit` | User wants runtime UI, not HTML shell |
+| `unity-debug` | "Works in editor but not in WebGL" with runtime errors |
 
 ## Standards
 
-Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
+`read_skill_file("unity-standards", "references/<path>")`:
+- `code-standards/architecture-systems.md` · `code-standards/lifecycle-async-errors.md`
+- `debug/common-unity-errors.md` · `other/unity-mcp-routing-matrix.md`
 
-- `code-standards/architecture-systems.md` — includes WebGL restrictions, platform workarounds
-- `code-standards/lifecycle-async-errors.md` · `core-conventions.md` — lifecycle, null safety, error handling
-- `debug/common-unity-errors.md` — includes WebGL-specific errors (code stripping, OOM)
-- `other/unity-mcp-routing-matrix.md` — MCP tool routing for editor control, console tools, and script management
-
-Load skill-specific references via `read_skill_file("unity-webgl", "references/<path>")`:
-
-- `references/jslib-patterns.md` — JSLib format, marshalling, browser API wrappers, complete examples
-- `references/build-optimization.md` — compression, stripping, memory, linker.xml, deployment, server config
-- `references/template-customization.md` — HTML template variables, responsive CSS, loading screen, iframe embedding
+`read_skill_file("unity-webgl", "references/<path>")`:
+- `jslib-patterns.md` · `build-optimization.md` · `template-customization.md`

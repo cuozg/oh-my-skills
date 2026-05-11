@@ -15,7 +15,7 @@ metadata:
 ---
 # unity-editor
 
-Detect scope, pick extension type, implement. Place under `Editor/`, verify compilation.
+Detect scope, identify extension type, implement editor script under `Editor/`, verify compilation.
 
 ## Step 1 — Detect Scope
 
@@ -37,77 +37,46 @@ State triage: "This is [scope] — [reason]."
 
 ## Step 3 — Execute
 
-### Quick Scope
-
-1. **Qualify** — confirm one editor `.cs` file suffices; escalate to Deep if scope grows
-2. **Discover** — read target runtime class fully before writing editor code; check nearby Editor/ for style
-3. **Implement** — write editor script under `Editor/` folder using correct base class and API
-4. **Verify** — `lsp_diagnostics` on new file
-5. **Handoff** — file path, what it does, diagnostics result
-
-### Deep Scope
-
-1. **Qualify** — confirm 2+ editor files needed; switch to Quick if single-file
-2. **Discover** — read all target runtime classes + existing Editor/ scripts for style/patterns
-3. **Plan** — list every file, its extension type, and dependency order
-4. **Implement** — shared utilities first → individual editors → integration (menus, shortcuts)
-5. **Verify** — `lsp_diagnostics` on all files
-6. **Handoff** — all paths, what each does, editor follow-up (menu locations, shortcuts)
+**Quick:** Qualify → Discover (read target runtime class + nearby `Editor/`) → Implement → `lsp_diagnostics` → Handoff  
+**Deep:** Qualify → Discover (all target classes + existing `Editor/` scripts) → Plan (list all files, types, dependency order) → Implement (shared utilities → individual editors → menus/shortcuts) → `lsp_diagnostics` → Handoff
 
 ## MCP Editor Tools
 
-When Unity MCP is available, these tools complement editor script development:
-
 | Action | Tool |
 |--------|------|
-| Manage tags and layers | `Unity.ManageEditor` (AddTag, RemoveTag, GetTags, AddLayer, RemoveLayer, GetLayers) |
-| Execute menu items (test custom menus) | `Unity.ManageMenuItem` (Execute — use List first to find path) |
-| Find existing menu items | `Unity.ManageMenuItem` (List with Search filter) |
-| Check editor state, selection, prefab stage | `Unity.ManageEditor` (GetState, GetSelection, GetPrefabStage) |
-| Verify editor scripts compiled | `Unity.ReadConsole` or `Unity.GetConsoleLogs` |
+| Manage tags/layers | `Unity.ManageEditor` (AddTag, RemoveTag, AddLayer, GetLayers) |
+| Execute/find menu items | `Unity.ManageMenuItem` (List → Execute) |
+| Check editor state/selection | `Unity.ManageEditor` (GetState, GetSelection, GetPrefabStage) |
+| Verify compilation | `Unity.ReadConsole` or `Unity.GetConsoleLogs` |
 
-**Guard clauses:**
-- Don't use `ManageMenuItem(Execute)` to create new menu items — that requires editor scripts
-- Always use `ManageMenuItem(List)` before `Execute` if unsure of exact menu path
-- Use `ManageEditor` for tags/layers, not for scene hierarchy (use `ManageScene` for that)
-
-For the full MCP tool decision tree, load `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` — see **Editor Control Branch**.
+Full MCP routing: `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` → Editor Control Branch.
 
 ## Rules
 
-- Always save under `Editor/` folder (compile-guard for editor-only APIs)
+- Always save under `Editor/` folder
 - Never add `using UnityEditor` to runtime scripts
-- Use `[CustomEditor(typeof(X))]` on class declaration
-- Call `base.OnInspectorGUI()` before custom GUI unless fully replacing inspector
+- Call `base.OnInspectorGUI()` before custom GUI unless fully replacing
 - `serializedObject.Update()` / `ApplyModifiedProperties()` around all `SerializedProperty` edits
-- Prefer `SerializedProperty` over direct field access — supports Undo and Prefab overrides
+- Prefer `SerializedProperty` over direct field access (supports Undo + Prefab overrides)
 - `EditorGUILayout` for window/inspector GUI; `EditorGUI` for fixed-rect drawing
-- Register EditorWindow via `GetWindow<T>()` inside a `[MenuItem]` static method
-- `GUILayout.BeginHorizontal/Vertical` for layout; avoid magic pixel offsets
-- Add `[InitializeOnLoad]` only when truly needed (slows editor startup)
+- Register EditorWindow via `GetWindow<T>()` inside `[MenuItem]` static method
 - Null-guard `target` casts in `OnInspectorGUI`
-- Handle Undo: `Undo.RecordObject(target, "action")` before mutations
+- `Undo.RecordObject(target, "action")` before mutations
 - Wrap Handles/Gizmos in `#if UNITY_EDITOR` when referenced from runtime code
-- Use `EditorUtility.SetDirty(target)` after direct mutations to mark scene dirty
-- Local style wins — project patterns trump references
-- Never leave `TODO`, stubs, or partially wired code
-- One type per file, file name = type name
-- `lsp_diagnostics` after every code change
+- `EditorUtility.SetDirty(target)` after direct mutations
+- Local style wins · One type per file · `lsp_diagnostics` after every change
 
 ## Escalation
 
-| From | To | When |
-|------|----|------|
-| Quick | Deep | Work requires a second editor file |
-| Deep | Quick | Plan reveals single-file scope |
-| Any | unity-code | Target is runtime domain (MonoBehaviour, SO, service) |
-
-Carry forward context; tell user why.
+| To | When |
+|----|------|
+| Deep | Work requires a second editor file |
+| Quick | Plan reveals single-file scope |
+| `unity-code` | Target is runtime domain |
 
 ## Standards
 
-Load on demand via `read_skill_file("unity-standards", "references/<path>")`:
-
-- `code-standards/architecture-systems.md` — Editor patterns, gizmos, handles, CustomEditor, PropertyDrawer
+`read_skill_file("unity-standards", "references/<path>")`:
+- `code-standards/architecture-systems.md` — Editor patterns, gizmos, handles
 - `code-standards/core-conventions.md` — naming, serialization, null safety
-- `other/unity-mcp-routing-matrix.md` — MCP editor control tools (ManageEditor, ManageMenuItem), guard clauses
+- `other/unity-mcp-routing-matrix.md` — MCP editor control tools, guard clauses
