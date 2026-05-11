@@ -11,45 +11,51 @@ metadata:
 
 Complete end-to-end workflow for reviewing Unity GitHub pull requests.
 
-## 1. Fetch PR and Get List of Files
+## 1. Fetch PR + Auth User + Labels
 
-**Fetch PR Metadata**:
-  - Files list: `gh api repos/{owner}/{repo}/pulls/{pr}/files`
-  - Description/Labels: `gh api repos/{owner}/{repo}/pulls/{pr}`
-  - *Exit if labels contain `skip-review` or `no-review`.*
+- Fetch PR Metadata: `gh api repos/{owner}/{repo}/pulls/{pr}/files` and `gh api repos/{owner}/{repo}/pulls/{pr}`
+- Fetch Auth User: `gh api user --jq .login`
+- Fetch PR Author.
+- Exit if labels contain `skip-review` or `no-review`.
+- If scope is big: Ask the user which specific criteria they need to review.
 
-**If scope is big:** Ask the user which specific criteria they need to review.
+## 2. Build Changed-File Groups
 
-## 2. Group Files by Type
+Group files by type (`.cs`, `.prefab`, `.unity`, `.mat`, `.shader`). Ignore `.meta`.
 
-From the files list, group files by their type (e.g., `.cs`, `.prefab`, `.unity`, `.mat`, `.shader`). Ignore `.meta` files.
+## 3. Build Commentable-Line Map
 
-## 3. Spawn Parallel Review Subagents
+Build a map from PR file patches: `{ path, line, side }`. Only inline comment if the line exists in the patch hunk. If the patch is null or line is not commentable, move the finding to the review body (avoids "Line could not be resolved").
 
-Spawn parallel reviewer subagents for each file type group. Make sure they only fetch the correct file type for their assignment via `gh api` or `git show {head_sha}:{path}`.
-See `unity-standards/references/review/parallel-review-criteria.md` for the subagent prompt template.
-- When reviewing criteria with a big scope, try to split the work and spawn multiple reviewer subagents.
+## 4. Spawn Parallel Review Subagents
 
-Review only the modified lines and their directly referenced methods/fields. Do not load the complete file content. Full context should only be pulled if an issue requires deeper investigation.
+Spawn parallel reviewers for each file type with a strict schema. See `unity-standards/references/review/parallel-review-criteria.md`. Split work for big scopes.
 
-## 4. Aggregate and Validate
+## 5. Aggregator Validation
 
-1. Merge findings from all subagents into a single list.
-2. Deduplicate by (path, line) — keep highest severity.
-3. Sort by file path → line number.
-4. **Validate uncertain findings**: 
-   - Dead code claims — verify nothing references the symbol.
-   - Missing unsubscription — verify the subscription actually exists.
-   - Unused variable — verify it's not used via reflection or serialization.
+Validate only high-confidence findings. Deduplicate by (path, line).
+- Dead code: verify nothing references the symbol.
+- Missing unsub: verify subscription exists.
 
-## 5. Build PR Review Payload
+## 6. Split Inline vs Body Findings
 
-Create `review.json` locally. The `body` must contain a summary table and decision:
+Before submitting review, convert findings into two groups: `inline_comments` only for commentable PR patch lines, and `body_findings` for large files, hidden patches, or non-commentable lines.
+- **Comment cap:** Inline top 20–30 strongest findings only. Put lower-severity or large-asset findings in the body.
+
+## 7. Build Payload and Submit Event
+
+Create `review.json` locally.
+- **Payload Preflight:** Validate JSON. Verify every comment path exists in PR files and every line is commentable. Include `commit_id: head_sha`. Never submit placeholder body like ".".
+- **Decision:**
+  - If auth user == PR author, use `COMMENT` (avoids GitHub API error).
+  - Normal reviewer + blockers (CRITICAL/≥2 HIGH findings), use `REQUEST_CHANGES`.
+  - Otherwise, use `COMMENT` or `APPROVE`.
 
 ```json
 {
+  "commit_id": "{head_sha}",
   "event": "REQUEST_CHANGES",
-  "body": "## Code Review — PR #{number}\n{1-2 sentence verdict}\n\n| Category | Count | Top Severity |\n|---|:---:|---|\n| 💥 Crash/Breaking | {n} | 🔴 CRITICAL |\n| ⚠️ Bugs/Logic | {n} | 🟠 HIGH |\n| 🎮 Unity Risks | {n} | 🟡 MEDIUM |\n| 💡 Improvements | {n} | 🔵 LOW/⚪ STYLE |\n\n**Decision**: ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT",
+  "body": "## Code Review — PR #{number}\n{1-2 sentence verdict}\n\n| Category | Count | Top Severity |\n|---|:---:|---|\n| 💥 Crash/Breaking | {n} | 🔴 CRITICAL |\n| ⚠️ Bugs/Logic | {n} | 🟠 HIGH |\n| 🎮 Unity Risks | {n} | 🟡 MEDIUM |\n| 💡 Improvements | {n} | 🔵 LOW/⚪ STYLE |\n\n{body_findings}\n\n**Decision**: ✅ APPROVE / ❌ REQUEST_CHANGES / 💬 COMMENT",
   "comments": [
     { 
       "path": "Assets/Scripts/Player.cs", 
@@ -60,16 +66,13 @@ Create `review.json` locally. The `body` must contain a summary table and decisi
   ]
 }
 ```
-- **Line/Side**: `line` is the right-side file line number. `side` must be `RIGHT`.
-- **Severity Badges**: Use GitHub Markdown Alerts based on severity:\n  - CRITICAL/HIGH: `> [!CAUTION]` (Red)\n  - MEDIUM: `> [!IMPORTANT]` (Purple)\n  - LOW/STYLE: `> [!NOTE]` (Blue)
-- **Decision Matrix**:
-  - `REQUEST_CHANGES`: Any CRITICAL or ≥2 HIGH findings.
-  - `COMMENT`: Only MEDIUM/LOW/STYLE findings.
-  - `APPROVE`: Zero CRITICAL/HIGH findings and all comments addressed.
+- Severity Badges: `> [!CAUTION]` (CRITICAL/HIGH), `> [!IMPORTANT]` (MEDIUM), `> [!NOTE]` (LOW/STYLE).
 
-## 6. Submit and Verify
+## 8. Fallback Tree and Verify
 
-1. **Submit**: `gh api repos/{owner}/{repo}/pulls/{pr}/reviews --method POST --input review.json`
-2. **Verify (Mandatory)**: Ensure submission succeeded:
-   `gh api repos/{owner}/{repo}/pulls/{pr}/reviews --jq '.[-1] | {id, state}'`
-3. Loop and fix if `id` is absent (handle 404, 403, 422 limits).
+1. Try full review submission via `gh api repos/{owner}/{repo}/pulls/{pr}/reviews --method POST --input review.json`.
+2. If 422 line error, remove invalid inline comments into body.
+3. Retry once.
+4. If still blocked, submit summary-only `COMMENT`.
+5. Never leave empty/dummy review.
+6. Verify latest review and inline count.
