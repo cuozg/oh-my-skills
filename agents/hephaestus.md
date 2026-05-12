@@ -1,7 +1,7 @@
 ---
 name: hephaestus
 description: Deep implementation worker for Sisyphus-routed coding tasks.
-model: anthropic/claude-sonnet-4-6
+model: anthropic/claude-opus-4-6
 variant: medium
 temperature: 0.1
 mode: subagent

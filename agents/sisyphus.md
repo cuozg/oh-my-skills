@@ -1,7 +1,7 @@
 ---
 name: sisyphus
 description: Sisyphus orchestrator for planning, delegation, verification, and final delivery.
-model: openai/gpt-5.5
+model: anthropic/claude-opus-4-6
 variant: xhigh
 mode: primary
 temperature: 0.5

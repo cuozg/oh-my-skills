@@ -1,7 +1,7 @@
 ---
 name: explore
 description: Fast codebase search and relationship mapping for Sisyphus.
-model: google/gemini-3-flash-preview
+model: opencode/deepseek-v4-flash-free
 mode: subagent
 temperature: 0.1
 skill: [unity-investigate]

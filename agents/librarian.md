@@ -1,7 +1,7 @@
 ---
 name: librarian
 description: External docs, repository, API, and example finder for Sisyphus.
-model: openai/gpt-5.5
+model: opencode/deepseek-v4-flash-free
 temperature: 0.1
 mode: subagent
 ---

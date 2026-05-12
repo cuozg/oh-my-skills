@@ -1,7 +1,8 @@
 ---
 name: hermes
 description: Documentation specialist for writing, creating, and updating docs, reports, and knowledge artifacts.
-model: google/gemini-3.1-pro-preview
+model: openai/gpt-5.5
+variant: medium
 temperature: 0.5
 mode: subagent
 ---
