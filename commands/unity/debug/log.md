@@ -1,6 +1,5 @@
 ---
-description: Generate formatted Debug.Log snippets for tracing and diagnostics
+description: Generate formatted Debug.Log snippets for tracing values or events in Unity
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-debug in Log mode to add debug logs for $ARGUMENTS
+Use skill unity-debug-log to add logs to $ARGUMENTS

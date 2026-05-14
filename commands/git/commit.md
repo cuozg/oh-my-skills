@@ -1,6 +1,5 @@
 ---
-description: Generate clean commit messages and commit changes
-agent: sisyphus-junior
-model: google/gemini-3-flash-preview
+description: Stage and commit changes with a clean, imperative-mood commit message
+agent: sisyphus
 ---
-Use skill git-commit to commit $ARGUMENTS
+Use skill git-commit to commit changes $ARGUMENTS

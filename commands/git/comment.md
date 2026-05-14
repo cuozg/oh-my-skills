@@ -1,7 +1,5 @@
 ---
-description: Generate and apply concise commit messages for the last commit
-agent: sisyphus-junior
-subtask: true
-model: google/gemini-3-flash-preview
+description: Rewrite the most recent local commit message to be clean and imperative
+agent: sisyphus
 ---
-Use skill git-comment to generate a commit message for the last commit. $ARGUMENTS
+Use skill git-comment to fix the last commit message $ARGUMENTS

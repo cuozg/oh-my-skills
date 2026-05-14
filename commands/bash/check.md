@@ -1,6 +1,5 @@
 ---
-description: Validate and check bash shell scripts for correctness and compatibility
-agent: sisyphus-junior
-subtask: true
+description: Validate a shell script before committing or deploying — runs syntax checks and static analysis
+agent: sisyphus
 ---
 Use skill bash-check to validate $ARGUMENTS

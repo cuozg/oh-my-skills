@@ -1,6 +1,5 @@
 ---
-description: Generate structured PR titles and descriptions from GitHub pull request links
-agent: sisyphus-junior
-model: google/gemini-3-flash-preview
+description: Generate and apply a clear title and structured description for a GitHub Pull Request
+agent: sisyphus
 ---
-Use skill git-pr to generate and apply a structured PR title and description for $ARGUMENTS
+Use skill git-pr to describe the pull request $ARGUMENTS

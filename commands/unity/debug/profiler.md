@@ -1,6 +1,5 @@
 ---
-description: Analyze Unity Profiler data and generate severity-ranked performance report
+description: Analyze Unity Profiler data and generate severity-ranked performance reports
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-profiler to analyze profiler data for $ARGUMENTS
+Use skill unity-profiler to analyze performance for $ARGUMENTS

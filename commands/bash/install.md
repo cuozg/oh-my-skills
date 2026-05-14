@@ -1,6 +1,5 @@
 ---
-description: Install software, packages, and tools with retry and fallback
-agent: sisyphus-junior
-subtask: true
+description: Install a CLI tool, library, runtime, or dependency on the machine or CI environment
+agent: sisyphus
 ---
 Use skill bash-install to install $ARGUMENTS

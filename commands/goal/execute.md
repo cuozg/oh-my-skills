@@ -1,5 +1,5 @@
 ---
-description: Execute one goal end-to-end
+description: Execute one uncompleted goal end-to-end
 agent: sisyphus
 ---
-Use skill goal-execute to process $ARGUMENTS
+Use skill goal-execute to implement the goal $ARGUMENTS

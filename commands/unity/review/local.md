@@ -1,6 +1,5 @@
 ---
-description: Review local Unity code changes with inline // REVIEW comments
+description: Review locally changed Unity C# files for standards and quality
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-review in Local mode to review the code changes for $ARGUMENTS (ulw)
+Use skill unity-review-local to review $ARGUMENTS

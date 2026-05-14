@@ -1,6 +1,5 @@
 ---
-description: Create Mermaid diagrams for flows, architecture, and state
-agent: sisyphus-junior
-subtask: true
+description: Create Mermaid diagrams — flowcharts, sequence, state, class, and architecture diagrams
+agent: sisyphus
 ---
-Use skill mermaid to create diagram for $ARGUMENTS
+Use skill mermaid to create diagrams for $ARGUMENTS

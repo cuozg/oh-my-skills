@@ -1,6 +1,5 @@
 ---
-description: Create unit tests for a Unity feature
+description: Write Edit Mode and Play Mode unit tests for Unity C#
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-test-unit to create the unit test for $ARGUMENTS
+Use skill unity-test-unit to write unit tests for $ARGUMENTS

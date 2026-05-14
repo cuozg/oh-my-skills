@@ -1,6 +1,5 @@
 ---
-description: Write Unity Editor scripts — custom inspectors, editor windows, property drawers, gizmos, handles, menu items
+description: Write Unity Editor scripts — custom inspectors, editor windows, property drawers, gizmos, handles
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-editor to implement $ARGUMENTS (ulw)
+Use skill unity-editor to implement $ARGUMENTS

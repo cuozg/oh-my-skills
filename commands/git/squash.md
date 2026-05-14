@@ -1,7 +1,5 @@
 ---
-description: Squash and organize commits into clean, well-documented history
-agent: sisyphus-junior
-subtask: true
-model: google/gemini-3-flash-preview
+description: Squash a branch's commits into clean, logical units before merging
+agent: sisyphus
 ---
-Use skill git-squash to squash and organize the commit history for $ARGUMENTS
+Use skill git-squash to squash commits $ARGUMENTS

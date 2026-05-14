@@ -1,6 +1,5 @@
 ---
-description: Detailed HTML plan for XL Unity features (10+ days) with epic/task tree and risk assessment
+description: Create tshirt costing, detailed costing, and delivery plans for Unity features
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-costing to create the detail plan document for $ARGUMENTS (ulb ulw)
+Use skill unity-costing to cost $ARGUMENTS

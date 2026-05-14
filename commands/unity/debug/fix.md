@@ -1,6 +1,5 @@
 ---
-description: Auto-fix Unity compile errors with fix loop
+description: Diagnose Unity bugs from compile errors to stack traces and runtime failures
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-debug in Fix mode to fix $ARGUMENTS
+Use skill unity-debug to fix $ARGUMENTS

@@ -1,7 +1,5 @@
 ---
-description: Delete all comments from a GitHub PR
-agent: sisyphus-junior
-subtask: true
-model: google/gemini-3-flash-preview
+description: Delete all comments from a GitHub Pull Request
+agent: sisyphus
 ---
-Use skill git-clear to clear PR comments for $ARGUMENTS
+Use skill git-clear to clear comments from $ARGUMENTS

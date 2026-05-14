@@ -1,6 +1,5 @@
 ---
-description: Create QA test cases plan for a Unity feature
+description: Generate structured manual QA test cases as an HTML document
 agent: sisyphus
-subtask: true
 ---
-Use skill unity-test-case to create the test cases plan for $ARGUMENTS
+Use skill unity-test-case to generate test cases for $ARGUMENTS
