@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-52">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-56">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
+  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-52">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-57">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
 </p>
 
 ---
@@ -68,7 +68,7 @@ That's it. Skills auto-activate based on your requests.
 | Commits of refinement | **398+** |
 | Eval & refinement iterations | **53+** |
 | Unity standards reference files | **56** |
-| Slash commands | **56** |
+| Slash commands | **57** |
 | Covered domains | **11** |
 
 ---
@@ -307,9 +307,9 @@ graph TD
 
 ---
 
-<a id="commands-56"></a>
+<a id="commands-57"></a>
 
-## Commands (56)
+## Commands (57)
 
 Slash commands for direct access to specific skills.
 
@@ -322,6 +322,7 @@ image/            gen
 mcp/              build
 mermaid/          create
 nextjs/           backend
+opencode/        review
 openai/           docs
 phaser/           coder
 pixijs/           coder

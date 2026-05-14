@@ -1,57 +1,13 @@
-# Investigation Report Template
+# Investigation Output Template
 
-## {SystemName} — Investigation Report
-**Date**: {YYYY-MM-DD}  
-**Scope**: {brief system boundary description}  
-**Investigator**: AI
+{One-line summary of the result. Short direct answer.}
 
----
+## Evidences
 
-## Executive Summary
+- `{file:line}` — {evidence 1, code traceback, flow, or reference}
+- `{file:line}` — {evidence 2, code traceback, flow, or reference}
+- `{file:line}` — {evidence 3, code traceback, flow, or reference}
 
-{1 paragraph. What is this system, what does it do, what are the key findings.}
+## Notes
 
----
-
-## System Map
-
-**Entry points:**
-- `{file:line}` — {description}
-
-**Key classes/components:**
-- `{ClassName}` (`{file:line}`) — {role}
-
-**Exit points / outputs:**
-- `{file:line}` — {description}
-
----
-
-## Execution Flow
-
-```mermaid
-flowchart TD
-    A[Entry Point] --> B[Core Logic]
-    B --> C[Output]
-```
-
----
-
-## Data Flow
-
-| Data | Source | Destination | Transformation |
-|------|--------|-------------|----------------|
-| {data} | `{file:line}` | `{file:line}` | {description} |
-
----
-
-## Risks
-
-| Risk | Severity | Evidence | Mitigation |
-|------|----------|----------|------------|
-| {risk} | High/Med/Low | `{file:line}` | {action} |
-
----
-
-## References
-
-- `{file:line}` — {what was found here}
+{Optional notes, caveats, assumptions, or follow-up context. Omit this section if not available.}

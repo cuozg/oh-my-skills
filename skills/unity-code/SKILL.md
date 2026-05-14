@@ -2,6 +2,7 @@
 name: unity-code
 description: >
   Use this skill to write, refactor, or fix Unity C# code.
+metadata:
   author: kuozg
   version: "6.1"
 ---
@@ -21,12 +22,15 @@ Follow these steps exactly:
 ### 1. Understand Requirement
 Fully understand the requirement. If the requirement is unclear, ambiguous, or lacks necessary context, stop and ask the user for clarification.
 
-### 2. Load Standards
-Load 1-3 relevant files from `unity-standards/references/` based on the task:
+### 2. Load Code Standards
+Load the `unity-standards` skill, then read only the relevant files from `references/code-standards/` based on the task:
 - `code-standards/core-conventions.md` (Naming, formatting, modifiers, null safety, patterns)
 - `code-standards/lifecycle-async-errors.md` (Unity lifecycle, async, error handling, security)
 - `code-standards/performance-data.md` (Collections, LINQ, serialization)
 - `code-standards/architecture-systems.md` (Events, DI, architecture, folder structure)
+- `code-standards/ecs-burst-standards.md` (ECS, Jobs, Burst, NativeContainers, Bakers)
+
+Start with `code-standards/README.md` when unsure which standards file applies.
 
 ### 3. Analyze Codebase
 Understand the existing codebase and document the context. If the scope is large or complex, spawn a subagent to thoroughly analyze the architecture, dependencies, and surrounding code before proceeding.

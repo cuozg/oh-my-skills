@@ -36,7 +36,7 @@ Recursively scan `Docs/Goals/` for existing goals matching the intent. If found,
 
 ### 3. Explore Context
 
-Spawn Explore/Librarian agents to understand the codebase. Check project setup, existing patterns, and constraints to inform your questions.
+Spawn Codebase Explorer/Librarian agents to understand the codebase. Check project setup, existing patterns, and constraints to inform your questions.
 
 ### 4. Assess Scope, Size, and Feature
 
