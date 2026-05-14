@@ -43,46 +43,68 @@ Answer the question in the fewest tool calls possible.
 
 ### Workflow
 
-1. **Parse** — Extract the exact symbol, file, or concept from the question
-2. **Find** — `lsp_goto_definition` on the target symbol to locate its declaration
-3. **Trace** — `lsp_find_references` or `grep` to follow call chains one level deep
-4. **Stop** — Halt the moment the question can be answered; skip unused steps
-5. **Reply** — Format as summary + 1-3 typed detail blocks
-
-### Rules
-
-- Stop the moment the question can be answered — speed over ceremony
-- Never read an entire file to answer a line-level question
-- Prefer `lsp_goto_definition` over `grep` when a symbol name is known
-- Inline code snippets only when they directly clarify the answer
-- No headers, no preamble — answer starts immediately
-
-### Output
-
-`## {Target} [{type: class|method|event|system}]` followed by a summary sentence, then 1-3 detail bullets.
+1. **Parse** — Extract the exact symbol, file, or concept from the question.
+2. **Find** — `lsp_goto_definition` on the target symbol to locate its declaration.
+3. **Trace** — `lsp_find_references` or `grep` to follow call chains one level deep.
+4. **Stop** — Halt the moment the question can be answered; skip unused steps.
+5. **Reply** — Format as summary + 1-3 typed detail blocks.
 
 ---
 
 ## Deep Mode
 
-Produce a comprehensive investigation report. Load the reference first:
-`read_skill_file("unity-investigate", "references/deep-mode.md")`
+Produce a comprehensive investigation report. Follow this workflow:
 
-The reference contains the full deep workflow: scoping, discovery, diagramming, risk assessment, and the mandatory report template. Follow it exactly.
+### 1. Scope & Discovery
+Define boundaries and map the system systematically:
+- **Entry Points**: Public APIs, Unity callbacks (Awake/Start), event handlers.
+- **Exit Points**: Data outputs, event triggers, state mutations.
+- **Map Files**:
+  ```text
+  glob(pattern="**/{SystemName}*.cs")
+  grep(pattern="ClassName|InterfaceName", include="*.cs")
+  lsp_goto_definition -> follow type hierarchy
+  ```
 
-**Output**: Save report to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`
+### 2. Detailed Tracing
+Follow execution paths and side effects:
+- **Call Chains**: `lsp_find_references` from entry points 2-3 levels deep.
+- **Side Effects**:
+  ```text
+  grep(pattern="\\.On[A-Z]|event\s+|Action<|UnityEvent", include="*.cs")
+  grep(pattern="AddListener|RemoveListener", include="*.cs")
+  ```
+- **Dependencies**: Note `using` directives (compile-time) and `GetComponent` (runtime).
+
+### 3. Test & Safety Analysis
+Check for coverage and data implications:
+- **Coverage**: `glob(pattern="**/*Tests.cs")` to match source to test files.
+- **Risk Assessment**:
+  | Factor | Question |
+  |--------|----------|
+  | Blast Radius | How many systems are touched or break if this changes? |
+  | Data Safety | Can this corrupt saves, PlayerPrefs, or global state? |
+  | Test Coverage | Are critical paths tested? Score: High/Med/Low. |
+
+### 4. Diagram & Documentation
+Create Mermaid diagrams and write the report:
+- **Diagrams**: Create an Execution Flow (`flowchart TD`) and Structure (`classDiagram`).
+- **Template**: Mandatory `read_skill_file("unity-standards", "references/plan/investigation-template.md")`.
+- **Output**: Save to `Documents/Investigations/{SystemName}_{YYYY-MM-DD}.md`.
+
+### Quality Checklist
+- [ ] Executive Summary covers purpose and key findings.
+- [ ] Every claim has a `file:line` citation.
+- [ ] At least one Mermaid diagram renders correctly.
+- [ ] Risk table includes severity, evidence, and mitigation.
+- [ ] Side effects and event chains are documented.
 
 ---
 
 ## Standards
 
-Load `unity-standards` when answers require convention context. Key references:
-
-- `code-standards/lifecycle-async-errors.md` — Awake/Start/OnEnable order, coroutine rules
-- `code-standards/architecture-systems.md` — events, dependencies, architecture patterns
-- `review/checklist.md` — section `## 7. Architecture`: coupling, SOLID, assembly boundaries
-- `plan/investigation-workflow.md` — file tracing, call chains, dependency mapping
-- `plan/investigation-template.md` — markdown template for investigation reports
-- `other/unity-mcp-routing-matrix.md` — MCP tool routing for reading files (`ReadResource`), finding assets (`FindProjectAssets`), and scene inspection (`ManageScene(GetHierarchy)`)
-
-Load via `read_skill_file("unity-standards", "references/<path>")`.
+Load `unity-standards` for convention context:
+- `code-standards/lifecycle-async-errors.md` — Order of execution rules.
+- `code-standards/architecture-systems.md` — Architecture patterns.
+- `plan/investigation-template.md` — The mandatory report template.
+- `other/unity-mcp-routing-matrix.md` — MCP tool routing for scene/asset inspection.

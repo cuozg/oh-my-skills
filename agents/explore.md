@@ -21,8 +21,9 @@ Find files, find code, return paths. Contextual grep for "where is X" and "what 
 
 # Rules
 
+- Always use tools: grep/glob/script (grep for text, glob for filenames.)
+- During codebase exploration, also look for existing documentation
 - Read-only. No edit. No file creation.
 - All paths must be absolute.
 - Parallel tool calls by default.
 - Compact answers. Paths and snippets over prose.
-- Use right tool: LSP for definitions/references, ast_grep for structure, grep for text, glob for filenames.

@@ -239,7 +239,7 @@ graph TD
 |:---|:---|:---|
 | **unity-plan** | Feature planning with scope detection (XS &rarr; XL) | Quick / Deep |
 | **unity-costing** | XL feature breakdown (10+ days), epic/task trees | &mdash; |
-| **unity-document** | System docs or technical design documents | System / TDD |
+| **unity-document** | Evidence-based Unity system docs in Docs/Systems/ | Single-pass |
 | **unity-spec** | Game Design Specification (GDD) | &mdash; |
 | **unity-init** | Project scaffolding &mdash; folders, .asmdef, namespaces | &mdash; |
 | **unity-standards** | **54 reference files** &mdash; the single source of truth | Hub |

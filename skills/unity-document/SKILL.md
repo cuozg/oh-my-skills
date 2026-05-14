@@ -1,95 +1,73 @@
 ---
 name: unity-document
 description: >
-  Unified Unity documentation skill — write system documentation or technical design documents from
-  real codebase state. Auto-triages: System (existing system → architecture diagrams, API reference,
-  extension guides with mandatory 8-section template and validation) or TDD (pre-implementation →
-  architecture decisions, alternatives analysis, risk assessment). Use when the user says "document
-  this system," "write docs for X," "architecture documentation," "write a design doc," "TDD for
-  this feature," "document the architecture decision," "what's the implementation strategy," or wants
-  any form of technical documentation for a Unity codebase module. Covers both documenting what exists
-  and planning what will be built.
+  Unity documentation skill for investigating a feature in a Unity codebase and writing an
+  evidence-based system document to Docs/Systems/<feature-name>.md.
 metadata:
   author: kuozg
-  version: "2.0"
+  version: "3.0"
 ---
 
 # unity-document
 
-Write evidence-based technical documentation grounded in the actual codebase. Auto-triage into the right mode.
+Create a Unity system document grounded in the real codebase, then verify the result.
 
-## Triage
+## When to Use
 
-Classify the request before starting:
+Use this skill when the user wants a document for a Unity project feature, subsystem, flow,
+manager, integration, or gameplay system.
 
-| Signal | Mode |
-|--------|------|
-| "document this system," "write docs for X," "architecture docs" | **System** |
-| Existing system needs a reference document | **System** |
-| User wants API reference, data flows, extension guides | **System** |
-| "write a design doc," "TDD for this feature," "design document" | **TDD** |
-| Planning a new system or major feature | **TDD** |
-| Architecture sign-off, trade-off analysis, implementation strategy | **TDD** |
+## Workflow
 
-When ambiguous, ask: "Are you documenting an existing system or planning a new one?"
+### 1. **Understand the requirement**
+   - Identify the feature name, scope, audience, and expected output file name.
+   - Clarify only if the request is ambiguous enough that a reasonable file name or scope cannot
+     be inferred.
+### 2. **Investigate the codebase**
+   - Spawn at least one `explorer` subagent to inspect the relevant code paths, assets, scenes,
+     tests, and config.
+   - Spawn a second `explorer` when a separate pass is useful for dependencies, events, or setup
+     paths.
+   - Use the subagent findings as evidence, not as a substitute for reading the source.
+### 3. **Build the document**
+   - Write the document in this exact section order:
+     1. `Overview`
+     2. `System Architecture`
+     3. `Core Components`
+     4. `Lifecycle & Initialization`
+     5. `Data Models`
+     6. `How to Setup an Event`
+     7. `How to Fake Data for Testing`
+     8. `Validation`
+     9. `Debugging`
+     10. `API Reference`
+   - Put the file at `Docs/Systems/<feature-name>.md`.
+   - Use concise, evidence-backed prose. Cite claims with `file:line` references from the codebase.
+   - Include Mermaid diagrams where they clarify the architecture or event flow.
+### 4. **Verify the document**
+   - Confirm the target path is correct.
+   - Confirm every required section exists and is in the correct order.
+   - Confirm the document has no placeholder text such as `TODO`, `TBD`, or `FIXME`.
+   - Confirm the document includes source citations and any required Mermaid diagrams.
+   - Run the bundled validator when available.
 
----
+## Writing Rules
 
-## System Mode
+- Investigate the actual codebase before writing. Do not speculate.
+- Prefer the concrete runtime path over abstract design language.
+- Document real setup steps, not idealized ones.
+- If a capability is not present in the codebase, state that clearly.
+- Keep the document focused on one Unity feature or system.
 
-Document an existing system with mandatory template enforcement.
+## Minimum Content Expectations
 
-### Workflow
-
-1. **Identify** — Locate core entry points, data models, and managers for the target system
-2. **Trace** — Follow data flow from input to output, noting dependencies and events
-3. **Map** — Identify the architectural pattern (Event Bus, Singleton, ECS, etc.)
-4. **Diagram** — Formulate Mermaid sequence and architecture diagrams from code
-5. **Write** — Load template: `read_skill_file("unity-document", "references/system-doc-template.md")`. Follow it exactly — no renaming, reordering, or skipping sections
-6. **Validate** — Run: `run_skill_script("unity-document", "scripts/validate_system_doc.py", arguments=[<path>])`
-
-### Output
-
-Save to `Documents/Systems/{SystemName}.md`. All 8 sections mandatory, all claims cited `(file.cs:line)`, at least 2 Mermaid diagrams, owner assigned, review date set (max 90 days).
-
----
-
-## TDD Mode
-
-Produce a Technical Design Document for a planned system or feature.
-
-### Workflow
-
-1. **Load template** — `read_skill_file("unity-document", "references/tdd-template.md")`; use as exact skeleton
-2. **Investigate** — Read existing related systems; understand current patterns and constraints
-3. **Define** — State problem, goals, and non-goals precisely
-4. **Design** — Propose architecture: components, interfaces, data flow (Mermaid required)
-5. **Alternatives** — Document at least 2 rejected alternatives with rationale (mandatory)
-6. **Dependencies** — Map all affected systems with `file:line` evidence
-7. **Risks** — List risks with likelihood, impact, and mitigation
-8. **Write** — Fill every section; no placeholder text
-9. **Validate** — Run: `run_skill_script("unity-document", "scripts/validate_tdd.py", arguments=[<path>])`
-10. **Save** — Write to `Documents/TDDs/TDD_{Name}.md`
-
-### Output
-
-All 8 template sections mandatory: Problem, Goals, Non-Goals, Design (Components + Interfaces + Data Flow mermaid), Alternatives Considered, Dependencies, Risks, Open Questions.
-
----
-
-## Shared Rules
-
-- Investigate the actual codebase before writing — no speculation
-- Cite `file:line` for every dependency, API reference, and architectural claim
-- No TODO/TBD/FIXME in the output document
-- Use imperative language; avoid "we should" or "you could"
-- Include at least one Mermaid diagram per document
-
-## Standards
-
-Load `unity-standards` for architecture context. Key references:
-
-- `code-standards/architecture-systems.md` — architecture patterns, dependencies, events, project structure
-- `review/checklist.md` — section `## 7. Architecture`: coupling, SOLID, assembly boundaries
-
-Load via `read_skill_file("unity-standards", "references/<path>")`.
+- `Overview`: what the system does and why it exists.
+- `System Architecture`: major runtime pieces and how they connect.
+- `Core Components`: the key classes, ScriptableObjects, scenes, prefabs, or services.
+- `Lifecycle & Initialization`: startup order, bootstrap, registration, and teardown.
+- `Data Models`: runtime data, serialized data, event payloads, and config.
+- `How to Setup an Event`: the concrete wiring required to emit and receive the event.
+- `How to Fake Data for Testing`: test doubles, mock data, editor setup, or harnesses.
+- `Validation`: how to confirm the feature works.
+- `Debugging`: likely failure points and where to inspect them.
+- `API Reference`: public methods, events, properties, and entry points.

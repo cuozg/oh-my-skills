@@ -2,7 +2,7 @@
 name: junior
 description: Small scoped executor for clear tasks from Sisyphus.
 model: anthropic/claude-sonnet-4-6
-variant: xhigh
+variant: medium
 mode: subagent
 temperature: 0.1
 ---
