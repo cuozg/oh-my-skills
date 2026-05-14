@@ -7,13 +7,13 @@
 <h1 align="center">Oh My Skills</h1>
 
 <p align="center">
-  <strong>51 battle-tested AI agent skills. 253 reference docs. 322 commits of relentless refinement.</strong>
+  <strong>52 battle-tested AI agent skills. 294 reference docs. 396 commits of relentless refinement.</strong>
   <br />
-  Built for Unity, Flutter, and full-stack development &mdash; evaluated, iterated, and hardened until they actually work.
+  Built for Unity, Phaser, PixiJS, and full-stack development &mdash; evaluated, iterated, and hardened until they actually work.
 </p>
 
 <p align="center">
-  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-51">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-57">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
+  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-52">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-72">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
 </p>
 
 ---
@@ -27,7 +27,7 @@ Most AI agent skills are written once and abandoned. They hallucinate patterns, 
 - **Written** from real-world project experience, not hypotheticals
 - **Evaluated** against concrete test scenarios with pass/fail criteria
 - **Refined** across 50+ iteration cycles &mdash; rewrite, eval, fix, re-eval
-- **Hardened** with 253 reference documents that ground the agent in real conventions
+- **Hardened** with 294 reference documents that ground the agent in real conventions
 
 The result: skills that produce **senior-engineer-quality output** &mdash; code that follows your project's actual patterns, reviews that catch real bugs, plans that map to your real codebase.
 
@@ -63,14 +63,13 @@ That's it. Skills auto-activate based on your requests.
 
 | Metric | Count |
 |:---|---:|
-| Specialized skills | **51** |
-| Reference documents | **253** |
-| Commits of refinement | **322+** |
+| Specialized skills | **52** |
+| Reference documents | **294** |
+| Commits of refinement | **396+** |
 | Eval & refinement iterations | **53+** |
-| Unity standards reference files | **54** |
-| Flutter standards reference files | **12** |
-| Slash commands | **74** |
-| Covered domains | **13** |
+| Unity standards reference files | **56** |
+| Slash commands | **72** |
+| Covered domains | **11** |
 
 ---
 
@@ -105,7 +104,7 @@ Tier 3 ── References        Loaded on demand         Deep docs    standards,
 Instead of duplicating conventions across skills, **shared standards hubs** act as the single source of truth:
 
 ```
-unity-standards/references/          54 files across 9 categories
+unity-standards/references/          56 files across 9 categories
 ├── code-standards/                  Naming, formatting, patterns, architecture
 ├── review/                          Checklists, PR format, parallel review
 ├── plan/                            Sizing, risk, task structure, dependencies
@@ -115,26 +114,16 @@ unity-standards/references/          54 files across 9 categories
 ├── debug/                           Diagnosis, common errors, log format
 ├── optimization/                    Build, rendering, memory, mobile, Jobs/Burst
 └── other/                           Mermaid, FlatBuffers, skill authoring
-
-flutter-standards/references/        12 files across 6 categories
-├── Code & Style                     Dart naming, formatting, linting
-├── Architecture & State             Feature-first, Riverpod 2.x, DI
-├── UI & Assets                      Widget composition, theming, responsive
-├── Async & Errors                   Future/Stream, exception hierarchies
-├── Testing                          AAA pattern, Mocktail
-└── Performance & Debug              Rebuild profiling, DevTools, logging
 ```
 
 Any skill can pull a specific reference on demand:
 ```python
 read_skill_file("unity-standards", "references/code-standards/naming.md")
-read_skill_file("flutter-standards", "references/state-management-guide.md")
 ```
 
-**Rule:** When delegating any Unity or Flutter task, always include the corresponding standards skill:
+**Rule:** When delegating any Unity task, always include the corresponding standards skill:
 ```python
 task(category="quick", load_skills=["unity-standards", "unity-code"], prompt="...")
-task(category="deep",  load_skills=["flutter-standards", "flutter-code"], prompt="...")
 ```
 
 ---
@@ -147,41 +136,43 @@ Every domain skill pulls from its standards hub. The hub holds the conventions; 
 
 ```mermaid
 graph TD
-    US[unity-standards<br/>54 reference files] --> UC[unity-code]
+    US[unity-standards<br/>56 reference files] --> UC[unity-code]
     US --> UE[unity-editor]
-    US --> UR[unity-review]
+    US --> URL[unity-review-local]
+    US --> URP[unity-review-pr]
     US --> UI[unity-investigate]
     US --> UD[unity-debug]
-    US --> UP[unity-plan]
+    US --> UDL[unity-debug-log]
     US --> UDoc[unity-document]
     US --> UProf[unity-profiler]
     US --> UTU[unity-test-unit]
     US --> UTC[unity-test-case]
     US --> UUI[unity-uitoolkit]
-    US --> UApp[unity-app-ui]
     US --> UPI[unity-init]
     US --> USpec[unity-spec]
     US --> UOpt[unity-optimize]
     US --> UWgl[unity-webgl]
     US --> UPro[unity-prototype]
     US --> UCost[unity-costing]
-
-    FS[flutter-standards<br/>12 reference files] --> FC[flutter-code]
-    FS --> FU[flutter-ui]
-    FS --> FD[flutter-debug]
-    FS --> FR[flutter-review]
-    FS --> FT[flutter-test]
-    FS --> FP[flutter-profiler]
+    US --> UAG[unity-asset-generation]
+    US --> UA[unity-audio]
+    US --> UL[unity-liveops]
+    US --> ULoc[unity-localization]
+    US --> UM[unity-mobile]
+    US --> UPS[unity-project-settings]
+    US --> UQA[unity-qa-automation]
+    US --> USD[unity-save-data]
+    US --> USI[unity-sdk-integration]
 
     style US fill:#E04E39,color:#fff,stroke:#C03E2B
-    style FS fill:#0175C2,color:#fff,stroke:#02569B
 
     style UC fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UE fill:#1a1a2e,color:#fff,stroke:#E04E39
-    style UR fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style URL fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style URP fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UI fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UD fill:#1a1a2e,color:#fff,stroke:#E04E39
-    style UP fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UDL fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UDoc fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UProf fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UTU fill:#1a1a2e,color:#fff,stroke:#E04E39
@@ -193,22 +184,24 @@ graph TD
     style UWgl fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UPro fill:#1a1a2e,color:#fff,stroke:#E04E39
     style UCost fill:#1a1a2e,color:#fff,stroke:#E04E39
-
-    style FC fill:#1a1a2e,color:#fff,stroke:#0175C2
-    style FU fill:#1a1a2e,color:#fff,stroke:#0175C2
-    style FD fill:#1a1a2e,color:#fff,stroke:#0175C2
-    style FR fill:#1a1a2e,color:#fff,stroke:#0175C2
-    style FT fill:#1a1a2e,color:#fff,stroke:#0175C2
-    style FP fill:#1a1a2e,color:#fff,stroke:#0175C2
+    style UAG fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UA fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UL fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style ULoc fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UM fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UPS fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style UQA fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style USD fill:#1a1a2e,color:#fff,stroke:#E04E39
+    style USI fill:#1a1a2e,color:#fff,stroke:#E04E39
 ```
 
 ---
 
-<a id="skills-51"></a>
+<a id="skills-52"></a>
 
-## Skills (51)
+## Skills (52)
 
-51 skills across 13 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
+52 skills across 11 domains. Each skill auto-triages complexity, loads shared references on demand, and produces defined outputs.
 
 ### Unity &mdash; Runtime Code
 
@@ -218,51 +211,54 @@ graph TD
 | **unity-optimize** | Performance &mdash; code hot paths, build settings, audits | Code / Settings / Audit |
 | **unity-editor** | Custom inspectors, windows, drawers, gizmos, handles | Quick / Deep |
 | **unity-uitoolkit** | Runtime UI &mdash; UXML, USS, C# bindings, custom controls | &mdash; |
-| **unity-app-ui** | App UI package screens, MVVM, navigation, themes, Storybook | Component / App Shell / MVVM |
 | **unity-webgl** | JSLib plugins, WebGL builds, templates, deployment | JSLib / Build / Template |
 | **unity-prototype** | Playable prototypes from game ideas | &mdash; |
+| **unity-save-data** | Design and implement save/load systems, serialization | &mdash; |
+| **unity-localization** | Multilingual UI, string tables, localized assets | &mdash; |
+| **unity-audio** | SFX, music loops, trimming, normalization | &mdash; |
+| **unity-asset-generation** | Sprites, textures, materials, animations | &mdash; |
 
 ### Unity &mdash; Quality & Review
 
 | Skill | What it does | Modes |
 |:---|:---|:---|
-| **unity-review** | Code review, PR review, full project audit | Local / PR / Project |
-| **unity-debug** | Diagnose and fix bugs, from compile errors to intermittent issues | Fix / Quick / Deep / Log |
+| **unity-review-local** | Code review and project audit for local changes | Local |
+| **unity-review-pr** | Comprehensive GitHub PR reviews | PR |
+| **unity-debug** | Diagnose and fix bugs, from compile errors to intermittent issues | Fix / Quick / Deep |
+| **unity-debug-log** | Formatted Debug.Log snippets for tracing values | &mdash; |
 | **unity-investigate** | Codebase analysis, system tracing, architecture reports | Quick / Deep |
 | **unity-profiler** | CPU spikes, GC pressure, rendering bottlenecks | &mdash; |
 | **unity-test-unit** | Edit/Play mode unit tests (10+ per class, AAA pattern) | &mdash; |
 | **unity-test-case** | QA test case documentation (HTML output) | &mdash; |
+| **unity-qa-automation** | Smoke checks, scene validation, regression evidence | &mdash; |
 
 ### Unity &mdash; Planning & Docs
 
 | Skill | What it does | Modes |
 |:---|:---|:---|
-| **unity-plan** | Feature planning with scope detection (XS &rarr; XL) | Quick / Deep |
 | **unity-costing** | XL feature breakdown (10+ days), epic/task trees | &mdash; |
 | **unity-document** | Evidence-based Unity system docs in Docs/Systems/ | Single-pass |
 | **unity-spec** | Game Design Specification (GDD) | &mdash; |
 | **unity-init** | Project scaffolding &mdash; folders, .asmdef, namespaces | &mdash; |
-| **unity-standards** | **54 reference files** &mdash; the single source of truth | Hub |
+| **unity-standards** | **56 reference files** &mdash; the single source of truth | Hub |
+| **unity-project-settings** | Tags, layers, build/quality settings | &mdash; |
+| **unity-liveops** | Remote config, analytics, ads, IAP | &mdash; |
+| **unity-mobile** | Android/iOS specific validation, permissions, builds | &mdash; |
+| **unity-sdk-integration** | SDK package management, boundaries, samples | &mdash; |
 
-### Flutter
+### Games &mdash; Phaser & PixiJS
 
-| Skill | What it does | Modes |
-|:---|:---|:---|
-| **flutter-code** | Write, extend, or optimize Dart code | Quick / Deep / Optimize |
-| **flutter-ui** | Screens, widgets, themes, responsive layouts | Quick / Deep |
-| **flutter-debug** | Dart analysis errors to intermittent bugs | Fix / Quick / Deep / Log |
-| **flutter-review** | Code review, PR review, project audit | Local / PR / Project |
-| **flutter-test** | Unit, widget, and integration tests (AAA, mocktail) | Auto-triage |
-| **flutter-profiler** | DevTools analysis, CPU/memory/jank reports | &mdash; |
-| **flutter-standards** | **12 reference files** &mdash; Dart/Flutter conventions | Hub |
+| Skill | What it does |
+|:---|:---|
+| **phaser-coder** | Write, review, debug, or explain Phaser 3 code |
+| **pixijs-coder** | PixiJS v8 &mdash; apps, shaders, filters, animations |
 
 ### Full-Stack & Infrastructure
 
 | Skill | What it does |
 |:---|:---|
 | **nextjs-backend** | API routes, server actions, auth, multi-tenant (App Router) |
-| **database-design** | PostgreSQL schemas, migrations, indexing, Prisma/Drizzle |
-| **cloud-infra** | Cloudflare R2, Vercel deployment, CDN, signed URLs |
+| **ui-ux** | UI/UX design intelligence &mdash; 67 styles, 96 palettes, 13 stacks |
 
 ### Git Workflow
 
@@ -282,7 +278,6 @@ graph TD
 | **goal-execute** | Execute one goal end-to-end with criterion evidence |
 | **goal-verify** | Verify one goal criterion by criterion |
 | **goal-loop** | Loop incomplete goals through execute and verify cycles |
-| **goal-improve** | Critique and improve goal usefulness, design, and agent-readiness |
 | **session-retrospective** | Post-session learning &mdash; improve skills from experience |
 
 ### Shell & CLI
@@ -297,7 +292,6 @@ graph TD
 
 | Skill | What it does |
 |:---|:---|
-| **pixijs-coder** | PixiJS v8 &mdash; apps, shaders, filters, animations |
 | **flatbuffers-coder** | .fbs schemas, C# generation, binary serialization |
 | **mcp-builder** | Build MCP servers (Python FastMCP / Node SDK) |
 | **skill-creator** | Create, modify, benchmark, and optimize skills |
@@ -308,23 +302,21 @@ graph TD
 |:---|:---|
 | **visual-explainer** | Self-contained HTML pages for visual explanations |
 | **mermaid** | Flowcharts, sequence diagrams, state machines |
-| **spreadsheet** | Create, edit, analyze .xlsx/.csv/.tsv files |
-| **pdf** | Read, create, review PDFs with layout fidelity |
 | **imagegen** | Generate + edit images via Google Gemini Imagen API |
 | **screenshot** | Desktop/system screenshots (macOS, Linux, Windows) |
 
 ---
 
-<a id="commands-74"></a>
+<a id="commands-72"></a>
 
-## Commands (74)
+## Commands (72)
 
 Slash commands for direct access to specific skill modes.
 
 ```
 bash/              check   install   optimize
 flatbuffers/       coder
-git/               clear   comment   commit   description   squash
+git/               clear   comment   commit   pr   squash
 mermaid/           create
 omo/               atlas   prometheus   sisyphus   goal
                    improve   sisyphus-junior   work
@@ -340,10 +332,9 @@ flutter/review/    audit   local   pr
 flutter/test/      integration   unit   widget
 flutter/ui/        deep   quick
 
-unity/code/        deep   optimize   quick
+unity/code/        deep   editor   optimize   quick
 unity/debug/       deep   fix   log   profiler   quick
 unity/document/    system   tdd
-unity/editor/      deep   quick
 unity/investigate/ deep   quick
 unity/optimize/    audit   code   settings
 unity/plan/        costing   deep   quick
@@ -392,5 +383,8 @@ The bar: every skill must produce output you'd accept in a code review from a se
 ---
 
 <p align="center">
+  <sub>Built with obsessive iteration by <a href="https://github.com/cuozg">@cuozg</a></sub>
+</p>
+"center">
   <sub>Built with obsessive iteration by <a href="https://github.com/cuozg">@cuozg</a></sub>
 </p>
