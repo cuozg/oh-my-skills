@@ -7,13 +7,13 @@
 <h1 align="center">Oh My Skills</h1>
 
 <p align="center">
-  <strong>52 battle-tested AI agent skills. 294 reference docs. 396 commits of relentless refinement.</strong>
+  <strong>52 battle-tested AI agent skills. 363 reference docs. 398 commits of relentless refinement.</strong>
   <br />
   Built for Unity, Phaser, PixiJS, and full-stack development &mdash; evaluated, iterated, and hardened until they actually work.
 </p>
 
 <p align="center">
-  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-52">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-72">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
+  <a href="#installation">Installation</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#skills-52">Skills</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#commands-56">Commands</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#architecture">Architecture</a>&nbsp;&nbsp;&bull;&nbsp;&nbsp;<a href="#philosophy">Philosophy</a>
 </p>
 
 ---
@@ -64,11 +64,11 @@ That's it. Skills auto-activate based on your requests.
 | Metric | Count |
 |:---|---:|
 | Specialized skills | **52** |
-| Reference documents | **294** |
-| Commits of refinement | **396+** |
+| Reference documents | **363** |
+| Commits of refinement | **398+** |
 | Eval & refinement iterations | **53+** |
 | Unity standards reference files | **56** |
-| Slash commands | **72** |
+| Slash commands | **56** |
 | Covered domains | **11** |
 
 ---
@@ -307,41 +307,46 @@ graph TD
 
 ---
 
-<a id="commands-72"></a>
+<a id="commands-56"></a>
 
-## Commands (72)
+## Commands (56)
 
-Slash commands for direct access to specific skill modes.
+Slash commands for direct access to specific skills.
 
 ```
-bash/              check   install   optimize
-flatbuffers/       coder
-git/               clear   comment   commit   pr   squash
-mermaid/           create
-omo/               atlas   prometheus   sisyphus   goal
-                   improve   sisyphus-junior   work
-skill/             deep   quick
-visual-explainer/  diff-review   fact-check   generate-slides
-                   generate-visual-plan   generate-web-diagram
-                   plan-review   project-recap   share
+bash/             check   install   optimize
+flatbuffers/      coder
+git/              clear   comment   commit   pr   squash
+goal/             create   execute   loop   verify
+image/            gen
+mcp/              build
+mermaid/          create
+nextjs/           backend
+openai/           docs
+phaser/           coder
+pixijs/           coder
+plugin/           create
+screenshot/       capture
+session/          retrospective
+skill/            create   install
+ui-ux/            design
 
-flutter/           init
-flutter/code/      deep   optimize   quick
-flutter/debug/     deep   fix   log   profiler   quick
-flutter/review/    audit   local   pr
-flutter/test/      integration   unit   widget
-flutter/ui/        deep   quick
-
-unity/code/        deep   editor   optimize   quick
-unity/debug/       deep   fix   log   profiler   quick
-unity/document/    system   tdd
-unity/investigate/ deep   quick
-unity/optimize/    audit   code   settings
-unity/plan/        costing   deep   quick
-unity/review/      architecture   asset   code-pr   general
-                   local   prefab   quality
-unity/test/        case   unit
-unity/ui/          create
+unity/            init   investigate   liveops   localization   mobile
+                  optimize   prototype   qa/automation   standards
+                  webgl
+unity/asset/      gen
+unity/audio/      process
+unity/code/       editor   write
+unity/debug/      fix   log   profiler
+unity/document/   spec   system
+unity/plan/       costing
+unity/project/    settings
+unity/review/     local   pr
+unity/save/       data
+unity/sdk/        integration
+unity/test/       case   unit
+unity/ui/         toolkit
+visual/           explainer
 ```
 
 ---
