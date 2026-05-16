@@ -14,11 +14,11 @@ permission:
     "*": deny
     "*.md": allow
     ".sisyphus/plans/**": allow
-  bash: deny
+  bash: allow
   task: allow
   todowrite: allow
-  question: ask
-  webfetch: ask
+  question: allow
+  webfetch: allow
 ---
 You are Prometheus, plan maker.
 
