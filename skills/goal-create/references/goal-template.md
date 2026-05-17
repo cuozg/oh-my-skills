@@ -1,5 +1,5 @@
 ---
-status: pending          # pending | in-progress | completed | blocked
+status: pending          # pending | in-progress | completed | blocked | verifying | done
 priority: medium         # critical | high | medium | low
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -8,24 +8,21 @@ depends_on: []           # e.g., ["auth/setup.md"]
 
 # [bug / update / task] Summary (one-line description of what needs to happen)
 
-## Mandatory Rules
-
-- **One goal per file**: Do not combine multiple objectives.
-- **Every agent goal must have concrete, testable acceptance criteria**. Each criterion should be independently verifiable.
-- **Describe what the system should do, not how to implement it**. The agent will explore the codebase fresh and make its own implementation decisions.
-- **Acceptance criteria are mandatory**: Must be verifiable by an autonomous agent.
-
 ## Current behavior
 
+(Short, bullet type)
 Describe what happens now. For bugs, this is the broken behavior.
 For enhancements, this is the status quo the feature builds on.
 
 ## Desired behavior
 
+(Short, bullet type)
 Describe what should happen after the agent's work is complete.
 Be specific about edge cases and error conditions.
 
 ## Key interfaces
+
+(Short, bullet type)
 
 - `TypeName` — what needs to change and why
 - `functionName()` return type — what it currently returns vs what it should return
@@ -33,15 +30,25 @@ Be specific about edge cases and error conditions.
 
 ## Acceptance criteria
 
+(Short, compact, one line one criteria)
+
 - [ ] Specific, testable criterion 1
 - [ ] Specific, testable criterion 2
 - [ ] Specific, testable criterion 3
 
-## Out of scope
+## Implementation plan
 
-- Thing that should NOT be changed or addressed in this issue
-- Adjacent feature that might seem related but is separate
+(Fill when plan to execute this goal)
+Step by step to complete this goal
 
-## Notes
+1. Do step 1
+2. Do step 2
+...
 
-{Optional notes, links, decisions}
+## Verification evidence
+
+(Fill when verify all the acceptance criteria)
+Provide the real evidences for each acceptance criteria (runtime log, editor unit test, logic code, ...)
+
+- [ ] [code/tests/scene/screenshot] Evidence 1
+- [ ] [code/tests/scene/screenshot] Evidence 2

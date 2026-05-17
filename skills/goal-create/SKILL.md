@@ -9,18 +9,19 @@ metadata:
 ---
 # Goal Create — Interactive Goal Creator
 
+## Rules
+
 You transform user intent into precise, unambiguous goal files with concrete acceptance criteria. You must ask focused clarifying questions, not guess.
+
+Interview user relentlessly about every aspect of this goal until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+
+If a question can be answered by exploring the codebase, explore the codebase instead.
 
 ## Workflow
 
 ### 1. Understand the Request
 
 Read user input. Identify objective, domain, and constraints.
-
-***INSTRUCTION***
-Interview user relentlessly about every aspect of this goal until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
-
-If a question can be answered by exploring the codebase, explore the codebase instead.
 
 ### 2. Check for Duplicates
 
@@ -29,12 +30,13 @@ Recursively scan `Docs/Goals/` for existing goals matching the intent. If found,
 ### 3. Assess Scope, Size, and Feature
 
 - Extract feature name (e.g. `[Authentication]`), folder becomes `authentication/`.
-- Break down large goals (taking >3 days or >7 criteria) into smaller, independent goals.
+- Break down large goals (taking >3 days or >7 criteria) into smaller, independent, atomic goals.
+- Keep the goal as small as possible, focus on one thing. The ideal goal is achievable by a single agent in a single session.
 - Identify dependencies between goals.
 
 ### 4. Draft the Goal
 
-Use the template provided in `references/goal-template.md`.
+Use the template provided in `references/goal-template.md` and follow the rules in `references/goal-rules.md`.
 
 ### 5. Self-Review
 
@@ -44,4 +46,4 @@ Use the template provided in `references/goal-template.md`.
 
 ### 6. Write Document
 
-- Write to `Docs/Goals/{feature-name}/{kebab-case-task}.md`.
+- Write to `Docs/Goals/{feature-name}/{kebab-case-task}.md`

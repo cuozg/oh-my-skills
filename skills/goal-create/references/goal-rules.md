@@ -1,4 +1,9 @@
-# Acceptance Criteria Guide
+# Goal Creation Rules
+
+- **One goal per file**: Do not combine multiple objectives.
+- **Describe what the system should do, not how to implement it**. The agent will explore the codebase fresh and make its own implementation decisions.
+
+## Acceptance Criteria Guide
 
 A criterion is **testable** when an autonomous agent can independently verify it in the Unity Editor without human intervention.
 
@@ -19,6 +24,7 @@ If any of those three are missing, the criterion is not testable.
 ## Verification Methods
 
 Ensure criteria can be verified via:
+
 1. **Code Appearance:** Script, method, or property exists in the project.
 2. **Tests:** A specific test file passes in the Unity Test Runner.
 3. **Scene Checks:** A GameObject exists with specific components and values.
