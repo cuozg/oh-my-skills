@@ -1,46 +1,58 @@
 ---
 name: goal-execute
-description: "Execute one goal end-to-end. Discovers an uncompleted goal, updates state, plans, implements, independently verifies every criterion, and syncs documentation."
+description: >
+  Execute one goal file created by goal-create. Use when a user says to run,
+  implement, finish, or ship a goal in Docs/Goals, or wants one goal taken from
+  pending to verified completion. Do not use for creating goals or read-only audits.
+metadata:
+  author: kuozg
+  version: "1.1"
 ---
 
 # Goal Execute
 
-Use this skill to execute one goal file end-to-end. Do NOT use for creating goals (`goal-create`) or read-only verification (`goal-verify`).
+Execute exactly one goal file from `goal-create`, then prove every acceptance criterion with evidence.
 
 ## Workflow
 
-Follow this fixed sequence. Do not reorder phases. Do not skip independent verification.
+1. Read the goal.
+   - If a path is provided, read that file in full.
+   - If no path is provided, scan `Docs/Goals/` for incomplete goals and pick one only when the user's intent is clear; otherwise ask.
+   - Parse frontmatter, summary, current behavior, desired behavior, key interfaces, acceptance criteria, out of scope, notes, and `depends_on`.
 
-### 1. Discover Goal
-- Read the provided goal file in full.
-- If no specific goal is provided, search `Docs/Goals/` for the first goal that is not `completed` and has criteria with status `TODO` or `IN PROGRESS` (check `Docs/Goals/Master.md` first).
-- If no incomplete goal is found, stop and report `NO_INCOMPLETE_GOAL`.
+2. Understand the work.
+   - Confirm dependencies are complete or already satisfied.
+   - Spawn a subagent to index the codebase when the relevant files, patterns, or tests are not obvious.
+   - If the goal is ambiguous, report the ambiguity and stop.
+   - If a dependency blocks execution, set status `blocked`, refresh `updated`, record why, and stop.
 
-### 2. Update State
-- Change the goal's frontmatter status to `processing`.
+3. Plan and track.
+   - Create a concise todo list mapped to the acceptance criteria.
+   - Set status `in-progress` and refresh `updated` before implementation.
+   - Keep the plan small: implement only what the criteria require.
 
-### 3. Create Plan
-- Identify the goal, verbatim acceptance criteria from the table, and relevant specs (`Docs/Specs/`).
-- Create an implementation plan detailing steps, criterion-to-work mapping, and intended verification evidence.
+4. Implement.
+   - Make focused changes that satisfy the goal.
+   - Add or update the most direct tests/checks when the repo supports them.
+   - Avoid unrelated cleanup, speculative abstractions, or broad refactors.
 
-### 4. Implement Plan
-- Execute the plan sequentially (do NOT parallelize).
-- **MANDATORY DELEGATION RULE**: NEVER delegate a task to implement an entire goal. You MUST break/split the goal and delegate work strictly at the level of individual acceptance criteria.
-- Spawn a subagent to implement each acceptance criterion one by one. Update the criterion's status to `IN PROGRESS` in the table.
-- **NO MULTIPLE CRITERIA**: Never process multiple acceptance criteria in a single task/thread or subagent. This is non-negotiable. If you find the session is processing multiple acceptance criteria simultaneously, STOP IT immediately.
-- **COMPACTION**: Perform context compaction after completing each acceptance criterion to keep the context small.
-- Once a criterion is implemented, update its status to `VALIDATION`.
-- Keep changes strictly scoped to the goal. Add/update necessary tests.
+5. Self-verify.
+   - Re-check every acceptance criterion against the final code and behavior.
+   - Use direct evidence only: file paths, commands, test names, logs, screenshots, or observed behavior.
+   - Treat `UNCLEAR`, partial evidence, stale logs, and assumptions as failures.
 
-### 5. Independently Verify
-- Every acceptance criterion MUST be independently verified before marking it `VALIDATION`.
-- Verify by re-reading changed files, running tests, or checking behavior.
-- *Rule*: Every acceptance criteria must be satisfied with concrete evidence. `UNCLEAR` counts as unmet.
+6. Independent verify.
+   - Spawn a separate subagent to re-read the final files and verify each criterion independently.
+   - Only check off a criterion when both self-verification and independent verification prove the exact checkbox text.
 
-### 6. Sync Documents
-- Once all criteria are verified, update their status to `DONE` in the table with concrete evidence in the Evidences column.
-- Update the goal frontmatter status to `completed`.
-- Sync `Docs/Goals/Master.md` (status, date, counts).
-- Sync `README.md` if user-facing behavior changed.
-- Sync `Docs/Specs/` so they match the shipped implementation.
-- Output a final report.
+7. Sync and report.
+   - If every criterion is verified, change verified criteria from `- [ ]` to `- [x]`, add/update `## Verification evidence`, set status `completed`, and refresh `updated`.
+   - If anything remains unverified, leave it unchecked, keep status `in-progress` or `blocked`, and record the missing evidence or blocker.
+   - Sync goal indexes, docs, specs, or README only when the repo already uses them and implementation changed their truth.
+   - Report criterion status, evidence, files changed, verification commands, and final goal status.
+
+## Rules
+
+- Execute one goal only.
+- Never mark a goal complete without evidence for every acceptance criterion.
+- Preserve goal-create status values: `pending`, `in-progress`, `completed`, `blocked`.

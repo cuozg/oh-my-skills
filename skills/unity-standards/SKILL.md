@@ -1,21 +1,15 @@
 ---
 name: unity-standards
-description: >
-  Use this skill as the shared reference hub for all Unity C# development - coding standards, naming
-  conventions, review checklists, debug patterns, test patterns, and UI Toolkit guidelines. MUST be
-  included in load_skills for any Unity task delegation. Triggers automatically when writing, reviewing,
-  debugging, testing, or planning Unity C# code. Contains 80+ reference files across 9 categories that
-  other skills pull from on demand. Includes editor patterns for CustomEditor, EditorWindow,
-  PropertyDrawer, Gizmos, and Handles. Also covers optimization settings for build, rendering,
-  memory, physics, mobile, startup, ECS, Jobs, Burst compiler, and DOTS review/debug patterns.
+description: "Shared Unity reference hub for writing, reviewing, debugging, planning, testing, documenting, and optimizing Unity C# systems."
 metadata:
   author: kuozg
-  version: "1.5"
+  version: "2.0"
 ---
 
 # unity-standards
 
-Unity C# shared reference hub for code, review, debug, testing, planning, and UI Toolkit work.
+Use this skill as the compact router for Unity engineering standards. Keep the main
+context small; load only the reference files that match the task.
 
 ## When This Skill Triggers
 
@@ -25,73 +19,76 @@ Unity C# shared reference hub for code, review, debug, testing, planning, and UI
 - Planning, testing, or documenting Unity systems
 - Optimizing Unity project performance
 
-## Usage
+## How To Use
 
-- Always include `unity-standards` in `load_skills` for delegated Unity work.
-- Load only the needed reference: `read_skill_file("unity-standards", "references/<path>")`.
-- For version-sensitive or package-sensitive topics, also load `read_skill_file("unity-standards", "references/other/official-source-map.md")`.
+1. Identify the Unity task type and touched surface.
+2. Load the smallest matching references with
+   `read_skill_file("unity-standards", "references/<path>")`.
+3. For package/version-sensitive behavior, also load
+   `other/official-source-map.md`.
+4. Apply the repo's existing patterns first; use these references to catch gaps,
+   risks, and verification requirements.
 
-## Reference Catalog
+## Load References Accordingly
 
-### Code Standards (5 consolidated files)
+### Write Or Refactor Code
 
-- `code-standards/core-conventions.md` - naming, formatting, comments, access modifiers, null safety, unity attributes, code patterns
-- `code-standards/lifecycle-async-errors.md` - lifecycle, async patterns, error handling, security/validation
-- `code-standards/performance-data.md` - collections, LINQ, object pooling, serialization
-- `code-standards/architecture-systems.md` - project structure, dependencies, events, architecture patterns, refactoring, workflows, editor patterns, gizmos, WebGL
-- `code-standards/ecs-burst-standards.md` - ECS, Jobs, Burst, NativeContainers, Bakers, structural changes, migration strategy
+- General C#: `code-standards/core-conventions.md`
+- Lifecycle, async, errors, validation: `code-standards/lifecycle-async-errors.md`
+- Collections, LINQ, pooling, serialization: `code-standards/performance-data.md`
+- Architecture, events, dependencies, editor tools, WebGL: `code-standards/architecture-systems.md`
+- ECS, Jobs, Burst, NativeContainers: `code-standards/ecs-burst-standards.md`
 
-### Review (5)
+### Review Changes Or PRs
 
-- `review/checklist.md` — unified checklist: logic, lifecycle, serialization, performance, security, concurrency, architecture, assets/prefabs
-- `review/comment-format.md` - `pr-submission.md` - `parallel-review-criteria.md`
-- `review/ecs-burst-review.md` - ECS, Jobs, Burst, NativeContainer, ECB, query, and performance review checklist
+- Main review pass: `review/checklist.md`
+- C# implementation: `review/checklist_cs.md`
+- Assets: `review/checklist_prefab.md`, `review/checklist_material.md`,
+  `review/checklist_shader.md`
+- ECS/Burst: `review/ecs-burst-review.md`
+- Parallel review criteria: `review/parallel-review-criteria.md`
 
-### Quality (6)
+### Debug Runtime Or Compile Issues
 
-- `quality/grading-criteria.md` - `architecture-audit.md` - `performance-audit.md`
-- `quality/best-practices-audit.md` - `tech-debt-audit.md` - `html-report-format.md`
+- Start here: `debug/diagnosis-workflow.md`
+- Compile verification: `debug/compile-verification.md`
+- Known error patterns: `debug/common-unity-errors.md`
+- Deep investigations: `debug/deep-investigation-checklist.md`,
+  `debug/analysis-template.md`
+- ECS/Burst diagnostics: `debug/ecs-burst-debugging.md`
 
-### Plan (10)
+### Plan, Test, Or Document Systems
 
-- `plan/sizing-guide.md` - `risk-assessment.md` - `task-structure.md`
-- `plan/investigation-workflow.md` - `dependency-mapping.md` - `confirmation-flow.md`
-- `plan/scope-confirmation.md` - `plan/scope-detection-guide.md`
-- `plan/output-quick.md` - `plan/output-deep.md`
-- `plan/investigation-template.md` - markdown template for system investigation reports
+- Planning flow: `plan/confirmation-flow.md`, `plan/dependency-mapping.md`
+- Plan output: `plan/output-quick.md` or `plan/output-deep.md`
+- Acceptance criteria: `test/acceptance-criteria-verification.md`
+- Test strategy: `test/coverage-strategy.md`, `test/edit-mode-patterns.md`,
+  `test/edit-mode-advanced.md`, `test/play-mode-patterns.md`
+- Test docs: `test/test-case-format.md`, `test/naming-conventions.md`
+- Diagrams: `other/mermaid-syntax.md`
 
-### Debug (7)
+### Optimize Performance
 
-- `debug/diagnosis-workflow.md` - `common-unity-errors.md` - `log-format.md`
-- `debug/deep-investigation-checklist.md`
-- `debug/analysis-template.md` - structured report template for deep bug analysis output
-- `debug/compile-verification.md` - verification chain, Unity error line format regex, compile error codes, log section markers, batchmode exit code caveats
-- `debug/ecs-burst-debugging.md` - ECS query/world debugging, Burst isolation, job dependency, NativeContainer, Baker, and ECB diagnostics
+- Build and startup: `optimization/build-settings.md`,
+  `optimization/startup-settings.md`
+- Rendering: `optimization/rendering-settings.md`
+- Memory and loading: `optimization/memory-settings.md`
+- Physics: `optimization/physics-settings.md`
+- Mobile: `optimization/mobile-settings.md`
+- Jobs/Burst/ECS: `optimization/jobs-burst-migration.md`,
+  `optimization/ecs-data-oriented-design.md`
 
-### Test (6)
+### UI Toolkit
 
-- `test/edit-mode-patterns.md` - `edit-mode-advanced.md`
-- `test/play-mode-patterns.md` - `test-case-format.md`
-- `test/coverage-strategy.md` - `naming-conventions.md`
+- Setup: `ui-toolkit/setup.md`
+- UXML/USS: `ui-toolkit/uxml-patterns.md`, `ui-toolkit/uss-styling.md`
+- C# bindings and controls: `ui-toolkit/csharp-bindings.md`,
+  `ui-toolkit/custom-controls.md`
+- Performance: `ui-toolkit/performance.md`
 
-### Other (5)
+### Cross-Cutting Helpers
 
-- `other/mermaid-syntax.md` - `flatbuffers-guide.md` - `skill-authoring.md`
-- `other/official-source-map.md` - official Unity docs for version-sensitive behavior and package features
-- `other/unity-mcp-routing-matrix.md` - Unity MCP tool routing matrix, decision trees, guard clauses, keyword index, workflow cheat sheets (51 tools)
-
-### UI Toolkit (6)
-
-- `ui-toolkit/setup.md` - `performance.md` - `uxml-patterns.md`
-- `ui-toolkit/uss-styling.md` - `csharp-bindings.md` - `custom-controls.md`
-
-### Optimization (8)
-
-- `optimization/build-settings.md` - code stripping, IL2CPP, compression, texture/audio/mesh settings
-- `optimization/rendering-settings.md` - SRP Batcher, GPU instancing, batching, shader variants, LOD, occlusion culling
-- `optimization/memory-settings.md` - texture streaming, audio memory, asset lifecycle, Addressables, scene loading
-- `optimization/physics-settings.md` - layer collision matrix, fixed timestep, collision shapes, auto sync transforms
-- `optimization/mobile-settings.md` - target frame rate, thermal throttling, resolution scaling, battery-conscious design
-- `optimization/startup-settings.md` - Enter Play Mode settings, domain reload, preloading, script execution order
-- `optimization/jobs-burst-migration.md` - Jobs system, Burst compiler, data layout, migration checklist, SIMD intrinsics
-- `optimization/ecs-data-oriented-design.md` - Entity Component System, IJobEntity, archetypes, chunks, queries, ECB
+- Unity MCP routing: `other/unity-mcp-routing-matrix.md`
+- FlatBuffers: `other/flatbuffers-guide.md`
+- Skill authoring: `other/skill-authoring.md`
+- Code-standard consolidation map: `code-standards/README.md`

@@ -6,36 +6,42 @@ updated: YYYY-MM-DD
 depends_on: []           # e.g., ["auth/setup.md"]
 ---
 
-# [Feature] Task Name
+# [bug / update / task] Summary (one-line description of what needs to happen)
 
-## Objective
-{1-3 sentences on what to achieve and why.}
+## Mandatory Rules
 
-## Context
-{Background, existing systems, related paths.}
+- **One goal per file**: Do not combine multiple objectives.
+- **Every agent goal must have concrete, testable acceptance criteria**. Each criterion should be independently verifiable.
+- **Describe what the system should do, not how to implement it**. The agent will explore the codebase fresh and make its own implementation decisions.
+- **Acceptance criteria are mandatory**: Must be verifiable by an autonomous agent.
 
-## Acceptance Criteria
+## Current behavior
 
-Acceptance criteria must be verifiable by an autonomous agent without human intervention. Use 3-7 criteria per goal.
+Describe what happens now. For bugs, this is the broken behavior.
+For enhancements, this is the status quo the feature builds on.
 
-### General Format Template
+## Desired behavior
 
-```markdown
-## Acceptance Criteria
-- [ ] **Happy Path**: {Subject} successfully performs {action} under {condition}, resulting in {verifiable outcome}.
-- [ ] **Edge/Error Case**: {Subject} handles {invalid/edge condition} by {verifiable error handling or fallback}.
-- [ ] **Data/State Verification**: {Data/State} is accurately updated in {storage/UI} and persists after {action}.
-- [ ] **Constraint Check**: Execution adheres to {specific constraint, e.g., performance limit, secure storage}.
-- [ ] **Evidence**: {Command, test, or tool} successfully runs and outputs {expected validation result}.
-```
+Describe what should happen after the agent's work is complete.
+Be specific about edge cases and error conditions.
 
-### Key Rules
-- One behavior per checkbox.
-- Use concrete paths, variables, and commands.
-- Avoid vague words ("properly", "correctly", "best practices").
+## Key interfaces
 
-## Constraints
-- {Technical constraints, platform requirements}
+- `TypeName` — what needs to change and why
+- `functionName()` return type — what it currently returns vs what it should return
+- Config shape — any new configuration options needed
+
+## Acceptance criteria
+
+- [ ] Specific, testable criterion 1
+- [ ] Specific, testable criterion 2
+- [ ] Specific, testable criterion 3
+
+## Out of scope
+
+- Thing that should NOT be changed or addressed in this issue
+- Adjacent feature that might seem related but is separate
 
 ## Notes
-- {Optional notes, links, decisions}
+
+{Optional notes, links, decisions}
