@@ -1,0 +1,38 @@
+{
+  "skill_name": "goal-todo",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Read Docs/Specs/Inventory.md and create the implementation TODO and test case list for it.",
+      "expected_output": "Creates Docs/Specs/Inventory-todo.md with Todo and Test cases sections only, includes Logic/UI/Data categorized tasks, and does not modify the source spec.",
+      "expectations": [
+        "The skill reads the referenced spec before writing output.",
+        "The output file is written in the same folder as the spec using the <spec-stem>-todo.md naming pattern.",
+        "Todo items use [Logic], [UI], or [Data] category tags.",
+        "Test cases map to the meaningful requirements and edge states in the spec.",
+        "No implementation code or source spec changes are made."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Turn the shop UI spec into todos and tests. The spec is at Docs/Specs/Shop_UI.md.",
+      "expected_output": "Investigates existing shop/UI code and produces a same-folder TODO document that includes UI/UX interaction, empty/error/loading state, accessibility, and relevant logic/data tasks with matching tests.",
+      "expectations": [
+        "The skill performs codebase investigation before finalizing tasks.",
+        "The generated TODO includes UI/UX states required by the spec without inventing unrelated redesign work.",
+        "Tasks are split by responsibility instead of combining UI, logic, and data in one item.",
+        "Test cases include user-flow and edge-state verification."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "goal-todo for the latest spec in Docs/Specs; make the checklist actionable for implementation.",
+      "expected_output": "Finds likely spec candidates, asks for clarification if multiple plausible specs exist, then creates an actionable same-folder TODO/test checklist once the input spec is resolved.",
+      "expectations": [
+        "The skill scans likely spec locations when no exact path is provided.",
+        "The skill asks for a specific spec when multiple plausible files exist.",
+        "The final checklist contains only implementable tasks and verification cases, not broad planning prose."
+      ]
+    }
+  ]
+}

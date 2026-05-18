@@ -6,7 +6,6 @@ metadata:
   author: kuozg
   version: "1.3"
 ---
-
 # Goal Verify
 
 Verify exactly one `Docs/Goals/**.md` goal. This is a gate, not implementation:
@@ -39,7 +38,7 @@ evidence, then update the goal file with honest pass/fail evidence.
 6. Decide each criterion:
    - PASS only if direct evidence proves the exact checkbox text.
    - FAIL/BLOCKED for `UNCLEAR`, stale logs, skipped tests, missing evidence, compile errors, assumptions, or invalid self-test.
-7. Edit the same goal file:
+7. Edit the same goal file in Verification part:
    - passed: `- [x] ...`
    - failed/unverified: `- [ ] ...` plus an indented callout directly below
    - update `## Verification evidence` with per-criterion verdicts and accepted/rejected self-test evidence
@@ -48,19 +47,20 @@ evidence, then update the goal file with honest pass/fail evidence.
 
 ## Failure comments
 
-Use required severity badges directly under failed criteria:
+Use required severity badges directly under failed verification evidence:
 
-- `> [!CAUTION]` = **CRITICAL/HIGH**: core criterion missing, test/compile fail, blocking runtime error, data loss/security risk.
-- `> [!IMPORTANT]` = **MEDIUM**: partial implementation, invalid/weak self-test, missing edge case, ambiguous/unproven behavior.
-- `> [!NOTE]` = **LOW/STYLE**: non-blocking polish, docs/naming/style mismatch.
+- `> 🔴` = **CRITICAL/HIGH**: core criterion missing, test/compile fail, blocking runtime error, data loss/security risk.
+- `> 🟠` = **MEDIUM**: partial implementation, invalid/weak self-test, missing edge case, ambiguous/unproven behavior.
+- `> 🔵` = **LOW/STYLE**: non-blocking polish, docs/naming/style mismatch.
+- `> ✅` = **PASS**: criterion is met and evidence is provided.
 
 Format:
 
-```markdown
-- [ ] Criterion text unchanged
-  > [!CAUTION]
-  > **HIGH:** Independent verification failed. Evidence checked: `npm test` failed in `ExampleTests.ShouldDoThing`; `src/example.ts:42` still returns old value. Required fix: implement expected behavior and add passing evidence.
-```
+> [🔴 CRITICAL] [Criterion Text] (1 line summary)
+> (Short explanations if needed)
+>
+> - Evidence 1
+> - Evidence 2
 
 ## Rules
 
@@ -68,4 +68,4 @@ Format:
 - Do not implement fixes unless explicitly asked.
 - Do not mark `completed` without independent passing evidence for every criterion.
 - Do not trust self-test evidence until audited.
-- Failed criteria must be commented in the goal file, not only in chat.
+- Failed verifications must be commented in the goal file, not only in chat.

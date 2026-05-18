@@ -36,19 +36,11 @@ Be specific about edge cases and error conditions.
 - [ ] Specific, testable criterion 2
 - [ ] Specific, testable criterion 3
 
-## Implementation plan
+## Out of scope
 
-(Fill when plan to execute this goal)
-Step by step to complete this goal
+- Thing that should NOT be changed or addressed in this issue
+- Adjacent feature that might seem related but is separate
 
-1. Do step 1
-2. Do step 2
-...
+## Notes
 
-## Verification evidence
-
-(Fill when verify all the acceptance criteria)
-Provide the real evidences for each acceptance criteria (runtime log, editor unit test, logic code, ...)
-
-- [ ] [code/tests/scene/screenshot] Evidence 1
-- [ ] [code/tests/scene/screenshot] Evidence 2
+{Optional notes, links, decisions}

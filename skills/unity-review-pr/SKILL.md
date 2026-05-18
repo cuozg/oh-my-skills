@@ -11,12 +11,16 @@ metadata:
 
 Complete end-to-end workflow for reviewing Unity GitHub pull requests.
 
+## MANDATORY RULE
+- Always follow the workflow steps in order. Do not skip or reorder steps.
+- Always follow output formats and guidelines strictly. Do not deviate or improvise.
+- Always push the review comment to github. Do not leave any comment as draft or in local file only.
+- Always verify the review submission and report success or failure. Do not assume it works.
+
 ## 1. Fetch PR + Auth User + Labels
 
-- Fetch PR Metadata: `gh api repos/{owner}/{repo}/pulls/{pr}/files` and `gh api repos/{owner}/{repo}/pulls/{pr}`
-- Fetch Auth User: `gh api user --jq .login`
-- Fetch PR Author.
-- Exit if labels contain `skip-review` or `no-review`.
+- Fetch PR details via `gh pr view {pr} --json {number,author,labels,files,commits,headRefOid}`.
+- If the current branch is not PR branch, try to checkout PR branch as new worktree.
 - If scope is big: Ask the user which specific criteria they need to review.
 
 ## 2. Build Changed-File Groups
@@ -40,7 +44,7 @@ Validate only high-confidence findings. Deduplicate by (path, line).
 ## 6. Split Inline vs Body Findings
 
 Before submitting review, convert findings into two groups: `inline_comments` only for commentable PR patch lines, and `body_findings` for large files, hidden patches, or non-commentable lines.
-- **Comment cap:** Inline top 20–30 strongest findings only. Put lower-severity or large-asset findings in the body.
+- **Comment cap:** Inline top 5–10 strongest findings only. Put lower-severity or large-asset findings in the body.
 
 ## 7. Build Payload and Submit Event
 

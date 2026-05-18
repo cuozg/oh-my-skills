@@ -8,7 +8,6 @@ metadata:
   author: kuozg
   version: "1.1"
 ---
-
 # Goal Execute
 
 Execute exactly one goal file from `goal-create`, then prove every acceptance criterion with evidence.
@@ -23,7 +22,7 @@ Execute exactly one goal file from `goal-create`, then prove every acceptance cr
 
 ### 2. Understand the work
 
-- Confirm dependencies are complete or already satisfied.
+- Always check dependencies are complete or already satisfied. Never assume they are.
 - Spawn a subagent to index the codebase when the relevant files, patterns, or tests are not obvious.
 - If the goal is ambiguous, report the ambiguity and stop.
 - If a dependency blocks execution, set status `blocked`, refresh `updated`, record why, and stop.
@@ -33,7 +32,19 @@ Execute exactly one goal file from `goal-create`, then prove every acceptance cr
 - Create a concise todo list mapped to the acceptance criteria.
 - Set status `in-progress` and refresh `updated` before implementation.
 - Keep the plan small: implement only what the criteria require.
+- If the goal contain Failure comments, all all of them to plan and todo list, carefully, ultrawork.
 - Update ## Implement plan into goal file.
+
+```markdown
+## Implementation plan
+
+(Fill when plan to execute this goal)
+Step by step to complete this goal
+
+1. Do step 1
+2. Do step 2
+...
+```
 
 ### 4. Implement
 
@@ -52,6 +63,16 @@ Execute exactly one goal file from `goal-create`, then prove every acceptance cr
 - Spawn a separate subagent to re-read the final files and verify each criterion independently.
 - Only check off a criterion when both self-verification and independent verification prove the exact checkbox text.
 - Update ## Verification evidence into goal file.
+
+```markdown
+## Verification evidence
+
+(Fill when verify all the acceptance criteria)
+Provide the real evidences for each acceptance criteria (runtime log, editor unit test, logic code, ...)
+
+- [ ] [code/tests/scene/screenshot] Evidence 1
+- [ ] [code/tests/scene/screenshot] Evidence 2
+``` 
 
 ### 7. Sync and report
 
