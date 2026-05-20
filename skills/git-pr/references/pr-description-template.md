@@ -13,6 +13,20 @@ Please ensure the following items are completed before requesting a review:
 ## 🔍 Specific details of the changes made 
 <!-- Describe the changes made in this PR. Be specific and highlight any core functionality which team needs to know about -->
 
+### Before
+
+(Short, bullet type)
+Describe what happens before this pr change. 
+For bugs, this is the broken behavior.
+For enhancements, this is the status quo the feature builds on.
+
+### After
+
+(Short, bullet type)
+Describe what happens after this pr change. 
+For bugs, this is the fixed behavior.
+For enhancements, this is the status quo the feature builds on.
+
 ## 🔍 Linked Feature TDD (if applicable).
 <!-- Provide link to the TDD created for this work. Most relevant for feature main branches to be merged in main -->
 

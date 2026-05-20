@@ -1,4 +1,0 @@
-pytest
-pytest-mock
-google-genai
-pillow

@@ -48,6 +48,8 @@ Before submitting review, convert findings into two groups: `inline_comments` on
 
 ## 7. Build Payload and Submit Event
 
+*** MUST FOLLOW OUTPUT FORMAT ***
+
 Create `review.json` locally.
 - **Payload Preflight:** Validate JSON. Verify every comment path exists in PR files and every line is commentable. Include `commit_id: head_sha`. Never submit placeholder body like ".".
 - **Decision:**
@@ -65,12 +67,12 @@ Create `review.json` locally.
       "path": "Assets/Scripts/Player.cs", 
       "line": 42, 
       "side": "RIGHT", 
-      "body": "> [!CAUTION]\n> **🔴 Issue Title**\n> <1 line to summary the issue>\n> <1-3 lines to explain the issue (What, Why, How, ...)>\n\n```suggestion\n{fix}\n```" 
+      "body": "> [!CAUTION]\n> **🔴 Issue Title**\n> <1 line to summary the issue>\n> <1-3 lines to explain the issue, bullet style (What, Why, How, ...), bu>\n\n```suggestion\n{fix}\n```" 
     }
   ]
 }
 ```
-- Severity Badges: `> [!CAUTION]` (CRITICAL/HIGH), `> [!IMPORTANT]` (MEDIUM), `> [!NOTE]` (LOW/STYLE).
+- Severity Badges: `> [!CAUTION]` (CRITICAL), `> [!WARNING]` (HIGH),`> [!IMPORTANT]` (MEDIUM), `> [!NOTE]` (LOW/STYLE).
 
 ## 8. Fallback Tree and Verify
 
