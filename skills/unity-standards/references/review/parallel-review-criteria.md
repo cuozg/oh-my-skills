@@ -4,18 +4,20 @@ Spawn **one subagent per file type** run in background.
 Each subagent receives: file paths, file contents, diff hunks for its assigned file type ONLY. Do not pass diffs of other file types.
 
 **Rule: Fast and Focused Reading**
+
 - Review diff hunks first.
 - Only fetch surrounding methods/assets when needed.
 - Do not read full file by default. (Why: faster, less noise).
+- Do not review other than .cs file, except the user ask.
 
 ## Criteria Table
 
-| File Type | Reference File | Focus |
-| --------- | -------------- | ----- |
-| `.cs` | `review/checklist_cs.md` | Logic, Lifecycle, Performance, Serialization, Concurrency, etc. |
-| `.prefab`, `.unity` | `review/checklist_prefab.md` | Hierarchy, overrides, missing scripts, scene references |
-| `.mat` | `review/checklist_material.md` | GPU instancing, shared materials, properties |
-| `.shader` | `review/checklist_shader.md` | Render queue, fallbacks, passes, properties |
+| File Type               | Reference File                   | Focus                                                           |
+| ----------------------- | -------------------------------- | --------------------------------------------------------------- |
+| `.cs`                 | `review/checklist_cs.md`       | Logic, Lifecycle, Performance, Serialization, Concurrency, etc. |
+| `.prefab`, `.unity` | `review/checklist_prefab.md`   | Hierarchy, overrides, missing scripts, scene references         |
+| `.mat`                | `review/checklist_material.md` | GPU instancing, shared materials, properties                    |
+| `.shader`             | `review/checklist_shader.md`   | Render queue, fallbacks, passes, properties                     |
 
 ## Subagent Prompt Template
 
@@ -50,6 +52,7 @@ MUST NOT DO:
 ## Large Asset Strategy (Prefabs / Scenes)
 
 If GitHub patch is missing or file is too large:
+
 - Do not force inline comment (`inline_safe: false`).
 - Report as body findings with the following structure:
   - prefab path
@@ -60,6 +63,7 @@ If GitHub patch is missing or file is too large:
   - expected fix
 
 Example:
+
 ```text
 `Assets/_lowrez/.../low_UniversalSystemPopup.prefab`
 GameObject: UniversalSystemPopup
