@@ -51,6 +51,7 @@ Step by step to complete this goal
 - Make focused changes that satisfy the goal.
 - Add or update the most direct tests/checks when the repo supports them.
 - Avoid unrelated cleanup, speculative abstractions, or broad refactors.
+- While doing implement, keep update the Implementation plan with decisions you had to make weren't in spec, things you had to changes, tradeoffs you had to make or anything else the user should know.
 
 ### 5. Self-verify
 
