@@ -1,13 +1,10 @@
 ---
 name: goal-todo
 description: >
-  Convert a spec document into an implementation TODO list and test case list in
-  the same spec folder. Use when the user says goal-todo, todo from spec,
-  generate tasks from spec, turn this spec into todos, create implementation
-  checklist, extract tasks, write test cases from requirements, or asks to read a
-  Docs/Specs design doc and produce what must be implemented. Includes UI/UX
-  review and codebase investigation before writing the checklist. Do not use for
-  implementing the tasks, creating new goal files, or verifying completed work.
+  Convert a spec document into an implementation TODO list in the same spec folder. U
+  se when the user says goal-todo, todo from spec, generate tasks from spec, turn this spec into todos, create implementation checklist, extract tasks, or asks to read a Docs/Specs design doc and produce what must be implemented. 
+  Includes UI/UX review and codebase investigation before writing the checklist. 
+  Do not use for implementing the tasks, creating new goal files, writing test cases, or verifying completed work.
 metadata:
   author: kuozg
   version: "1.0"
@@ -15,7 +12,7 @@ metadata:
 
 # Goal Todo
 
-Read one spec document, investigate the current product/codebase, then write an implementation checklist and test case checklist in the same spec folder.
+Read one spec document, investigate the current product/codebase, then write an implementation checklist in the same spec folder.
 
 ## Output contract
 
@@ -49,7 +46,6 @@ For any visible UI or interaction requirement:
 
 - identify screens, components, navigation, feedback states, accessibility, localization, and responsiveness that must be implemented
 - include UI tasks only when they are traceable to the spec or necessary for a complete user flow
-- include test cases for layout, interaction, keyboard/focus, contrast, and edge states when relevant
 
 Do not redesign the product beyond the spec. The UI/UX pass exists to prevent missing required states, not to invent scope.
 
@@ -70,6 +66,8 @@ Use the format in `references/todo-template.md`.
 
 Rules for `## Todo`:
 
+- Group checklist items under `###` headings by task type or related feature area.
+- Choose the grouping that makes implementation easiest: task type for small specs, feature area for multi-flow specs.
 - Every item starts with one category tag: `[Logic]`, `[UI]`, or `[Data]`.
 - Write each item as a short actionable command: **verb + important target + outcome**.
 - Keep each item compact. Prefer one line under ~14 words when possible.
@@ -79,18 +77,8 @@ Rules for `## Todo`:
 - Split mixed work into separate items. UI rendering, business logic, and persistence should not be hidden in one item.
 - Include dependency/setup tasks only if the spec requires them.
 - If a spec requirement is already implemented in the current codebase, still list it and mark it done (`[x]`).
-- Exclude verification-only work from Todo; put it under Test cases.
-
-Rules for `## Test cases`:
-
-- Cover every meaningful TODO item with at least one test or manual verification case.
-- Write each case as a short actionable check: **Verify/Test + important condition + expected result**.
-- Keep each case compact. Prefer one line under ~16 words when possible.
-- Highlight important terms with bold markdown: the input, state, edge case, or expected result.
-- Focus on observable proof. Avoid implementation notes unless a known test type is required.
-- Prefer deterministic checks: unit tests, integration tests, scene/prefab checks, UI automation, or reproducible manual steps.
-- Include negative and edge cases from the spec.
-- Write test cases in user-observable language when no test framework is known.
+- Exclude verification-only work from Todo.
+- Do not generate a `## Test cases` section.
 
 ### 6. Self-check before reporting
 
@@ -98,10 +86,11 @@ Verify that:
 
 - the output file is in the same folder as the spec
 - every task maps to a requirement or necessary codebase integration
-- every requirement has either a TODO, a test case, or a clarification item
+- every requirement has either a TODO or a clarification item
+- TODO items are grouped by task type or related feature area
 - no implementation code was changed
 
-Report the output path and summarize only the main task/test counts.
+Report the output path and summarize only the main task counts.
 
 ## Rules
 
