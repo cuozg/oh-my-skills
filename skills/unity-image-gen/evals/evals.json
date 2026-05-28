@@ -1,0 +1,20 @@
+{
+  "skill_name": "unity-image-gen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "In my Unity project, generate a transparent inventory icon for a rare fire crystal and save it under Assets/Art/Icons.",
+      "expected_output": "Use unity-image-gen, collect or assume the Unity asset contract, generate a transparent icon through Unity MCP, save under Assets/Art/Icons without overwriting, and verify import plus alpha/console state."
+    },
+    {
+      "id": 2,
+      "prompt": "Create a 9:16 mobile loading screen background for this Unity game using Unity MCP.",
+      "expected_output": "Use unity-image-gen, route to Unity MCP image generation, choose or confirm an Assets path, prompt for a portrait background with safe UI space, refresh/import the asset, and report validation evidence."
+    },
+    {
+      "id": 3,
+      "prompt": "Capture a screenshot of the current Unity Game View including overlay UI and put it in Assets/Screenshots.",
+      "expected_output": "Use unity-image-gen, route to manage_camera screenshot without specifying a camera so overlay UI is included, save under Assets/Screenshots, then verify the capture is nonblank and console is clean."
+    }
+  ]
+}
