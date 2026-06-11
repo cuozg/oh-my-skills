@@ -1,512 +1,230 @@
-# Lifecycle, Async & Error Handling
+# Lifecycle, Async, Validation, And Errors
 
-> Consolidated from: lifecycle.md, lifecycle-advanced.md, async.md, async-advanced.md, error-handling.md, error-handling-advanced.md
+Use this file when code depends on Unity callback order, event subscriptions, coroutines, async flows, cancellation, logging, validation, or runtime failure behavior.
 
----
+## Lifecycle Contracts
 
-## Unity Lifecycle
+Use each callback for a narrow purpose:
 
-### Execution Order
+| Callback | Standard Use |
+| --- | --- |
+| `Reset` | Editor-time default references and values when the component is added. |
+| `OnValidate` | Clamp serialized values and report authoring errors in the Editor. |
+| `Awake` | Self-initialization: cache same-object components, validate required fields, build local data. |
+| `OnEnable` | Subscribe to events, start short-lived enabled-state behavior. |
+| `Start` | Cross-object binding when all `Awake` calls should have run. |
+| `FixedUpdate` | Physics writes and reads that depend on the fixed timestep. |
+| `Update` | Per-frame input, timers, and non-physics simulation. |
+| `LateUpdate` | Camera follow and work that must run after normal updates. |
+| `OnDisable` | Unsubscribe, stop enabled-state routines, release temporary state. |
+| `OnDestroy` | Dispose owned resources and long-lived registrations. |
 
-```
-Awake()           — first call, once per instance
-OnEnable()        — each time object becomes active
-Start()           — before first Update, after all Awake
-  ┌─ FixedUpdate()   — physics tick (default 50Hz)
-  │  Update()        — every frame
-  │  LateUpdate()    — after all Updates (camera follow here)
-  └─ repeat
-OnDisable()       — each time object becomes inactive
-OnDestroy()       — when destroyed or scene unloads
-```
+Do not rely on incidental callback order between different GameObjects. If order matters, make it explicit with serialized references, initialization methods, a bootstrapper, or `[DefaultExecutionOrder]`.
 
-### Awake vs Start
+## Initialization
 
-```csharp
-public sealed class Enemy : MonoBehaviour
-{
-    Rigidbody _rb;
-    HealthBar _healthBar;
-
-    void Awake() => _rb = GetComponent<Rigidbody>(); // self-init only
-
-    void Start()
-    {
-        _healthBar = FindAnyObjectByType<HealthBar>(); // cross-object refs
-        _healthBar.Bind(this);
-    }
-}
-```
-
-| Use | Awake | Start |
-|-----|-------|-------|
-| GetComponent | ✅ | ✅ |
-| Cross-object refs | ❌ | ✅ |
-| Called if disabled | ✅ | ❌ |
-| Order guarantee | None | After all Awake |
-
-### FixedUpdate for Physics
+Self-contained component setup belongs in `Awake`:
 
 ```csharp
-// ✅ Physics in FixedUpdate — deterministic
-void FixedUpdate()
+private void Awake()
 {
-    _rb.AddForce(Vector3.up * _thrust);
-    _rb.MovePosition(_rb.position + _velocity * Time.fixedDeltaTime);
-}
-
-// ❌ Physics in Update — frame-rate dependent
-void Update() { _rb.AddForce(Vector3.up * _thrust); }
-```
-
-### Subscribe Pattern — OnEnable/OnDisable
-
-```csharp
-void OnEnable()
-{
-    _health.OnDeath += HandleDeath;
-    InputActions.Player.Jump.performed += OnJump;
-}
-
-void OnDisable()
-{
-    _health.OnDeath -= HandleDeath;
-    InputActions.Player.Jump.performed -= OnJump;
-}
-```
-
-### Coroutine Lifecycle
-
-```csharp
-Coroutine _moveRoutine;
-void StartMoving()
-{
-    if (_moveRoutine != null) StopCoroutine(_moveRoutine);
-    _moveRoutine = StartCoroutine(MoveRoutine());
-}
-IEnumerator MoveRoutine()
-{
-    while (Vector3.Distance(transform.position, _target) > 0.1f)
-    {
-        transform.position = Vector3.MoveTowards(transform.position, _target, _speed * Time.deltaTime);
-        yield return null;
-    }
-}
-// Stops when: object disabled, destroyed, or StopCoroutine
-```
-
-### Deprecated Find Methods
-
-```csharp
-// ❌ Deprecated — slow, sorts by InstanceID
-FindObjectOfType<T>();
-FindObjectsOfType<T>();
-
-// ✅ Replacement — faster, explicit sort control
-FindAnyObjectByType<T>();                           // no guaranteed order, fastest
-FindFirstObjectByType<T>();                         // deterministic order, slower
-FindObjectsByType<T>(FindObjectsSortMode.None);     // batch find, skip sort for speed
-```
-
-### DefaultExecutionOrder
-
-```csharp
-// Negative = runs earlier, positive = runs later
-[DefaultExecutionOrder(-100)] public sealed class GameManager : MonoBehaviour { }
-[DefaultExecutionOrder(-50)]  public sealed class InputManager : MonoBehaviour { }
-[DefaultExecutionOrder(100)]  public sealed class UIManager : MonoBehaviour { }
-```
-
-### Application Lifecycle Callbacks
-
-```csharp
-void OnApplicationFocus(bool hasFocus)
-{
-    if (!hasFocus) PauseAudio();
-    else ResumeAudio();
-}
-
-void OnApplicationPause(bool pauseStatus)
-{
-    if (pauseStatus) SaveProgress();
-}
-
-void OnApplicationQuit()
-{
-    SaveFinalState();
-    CleanupNetworkConnections();
-}
-```
-
-| Callback | Mobile | Desktop | Editor |
-|----------|--------|---------|--------|
-| `OnApplicationFocus` | App switch | Alt-tab | Lose focus |
-| `OnApplicationPause` | Home/call | Minimize | Play→Pause |
-| `OnApplicationQuit` | Kill app | Close window | Stop play |
-
-### Visibility Callbacks
-
-```csharp
-void OnBecameVisible() => _isOnScreen = true;
-void OnBecameInvisible() => _isOnScreen = false;
-
-// Use for: LOD toggling, disabling expensive updates on off-screen objects
-void Update()
-{
-    if (!_isOnScreen) return;
-    ExpensiveAICalculation();
-}
-```
-
-### Reset() — Inspector Defaults
-
-```csharp
-// Called in Editor when component is first added or Reset is clicked
-void Reset()
-{
-    _speed = 5f;
+    _cachedTransform = transform;
     _rb = GetComponent<Rigidbody>();
-    _audioSrc = GetComponent<AudioSource>();
 }
 ```
 
----
-
-## Async Patterns
-
-### Pick One Async Stack Per Project
-
-- Use the async primitive already established in the repo.
-- If the project uses Unity's built-in `Awaitable`, stay consistent with it.
-- If the project already uses UniTask or targets older Unity versions, keep UniTask.
-- Use plain `Task` mainly at library or external API boundaries.
-- Avoid mixing `Task`, `UniTask`, and `Awaitable` in the same gameplay flow without a clear boundary.
-
-### UniTask Example
+Cross-object setup belongs in `Start` or an explicit composition root:
 
 ```csharp
-using Cysharp.Threading.Tasks;
-
-async UniTask LoadLevel(string sceneName, CancellationToken ct)
+private void Start()
 {
-    await SceneManager.LoadSceneAsync(sceneName);
-    await UniTask.Delay(500, cancellationToken: ct);
-    _ui.ShowHUD();
+    _hud.Bind(_health);
 }
-
-await UniTask.Yield();
-await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
-await UniTask.WaitForEndOfFrame(this);
 ```
 
-### Awaitable Example
+Avoid `FindAnyObjectByType`, `FindFirstObjectByType`, and scene-wide searches in hot paths. When a find is acceptable during bootstrap, document why a serialized reference or DI binding is not available.
+
+## Subscriptions
+
+Subscribe and unsubscribe at matching lifetimes.
 
 ```csharp
-async Awaitable LoadLevelAsync(string sceneName)
+private void OnEnable()
 {
-    await SceneManager.LoadSceneAsync(sceneName);
-    await Awaitable.WaitForSecondsAsync(0.5f);
-    _ui.ShowHUD();
+    _health.Died += HandleDied;
+    _input.FirePerformed += HandleFirePerformed;
 }
 
-await Awaitable.NextFrameAsync();
-await Awaitable.EndOfFrameAsync();
-await Awaitable.FixedUpdateAsync();
+private void OnDisable()
+{
+    _health.Died -= HandleDied;
+    _input.FirePerformed -= HandleFirePerformed;
+}
 ```
 
-### Cancellation — Always Pass It Through
+Standards:
+
+- Use `OnEnable`/`OnDisable` for subscriptions that should exist only while active.
+- Use `Awake`/`OnDestroy` only for subscriptions that must remain while disabled.
+- Unsubscribe from static events, event buses, ScriptableObject channels, and input actions.
+- Make repeated `OnEnable` calls idempotent; avoid double-subscribe bugs.
+
+## Coroutines
+
+Use coroutines for simple frame-based sequences owned by a MonoBehaviour. Store handles when a routine must be stopped or replaced.
 
 ```csharp
-public sealed class EnemyAI : MonoBehaviour
+private Coroutine _fadeRoutine;
+
+public void PlayFade()
 {
-    private async Awaitable Start()
+    if (_fadeRoutine != null)
     {
-        await PatrolLoopAsync(destroyCancellationToken);
+        StopCoroutine(_fadeRoutine);
     }
 
-    private async Awaitable PatrolLoopAsync(CancellationToken ct)
+    _fadeRoutine = StartCoroutine(FadeRoutine());
+}
+```
+
+Rules:
+
+- Do not start unbounded coroutines without a clear stop condition.
+- Stop or replace routines when state changes.
+- Cache common yield instructions only when the duration is constant and reuse is measurable or repeated.
+- Prefer async/await for IO-like flows and coroutines for simple visual/time sequencing when the repo has no async standard.
+
+## Async Stack Choice
+
+Use the async primitive already established by the project.
+
+| Stack | Use When |
+| --- | --- |
+| Unity `Awaitable` | The local Unity version supports it and the project uses Unity-native async without UniTask. |
+| UniTask | The project already depends on it, needs older Unity support, or has UniTask-based infrastructure. |
+| `Task` | External .NET/library boundaries, server calls, or code not tied to Unity player loop. |
+
+Do not mix `Awaitable`, UniTask, and `Task` in one gameplay flow unless the boundary is explicit. Check the local Unity version and package manifest before making API claims.
+
+## Cancellation
+
+Every long-lived async path must accept and forward a `CancellationToken`.
+
+```csharp
+private async Awaitable PatrolAsync(CancellationToken cancellationToken)
+{
+    while (!cancellationToken.IsCancellationRequested)
     {
-        while (!ct.IsCancellationRequested)
-        {
-            await MoveToNextWaypointAsync(ct);
-            await Awaitable.WaitForSecondsAsync(1f, ct);
-        }
+        await MoveToNextPointAsync(cancellationToken);
+        await Awaitable.WaitForSecondsAsync(1f, cancellationToken);
     }
 }
 ```
 
-If the project uses UniTask, apply the same rule: every long-lived async path should accept and forward a `CancellationToken`.
+For MonoBehaviours, use the repo's established lifetime token pattern. If `destroyCancellationToken` exists in the local Unity version, prefer it for object-owned async work. For UniTask projects, use the project's cancellation helpers consistently.
 
-### Async Void — Event Handlers Only
+Treat `OperationCanceledException` as a normal exit path unless cancellation indicates a product error.
 
-```csharp
-// Acceptable for Unity event handlers only
-async void OnButtonClick()
-{
-    await SaveGameAsync(destroyCancellationToken);
-}
+## Async Error Handling
 
-// Avoid for normal methods
-async Awaitable LoadDataAsync() { }
-```
-
-### Parallel Execution
+`async void` is only acceptable for Unity/UI event handlers. Catch and log inside it because callers cannot observe failures.
 
 ```csharp
-async UniTask InitGame(CancellationToken ct)
-{
-    await UniTask.WhenAll(
-        LoadPlayerData(ct),
-        LoadInventory(ct),
-        PreloadVfx(ct));
-}
-```
-
-If the project uses `Awaitable`, keep parallel composition explicit and remember that a single `Awaitable` instance must not be awaited multiple times.
-
-### Error Handling In Async
-
-```csharp
-async UniTask<bool> TrySaveAsync(CancellationToken ct)
+private async void HandleClicked()
 {
     try
     {
-        await WriteFile(_savePath, _data, ct);
-        return true;
+        await SaveAsync(destroyCancellationToken);
     }
     catch (OperationCanceledException)
     {
-        return false; // normal cancellation path
+        // Normal during destruction or navigation.
     }
-    catch (System.Exception ex)
+    catch (Exception ex)
     {
-        Debug.LogException(ex);
-        return false;
+        Debug.LogException(ex, this);
     }
 }
-
-// AsyncOperation -> UniTask: await SceneManager.LoadSceneAsync("Level1");
-// Coroutine -> UniTask: await SomeLegacyCoroutine().ToUniTask(cancellationToken: ct);
-// UnityWebRequest -> UniTask: await UnityWebRequest.Get(url).SendWebRequest().WithCancellation(ct);
 ```
 
-### Awaitable — Built-In Unity Async
+For normal async methods, return `Awaitable`, `UniTask`, `Task`, or a result type. Avoid fire-and-forget unless there is a documented owner, cancellation path, and exception sink.
 
-Use `Awaitable` in Unity versions that ship it, including Unity 6. It is a strong default for Unity-native async operations when the project does not already standardize on UniTask.
+## Validation
+
+Validate at the boundary closest to the bad data:
+
+- Inspector fields: `OnValidate`, custom editor validation, or build-time validation.
+- Runtime config/save/API data: schema or explicit parser validation before applying state.
+- Public methods: guard invalid arguments when the caller can reasonably pass bad input.
+- Internal invariants: `Debug.Assert` or fail-fast exceptions in non-player-facing paths.
 
 ```csharp
-await Awaitable.BackgroundThreadAsync();
-var result = HeavyComputation();
-await Awaitable.MainThreadAsync();
-ApplyResult(result);
+private void OnValidate()
+{
+    _maxHealth = Mathf.Max(1f, _maxHealth);
+    _spawnRadius = Mathf.Max(0f, _spawnRadius);
+}
 ```
 
-### Awaitable Vs UniTask Vs Task
-
-| Concern | Awaitable | UniTask | Task |
-|---------|-----------|---------|------|
-| Unity-native async | Strong fit | Strong fit | Fine but heavier |
-| Extra dependency | None | Package dependency | None |
-| Multiple await on same result | No — do not reuse same instance | Usually fine | Fine |
-| Third-party .NET interop | Bridge as needed | Bridge as needed | Best fit |
-| Older Unity support | Verify local version | Good when repo already uses it | Works broadly |
-
-Important: official Unity docs note that `Awaitable` instances are pooled, so a single instance is not safe to await multiple times.
-
-### Guidance
-
-- Prefer `Awaitable` for Unity-native async in projects that already use it.
-- Prefer UniTask when the repo already uses it or needs older-version support.
-- Prefer `Task` for external library interop or APIs that already expose `Task`.
-- Do not convert a codebase to a new async stack opportunistically inside an unrelated feature.
-
-### Version Notes
-
-- `destroyCancellationToken` exists on recent Unity versions; verify exact availability before making a hard version claim.
-- Do not describe `Awaitable` as "Unity 6 only". Confirm against the official docs for the local editor version.
-
----
+Prefer clamping for authoring convenience when the correction is obvious. Prefer errors when automatic correction would hide a broken setup.
 
 ## Error Handling
 
-### Narrow Try/Catch
+Use narrow try/catch blocks around the operation that can fail.
 
 ```csharp
-// ✅ Catch specific exceptions, minimal scope
-public SaveData LoadSave(string path)
+public SaveData Load(string path)
 {
     try
     {
-        var json = File.ReadAllText(path);
+        string json = File.ReadAllText(path);
         return JsonUtility.FromJson<SaveData>(json);
     }
     catch (FileNotFoundException)
     {
-        Debug.LogWarning($"Save file not found: {path}");
-        return new SaveData();
+        return SaveData.NewGame();
     }
-    catch (System.Exception ex) { Debug.LogException(ex); return new SaveData(); }
-}
-
-// ❌ Never swallow exceptions silently
-try { DoSomething(); }
-catch { } // NO — hides bugs
-```
-
-### Debug Logging Levels
-
-```csharp
-Debug.Log("Game started");                                  // info — normal flow
-Debug.LogWarning("Config missing, using defaults");         // recoverable issue
-Debug.LogError($"Failed to spawn enemy at {position}");     // broke, can continue
-try { riskyOp(); }
-catch (System.Exception ex) { Debug.LogException(ex, this); } // preserves stack trace
-```
-
-### Debug.Assert for Invariants
-
-```csharp
-void Awake()
-{
-    _rb = GetComponent<Rigidbody>();
-    Debug.Assert(_rb != null, "Missing Rigidbody", this);
-    Debug.Assert(_maxHealth > 0, $"Invalid MaxHealth: {_maxHealth}", this);
-}
-
-void SetWave(int index)
-{
-    Debug.Assert(index >= 0 && index < _waves.Length, $"Wave index OOB: {index}");
+    catch (Exception ex)
+    {
+        Debug.LogException(ex);
+        return SaveData.NewGame();
+    }
 }
 ```
 
-### Conditional Compilation
+Standards:
+
+- Never silently swallow exceptions.
+- Catch specific exceptions when recovery differs by failure.
+- Do not catch just to rethrow without context.
+- Include Unity object context in logs when available: `Debug.LogError(message, this)`.
+- Do not expose secrets, auth tokens, device identifiers, or raw server payloads in user-facing errors.
+- Do not let recoverable errors corrupt state; keep old valid state until new data is validated.
+
+## Logging
+
+Use logging as diagnostic evidence, not noise.
+
+| API | Use |
+| --- | --- |
+| `Debug.Log` | Important lifecycle or one-time diagnostic info. |
+| `Debug.LogWarning` | Recoverable misconfiguration or fallback path. |
+| `Debug.LogError` | Broken setup or failed operation that prevents expected behavior. |
+| `Debug.LogException` | Unexpected exception with stack trace. |
+| `Debug.Assert` | Developer invariant that should never fail. |
+
+Gate noisy diagnostics behind compile symbols or local debug flags. Do not leave per-frame logs in production code.
+
+## Conditional Compilation
+
+Use platform symbols at the boundary, not scattered through business logic.
 
 ```csharp
-#if UNITY_EDITOR
-void OnValidate()
-{
-    if (_speed < 0) Debug.LogWarning("Speed is negative", this);
-    if (_prefab == null) Debug.LogError("Prefab not assigned", this);
-}
-#endif
-
-// Conditional attribute — call stripped from non-editor builds
-[System.Diagnostics.Conditional("UNITY_EDITOR")]
-void DebugDrawPath(Vector3[] points)
-{
-    for (int i = 0; i < points.Length - 1; i++)
-        Debug.DrawLine(points[i], points[i + 1], Color.red, 2f);
-}
-```
-
-### Fail-Fast Patterns
-
-```csharp
-// Throw on invalid args in constructors/factories
-public static Projectile Create(ProjectileConfig config)
-{
-    if (config == null) throw new System.ArgumentNullException(nameof(config));
-    if (config.Speed <= 0) throw new System.ArgumentOutOfRangeException(nameof(config.Speed));
-    var proj = Instantiate(config.Prefab);
-    proj.Init(config);
-    return proj;
-}
-
-// Guard clause — return early for recoverable cases
-public void Heal(float amount)
-{
-    if (amount <= 0f) return;
-    if (!_isAlive) return;
-    _health = Mathf.Min(_health + amount, _maxHealth);
-}
-```
-
-### OnValidate — Editor-Time Validation
-
-```csharp
-#if UNITY_EDITOR
-void OnValidate()
-{
-    if (_speed < 0) Debug.LogWarning("Speed cannot be negative", this);
-    if (_prefab == null) Debug.LogError("Prefab must be assigned", this);
-    if (_waypoints != null && _waypoints.Length == 0)
-        Debug.LogWarning("Waypoints array is empty", this);
-
-    // Auto-fix: clamp values
-    _speed = Mathf.Max(0f, _speed);
-    _maxHealth = Mathf.Max(1f, _maxHealth);
-}
+#if UNITY_WEBGL && !UNITY_EDITOR
+    storage = new WebGlSaveStorage();
+#else
+    storage = new FileSaveStorage();
 #endif
 ```
 
-**Rules:**
-- Wrap in `#if UNITY_EDITOR` — `OnValidate` is editor-only but compiles in builds
-- Use `Debug.LogWarning` for soft issues, `Debug.LogError` for required fields
-- Auto-clamp numeric values where safe
-- Never call `GetComponent` in `OnValidate` on prefabs (may not be instantiated)
-
-### Custom Exception Types
-
-```csharp
-public class GameStateException : System.Exception
-{
-    public GameStateException(string message) : base(message) { }
-    public GameStateException(string message, System.Exception inner) : base(message, inner) { }
-}
-
-// Usage — typed exceptions for specific error domains
-public void TransitionTo(GameState next)
-{
-    if (!_validTransitions.Contains((_current, next)))
-        throw new GameStateException($"Invalid transition: {_current} → {next}");
-    _current = next;
-}
-```
-
-### Security — Input & Data Validation
-
-```csharp
-// ✅ Validate all external input (network, file, user text)
-public void SetPlayerName(string name)
-{
-    if (string.IsNullOrWhiteSpace(name)) return;
-    if (name.Length > 32) name = name[..32]; // truncate
-    _name = SanitizeString(name);
-}
-
-static string SanitizeString(string input)
-    => System.Text.RegularExpressions.Regex.Replace(input, @"[<>&""']", "");
-
-// ✅ Validate deserialized save data — never trust file contents
-public static SaveData LoadSave(string json)
-{
-    var data = JsonUtility.FromJson<SaveData>(json);
-    data.Health = Mathf.Clamp(data.Health, 0f, data.MaxHealth);
-    data.Level = Mathf.Clamp(data.Level, 1, 999);
-    data.Gold = Mathf.Max(0, data.Gold);
-    return data;
-}
-
-// ⚠️ PlayerPrefs — stored as plain text, trivially editable
-// NEVER store: auth tokens, purchase state, progression unlocks in PlayerPrefs
-// Use encrypted file or server-side validation for sensitive data
-
-// ✅ Rate-limit player actions to prevent exploit spam
-float _lastActionTime;
-const float ActionCooldown = 0.1f;
-
-public bool TryExecuteAction()
-{
-    if (Time.time - _lastActionTime < ActionCooldown) return false;
-    _lastActionTime = Time.time;
-    return true;
-}
-```
-
-**Security Rules:**
-- Validate all data from files, network, and user input
-- Clamp numeric values to sane ranges after deserialization
-- Never trust client-side state for authoritative game logic (multiplayer)
-- Sanitize strings displayed in UI to prevent injection
-- Use `Application.persistentDataPath` for saves — never hardcode paths
-- Log security-relevant failures with `Debug.LogWarning`, not silently
+Keep platform-specific implementations behind an interface when the branch affects more than a few lines.

@@ -91,4 +91,4 @@ context small; load only the reference files that match the task.
 - Unity MCP routing: `other/unity-mcp-routing-matrix.md`
 - FlatBuffers: `other/flatbuffers-guide.md`
 - Skill authoring: `other/skill-authoring.md`
-- Code-standard consolidation map: `code-standards/README.md`
+- Code-standard reference map: `code-standards/README.md`
