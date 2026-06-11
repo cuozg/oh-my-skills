@@ -1,51 +1,32 @@
-# Code Standards — Consolidation Map
+# Code Standards Reference Map
 
-33 reference files consolidated into 5 comprehensive files for faster AI agent loading.
+These files are compact Unity coding standards for agents writing, reviewing, or refactoring production C#.
+Load only the file that matches the work surface, then apply the target repository's existing style first.
 
-## New Files
+## How To Use These Standards
 
-| File | Sections | Lines |
-|------|----------|-------|
-| `core-conventions.md` | Naming, formatting, comments, access modifiers, null safety, unity attributes, code patterns | ~750 |
-| `lifecycle-async-errors.md` | Lifecycle, async patterns, error handling, security/validation | ~700 |
-| `performance-data.md` | Collections, LINQ, object pooling, serialization | ~720 |
-| `architecture-systems.md` | Project structure, dependencies, events, architecture patterns, refactoring, workflows, editor patterns, gizmos, WebGL | ~1050 |
-| `ecs-burst-standards.md` | ECS, Jobs, Burst, NativeContainers, Bakers, structural changes, migration strategy | ~450 |
+1. Inspect the current project before applying a rule. Existing architecture, Unity version, packages, and team conventions override generic guidance.
+2. Prefer the smallest change that satisfies the request and keeps behavior verifiable.
+3. Treat examples as patterns, not code to paste blindly. Rename, trim, and adapt to the surrounding code.
+4. Verify with the narrowest meaningful check: compile, focused unit/Edit Mode test, Play Mode smoke, prefab/scene inspection, or profiler evidence.
+5. For package-sensitive APIs, check `Packages/manifest.json` and load `references/other/official-source-map.md`.
 
-## Old → New Mapping
+## Files
 
-| Old File | New Location |
-|----------|-------------|
-| `naming.md` | `core-conventions.md` § Naming Conventions |
-| `formatting.md` | `core-conventions.md` § Formatting |
-| `comments.md` | `core-conventions.md` § Comments |
-| `access-modifiers.md` | `core-conventions.md` § Access Modifiers |
-| `null-safety.md` | `core-conventions.md` § Null Safety |
-| `null-safety-advanced.md` | `core-conventions.md` § Null Safety (Debug.Assert, #nullable) |
-| `unity-attributes.md` | `core-conventions.md` § Unity Attributes |
-| `unity-attributes-advanced.md` | `core-conventions.md` § Unity Attributes (Conditional, Preserve, Obsolete) |
-| `code-patterns.md` | `core-conventions.md` § Code Patterns |
-| `lifecycle.md` | `lifecycle-async-errors.md` § Unity Lifecycle |
-| `lifecycle-advanced.md` | `lifecycle-async-errors.md` § Unity Lifecycle (DefaultExecutionOrder, App callbacks) |
-| `async.md` | `lifecycle-async-errors.md` § Async Patterns |
-| `async-advanced.md` | `lifecycle-async-errors.md` § Async Patterns (Awaitable vs UniTask vs Task) |
-| `error-handling.md` | `lifecycle-async-errors.md` § Error Handling |
-| `error-handling-advanced.md` | `lifecycle-async-errors.md` § Error Handling (Fail-fast, Security) |
-| `collections.md` | `performance-data.md` § Collections |
-| `collections-advanced.md` | `performance-data.md` § Advanced Collections |
-| `linq.md` | `performance-data.md` § LINQ Usage |
-| `object-pooling.md` | `performance-data.md` § Object Pooling |
-| `object-pooling-advanced.md` | `performance-data.md` § Object Pooling (Generic, Pre-2021) |
-| `serialization.md` | `performance-data.md` § Serialization |
-| `architecture-patterns.md` | `architecture-systems.md` § Architecture Patterns |
-| `architecture-patterns-advanced.md` | `architecture-systems.md` § Architecture Patterns (Strategy, Mediator) |
-| `project-structure.md` | `architecture-systems.md` § Project Folder Structure |
-| `dependencies.md` | `architecture-systems.md` § Dependency Management |
-| `dependencies-advanced.md` | `architecture-systems.md` § Dependency Management (Zenject) |
-| `events.md` | `architecture-systems.md` § Events |
-| `refactoring-patterns.md` | `architecture-systems.md` § Refactoring Patterns |
-| `multi-file-workflow.md` | `architecture-systems.md` § Workflow Guides (Multi-File) |
-| `single-file-runtime-workflow.md` | `architecture-systems.md` § Workflow Guides (Single-File) |
-| `editor-patterns.md` | `architecture-systems.md` § Editor Patterns |
-| `gizmos-handles.md` | `architecture-systems.md` § Editor Patterns (Gizmos, Handles) |
-| `webgl-restrictions.md` | `architecture-systems.md` § Web Platform Restrictions |
+| File | Load When |
+| --- | --- |
+| `core-conventions.md` | Naming, formatting, fields, serialization attributes, null safety, comments, and basic Unity C# shape. |
+| `lifecycle-async-errors.md` | MonoBehaviour lifecycle, subscriptions, async/coroutines, cancellation, validation, logging, and error handling. |
+| `performance-data.md` | Runtime allocations, collections, LINQ, pooling, serialization, ScriptableObject data, and save data. |
+| `architecture-systems.md` | Folder layout, asmdefs, dependencies, events, feature boundaries, editor code, refactoring, and WebGL constraints. |
+| `ecs-burst-standards.md` | Entities, Jobs, Burst, NativeContainers, Bakers, structural changes, and DOTS migration decisions. |
+
+## Senior-Engineer Baseline
+
+- Match local style before imposing a generic rule.
+- Keep behavior explicit: public API is intentional, serialized state is private, dependencies are visible.
+- Avoid speculative abstraction. Add an interface, service, event channel, or base class only when it removes concrete coupling or enables tests.
+- Fail early in authoring/configuration paths; degrade gracefully only for expected runtime conditions.
+- Keep hot paths allocation-free unless profiler data says the cost is irrelevant.
+- Use Unity APIs on the main thread unless the API explicitly supports jobs or worker threads.
+- Prefer tests and direct Unity validation over confidence from inspection alone.
