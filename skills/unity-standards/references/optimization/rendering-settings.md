@@ -9,7 +9,7 @@ Reduces CPU draw call overhead by batching shader state changes (not objects).
 - Shader must declare `CBUFFER` for all material properties
 - `UnityPerMaterial` and `UnityPerDraw` CBUFFERs properly declared
 
-**Verify:** Frame Debugger → look for "SRP Batch" entries. Non-compatible shaders break batches.
+**Verify:** Frame Debugger -> look for "SRP Batch" entries. Non-compatible shaders break batches.
 
 ```
 // In Shader: properties must be in CBUFFER
@@ -24,11 +24,16 @@ CBUFFER_END
 Renders multiple objects with same mesh+material in one draw call.
 
 **Setup:**
-1. Material Inspector → Enable GPU Instancing checkbox
+1. Material Inspector -> Enable GPU Instancing checkbox
 2. Shader must support `UNITY_INSTANCING_BUFFER` (standard shaders do by default)
 3. Objects must share exact same material instance (not `.material` copies)
 
-**Limitations:** Does not work with SkinnedMeshRenderers. Broken by MaterialPropertyBlock in some cases — use `Graphics.DrawMeshInstanced` for manual control.
+**Limitations:** Does not work with SkinnedMeshRenderers. Broken by MaterialPropertyBlock in some cases - use `Graphics.DrawMeshInstanced` for manual control.
+
+**SRP note:** In URP/HDRP, prefer SRP Batcher for compatible shaders unless the
+project has measured that instancing is the better fit for a repeated mesh set.
+Custom shaders generally need to be incompatible with SRP Batcher, or SRP Batcher
+disabled, before GPU instancing becomes the active path.
 
 ## Static Batching
 
@@ -58,19 +63,19 @@ Combines small dynamic meshes at runtime.
 
 ## Shader Variant Stripping
 
-Unstripped projects can have 10,000+ shader variants → slow build, large size, shader compilation stutters.
+Unstripped projects can have 10,000+ shader variants -> slow build, large size, shader compilation stutters.
 
 **Strategy:**
 - `shader_feature` for material toggles (strips unused variants)
 - `multi_compile` only for runtime-toggled keywords (includes ALL variants)
 - Remove unused URP features in URP Asset (SSAO, HDR, Depth Texture if unused)
-- Edit → Project Settings → Graphics → Shader Stripping: strip unused passes
+- Edit -> Project Settings -> Graphics -> Shader Stripping: strip unused passes
 
 **URP-specific:**
 ```
 // URP Asset settings that generate variants:
 - HDR: disable if not needed
-- SSAO: disable if not needed  
+- SSAO: disable if not needed
 - Additional Lights: reduce max count
 - Shadows: disable additional light shadows if unused
 - Depth/Opaque Texture: disable if unused
@@ -80,8 +85,8 @@ Unstripped projects can have 10,000+ shader variants → slow build, large size,
 
 Prevent runtime shader compilation stutters:
 
-1. **ShaderVariantCollection:** Create in Editor → record variants during play → preload at startup
-2. **Preloaded Shaders:** Edit → Project Settings → Graphics → Preloaded Shaders array
+1. **ShaderVariantCollection:** Create in Editor -> record variants during play -> preload at startup
+2. **Preloaded Shaders:** Edit -> Project Settings -> Graphics -> Preloaded Shaders array
 3. **Shader.WarmupAllShaders():** Brute-force warmup at loading screen (expensive but thorough)
 
 ## LOD Groups
@@ -105,7 +110,7 @@ Skips rendering objects behind other objects.
 **Setup:**
 1. Mark large occluders as "Occluder Static" (walls, floors, large buildings)
 2. Mark everything else as "Occludee Static"
-3. Window → Rendering → Occlusion Culling → Bake
+3. Window -> Rendering -> Occlusion Culling -> Bake
 4. Set cell size: smaller = more accurate but more memory
 
 **Best for:** Indoor scenes, dense urban environments, levels with lots of walls.
@@ -114,10 +119,19 @@ Skips rendering objects behind other objects.
 ## Draw Call Reduction Checklist
 
 - [ ] Enable SRP Batcher (URP/HDRP)
-- [ ] Reduce material count — atlas textures, share materials
+- [ ] Reduce material count - atlas textures, share materials
 - [ ] GPU Instancing for repeated objects (trees, grass, props)
 - [ ] Static Batching for immovable geometry
 - [ ] LOD Groups on complex meshes
 - [ ] Occlusion Culling for indoor/dense scenes
 - [ ] Camera far clip plane: reduce to actual needed distance
 - [ ] Layer-based culling distances per camera
+
+## Related UI And Asset References
+
+- For uGUI Canvas batching, masks, atlases, and rebuild cost, load
+  `optimization/canvas-ui-drawcalls-batching.md`.
+- For material and shader asset edits that affect batching, load
+  `asset-management/prefab-material-shader-work.md`.
+- For runtime loading, preloading, and release ownership, load
+  `asset-management/addressables-asset-manager.md`.

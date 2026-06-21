@@ -1,6 +1,6 @@
 # Compile Verification
 
-Patterns for verifying Unity C# compilation — log parsing, error formats, and verification chain.
+Patterns for verifying Unity C# compilation - log parsing, error formats, and verification chain.
 
 ## Verification Chain
 
@@ -13,7 +13,7 @@ Use the fastest tool that covers your scope:
 | Unity MCP `GetConsoleLogs` | Fast | All console output | Quick error scan |
 | Batchmode compile check | 30s-5m | Full project compile | MCP unavailable, CI, cross-assembly |
 
-**Escalation path:** `lsp_diagnostics` → Unity MCP → batchmode compile check
+**Escalation path:** `lsp_diagnostics` -> Unity MCP -> batchmode compile check
 
 ## When lsp_diagnostics Is Not Enough
 
@@ -62,7 +62,7 @@ DisplayProgressNotification: Scripts have compiler errors.
 |------|------------|------------|
 | CS0246 | Type/namespace not found | Missing `using`, asmdef reference, or deleted class |
 | CS0103 | Name does not exist in scope | Typo, wrong scope, missing variable |
-| CS0029 | Cannot implicitly convert type | Type mismatch — add cast or fix assignment |
+| CS0029 | Cannot implicitly convert type | Type mismatch - add cast or fix assignment |
 | CS1061 | Type does not contain a definition | Wrong type, missing method, API change |
 | CS0234 | Namespace does not exist | Missing package or asmdef dependency |
 | CS0117 | Does not contain a definition for member | Static member access on wrong type |
@@ -75,9 +75,9 @@ DisplayProgressNotification: Scripts have compiler errors.
 Beyond CS#### compiler errors, also check for:
 
 ```
-Failed to import script <path>           — Script import failure (encoding, syntax)
-Assembly <X> has reference to <Y> which is not included — asmdef dependency missing
-Shader error in '<name>': <message>      — Shader compilation failure
+Failed to import script <path>           - Script import failure (encoding, syntax)
+Assembly <X> has reference to <Y> which is not included - asmdef dependency missing
+Shader error in '<name>': <message>      - Shader compilation failure
 ```
 
 ## Exit Code Caveat

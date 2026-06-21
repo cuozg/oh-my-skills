@@ -2,11 +2,11 @@
 
 ## What to Test First (Priority Order)
 
-1. **Public API** — every public method gets ≥1 test
-2. **State transitions** — valid and invalid transitions
-3. **Edge cases** — boundary values, empty collections
-4. **Error conditions** — null, invalid, out-of-range
-5. **Integration points** — event subscriptions, callbacks
+1. **Public API** - every public method gets >=1 test
+2. **State transitions** - valid and invalid transitions
+3. **Edge cases** - boundary values, empty collections
+4. **Error conditions** - null, invalid, out-of-range
+5. **Integration points** - event subscriptions, callbacks
 
 ## Boundary Value Analysis
 
@@ -25,8 +25,8 @@
 [TestCase(1)]
 [TestCase(99)]   // max - 1
 [TestCase(100)]  // max
-[TestCase(101)]  // over max — expect clamp
-[TestCase(-1)]   // negative — expect throw
+[TestCase(101)]  // over max - expect clamp
+[TestCase(-1)]   // negative - expect throw
 public void SetHealth_BoundaryValues(int value) { /* ... */ }
 ```
 
@@ -38,16 +38,16 @@ public void SetHealth_BoundaryValues(int value) { /* ... */ }
 | Empty string | Validate or return default |
 | Negative number | Clamp or throw |
 | Destroyed Unity object | Return early, log warning |
-| Duplicate call | Idempotent — no side effects |
+| Duplicate call | Idempotent - no side effects |
 
 ## Unity-Specific Coverage
 
 | Area | What to Test |
 |------|-------------|
-| Lifecycle order | `Awake` → `OnEnable` → `Start` — refs available when expected |
-| Serialization roundtrip | `JsonUtility.ToJson` → `FromJsonOverwrite` — data survives |
-| Prefab instantiation | `Instantiate(prefab)` — components present, refs intact |
-| Event subscribe/unsubscribe | Subscribe in `OnEnable`, unsubscribe in `OnDisable` — no leaks |
+| Lifecycle order | `Awake` -> `OnEnable` -> `Start` - refs available when expected |
+| Serialization roundtrip | `JsonUtility.ToJson` -> `FromJsonOverwrite` - data survives |
+| Prefab instantiation | `Instantiate(prefab)` - components present, refs intact |
+| Event subscribe/unsubscribe | Subscribe in `OnEnable`, unsubscribe in `OnDisable` - no leaks |
 | Scene load/unload | Singleton survives, cleanup happens |
 | `GetComponent` | Returns expected type, handles missing gracefully |
 

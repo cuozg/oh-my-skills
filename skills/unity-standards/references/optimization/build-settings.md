@@ -8,7 +8,7 @@
 | Minimal | Strips unreachable BCL | Low | Debug builds |
 | Low | Strips most unused BCL | Low-Medium | Safe default |
 | Medium | Strips unused user + BCL | Medium | Most projects |
-| High | Aggressive — strips everything unproven reachable | High | Size-critical mobile |
+| High | Aggressive - strips everything unproven reachable | High | Size-critical mobile |
 
 **Preserve via `link.xml`:**
 ```xml
@@ -36,8 +36,8 @@ High stripping + reflection = runtime `MissingMethodException`. Test thoroughly.
 
 | Option | Use Case |
 |--------|----------|
-| Faster runtime | Release builds — optimizes generated C++ |
-| Faster build | Development — reduces compile time |
+| Faster runtime | Release builds - optimizes generated C++ |
+| Faster build | Development - reduces compile time |
 
 ## Build Compression
 
@@ -50,7 +50,7 @@ High stripping + reflection = runtime `MissingMethodException`. Test thoroughly.
 
 ## Asset Bundle / Addressables Size
 
-- **Duplicate dependency check:** Addressables Analyze → "Check Duplicate Bundle Dependencies"
+- **Duplicate dependency check:** Addressables Analyze -> "Check Duplicate Bundle Dependencies"
 - **Group by load pattern:** co-loaded assets in same bundle, avoid cross-bundle dependencies
 - **Bundle size target:** 1-5 MB per bundle (network), 5-20 MB per bundle (local)
 - **Catalog size:** minimize label count, avoid per-asset labels
@@ -65,7 +65,7 @@ High stripping + reflection = runtime `MissingMethodException`. Test thoroughly.
 | PC/Console | BC7 (quality) or DXT5 (compat) | High quality | BC7 for modern GPUs |
 | WebGL | DXT5/BC7 (desktop) / ASTC (mobile) | Varies | Check WebGL browser support |
 
-**Size formula:** `width * height * bpp / 8` — ASTC 6x6 = 3.56 bpp, DXT5 = 8 bpp, BC7 = 8 bpp, RGBA32 = 32 bpp.
+**Size formula:** `width * height * bpp / 8` - ASTC 6x6 = 3.56 bpp, DXT5 = 8 bpp, BC7 = 8 bpp, RGBA32 = 32 bpp.
 
 ## Audio Compression
 
@@ -82,5 +82,5 @@ High stripping + reflection = runtime `MissingMethodException`. Test thoroughly.
 
 - **Mesh Compression:** Low/Medium for static, Off for animated (can cause artifacts)
 - **Read/Write Enabled:** OFF unless runtime mesh modification needed (halves memory)
-- **Optimize Mesh Data:** ON in Player Settings → strips unused vertex channels
+- **Optimize Mesh Data:** ON in Player Settings -> strips unused vertex channels
 - **Import settings:** disable tangents/normals if unused by shader

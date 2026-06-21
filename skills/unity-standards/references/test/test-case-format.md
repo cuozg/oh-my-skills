@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html><head>
 <meta charset="utf-8">
-<title>Test Cases — {Feature}</title>
+<title>Test Cases - {Feature}</title>
 <style>
   body { font-family: system-ui; margin: 2rem; background: #1a1a2e; color: #e0e0e0; }
   h1 { color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 0.5rem; }
@@ -21,7 +21,7 @@
   .pass { color: #4caf50; } .fail { color: #f44336; } .skip { color: #999; }
 </style>
 </head><body>
-<h1>Test Cases — {Feature}</h1>
+<h1>Test Cases - {Feature}</h1>
 <table>
 <tr><th>ID</th><th>Category</th><th>Steps</th><th>Expected</th><th>Priority</th><th>Status</th></tr>
 <!-- rows here -->
@@ -33,10 +33,10 @@
 
 | Level | Class | Use |
 |-------|-------|-----|
-| P0 | `p0` | Critical — blocks release |
-| P1 | `p1` | High — core functionality |
-| P2 | `p2` | Medium — secondary flows |
-| P3 | `p3` | Nice-to-have — polish |
+| P0 | `p0` | Critical - blocks release |
+| P1 | `p1` | High - core functionality |
+| P2 | `p2` | Medium - secondary flows |
+| P3 | `p3` | Nice-to-have - polish |
 
 ## Categories
 
@@ -63,8 +63,8 @@
 
 ## ID Convention
 
-Format: `TC-{NNN}` — sequential per feature. Group by category in table order:
-1. Happy Path (TC-001–099)
-2. Edge Case (TC-100–199)
-3. Error (TC-200–299)
-4. Performance (TC-300–399)
+Format: `TC-{NNN}` - sequential per feature. Group by category in table order:
+1. Happy Path (TC-001-099)
+2. Edge Case (TC-100-199)
+3. Error (TC-200-299)
+4. Performance (TC-300-399)

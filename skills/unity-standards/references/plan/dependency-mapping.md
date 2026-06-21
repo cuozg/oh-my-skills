@@ -11,15 +11,15 @@
 ## blockedBy Usage
 
 ```
-Task A: "Define IHealthService interface"         → blockedBy: []
-Task B: "Implement HealthService"                  → blockedBy: [A]
-Task C: "Write HealthService tests"                → blockedBy: [B]
-Task D: "Create HealthBar UI"                      → blockedBy: [A]  (only needs interface)
+Task A: "Define IHealthService interface"         -> blockedBy: []
+Task B: "Implement HealthService"                  -> blockedBy: [A]
+Task C: "Write HealthService tests"                -> blockedBy: [B]
+Task D: "Create HealthBar UI"                      -> blockedBy: [A]  (only needs interface)
 ```
 
 ## Maximizing Parallelism
 
-- Block only on TRUE dependencies — not assumed ordering
+- Block only on TRUE dependencies - not assumed ordering
 - Interface/contract tasks unblock multiple consumers
 - Split "implement + test" into separate tasks (test blocked by implement)
 - UI and logic tasks often parallel if interface is defined first
@@ -44,10 +44,12 @@ Task D: "Create HealthBar UI"                      → blockedBy: [A]  (only nee
 
 ## Visualization
 
-```
-A ──→ B ──→ C
- \         ↗
-  └→ D ──┘
+```mermaid
+flowchart LR
+    A["A: Define interface"] --> B["B: Implement service"]
+    B --> C["C: Write tests"]
+    A --> D["D: Create UI"]
+    D --> C
 ```
 
 A and D can run after A completes. C waits for both B and D.

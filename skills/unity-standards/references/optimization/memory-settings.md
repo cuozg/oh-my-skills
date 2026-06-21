@@ -12,12 +12,12 @@
 
 ### Texture Streaming (Unity 2018.2+)
 
-Loads mip levels on demand based on camera distance — reduces peak memory.
+Loads mip levels on demand based on camera distance - reduces peak memory.
 
 **Enable:**
-1. Edit → Project Settings → Quality → Texture Streaming: ON
-2. Set Memory Budget (default 512 MB — adjust per platform)
-3. Individual textures: Import Settings → Streaming Mipmaps: ON
+1. Edit -> Project Settings -> Quality -> Texture Streaming: ON
+2. Set Memory Budget (default 512 MB - adjust per platform)
+3. Individual textures: Import Settings -> Streaming Mipmaps: ON
 
 **Caveats:**
 - Adds ~1ms CPU overhead for mip management
@@ -28,9 +28,9 @@ Loads mip levels on demand based on camera distance — reduces peak memory.
 
 | Setting | Memory Impact |
 |---------|--------------|
-| Decompress On Load | Full PCM in memory — fast playback, high memory |
-| Compressed In Memory | Compressed in memory — CPU decode on play |
-| Streaming | Minimal memory — disk I/O on play |
+| Decompress On Load | Full PCM in memory - fast playback, high memory |
+| Compressed In Memory | Compressed in memory - CPU decode on play |
+| Streaming | Minimal memory - disk I/O on play |
 
 **Rules:**
 - Short SFX (< 200KB compressed): Decompress On Load
@@ -43,7 +43,7 @@ Loads mip levels on demand based on camera distance — reduces peak memory.
 ### Addressables Release Pattern
 
 ```csharp
-// MUST release handles — unreleased = memory leak
+// MUST release handles - unreleased = memory leak
 private AsyncOperationHandle<GameObject> _handle;
 
 async UniTask LoadEnemy(string key, CancellationToken ct)
@@ -63,7 +63,7 @@ void OnDestroy()
 ### Resources API Cleanup
 
 ```csharp
-// After scene transition — unload unused assets
+// After scene transition - unload unused assets
 await SceneManager.LoadSceneAsync("NewScene");
 await Resources.UnloadUnusedAssets(); // triggers GC + asset unload
 System.GC.Collect(); // optional: force GC after unload
@@ -74,6 +74,9 @@ System.GC.Collect(); // optional: force GC after unload
 - Every `Addressables.LoadAssetAsync` needs a matching `Release`
 - Every `Addressables.InstantiateAsync` needs `ReleaseInstance` or `Release` on the handle
 - Profile with Addressables Event Viewer to find leaks
+- For remote bundles, include an unload strategy in the feature design. Every
+  loaded bundle or asset family needs an owner, release point, and verification
+  path.
 
 ## Scene Loading Strategies
 

@@ -83,7 +83,7 @@ public IEnumerator TearDown()
 }
 ```
 
-## LogAssert — Expect Specific Logs
+## LogAssert - Expect Specific Logs
 
 ```csharp
 [UnityTest]

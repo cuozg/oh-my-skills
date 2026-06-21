@@ -4,24 +4,24 @@
 
 Dramatically reduces Enter Play Mode time in Editor.
 
-**Enable:** Edit → Project Settings → Editor → Enter Play Mode Settings
+**Enable:** Edit -> Project Settings -> Editor -> Enter Play Mode Settings
 
 | Setting | Default | Optimized | Effect |
 |---------|---------|-----------|--------|
 | Reload Domain | ON | OFF | Skips C# domain reload (2-10s savings) |
 | Reload Scene | ON | OFF | Skips scene reload (1-3s savings) |
 
-### Domain Reload OFF — Required Code Changes
+### Domain Reload OFF - Required Code Changes
 
 Without domain reload, static fields persist between play sessions:
 
 ```csharp
-// ❌ Static state carries over — stale data on second play
+// BAD: static state carries over - stale data on second play
 private static int s_score = 0;
 private static List<Enemy> s_activeEnemies = new();
 private static event Action OnGameOver;
 
-// ✅ Reset in RuntimeInitializeOnLoadMethod
+// GOOD: reset in RuntimeInitializeOnLoadMethod
 [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
 static void ResetStatics()
 {
@@ -50,6 +50,14 @@ More assemblies = longer domain reload (even when domain reload is ON).
 
 ## Startup Time Optimization
 
+Measure the complete app-launch-to-home-screen flow before optimizing. Break the
+timeline into app launch, SDK init, config load, Addressables/local bundles,
+remote catalog or API calls, and home UI render. Do not guess which step is slow.
+
+For production startup work, load
+`../production/full-cycle-ownership.md` and include analytics, attribution, ads,
+IAP, remote config, and other SDK initialization costs in the timeline.
+
 ### Splash Screen
 
 | Setting | Impact |
@@ -74,7 +82,7 @@ static void InitCriticalSystems()
 async UniTask PreloadCriticalAssets(CancellationToken ct)
 {
     var keys = new List<string> { "UI/MainMenu", "Audio/BGM", "Config/GameSettings" };
-    await Addressables.LoadAssetsAsync<Object>(keys, null, 
+    await Addressables.LoadAssetsAsync<Object>(keys, null,
         Addressables.MergeMode.Union).WithCancellation(ct);
 }
 ```
@@ -92,12 +100,12 @@ async UniTaskVoid Start()
 {
     // Show loading UI immediately
     _loadingScreen.Show();
-    
+
     await UniTask.Yield(); // let first frame render
     await LoadGameData(destroyCancellationToken);
     await UniTask.Yield();
     await InitializeSystems(destroyCancellationToken);
-    
+
     _loadingScreen.Hide();
 }
 ```
@@ -106,8 +114,21 @@ async UniTaskVoid Start()
 
 | Optimization | Time Saved | How |
 |-------------|-----------|-----|
-| IL2CPP Faster runtime | +build time, -startup | Player Settings → Code Generation: Faster Runtime |
-| Strip Engine Code | ~50-200ms | Player Settings → Strip Engine Code: ON |
-| Preloaded Shaders | Prevents runtime compile | Graphics → Preloaded Shaders array |
+| IL2CPP Faster runtime | +build time, -startup | Player Settings -> Code Generation: Faster Runtime |
+| Strip Engine Code | ~50-200ms | Player Settings -> Strip Engine Code: ON |
+| Preloaded Shaders | Prevents runtime compile | Graphics -> Preloaded Shaders array |
 | Disable Domain Reload | No effect on build | Editor-only setting |
 | Addressables: local bundles | ~100-500ms | Avoids remote catalog fetch at start |
+
+## Startup Production Rules
+
+- Prioritize only essential startup data. Delay non-critical APIs, analytics
+  enrichments, ads, attribution, or secondary content until after home renders
+  when product requirements allow it.
+- Optimize config size and deserialization before adding complex loading
+  infrastructure.
+- Avoid blocking startup on remote bundles unless the first screen cannot
+  function without them.
+- State the target metric and evidence source, such as app launch to home
+  screen, first interactive frame, cold start on low-end Android, or profiler
+  timeline capture.

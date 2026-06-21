@@ -1,106 +1,106 @@
 # C# Scripts (.cs) Review Checklist
 
-Check every item against changed code. Report as severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
+Use this for Unity C# review. Start from changed lines, then inspect nearby
+lifecycle, serialization, and data-flow context only when needed. Report only
+actionable issues with concrete behavior, build, data-loss, security, or
+maintainability impact.
+
+Severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
+
+## Review Procedure
+
+1. Identify the changed behavior and the runtime/editor surface it touches.
+2. Check lifecycle, serialization, performance, and security only where relevant.
+3. Prefer project conventions over generic advice.
+4. For each finding, include file/line, user impact, and minimal fix.
+5. Do not report speculative rewrites, style-only preferences, or pre-existing
+   issues unless the change makes them worse.
 
 ### Logic
-- [ ] `GetComponent<T>()` null-checked — prefer `TryGetComponent`
-- [ ] Destroyed `UnityEngine.Object` checked with `== null` (NOT `is null` — Unity overloads `==`)
-- [ ] Event invocation null-safe: `OnEvent?.Invoke()`
-- [ ] Optional SO/prefab fields validated in `OnEnable` or `Awake`
-- [ ] Empty collection guarded before indexing (`list.Count == 0` before `list[0]`)
-- [ ] Loop bounds: `<` for `Length`/`Count`, not `<=`
-- [ ] Float comparison uses `Mathf.Approximately`, not `==`
-- [ ] Integer division truncation handled (`5 / 2 == 2`)
-- [ ] Zero/negative input guarded (division, array size, timer duration)
-- [ ] Enum switch has `default` case or exhaustive match
-- [ ] Collection not modified during iteration (use reverse loop or `ToList()`)
-- [ ] Input validated at system boundary (public methods, events, deserialized data)
-- [ ] Boolean flags reset after one-shot use
-- [ ] Cross-component init order documented or enforced via `[DefaultExecutionOrder]`
-- [ ] Coroutine references stored for `StopCoroutine` cleanup
+
+- [ ] Required component references are validated or guaranteed by `[RequireComponent]`.
+- [ ] Destroyed `UnityEngine.Object` references use Unity null checks (`== null`), not `is null`.
+- [ ] Events are invoked safely and payloads do not expose mutable internal state.
+- [ ] Collections are checked before indexing and are not modified during unsafe iteration.
+- [ ] Numeric inputs that affect timers, array sizes, division, currency, health, or physics are clamped or rejected.
+- [ ] Float equality is intentional; otherwise use tolerances, ranges, or squared-distance comparisons.
+- [ ] Enum/switch handling is exhaustive or has a safe fallback.
+- [ ] One-shot flags, timers, and state transitions reset on all relevant paths.
+- [ ] Public APIs, deserialized data, save data, remote config, and server payloads are validated before use.
+- [ ] Cross-component initialization order is explicit through references, bootstrap code, or documented execution order.
 
 ### Unity Lifecycle
-- [ ] No `FindObjectOfType` / cross-object `GetComponent` in `Awake` (target may not exist yet)
-- [ ] `OnEnable` does not assume `Start` has run
-- [ ] `OnDisable` guards: check `gameObject.scene.isLoaded` (fires during scene unload too)
-- [ ] `DontDestroyOnLoad` has duplicate instance check
-- [ ] Every `+=` on event/delegate has matching `-=` in `OnDisable` or `OnDestroy`
-- [ ] `public event` fields nulled in `OnDestroy` if object can be destroyed at runtime
-- [ ] Every `StartCoroutine()` has matching `StopCoroutine()` / `StopAllCoroutines()` in `OnDisable`/`OnDestroy`
-- [ ] Every `InvokeRepeating()` has matching `CancelInvoke()` on lifecycle exit
-- [ ] `Destroy()` is end-of-frame — object still accessible this frame (don't re-check same frame)
-- [ ] `DestroyImmediate()` used only in Editor scripts, never runtime
-- [ ] Coroutines stop on `SetActive(false)` — won't auto-resume on re-enable
-- [ ] Static references cleared on scene unload
-- [ ] Additive scene objects explicitly unloaded
+
+- [ ] `Awake` handles self-setup; `Start` or a bootstrapper handles cross-object binding.
+- [ ] `OnEnable` does not assume `Start` has already run.
+- [ ] Event subscriptions pair `+=` and `-=` at the same lifetime (`OnEnable`/`OnDisable` or `Awake`/`OnDestroy`).
+- [ ] Coroutines, invokes, tweens, async flows, input actions, and timers stop or cancel on lifecycle exit.
+- [ ] `DontDestroyOnLoad` objects have duplicate-instance and stale-static handling.
+- [ ] `DestroyImmediate()` is editor-only; runtime code uses `Destroy()`.
+- [ ] Additive scene, pooled object, and inactive-object paths reset state deliberately.
+- [ ] Async continuations do not touch destroyed Unity objects.
 
 ### Serialization
-- [ ] Renamed field has `[FormerlySerializedAs("oldName")]` — never remove this attribute
-- [ ] Type change reviewed: `float→int` truncates, `List→Array` loses data, cross-type = migration needed
-- [ ] New field on existing prefab/SO — verify default value is safe
-- [ ] Custom classes have `[System.Serializable]`
-- [ ] Private inspector fields use `[SerializeField]`
-- [ ] `Dictionary<K,V>` not natively serializable — use `List` pairs or custom wrapper
-- [ ] Enum values explicit: `Sword = 0, Shield = 1` (insertion shifts indices, breaks saved data)
-- [ ] Runtime-mutated SO data cloned via `Instantiate(so)` (shared state persists in build)
-- [ ] SO assets in builds are readable — no secrets in SO fields
+
+- [ ] Serialized field renames preserve data with `[FormerlySerializedAs]`.
+- [ ] Serialized type changes include migration or asset/default-value review.
+- [ ] New serialized fields have safe defaults for existing prefabs, scenes, and ScriptableObjects.
+- [ ] Custom nested data types that need Inspector persistence are `[Serializable]`.
+- [ ] Inspector data uses private `[SerializeField]` unless public mutation is an intentional API.
+- [ ] Dictionary, interface, polymorphic, and `[SerializeReference]` data have proven editor and migration support.
+- [ ] Enum reorder/insert changes do not break saved data or serialized asset values.
+- [ ] Runtime-mutated ScriptableObject data is cloned or explicitly owned as runtime state.
+- [ ] Build-readable assets do not contain secrets, credentials, or sensitive endpoints.
 
 ### Performance
-- [ ] No LINQ in Update (`Where`, `Select`, `ToList` allocate)
-- [ ] No string concat in hot loops — use `StringBuilder` or cached formatting
-- [ ] No lambda captures that allocate delegate state per frame
-- [ ] No `new List<T>()` per frame — reuse with `.Clear()`
-- [ ] No boxing through `object` params or interface calls in hot paths
-- [ ] No repeated `ToString()` on value types in hot paths
-- [ ] `GetComponent<T>()` cached in `Awake`/`Start`, not called per frame
-- [ ] No `Find("name")` / `FindObjectOfType<T>()` in hot paths — cache or inject
-- [ ] `CompareTag("tag")` used instead of `gameObject.tag == "tag"`
-- [ ] `Physics.Raycast` uses `layerMask`
-- [ ] `NonAlloc` variants in hot loops: `RaycastNonAlloc`, `OverlapSphereNonAlloc`
-- [ ] Rigidbody manipulation in `FixedUpdate`, not `Update`
-- [ ] Static colliders not moved at runtime (triggers rebuild)
-- [ ] No `Renderer.material` in gameplay loops (creates instance) — use `sharedMaterial` or `MaterialPropertyBlock`
-- [ ] Object pooling for frequent spawn/despawn cycles
-- [ ] Addressable handles released after use
-- [ ] Canvas split: static vs dynamic UI when rebuild cost matters
+
+- [ ] Hot paths avoid avoidable allocations: LINQ, closures, `ToList`, string formatting, boxing, and temporary collections.
+- [ ] Repeated component, camera, transform, and scene lookups are cached or injected.
+- [ ] Tags use `CompareTag`; distance checks use `sqrMagnitude` where exact distance is unnecessary.
+- [ ] Physics queries use layer masks and `NonAlloc` variants when called frequently.
+- [ ] Rigidbody and physics writes happen in `FixedUpdate` or through deliberate simulation steps.
+- [ ] Runtime material changes avoid accidental `Renderer.material` instance churn in loops.
+- [ ] Frequent spawn/despawn paths use the project pool and reset pooled state fully.
+- [ ] Addressables, asset handles, native containers, and rented buffers are released at owner lifetime.
+- [ ] UI updates avoid unnecessary layout/canvas rebuilds; text changes only when values change.
 
 ### Security
-- [ ] User text input length-capped
-- [ ] Numeric inputs clamped (`Mathf.Clamp`)
-- [ ] File paths sanitized — no `..` traversal
-- [ ] Deserialized data validated before use (don't trust save files)
-- [ ] Player names stripped of rich text / HTML tags
-- [ ] No API keys / tokens in client code — use server proxy
-- [ ] No secrets in `PlayerPrefs` (plain text, easily edited)
-- [ ] No secrets in ScriptableObject fields (readable in builds)
-- [ ] Save file integrity: hash or HMAC to detect tampering
-- [ ] Debug panels behind `#if UNITY_EDITOR || DEVELOPMENT_BUILD`
-- [ ] Cheat commands stripped from release builds
-- [ ] `Debug.Log` stripped or conditional-compiled in production
-- [ ] Test scenes excluded from build settings
-- [ ] Server authoritative — client sends intent, server validates
-- [ ] No client-side trust for damage, currency, position
-- [ ] All communication over HTTPS/TLS
-- [ ] SQL queries parameterized
-- [ ] Rate limiting on client actions
+
+- [ ] User-entered text is length-capped and rich text/HTML is stripped where rendered.
+- [ ] File paths and imported filenames prevent traversal and unsupported extensions.
+- [ ] Save data, remote config, deep links, IAP payloads, and server responses are treated as untrusted.
+- [ ] Client code contains no API keys, service credentials, private signing keys, or auth tokens.
+- [ ] `PlayerPrefs`, ScriptableObjects, bundles, and client assets are not used for secrets.
+- [ ] Currency, inventory, damage, score, and competitive state are server-authoritative when the game has a backend.
+- [ ] Debug panels, cheat commands, test menus, and verbose logs are editor/development-build only.
+- [ ] Network calls use HTTPS/TLS and do not log sensitive payloads.
+- [ ] Backend-adjacent Unity code validates inputs before sending actions that can affect economy or player state.
+
+### Production Ownership
+
+- [ ] Analytics events have clear trigger timing, schema, required parameters, and duplicate/missing-event protection.
+- [ ] Revenue, IAP, attribution, economy, inventory, and progression events are server-authoritative when backend support exists.
+- [ ] Remote config or blueprint changes validate required fields, versions, missing-data behavior, rollback, and expired-data cleanup.
+- [ ] Server API changes handle timeout, network failure, business error, retry, cancellation, and double-submit behavior.
+- [ ] Risky features include observable breadcrumbs, dashboard checks, crash/error monitoring, or rollback controls.
+- [ ] Store, billing, privacy, and SDK behavior is checked against current official docs when the change depends on policy or package behavior.
 
 ### Concurrency
-- [ ] ALL Unity API calls on main thread (`Transform`, `GameObject`, `Component`)
-- [ ] Background work returns plain data, then dispatches to main thread for scene changes
-- [ ] No `async void` except Unity event handlers — use `async UniTask` or `async Task`
-- [ ] `CancellationToken` passed through (use `destroyCancellationToken` in 2022+)
-- [ ] No `await` in `OnDestroy` without cancellation guard (object may be mid-destroy)
-- [ ] Exception handling: `async void` swallows exceptions silently
-- [ ] No Unity object access after `Awaitable.BackgroundThreadAsync()`
-- [ ] `destroyCancellationToken` or lifetime token forwarded through long-lived async methods
-- [ ] Same `Awaitable` instance not awaited multiple times
+
+- [ ] Unity API calls stay on the main thread unless the API explicitly supports background use.
+- [ ] Background work returns plain data and dispatches scene/object changes back to the main thread.
+- [ ] `async void` is limited to Unity/UI event handlers and catches/logs exceptions internally.
+- [ ] Long-lived async methods accept and forward cancellation tokens.
+- [ ] Await continuations check object lifetime before touching Unity objects.
+- [ ] Awaitable/UniTask/Task usage matches the project's established async stack and Unity version.
+- [ ] Jobs complete or chain dependencies before reading/writing/disposal.
 
 ### Architecture
-- [ ] MonoBehaviour handles Unity lifecycle only — business logic in plain C# classes
-- [ ] ECS systems separate authoring, data components, and stateless processing logic
-- [ ] No God objects (one class doing input + UI + save + audio) — split at ~300 lines
-- [ ] Dependencies flow inward: UI → Logic → Data (inner layers never reference outer)
-- [ ] No `FindObjectOfType` for runtime wiring — inject or use SO events
-- [ ] No circular references between classes or assemblies
-- [ ] Editor code in Editor assembly (won't ship in build)
-- [ ] No deep inheritance (>2 levels) — prefer composition
+
+- [ ] MonoBehaviours own lifecycle and scene binding; reusable rules live in testable C# types where practical.
+- [ ] Dependencies flow toward stable core logic; UI, platform, SDK, and editor code stay at boundaries.
+- [ ] Runtime assemblies do not reference editor-only APIs or assemblies.
+- [ ] No new service locator, singleton, event bus, or DI framework usage unless it matches the existing architecture.
+- [ ] Large classes and methods are flagged only when the change worsens readability or risk.
+- [ ] ECS code separates authoring/baking, data components, systems, structural changes, and Burst-compatible work.
+- [ ] Inheritance is intentional and shallow; composition is preferred for gameplay variation.

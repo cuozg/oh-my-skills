@@ -3,15 +3,15 @@
 ## Selector Types
 
 ```css
-/* Type selector — matches element type */
+/* Type selector - matches element type */
 Button { background-color: #333; }
 
-/* Class selector — primary styling method */
+/* Class selector - primary styling method */
 .button { padding: 8px 16px; }
 .button--primary { background-color: var(--color-primary); }
 .button__icon { width: 24px; height: 24px; }
 
-/* Name selector — specific element */
+/* Name selector - specific element */
 #submit-btn { font-size: 18px; }
 
 /* Pseudo-classes */
@@ -85,7 +85,7 @@ Button { background-color: #333; }
 ## Performance Rules
 
 - BEM single-class selectors (`.button--primary`) over deep hierarchy (`.container > .menu > Button`)
-- Selector cost = N1 (classes on element) × N2 (USS files loaded)
-- Avoid `:hover` on deeply nested elements — triggers re-style on every mouse move
-- Use USS files over inline styles — inline styles allocate per-element memory
+- Selector cost = N1 (classes on element) x N2 (USS files loaded)
+- Avoid `:hover` on deeply nested elements - triggers re-style on every mouse move
+- Use USS files over inline styles - inline styles allocate per-element memory
 - Keep USS files focused: one per screen + one shared variables file

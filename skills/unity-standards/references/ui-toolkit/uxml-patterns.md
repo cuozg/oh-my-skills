@@ -22,13 +22,13 @@
 ## BEM Naming Convention
 
 ```
-block           → .button, .header, .modal
-block__element  → .button__icon, .header__title, .modal__backdrop
-block--modifier → .button--primary, .header--collapsed, .modal--fullscreen
+block           -> .button, .header, .modal
+block__element  -> .button__icon, .header__title, .modal__backdrop
+block--modifier -> .button--primary, .header--collapsed, .modal--fullscreen
 ```
 
-- UXML `name` attribute → kebab-case: `name="play-btn"` (for C# `Q<T>("play-btn")`)
-- USS classes → BEM: `class="button button--primary"` (for styling)
+- UXML `name` attribute -> kebab-case: `name="play-btn"` (for C# `Q<T>("play-btn")`)
+- USS classes -> BEM: `class="button button--primary"` (for styling)
 
 ## Reusable Templates
 
@@ -42,7 +42,7 @@ block--modifier → .button--primary, .header--collapsed, .modal--fullscreen
   </VisualElement>
 </UXML>
 
-<!-- MainScreen.uxml — instantiate reusable template -->
+<!-- MainScreen.uxml - instantiate reusable template -->
 <UXML xmlns="UnityEngine.UIElements">
   <Template src="Components/Card.uxml" name="CardTemplate" />
 
@@ -57,16 +57,16 @@ block--modifier → .button--primary, .header--collapsed, .modal--fullscreen
 
 ```
 Screen (root VisualElement)
-├── Header (fixed top bar)
-│   ├── Back Button
-│   ├── Title Label
-│   └── Action Buttons
-├── Content (scrollable body)
-│   ├── Sections / Cards / Lists
-│   └── Interactive elements
-└── Footer (fixed bottom bar)
-    ├── Navigation tabs
-    └── Status indicators
++-- Header (fixed top bar)
+|   +-- Back Button
+|   +-- Title Label
+|   +-- Action Buttons
++-- Content (scrollable body)
+|   +-- Sections / Cards / Lists
+|   +-- Interactive elements
++-- Footer (fixed bottom bar)
+    +-- Navigation tabs
+    +-- Status indicators
 ```
 
 ## Common Built-in Elements
@@ -88,9 +88,9 @@ Screen (root VisualElement)
 
 ```
 Assets/UI/
-├── Screens/          ← full-screen UXML (MainMenu.uxml, Settings.uxml)
-├── Components/       ← reusable UXML snippets (Card.uxml, Modal.uxml)
-├── Styles/           ← USS files (theme.uss, variables.uss, screen-name.uss)
-├── Controllers/      ← C# controllers (MainMenuController.cs)
-└── Settings/         ← PanelSettings assets
++-- Screens/          <- full-screen UXML (MainMenu.uxml, Settings.uxml)
++-- Components/       <- reusable UXML snippets (Card.uxml, Modal.uxml)
++-- Styles/           <- USS files (theme.uss, variables.uss, screen-name.uss)
++-- Controllers/      <- C# controllers (MainMenuController.cs)
++-- Settings/         <- PanelSettings assets
 ```

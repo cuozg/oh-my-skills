@@ -6,7 +6,7 @@
 |-----------|-------|-----|
 | `NullReferenceException` | Missing serialized ref | Assign in Inspector or add `[Required]` check |
 | `NullReferenceException` | Destroyed object accessed | Check `obj != null` (uses Unity's lifetime check) |
-| `NullReferenceException` | Execution order — ref not set yet | Use `[DefaultExecutionOrder]` or move to `Start()` |
+| `NullReferenceException` | Execution order - ref not set yet | Use `[DefaultExecutionOrder]` or move to `Start()` |
 | `MissingReferenceException` | Object destroyed but still referenced | Unsubscribe events in `OnDestroy()`, null out refs |
 | `InvalidOperationException` | Collection modified during iteration | Iterate copy: `foreach (var x in list.ToList())` |
 | `SerializationException` | Non-serializable field in SO/MB | Add `[System.Serializable]`, or use `ISerializationCallbackReceiver` |
@@ -50,12 +50,12 @@ public class GameManager : MonoBehaviour { }
 ## Null vs Destroyed
 
 ```csharp
-// C# null vs Unity null — NOT the same
+// C# null vs Unity null - NOT the same
 GameObject go = new GameObject();
 Destroy(go);
-// go == null        → true  (Unity override)
-// go is null        → false (C# check)
-// ReferenceEquals(go, null) → false
+// go == null        -> true  (Unity override)
+// go is null        -> false (C# check)
+// ReferenceEquals(go, null) -> false
 ```
 
 Use `== null` for Unity objects. Use `is null` only for pure C# objects.
@@ -68,7 +68,7 @@ Use `== null` for Unity objects. Use `is null` only for pure C# objects.
 | `public` property | No | Use backing `[SerializeField]` field |
 | `Dictionary<K,V>` | No | Use `ISerializationCallbackReceiver` |
 | `interface` field | No | Use abstract `ScriptableObject` base |
-| `static` field | No | Not supported — use instance field |
+| `static` field | No | Not supported - use instance field |
 
 ## IL2CPP Stripping Issues
 

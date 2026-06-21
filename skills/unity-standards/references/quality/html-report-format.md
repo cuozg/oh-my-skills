@@ -6,12 +6,12 @@
 
 ## Rules
 
-- CSS-only — no JavaScript, no external sheets
+- CSS-only - no JavaScript, no external sheets
 - Single self-contained `.html` file
 - Print-friendly (`@media print` overrides)
 - Replace all `{X}` placeholders before saving
-- Evidence rows sorted by severity: CRITICAL → WARNING → NOTE
-- Top 5 fixes ranked by `severity × frequency`
+- Evidence rows sorted by severity: CRITICAL -> WARNING -> NOTE
+- Top 5 fixes ranked by `severity x frequency`
 - No images or external CDN resources
 
 ## Grade Badge CSS
@@ -60,7 +60,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Unity Quality Audit — {Project} — {Date}</title>
+  <title>Unity Quality Audit - {Project} - {Date}</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; }
     .grade-A { color: #16a34a; } .grade-B { color: #65a30d; }
@@ -85,7 +85,7 @@
   </table>
   <h2>Top 5 Priority Fixes</h2>
   <ol>
-    <li><strong>[CRITICAL]</strong> {fix description} — <code>{file}:{line}</code></li>
+    <li><strong>[CRITICAL]</strong> {fix description} - <code>{file}:{line}</code></li>
   </ol>
   <h2>Evidence</h2>
   <table>

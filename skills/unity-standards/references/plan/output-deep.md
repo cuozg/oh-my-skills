@@ -28,6 +28,14 @@ Save to `Documents/Plans/PLAN_{Name}.md`. Follow this structure exactly.
 |---|---|---|
 | `{path}` | {New/Modified/Deleted} | {Low/Med/High} |
 
+## Product And Operations
+
+- Product goal / KPI: {known goal, or "Not specified"}
+- Analytics: {events/schema/dashboard impact, or "None"}
+- LiveOps / remote config: {feature flags/config/rollback impact, or "None"}
+- Server / IAP / compliance: {API, purchase, privacy, store-review impact, or "None"}
+- Post-release monitoring: {dashboard, crash, economy, rollout, or "None"}
+
 ## Risks
 
 | Risk | Likelihood | Impact | Mitigation |
@@ -38,7 +46,7 @@ Save to `Documents/Plans/PLAN_{Name}.md`. Follow this structure exactly.
 
 | ID | Subject | Size | Skill | Blocked By |
 |---|---|---|---|---|
-| T-1 | {Imperative verb + target} | {XS-L} | {skill-name} | — |
+| T-1 | {Imperative verb + target} | {XS-L} | {skill-name} | - |
 | T-2 | {Imperative verb + target} | {XS-L} | {skill-name} | T-1 |
 
 ## Dependency Graph
@@ -59,19 +67,20 @@ Wave 3 (after W2): T-5
 | Feature Name | Short, descriptive title |
 | Size | M (1-3 days) or L (3-10 days) |
 | Hours | Range (e.g., 8-16h) |
-| Risk | Low / Medium / High / Critical — evidence-based |
+| Risk | Low / Medium / High / Critical - evidence-based |
 | Request | 1-2 sentences, reference user's words |
 | Scope items | Bullet per boundary, concrete not vague |
 | Impact rows | One per affected file/module, cite real paths |
 | Risk rows | One per identified risk, with mitigation |
+| Product And Operations | Fill every row; use "None" only after checking scope |
 | Task ID | Sequential: T-1, T-2, T-3... |
 | Subject | Imperative verb + target (e.g., "Add health component") |
 | Skill | Exact skill name from registry |
-| Blocked By | Task IDs this depends on, or `—` for none |
+| Blocked By | Task IDs this depends on, or `-` for none |
 
 ## Rules
 
 - Every claim in Impact/Risks must cite a real file path
 - Task subjects use imperative mood
 - Dependency graph must match Blocked By column
-- No placeholder ranges — investigate before estimating
+- No placeholder ranges - investigate before estimating

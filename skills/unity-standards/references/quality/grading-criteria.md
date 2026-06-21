@@ -23,10 +23,10 @@
 ## Category Grades
 
 Score each audit category independently:
-- **Architecture** — coupling, boundaries, dependency direction
-- **Performance** — frame budget, GC, draw calls, memory
-- **Best Practices** — API usage, null safety, lifecycle
-- **Tech Debt** — TODOs, duplication, complexity, dead code
+- **Architecture** - coupling, boundaries, dependency direction
+- **Performance** - frame budget, GC, draw calls, memory
+- **Best Practices** - API usage, null safety, lifecycle
+- **Tech Debt** - TODOs, duplication, complexity, dead code
 
 ## Overall Grade Calculation
 
@@ -40,15 +40,15 @@ Score each audit category independently:
 | Best Practices | 0.25 |
 | Tech Debt | 0.20 |
 
-3. Weighted average → final grade:
-   - 3.5–4.0 → A
-   - 2.5–3.4 → B
-   - 1.5–2.4 → C
-   - 0.5–1.4 → D
-   - 0.0–0.4 → F
+3. Weighted average -> final grade:
+   - 3.5-4.0 -> A
+   - 2.5-3.4 -> B
+   - 1.5-2.4 -> C
+   - 0.5-1.4 -> D
+   - 0.0-0.4 -> F
 
 ## Grade Override Rules
 
-- Any **F** category → overall capped at **D**
-- Two or more **D** categories → overall capped at **C**
-- Critical security issue → automatic **F** override
+- Any **F** category -> overall capped at **D**
+- Two or more **D** categories -> overall capped at **C**
+- Critical security issue -> automatic **F** override

@@ -125,6 +125,22 @@ Keep state ownership explicit:
 
 When a feature crosses systems, write down the integration points before changing code: data source, owner, events, UI, persistence, analytics, assets, and tests.
 
+## Production Feature Boundaries
+
+For features that affect product goals, LiveOps, analytics, IAP, server APIs, or
+release behavior, load `../production/full-cycle-ownership.md` before changing
+architecture. These features need more than clean code boundaries:
+
+- Product goal and success signal should be known before implementation.
+- Client/server authority must be explicit for economy, purchases, inventory,
+  progression, attribution, and other business-critical state.
+- Remote config and blueprint systems need validation, defaults, rollback, and
+  expired-data cleanup, not just a deserializer.
+- Analytics instrumentation belongs in the feature design and test plan, with
+  event meaning and timing clarified before code.
+- Post-launch monitoring and rollback paths are part of ownership for risky
+  features.
+
 ## Patterns Worth Using
 
 Use patterns when they reduce concrete complexity:

@@ -16,9 +16,9 @@ UI            -       -      -       -       -           -    -
 Trigger       X       X      -       -       -           -    -
 ```
 
-Each disabled pair saves a broadphase check per frame. With 10 layers, maximum 45 pairs — disable all but needed.
+Each disabled pair saves a broadphase check per frame. With 10 layers, maximum 45 pairs - disable all but needed.
 
-**Access:** Edit → Project Settings → Physics → Layer Collision Matrix
+**Access:** Edit -> Project Settings -> Physics -> Layer Collision Matrix
 
 ## Fixed Timestep
 
@@ -28,16 +28,16 @@ Each disabled pair saves a broadphase check per frame. With 10 layers, maximum 4
 | Lower | 0.033 (30 Hz) | Less CPU, less accurate physics |
 | Higher | 0.01 (100 Hz) | More CPU, more accurate (racing, physics puzzles) |
 
-**Rule:** Match physics rate to visual requirement. Don't run at 50Hz if your game targets 30fps — set to 0.033.
+**Rule:** Match physics rate to visual requirement. Don't run at 50Hz if your game targets 30fps - set to 0.033.
 
-**Maximum Allowed Timestep:** Default 0.333s — prevents spiral-of-death. Reduce to 0.1s for mobile to cap physics catchup.
+**Maximum Allowed Timestep:** Default 0.333s - prevents spiral-of-death. Reduce to 0.1s for mobile to cap physics catchup.
 
 ## Auto Sync Transforms
 
 **Default:** ON (legacy behavior)
 **Recommended:** OFF
 
-When ON, `transform.position = X` immediately updates physics world — expensive. When OFF, physics world syncs once before `FixedUpdate`.
+When ON, `transform.position = X` immediately updates physics world - expensive. When OFF, physics world syncs once before `FixedUpdate`.
 
 **Turn OFF unless:** You read `transform.position` immediately after setting it and expect physics-updated values in the same frame.
 
@@ -54,12 +54,12 @@ When ON, `transform.position = X` immediately updates physics world — expensiv
 **Rules:**
 - Non-convex mesh colliders: ONLY on static objects (Rigidbody requires convex)
 - Compound colliders (multiple primitives) beat complex mesh colliders
-- `isTrigger` is cheaper than collision response — use when physical response not needed
+- `isTrigger` is cheaper than collision response - use when physical response not needed
 
 ## Physics Query Optimization
 
 ```csharp
-// ✅ Use NonAlloc variants
+// GOOD: use NonAlloc variants
 private readonly RaycastHit[] _hitBuffer = new RaycastHit[16];
 void QueryTargets()
 {
@@ -67,10 +67,10 @@ void QueryTargets()
     for (int i = 0; i < count; i++) ProcessHit(_hitBuffer[i]);
 }
 
-// ✅ Always specify layerMask
+// GOOD: always specify layerMask
 Physics.Raycast(origin, dir, out hit, distance, LayerMask.GetMask("Enemy"));
 
-// ❌ Avoid: allocating variants
+// BAD: allocating variants
 var hits = Physics.RaycastAll(ray); // allocates array each call
 ```
 
@@ -89,5 +89,5 @@ var hits = Physics.RaycastAll(ray); // allocates array each call
 - [ ] Maximum Allowed Timestep: 0.1s on mobile
 - [ ] Queries Hit Triggers: OFF unless triggers need to be raycast targets
 - [ ] Reuse Collision Callbacks: ON (reduces GC from collision events)
-- [ ] Default Contact Offset: 0.01 (default) — reduce to 0.005 if precision needed
+- [ ] Default Contact Offset: 0.01 (default) - reduce to 0.005 if precision needed
 - [ ] All mesh colliders on kinematic/static bodies only

@@ -4,10 +4,10 @@
 
 | Method | CPU | GPU | Memory | Use Case |
 |--------|-----|-----|--------|----------|
-| `visibility: hidden` | ✅ Low | ✅ No render | ✅ Freed | Frequently toggled UI |
-| `opacity: 0` | ✅ Low | ⚠️ GPU processes | ✅ Freed | Fade animations |
-| `display: none` | ⚠️ Layout reflow | ✅ No render | ✅ Freed | Permanent removal |
-| `RemoveFromHierarchy()` | ⚠️ Recreate cost | ✅ Freed | ✅ Freed | One-time hide |
+| `visibility: hidden` | Low | No render | Freed | Frequently toggled UI |
+| `opacity: 0` | Low | GPU still processes | Freed | Fade animations |
+| `display: none` | Layout reflow | No render | Freed | Permanent removal |
+| `RemoveFromHierarchy()` | Recreate cost | Freed | Freed | One-time hide |
 
 **Rule**: Use `visibility: hidden` for toggled UI. Use `display: none` only for permanent changes.
 
@@ -36,7 +36,7 @@ VisualElement GetFromPool() =>
 ## ListView (Built-in Pooling)
 
 ```csharp
-// ListView auto-pools — only visible items exist in hierarchy
+// ListView auto-pools - only visible items exist in hierarchy
 var listView = root.Q<ListView>("item-list");
 listView.itemsSource = items;
 listView.makeItem = () => new Label();
@@ -46,9 +46,9 @@ listView.bindItem = (element, index) =>
 
 ## USS Selector Performance
 
-- **Cost formula**: N1 (classes on element) × N2 (USS files loaded)
-- BEM single-class selectors: `.button--primary` → O(1)
-- Deep selectors: `.panel > .list > .item:hover` → N1×N2 per mouse move
+- **Cost formula**: N1 (classes on element) x N2 (USS files loaded)
+- BEM single-class selectors: `.button--primary` -> O(1)
+- Deep selectors: `.panel > .list > .item:hover` -> N1xN2 per mouse move
 - `:hover` on deep hierarchies triggers re-style on every `PointerMoveEvent`
 
 ## UsageHints
@@ -61,21 +61,21 @@ element.usageHints = UsageHints.GroupTransform;     // complex content grouping
 ## UQuery Caching & Memory Leaks
 
 ```csharp
-// ✗ BAD: traverses hierarchy every call
+// BAD: traverses hierarchy every call
 void OnClick() => root.Q<Label>("status").text = "Done";
 
-// ✓ GOOD: cache in OnEnable
+// GOOD: cache in OnEnable
 private Label _status;
 void OnEnable() => _status = root.Q<Label>("status");
 void OnClick() => _status.text = "Done";
 
-// ✗ Captures 'this' — entire MonoBehaviour stays alive
+// BAD Captures 'this' - entire MonoBehaviour stays alive
 button.clicked += () => this.UpdateUI();
-// ✓ Capture specific element reference
+// GOOD Capture specific element reference
 var label = root.Q<Label>("output");
 button.clicked += () => label.text = "Updated";
 
-// ✓ Always unregister in OnDisable
+// GOOD Always unregister in OnDisable
 void OnDisable() {
     _button.clicked -= OnButtonClicked;
     _slider.UnregisterValueChangedCallback(OnSliderChanged);

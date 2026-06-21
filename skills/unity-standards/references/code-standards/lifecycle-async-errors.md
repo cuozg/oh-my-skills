@@ -149,6 +149,23 @@ private async void HandleClicked()
 
 For normal async methods, return `Awaitable`, `UniTask`, `Task`, or a result type. Avoid fire-and-forget unless there is a documented owner, cancellation path, and exception sink.
 
+## Server API Flow
+
+For client/backend integration, also load
+`../production/full-cycle-ownership.md`.
+
+- Retry only idempotent calls unless the backend contract makes transactional
+  retries safe.
+- Categorize failures: network/timeout, authentication, backend unavailable,
+  and business-rule errors usually need different UI and recovery behavior.
+- Keep independent requests parallel only when their results do not depend on
+  each other; preserve ordering for dependent or economy-sensitive requests.
+- Show loading, disable repeated submit actions, or use an explicit pending
+  state during server operations.
+- Keep old valid state until the authoritative response is validated. When the
+  server owns the result, hydrate from the response instead of recomputing local
+  state.
+
 ## Validation
 
 Validate at the boundary closest to the bad data:

@@ -1,6 +1,6 @@
-# Edit Mode Test Patterns — Advanced
+# Edit Mode Test Patterns - Advanced
 
-## NSubstitute — Mocking Framework
+## NSubstitute - Mocking Framework
 
 ```csharp
 using NSubstitute;
@@ -37,7 +37,7 @@ public void EventBus_NotifiesSubscribers()
 ## Testing MonoBehaviour Indirectly
 
 ```csharp
-// Extract logic into pure C# class — test that instead
+// Extract logic into pure C# class - test that instead
 public class HealthLogic
 {
     public float Current { get; private set; }
@@ -56,7 +56,7 @@ public sealed class HealthComponent : MonoBehaviour
     void Awake() => Logic = new HealthLogic(_maxHealth);
 }
 
-// Test pure logic — no MonoBehaviour instantiation needed
+// Test pure logic - no MonoBehaviour instantiation needed
 [Test]
 public void HealthLogic_DiesAtZero()
 {

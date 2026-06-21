@@ -1,300 +1,176 @@
 # Acceptance Criteria Verification
 
-Shared reference for the `goal-verify` skill. Defines **how** to parse Acceptance
-Criteria (ACs) from a goal file, **which** test mode (Edit vs Play) to use for
-each AC, and **what** shape the resulting verification report must take.
+Use this when turning Unity goals, plans, or manual acceptance criteria into
+verifiable checks. Keep the output tied to evidence: tests, editor inspection,
+Play Mode proof, console logs, screenshots, profiler captures, or PR diffs.
 
-This file is the single source of truth for AC→test mapping. It intentionally
-does not duplicate test-writing patterns — cross-link to the sibling files:
+## Goal File AC Parser
 
-- [coverage-strategy.md](./coverage-strategy.md) — what to cover and why
-- [edit-mode-patterns.md](./edit-mode-patterns.md) — fast, in-process tests
-- [edit-mode-advanced.md](./edit-mode-advanced.md) — async, serialization, editor APIs
-- [play-mode-patterns.md](./play-mode-patterns.md) — scene, coroutines, physics
-- [naming-conventions.md](./naming-conventions.md) — test naming rules
-- [test-case-format.md](./test-case-format.md) — the HTML QA template (different skill)
+Goal files normally live at `Docs/Goals/{feature}/{task}.md`.
 
-The `goal-verify` skill reads a goal file, runs the parser in Section A, classifies
-each AC using the matrix in Section B, and emits a markdown report using the
-template in Section C.
+Parse only top-level checklist items inside `## Acceptance Criteria`:
 
----
-
-## Section A — AC Parser Spec
-
-### A.1 Goal File Location
-
-Goal files live at `Docs/Goals/{feature-name}/{kebab-case-task}.md`, produced by
-the `goal-create` skill. Every goal file has two machine-readable blocks:
-
-1. **YAML frontmatter** — status, priority, and dependency metadata.
-2. **`## Acceptance Criteria` section** — a GitHub-style task list.
-
-### A.2 Required Frontmatter Fields
-
-Per `goal-create` Rule 14, these five fields MUST be present:
-
-| Field         | Type       | Example                          |
-| ------------- | ---------- | -------------------------------- |
-| `status`      | string     | `todo` \| `in_progress` \| `done` |
-| `priority`    | string     | `P0` \| `P1` \| `P2` \| `P3`     |
-| `created`     | ISO date   | `2026-04-10`                     |
-| `updated`     | ISO date   | `2026-04-18`                     |
-| `depends_on`  | list\|null | `[search/indexer-core]`          |
-
-If any field is missing, the parser MUST emit a warning and continue — do not
-abort. Treat missing `depends_on` as `[]`.
-
-### A.3 AC Checkbox Regex
-
-Each AC is a single line that matches:
-
-```
+```regex
 ^- \[([ x])\] (AC-\d{3}): (.+)$
 ```
 
-Capture groups:
+Capture:
 
-1. **state** — `" "` means unchecked (not yet delivered), `"x"` means author
-   claims it is delivered.
-2. **id** — zero-padded three-digit ID (`AC-001` … `AC-999`). IDs MUST be
-   unique within a goal file.
-3. **text** — the human-readable criterion. Trim trailing whitespace.
+| Field | Meaning |
+| --- | --- |
+| `state` | blank = not claimed complete, `x` = author claims complete |
+| `id` | stable criterion ID, for example `AC-001` |
+| `text` | criterion text, trimmed only at the ends |
+| `sourceLine` | 1-based line number for report links |
 
-Only lines inside the `## Acceptance Criteria` section are considered. Stop at
-the next `## ` heading or EOF.
+Parser rules:
 
-### A.4 Output Schema
+- Stop at the next `## ` heading or EOF.
+- Skip fenced code blocks.
+- Duplicate IDs: keep the first, warn on later duplicates.
+- Missing or empty AC section: report zero ACs with a parse warning.
+- Do not renumber ACs and do not rewrite AC text.
+- Frontmatter is useful metadata, but missing fields should warn rather than
+  abort verification.
 
-For each matched line the parser produces:
+Minimal parser output shape:
 
 ```json
 {
-  "id": "AC-001",
-  "text": "Player jumps when Space pressed",
-  "checked": false,
-  "sourceLine": 23
+  "title": "Add Level Timer",
+  "feature": "timer",
+  "task": "add-level-timer",
+  "acs": [
+    {
+      "id": "AC-001",
+      "text": "Timer pauses while the pause menu is open",
+      "checked": false,
+      "sourceLine": 18
+    }
+  ],
+  "warnings": []
 }
 ```
 
-- `id` — string, the `AC-###` token.
-- `text` — string, the criterion body (no leading bullet, no checkbox).
-- `checked` — boolean, `true` iff state was `x`.
-- `sourceLine` — 1-based line number in the goal file (used for deep links in
-  the report).
+## Mode Selection
 
-### A.5 Title / Feature / Task Extraction
+Choose the cheapest Unity Test Framework mode that can prove the criterion.
 
-- **Title** — first `# ` (H1) heading in the body. If absent, fall back to the
-  kebab-case filename converted to Title Case.
-- **Feature** — the parent folder name under `Docs/Goals/` (e.g. `search`).
-- **Task** — the filename without the `.md` extension (e.g.
-  `add-full-text-search`).
+| AC Concern | Default Mode | Evidence |
+| --- | --- | --- |
+| Pure C# rules, algorithms, parsers, validators | Edit Mode | NUnit assertions |
+| ScriptableObject data or serialization | Edit Mode | asset instance / JSON roundtrip |
+| Editor tooling, inspectors, menus, importers | Edit Mode | editor API assertions |
+| MonoBehaviour lifecycle, `Update`, coroutines | Play Mode | `[UnityTest]` frame progression |
+| Physics, collisions, raycasts under simulation | Play Mode | fixed-step simulation evidence |
+| Input, UI events, Animator, scene loading | Play Mode | scene/player-loop proof |
+| Performance, GC, frame timing, memory | Play Mode or profiler run | measured target-path metrics |
+| Platform/compiler branches | Compile plus targeted runtime if available | build/define evidence |
+| Analytics events and schemas | Edit Mode, Play Mode, or captured event inspection | event name, timing, params, duplicate/missing checks |
+| Remote config, blueprints, LiveOps gates | Edit Mode plus targeted runtime path | valid/missing/expired/malformed/rollback checks |
+| Server API, IAP, purchase validation | Play Mode, integration test, sandbox, or documented inspection | success, failure, retry, double-submit, authoritative response |
 
-### A.6 Concrete Example
+If an AC is ambiguous, start with Edit Mode. Escalate to Play Mode only when the
+behavior requires a live player loop, real scene lifecycle, or measured runtime
+state.
 
-Source: `Docs/Goals/search/add-full-text-search.md`
+## Verification Workflow
+
+1. Map each AC to one proof method: automated test, editor validation, manual QA
+   step, profiler capture, or documented inspection.
+2. Prefer automated tests for deterministic logic and regression-prone gameplay.
+3. Use manual QA only for visual feel, device/platform behavior, or flows that
+   are not practical to automate in the current project.
+4. Run the narrowest meaningful verification first; broaden only when the change
+   touches shared systems.
+5. Record failures against the AC ID and keep the original AC text intact.
+6. For production features, include analytics, LiveOps/config, server/API, IAP,
+   release, and monitoring proof when those surfaces are part of the change.
+
+## Test Coverage Guidance
+
+- Cover happy path, boundary path, and at least one invalid path for each core
+  rule-heavy class.
+- Pure C# should usually be Edit Mode and high coverage.
+- MonoBehaviour orchestration can be lower coverage if scene smoke tests prove
+  the lifecycle behavior.
+- Do not chase 80% coverage by testing Unity boilerplate; spend tests where a
+  regression would break gameplay, data, economy, UI flow, or platform builds.
+
+See:
+
+- `coverage-strategy.md` for coverage priority.
+- `edit-mode-patterns.md` and `edit-mode-advanced.md` for Edit Mode tests.
+- `play-mode-patterns.md` for scene, coroutine, physics, and UI tests.
+- `naming-conventions.md` for class and method naming.
+- `test-case-format.md` when the deliverable is a manual QA HTML test plan.
+
+## Report Format
+
+Write reports under the goal folder when a goal file exists:
+`Docs/Goals/{feature}/{task}-test.md`.
+
+Use this compact structure:
 
 ```markdown
 ---
-status: in_progress
-priority: P1
-created: 2026-04-10
-updated: 2026-04-18
-depends_on: [search/indexer-core]
----
-
-# Add Full-Text Search
-
-## Acceptance Criteria
-
-- [x] AC-001: Query returns results in under 200 ms for a 10k-doc corpus
-- [ ] AC-002: Highlighted snippets wrap matched terms in `<mark>` tags
-- [ ] AC-003: Empty query returns an empty list, not an error
-```
-
-Parser output:
-
-```json
-{
-  "title":   "Add Full-Text Search",
-  "feature": "search",
-  "task":    "add-full-text-search",
-  "frontmatter": { "status": "in_progress", "priority": "P1", "depends_on": ["search/indexer-core"] },
-  "acs": [
-    { "id": "AC-001", "text": "Query returns results in under 200 ms for a 10k-doc corpus", "checked": true,  "sourceLine": 12 },
-    { "id": "AC-002", "text": "Highlighted snippets wrap matched terms in `<mark>` tags",  "checked": false, "sourceLine": 13 },
-    { "id": "AC-003", "text": "Empty query returns an empty list, not an error",           "checked": false, "sourceLine": 14 }
-  ]
-}
-```
-
-### A.7 Edge Cases
-
-| Case                                  | Handling                                                                |
-| ------------------------------------- | ----------------------------------------------------------------------- |
-| Duplicate AC IDs                      | Emit warning, keep first occurrence, mark duplicates as `skipped`.      |
-| Non-sequential IDs (AC-001, AC-003)   | Allowed. Do not renumber. Report in verification metadata.              |
-| Nested bullets under an AC            | Ignored by the regex. Treat as human-readable notes only.               |
-| Code fences inside the AC section     | Skip lines inside fenced blocks to avoid matching checkboxes in code.   |
-| No `## Acceptance Criteria` heading   | Report is generated with zero ACs and a top-level `⚠️ parse warning`. |
-| Trailing whitespace in text           | Trim. Preserve internal whitespace (matters for backtick code spans).   |
-| AC lines indented (e.g. inside a list)| Reject. Top-level bullets only — prevents false positives in examples. |
-
----
-
-## Section B — Editor vs Play Mode Decision Matrix
-
-Each AC must be classified into **Edit Mode** or **Play Mode** before a test is
-written. Edit Mode is faster, deterministic, and runs without loading scenes;
-Play Mode exercises real MonoBehaviour lifecycle, physics, and coroutines.
-
-| # | AC Concern                                  | Recommended Mode | Rationale                                                                          |
-| - | ------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------- |
-| 1 | Pure C# logic / algorithms                  | Edit             | No Unity runtime required.                                                         |
-| 2 | ScriptableObject data validation            | Edit             | Assets instantiate without scene context.                                          |
-| 3 | Serialization / save-load                   | Edit             | Use `JsonUtility`, `EditorJsonUtility`; no PlayMode tick.                          |
-| 4 | Editor tooling / menu items / inspectors    | Edit             | Lives in `Editor/` asmdef; PlayMode cannot load it.                                |
-| 5 | Awake / Start / OnEnable ordering           | Play             | MonoBehaviour lifecycle only fires in Play.                                        |
-| 6 | Update / FixedUpdate / LateUpdate behavior  | Play             | Requires frame pump.                                                               |
-| 7 | Coroutines and `WaitForSeconds`             | Play             | Use `[UnityTest]` + `yield return`. Edit Mode lacks a coroutine scheduler.         |
-| 8 | Physics collisions / triggers / raycasts    | Play             | Physics step only runs in Play.                                                    |
-| 9 | Input — keyboard, mouse, gamepad, touch     | Play             | `Input` / Input System needs a live player loop.                                   |
-| 10| UGUI / UI Toolkit event callbacks           | Play             | Event system and layout only run in Play.                                          |
-| 11| Animator state transitions                  | Play             | Animator requires Play to advance graph.                                           |
-| 12| Scene load / additive / unload              | Play             | `SceneManager.LoadSceneAsync` is Play-only for runtime scenes.                     |
-| 13| Networking, file I/O, coroutine async flows | Play             | Needs a frame loop to drive completion.                                            |
-| 14| Performance budgets (ms, allocs, GC)        | Play             | Must measure on a live player loop with representative load.                       |
-| 15| Platform conditionals (`#if UNITY_IOS`, …)  | Edit             | Pure compile-gated code; verified in Edit via reflection on the compiled assembly. |
-
-### B.1 How to Classify an AC
-
-Run the AC text through these questions in order; stop at the first **Yes**:
-
-1. Does the AC mention a **frame**, **tick**, **physics**, **collision**,
-   **coroutine**, **animator**, **scene**, **input**, or a **UI event**?
-   → **Play Mode**. See [play-mode-patterns.md](./play-mode-patterns.md).
-2. Does the AC require measuring **performance**, **allocations**, or **GC**
-   under realistic load? → **Play Mode**.
-3. Is the AC about **pure logic**, **data shape**, **serialization**,
-   **editor tooling**, or **compile-time behavior**?
-   → **Edit Mode**. See [edit-mode-patterns.md](./edit-mode-patterns.md) and
-   [edit-mode-advanced.md](./edit-mode-advanced.md) for async/serialization.
-4. Ambiguous? → **Edit Mode** first (cheaper, faster). Escalate to Play only
-   if the Edit test cannot express the behavior.
-
-### B.2 Naming and Coverage Cross-Links
-
-- Test method names MUST follow [naming-conventions.md](./naming-conventions.md).
-- Coverage targets (min tests per class, happy/edge/negative ratio) live in
-  [coverage-strategy.md](./coverage-strategy.md).
-
----
-
-## Section C — Markdown Report Template
-
-The `goal-verify` skill writes the report to
-`Docs/Goals/{feature-name}/{kebab-case-task}-test.md`. Use the exact structure
-below. Status icons: ✅ Pass · ❌ Fail · ⏭️ Skip · ⚠️ Partial.
-
-````markdown
----
 goal: {feature}/{task}
 generated: {ISO-8601 timestamp}
-verifier: goal-verify
 total_acs: {n}
 passed: {n}
 failed: {n}
 skipped: {n}
 ---
 
-# Test Report — {Title}
+# Test Report - {Title}
 
-## Executive Summary
+## Summary
 
-- **Goal**: `Docs/Goals/{feature}/{task}.md`
-- **Status**: {one-line verdict, e.g. "3/5 ACs verified, 1 failing, 1 skipped"}
-- **Mode split**: {edit-count} Edit Mode · {play-count} Play Mode
-- **Next action**: {concrete follow-up — e.g. "fix AC-002 snippet wrapping"}
+- Goal: `Docs/Goals/{feature}/{task}.md`
+- Verdict: {passed}/{total} ACs verified
+- Verification: {Edit Mode tests, Play Mode tests, manual checks, profiler, etc.}
+- Next action: {one concrete next step, or "None"}
 
 ## AC Results
 
-### ✅ AC-001 — {criterion text}
+### Pass AC-001 - {original criterion text}
 
-- **Mode**: Edit
-- **Test**: `Assets/Tests/EditMode/SearchQueryTests.cs::ReturnsResultsUnder200Ms`
-- **Evidence**: 10k-doc corpus benchmark, median 142 ms (budget 200 ms).
-- **Notes**: —
+- Evidence: `{test name}`, `{scene/prefab path}`, `{console/profiler artifact}`
+- Notes: {short note or "None"}
 
-### ❌ AC-002 — {criterion text}
+### Fail AC-002 - {original criterion text}
 
-- **Mode**: Edit
-- **Test**: `Assets/Tests/EditMode/SnippetFormatterTests.cs::WrapsMatchesInMark`
-- **Evidence**: Expected `<mark>foo</mark>`, got `**foo**`.
-- **Fix hint**: `SnippetFormatter.Wrap` still uses Markdown bold; swap to HTML.
+- Evidence: {what failed}
+- Expected: {expected behavior}
+- Actual: {actual behavior}
+- Fix direction: {minimal next fix}
 
-### ⏭️ AC-003 — {criterion text}
+### Skip AC-003 - {original criterion text}
 
-- **Mode**: Edit
-- **Reason**: Implementation not started — tracked in `Docs/Goals/search/empty-query-handling.md`.
-
-## Rules
-
-1. One `### {icon} AC-### — {text}` block per AC, in source order.
-2. Every block lists **Mode**, **Test** (file + method, or `—` if none), and
-   either **Evidence** (for pass/fail) or **Reason** (for skip/partial).
-3. For ❌ and ⚠️ blocks, include a **Fix hint** with the smallest next step.
-4. Never rewrite the AC text — copy it verbatim from the goal file so diffs
-   stay grep-able.
-5. Report is idempotent: re-running `goal-verify` overwrites the file but keeps
-   the filename stable.
-
-## Verification Metadata
-
-- **Parser warnings**: {list, or "none"}
-- **Duplicate IDs**: {list, or "none"}
-- **Missing frontmatter fields**: {list, or "none"}
-- **Goal frontmatter snapshot**: `status={...}` `priority={...}` `updated={...}`
-````
-
----
-
-## Worked Example
-
-Source goal excerpt (`Docs/Goals/player/core-movement.md`):
-
-```markdown
-## Acceptance Criteria
-
-- [x] AC-001: Player jumps when Space pressed
-- [x] AC-002: Score increments by 10 on pickup
+- Reason: {blocked by missing scene/device/data/tooling}
+- Required evidence: {what would prove it}
 ```
 
-### Classification
+## Acceptance Criteria Writing Rules
 
-| AC     | Mode | Why                                                              |
-| ------ | ---- | ---------------------------------------------------------------- |
-| AC-001 | Play | Requires Input + MonoBehaviour `Update` + Rigidbody velocity.    |
-| AC-002 | Edit | Pure logic — `ScoreService.Add(10)` on a POCO, no frame needed.  |
+Good ACs are observable, bounded, and testable:
 
-### Rendered Report Fragment
+- State one behavior per AC.
+- Include concrete trigger, expected result, and relevant boundary.
+- Mention scene, prefab, config key, platform, or data source when important.
+- For product-facing features, include analytics, LiveOps/config, server
+  authority, performance threshold, or post-release monitoring only when that is
+  part of the requirement.
+- Avoid vague words like "works", "nice", "fast", or "properly" unless backed by
+  a threshold.
+
+Examples:
 
 ```markdown
-### ✅ AC-001 — Player jumps when Space pressed
-
-- **Mode**: Play
-- **Test**: `Assets/Tests/PlayMode/PlayerJumpTests.cs::SpacePressed_AppliesUpwardVelocity`
-- **Evidence**: After `InputTestFixture.Press(Keyboard.spaceKey)` and one
-  physics step, `rigidbody.velocity.y` ≥ configured `jumpSpeed`.
-- **Notes**: Uses Input System test fixture — see
-  [play-mode-patterns.md](./play-mode-patterns.md).
-
-### ✅ AC-002 — Score increments by 10 on pickup
-
-- **Mode**: Edit
-- **Test**: `Assets/Tests/EditMode/ScoreServiceTests.cs::OnPickup_AddsTen`
-- **Evidence**: `new ScoreService().OnPickup(); Assert.AreEqual(10, svc.Score);`
-- **Notes**: Pure AAA — see [edit-mode-patterns.md](./edit-mode-patterns.md).
+- [ ] AC-001: Match detection returns no matches for an empty 8x8 board
+- [ ] AC-002: Pause menu blocks board input until Resume is clicked
+- [ ] AC-003: WebGL save data hydrates from browser storage before home UI renders
+- [ ] AC-004: Opening inventory allocates less than 1 KB GC after warmup
+- [ ] AC-005: Reward claim sends exactly one `reward_claimed` event after the server confirms success
+- [ ] AC-006: Missing reward config keeps the previous valid config and shows no claimable reward row
 ```
-
-Both ACs pass → report headline: **"2/2 ACs verified, 1 Edit · 1 Play"**.

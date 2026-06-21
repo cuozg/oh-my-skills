@@ -21,6 +21,15 @@ Load only the file that matches the work surface, then apply the target reposito
 | `architecture-systems.md` | Folder layout, asmdefs, dependencies, events, feature boundaries, editor code, refactoring, and WebGL constraints. |
 | `ecs-burst-standards.md` | Entities, Jobs, Burst, NativeContainers, Bakers, structural changes, and DOTS migration decisions. |
 
+Related non-code standards:
+
+| File | Load When |
+| --- | --- |
+| `../asset-management/addressables-asset-manager.md` | Asset manager, Addressables, runtime loading, catalogs, labels, handles, and release ownership. |
+| `../asset-management/prefab-material-shader-work.md` | Prefab, material, shader, sprite atlas, and renderer asset work. |
+| `../optimization/canvas-ui-drawcalls-batching.md` | uGUI Canvas optimization, UI draw calls, batching, masks, atlases, and overdraw. |
+| `../production/full-cycle-ownership.md` | Product goals, analytics, LiveOps, remote config, server APIs, IAP, release readiness, and monitoring. |
+
 ## Senior-Engineer Baseline
 
 - Match local style before imposing a generic rule.
@@ -30,3 +39,5 @@ Load only the file that matches the work surface, then apply the target reposito
 - Keep hot paths allocation-free unless profiler data says the cost is irrelevant.
 - Use Unity APIs on the main thread unless the API explicitly supports jobs or worker threads.
 - Prefer tests and direct Unity validation over confidence from inspection alone.
+- For production features, include analytics correctness, LiveOps maintainability,
+  release risk, and post-launch observability in the definition of done.

@@ -64,10 +64,41 @@ Use these for:
   `https://docs.unity3d.com/kr/2022.2/ScriptReference/Pool.IObjectPool_1.html`
 - Addressables package docs:
   `https://docs.unity3d.com/cn/2023.2/Manual/com.unity.addressables.html`
+- Addressables memory management:
+  `https://docs.unity3d.com/Packages/com.unity.addressables@2.0/manual/MemoryManagement.html`
+- Addressables asset loading:
+  `https://docs.unity3d.com/Packages/com.unity.addressables@2.0/manual/load-assets.html`
+- Addressables operations and handles:
+  `https://docs.unity3d.com/Packages/com.unity.addressables@1.20/manual/AddressableAssetsAsyncOperationHandle.html`
 
 Use these for:
 - Built-in object pooling support windows and API semantics
 - Addressables package version compatibility with the current editor
+- Addressables handle ownership, release rules, async loading, labels, groups,
+  and content update behavior
+
+## Rendering, Materials, Shaders, Prefabs, And Canvas UI
+
+- SRP Batcher manual:
+  `https://docs.unity3d.com/Manual/SRPBatcher.html`
+- Draw call batching manual:
+  `https://docs.unity3d.com/Manual/DrawCallBatching.html`
+- GPU instancing manual:
+  `https://docs.unity3d.com/Manual/GPUInstancing.html`
+- Shader variants manual:
+  `https://docs.unity3d.com/Manual/shader-variants.html`
+- Prefab variants manual:
+  `https://docs.unity3d.com/Manual/PrefabVariants.html`
+- Nested prefabs manual:
+  `https://docs.unity3d.com/Manual/NestedPrefabs.html`
+- Unity UI optimization guide:
+  `https://unity.com/how-to/unity-ui-optimization-tips`
+
+Use these for:
+- SRP Batcher, static batching, dynamic batching, GPU instancing, and shader
+  variant claims
+- Prefab variant and nested prefab workflow rules
+- Canvas rebuild, raycast target, layout, atlas, mask, and UI batching guidance
 
 ## Web Platform
 
@@ -79,6 +110,30 @@ Use these for:
 Use these for:
 - Current Web platform limitations, including filesystem and threading constraints
 - Whether a target browser or device class is officially supported
+
+## IAP, Billing, Store Review, And Compliance
+
+- Unity IAP docs:
+  `https://docs.unity.com/en-us/iap`
+- Unity IAP package docs:
+  `https://docs.unity3d.com/Packages/com.unity.purchasing@5.3/`
+- Unity IAP v5 upgrade guide:
+  `https://docs.unity.com/en-us/iap/upgrade-to-iap-v5`
+- Google Play Billing:
+  `https://developer.android.com/google/play/billing`
+- Google Play alternative billing:
+  `https://developer.android.com/google/play/billing/alternative/alternative-billing-with-user-choice-in-app`
+- Apple App Review Guidelines:
+  `https://developer.apple.com/app-store/review/guidelines/`
+- Apple App Review overview:
+  `https://developer.apple.com/distribute/app-review/`
+
+Use these for:
+- Current Unity IAP package APIs and migration behavior
+- Billing, alternative billing, store policy, privacy, tracking, metadata, and
+  app-review requirements
+- Avoiding stale assumptions about regional billing rules, review timing, or
+  compliance checklists
 
 ## Testing
 

@@ -2,44 +2,46 @@
 
 ## Template
 
-```
-▲ {Feature Name}
-{size} · {hours} · {risk} risk
+```markdown
+## {Feature Name}
+{size} | {hours} | {risk} risk
 
 {1-sentence summary with evidence}
 
-┌ Tasks
-├─ {subject}
-│  {description}
-│  → skill:{skill-name}
-├─ {subject}
-│  {description}
-│  → skill:{skill-name}
-└─ {subject}
-   {description}
-   → skill:{skill-name}
+Product / release surface: {None, or KPI/analytics/LiveOps/API/release risk}
+
+### Tasks
+- [ ] {subject}
+  - {description}
+  - Skill: `{skill-name}`
+- [ ] {subject}
+  - {description}
+  - Skill: `{skill-name}`
+- [ ] {subject}
+  - {description}
+  - Skill: `{skill-name}`
 ```
 
 ## Example
 
-```
-▲ Add Player Health System
-S · 2-4h · Low risk
+```markdown
+## Add Player Health System
+S | 2-4h | Low risk
 
 Add health component with damage/heal API and death event, based on existing IDamageable pattern in Assets/Scripts/Interfaces/.
 
-┌ Tasks
-├─ Implement HealthComponent MonoBehaviour
-│  Track current/max HP, expose TakeDamage/Heal, fire OnDeath event.
-│  Serialized fields for maxHealth, invincibility duration.
-│  → skill:unity-code
-├─ Create HealthBar UI prefab
-│  Slider-based bar, subscribe to HealthComponent events.
-│  Follow existing UI pattern in Assets/Prefabs/UI/.
-│  → skill:unity-code
-└─ Write HealthComponent unit tests
-   Cover: damage clamp, heal cap, death trigger, negative input.
-   → skill:unity-test-unit
+### Tasks
+- [ ] Implement HealthComponent MonoBehaviour
+  - Track current/max HP, expose TakeDamage/Heal, fire OnDeath event.
+  - Serialized fields for maxHealth and invincibility duration.
+  - Skill: `unity-standards`
+- [ ] Create HealthBar UI prefab
+  - Slider-based bar, subscribe to HealthComponent events.
+  - Follow existing UI pattern in Assets/Prefabs/UI/.
+  - Skill: `unity-standards`
+- [ ] Write HealthComponent unit tests
+  - Cover damage clamp, heal cap, death trigger, and negative input.
+  - Skill: `unity-test-unit`
 ```
 
 ## Field Rules
@@ -53,7 +55,8 @@ Add health component with damage/heal API and death event, based on existing IDa
 | Subject     | Imperative verb + target                    |
 | Description | What + why + constraints (2-3 lines max)    |
 | Skill       | Exact skill name from skill registry        |
+| Product / release surface | Mention analytics, LiveOps, server, IAP, release, or monitoring only when touched |
 
 ## Metadata Line
 
-Single line: `{size} · {hours} · {risk} risk`
+Single line: `{size} | {hours} | {risk} risk`

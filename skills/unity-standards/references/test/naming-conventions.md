@@ -23,25 +23,25 @@ public class WeaponConfigTests { }
 public class PlayerControllerPlayTests { } // play mode suffix
 ```
 
-## File Location — Mirror Source
+## File Location - Mirror Source
 
 ```
 Assets/
-├── Scripts/
-│   ├── Player/
-│   │   ├── HealthSystem.cs
-│   │   └── PlayerController.cs
-│   └── Inventory/
-│       └── InventoryManager.cs
-└── Tests/
-    ├── EditMode/
-    │   ├── Player/
-    │   │   └── HealthSystemTests.cs
-    │   └── Inventory/
-    │       └── InventoryManagerTests.cs
-    └── PlayMode/
-        └── Player/
-            └── PlayerControllerPlayTests.cs
++-- Scripts/
+|   +-- Player/
+|   |   +-- HealthSystem.cs
+|   |   +-- PlayerController.cs
+|   +-- Inventory/
+|       +-- InventoryManager.cs
++-- Tests/
+    +-- EditMode/
+    |   +-- Player/
+    |   |   +-- HealthSystemTests.cs
+    |   +-- Inventory/
+    |       +-- InventoryManagerTests.cs
+    +-- PlayMode/
+        +-- Player/
+            +-- PlayerControllerPlayTests.cs
 ```
 
 ## Assembly Definitions
@@ -76,7 +76,7 @@ public class SaveSystemTests { }
 public class SceneLoadTests { }
 ```
 
-Run filtered: `Unity Test Runner → Category filter`
+Run filtered: `Unity Test Runner -> Category filter`
 
 ## Quick Reference
 

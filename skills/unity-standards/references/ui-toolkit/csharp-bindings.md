@@ -62,9 +62,9 @@ element.UnregisterCallback<PointerDownEvent>(OnPointerDown);         // Always p
 ## Closure Safety
 
 ```csharp
-// ✗ BAD: captures 'this'
+// BAD: captures 'this'
 button.clicked += () => this.DoSomething();
-// ✓ GOOD: capture specific element
+// GOOD: capture specific element
 var label = root.Q<Label>("status");
 button.clicked += () => label.text = "Done";
 ```
@@ -76,7 +76,7 @@ button.clicked += () => label.text = "Done";
 var nameLabel = root.Q<Label>("player-name");
 nameLabel.SetBinding("text", new DataBinding {
     dataSourcePath = new PropertyPath(nameof(PlayerData.Name)),
-    bindingMode = BindingMode.OneWayToTarget  // C# → UI only
+    bindingMode = BindingMode.OneWayToTarget  // C# -> UI only
 });
 // Modes: OneWayToTarget (display), TwoWay (editable), OneWayFromTarget (user-driven)
 // Triggers: OnValueChange (default), OnFocusOut (debounced)
@@ -91,7 +91,7 @@ element.tabIndex = 0;    // tab order (-1 to skip)
 element.focusable = true;
 
 // Hide: visibility (cheap, keeps layout) vs display (reflows)
-element.style.visibility = Visibility.Hidden;   // ✓ cheapest
+element.style.visibility = Visibility.Hidden;   // GOOD cheapest
 element.style.display = DisplayStyle.None;      // layout reflow
 
 // State via USS classes

@@ -169,6 +169,23 @@ Risky uses:
 - hidden service locator references
 - data that must differ per scene instance without clear ownership
 
+## Config And Scalable Data
+
+Remote config, blueprints, and server payloads are production data. Load
+`../production/full-cycle-ownership.md` when config affects LiveOps, analytics,
+economy, progression, or release behavior.
+
+- Keep config compact. Large payloads, post-load dictionary generation, sorting,
+  and dependency resolution can hurt startup and memory.
+- Validate required fields and version compatibility before applying new config.
+- Keep the previous valid state when a new config is missing, malformed, expired,
+  or incompatible.
+- For unbounded systems, store only the compact player-specific state and
+  generate predictable ranges from templates. Do not persist every possible
+  level, reward, or row when the data can scale indefinitely.
+- Clean up expired config and obsolete player data intentionally so LiveOps
+  iteration does not create permanent memory, save, or backend bloat.
+
 ## Save And External Data
 
 Treat save files, remote config, and server payloads as untrusted input.

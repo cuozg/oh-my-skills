@@ -4,9 +4,9 @@
 
 | Metric | Threshold | Tool |
 |--------|-----------|------|
-| Afferent coupling (Ca) | ≤ 10 per class | lsp_find_references |
-| Efferent coupling (Ce) | ≤ 8 per class | count `using` + field types |
-| Instability (Ce/(Ca+Ce)) | 0.0–1.0 range | calculate per assembly |
+| Afferent coupling (Ca) | <= 10 per class | lsp_find_references |
+| Efferent coupling (Ce) | <= 8 per class | count `using` + field types |
+| Instability (Ce/(Ca+Ce)) | 0.0-1.0 range | calculate per assembly |
 
 ## Assembly Boundary Checks
 
@@ -19,8 +19,8 @@
 ## Dependency Direction
 
 ```
-UI → Application → Domain → Core
-     ↓
+UI -> Application -> Domain -> Core
+     v
    Infrastructure
 ```
 
@@ -33,7 +33,7 @@ UI → Application → Domain → Core
 
 | Check | Pass Criteria |
 |-------|---------------|
-| Count | ≤ 3 singletons total |
+| Count | <= 3 singletons total |
 | Lifecycle | Paired with `OnDestroy` cleanup |
 | Thread safety | `lock` or main-thread assertion |
 | Testability | Interface-backed, injectable |
@@ -63,4 +63,4 @@ UI → Application → Domain → Core
 1. Build adjacency graph from `using` directives
 2. Run DFS cycle detection
 3. Each cycle = **Critical** finding
-4. Report: `ClassA → ClassB → ClassC → ClassA`
+4. Report: `ClassA -> ClassB -> ClassC -> ClassA`
