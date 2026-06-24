@@ -21,6 +21,8 @@ Keep it compact and structured. Focus on evidence and actionable solutions. Avoi
    - Current behavior vs expected behavior
    - Key signal: compile error, stack trace, log, visual symptom, or failing state
    - Affected scene, prefab, system, build target, or user path
+   - Scope — single script, system interaction, or timing?
+   - Check git log -5 for recent changes.
    - Reproduction steps and frequency
 ### 2. If required debug inputs are missing, ask only for the missing evidence. Do not assume.
 ### 3. Understand the codebase.
