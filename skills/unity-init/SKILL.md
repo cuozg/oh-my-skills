@@ -1,87 +1,158 @@
----
-name: unity-init
-description: "Use this skill to initialize a Unity project structure based on user requests: scaffolding folder layout with feature-based organization, assembly definitions (.asmdef), .gitignore, and namespace-aligned directories under Assets/_Project/. Use whenever a user wants to start a new Unity project, set up folder structure, initialize or scaffold a project, create a project template, or organize their Unity project from scratch, even if they just say they are starting a new Unity game or describe a game concept and ask for the project setup. Also triggers on folder layout, project organization, directory structure, project template, asmdef setup, or best folder structure for Unity. Always use this skill when the user provides a company name, project name, and feature list for a new Unity project. Do not use for adding features to an existing project; use unity-code for that."
-metadata:
-  author: kuozg
-  version: "1.0"
----
-
 # unity-init
 
-Generate a production-ready Unity project folder tree with assembly definitions, .gitignore, and namespace alignment.
+Generate a production-ready Unity project folder tree following the **ZenoGames Ten Crush pattern**: tiered assembly definitions, event-bus-first feature isolation, MVVM view controllers, optional shared SDK scaffold, asset-first docs.
 
 ## Scope
 
-**Use when:** Starting a new Unity project, reorganizing a messy project, or setting up a clean folder structure from scratch.
+**Use when:** Starting a new Unity project, reorganizing a messy project, or scaffolding the canonical structure for a ZenoGames title.
 
 **Switch out if:** Project already has an established structure and the user wants to add features (`unity-code`).
 
+## Quick Start
+
+```bash
+python3 scripts/generate_structure.py \
+  --company ZenoGames --project TenCrush \
+  --sdk ZenoSDK \
+  --features "Board,Match,Score,Goal,Audio,Input,Tile,VFX" \
+  --ui-controllers "HUD,Popups" \
+  --pipeline URP \
+  --gitignore \
+  --output-dir /path/to/UnityProject
+```
+
+Generates the full folder tree + every `.asmdef` + feature `README.md` + `AGENTS.md`. The project's own `CLAUDE.md` and the resulting tree should match — see "Verify Against CLAUDE.md" below.
+
 ## Workflow
 
-1. **Gather** - Ask or infer these inputs:
-   - **Company name** (namespace root, e.g., `Studio`)
-   - **Project name** (e.g., `RPG`, `Platformer`)
-   - **Initial features** (e.g., `Player`, `Combat`, `Inventory`) - default: `Player` only
-   - **Render pipeline** (`URP`, `HDRP`, `Built-in`) - default: `URP`
-   - **Include .gitignore?** - default: yes
-
-   If the user gives a game description instead of explicit params, extract company/project/features from context.
-
-2. **Generate** - Run the scaffold script:
-   ```
-   run_skill_script("unity-init", "scripts/generate_structure.py",
-     arguments=["--company", "Studio", "--project", "RPG",
-                "--features", "Player,Combat,Inventory",
-                "--pipeline", "URP", "--gitignore"])
-   ```
-   The script outputs a JSON manifest of all paths and file contents.
-
-3. **Apply** - Use the script output to create the structure in the Unity project:
-   - Create directories via `bash mkdir -p`
-   - Write `.asmdef` JSON files with correct references
-   - Write `.gitignore` at project root if requested
-   - Write `.asmdef` for Core, Infrastructure, each feature, and test assemblies
-
-4. **Verify** - Confirm all directories and files exist. Report the generated tree to the user.
+1. **Gather** — collect or infer these inputs:
+   - `--company` (namespace root, e.g. `ZenoGames`)
+   - `--project` (game name, e.g. `TenCrush`)
+   - `--features` (csv; default `Board,Match,Score,Goal,Audio,Input,Tile,VFX`)
+   - `--ui-controllers` (csv; default `HUD,Popups`)
+   - `--sdk` (optional, e.g. `ZenoSDK` → generates `Assets/_ZenoSDK/` scaffold)
+   - `--pipeline` (`URP` | `URP2D` | `HDRP` | `Built-in`; default `URP`)
+   - `--gitignore` (default off)
+2. **Generate** — run the scaffold script (above).
+3. **Apply** — creates directories, writes `.asmdef` files with correct references, optional `.gitignore`, `README.md` and `AGENTS.md` per feature.
+4. **Verify** — confirm tree, check every `<X>.asmdef` compiles in Unity, then update the project's `CLAUDE.md` folder-structure table.
 
 ## What Gets Generated
 
 ```
 Assets/
-+-- _Project/
-|   +-- Core/Scripts/          + .asmdef (no deps)
-|   +-- Features/{Name}/
-|   |   +-- Scripts/           + .asmdef (refs Core)
-|   |   +-- Prefabs/
-|   |   +-- Art/
-|   |   +-- Animations/
-|   |   +-- Tests/             + .asmdef (test assembly)
-|   +-- Infrastructure/Scripts/ + .asmdef (refs Core + features)
-|   +-- UI/
-|   +-- Settings/
-|   +-- Art/
-|   +-- Audio/
-|   +-- Scenes/
-+-- Plugins/
-.gitignore                     (Unity-optimized, at project root)
+├── Scenes/                                # project-level (non-game)
+├── Settings/
+│   ├── Build Profiles/                    # per-platform build profiles
+│   └── Scenes/                            # scene templates
+├── Tests/
+│   ├── EditMode/                          # Editor-only test asmdef
+│   └── PlayMode/                          # PlayMode test asmdef
+├── _<Project>/                            # game-specific (e.g. _TenCrush)
+│   ├── Audio/  Fonts/  Shaders/  Sprites/  VFXs/
+│   ├── Datas/{Events,Levels}/             # ScriptableObject data assets
+│   ├── Editor/                            # editor-only scripts
+│   ├── Prefabs/{GamePlay,Services,UI}/    # categorized prefabs
+│   ├── Scenes/                            # game scenes
+│   ├── Scripts/
+│   │   ├── Bootstrap/                     # composition root
+│   │   ├── Core/                          # foundation (no deps)
+│   │   ├── Events/                        # foundation (no deps) — event bus
+│   │   ├── Models/                        # data layer (refs Core)
+│   │   ├── Systems/                       # cross-cutting services
+│   │   ├── ViewModels/                    # MVVM (refs Core + Events)
+│   │   ├── Features/<Name>/               # self-contained features
+│   │   │   ├── Scripts/<X>.asmdef
+│   │   │   ├── Tests/                     # per-feature test folder
+│   │   │   ├── README.md
+│   │   │   └── AGENTS.md
+│   │   └── ViewControllers/<Name>/        # UI controllers (HUD, Popups)
+│   ├── README.md  AGENTS.md
+└── _<SDK>/                                # optional shared SDK (e.g. _ZenoSDK)
+    ├── Scripts/{Core,Events}/
+    └── Editor/
 ```
 
-## Rules
+## Assembly Topology
 
-- **Feature-based layout.** Every feature is self-contained with Scripts/, Prefabs/, Art/.
-- **Assembly per feature.** Each Scripts/ folder gets a `.asmdef` - prevents monolithic recompilation.
-- **Namespace = folder path.** `Company.Project.Feature` maps to `Features/Feature/Scripts/`.
-- **Core has no deps.** Core assembly defines interfaces and data - everything else depends on it.
-- **No `Resources/` folder.** Use Addressables instead - `Resources/` bloats builds.
-- **`_Project/` prefix.** Sorts above Unity-generated folders in the Project window.
+All runtime asmdefs default to `autoReferenced: true`; tests to `autoReferenced: false` + `UNITY_INCLUDE_TESTS`.
+
+```
+Foundation (zero deps)
+├─ ZenoGames.<Project>.Core
+└─ ZenoGames.<Project>.Events            ← event bus; ONLY cross-feature channel
+
+Data layer
+└─ ZenoGames.<Project>.Models            → Core
+
+Cross-cutting
+└─ ZenoGames.<Project>.Systems           → Core, Events, Models
+
+MVVM
+└─ ZenoGames.<Project>.ViewModels        → Core, Events
+
+Features (each isolated)
+├─ ZenoGames.<Project>.Features.Audio    → Core, Events
+├─ ZenoGames.<Project>.Features.Board    → Core, Events
+├─ ...
+
+UI ViewControllers
+├─ ZenoGames.<Project>.ViewControllers.HUD    → Core, Events, ViewModels
+├─ ZenoGames.<Project>.ViewControllers.Popups → Core, Events, ViewModels
+└─ ZenoGames.<Project>.ViewControllers        → Core, Events, ViewModels, .HUD, .Popups
+
+Composition root
+└─ ZenoGames.<Project>.Bootstrap         → Core, Events, +features
+
+Editor (includePlatforms: ["Editor"])
+└─ ZenoGames.<Project>.Editor            → Core, Events, ViewModels, Models, *features
+
+Tests
+├─ ZenoGames.<Project>.EditMode.Tests    → Core, Events, ViewModels, *features (Editor)
+└─ ZenoGames.<Project>.PlayMode.Tests    → Core, Events, ViewModels, Bootstrap, *features
+```
+
+**Hard rules baked into the generator:**
+- `Core` and `Events` have zero internal deps.
+- Every `Features.*` depends only on `Core` + `Events` — never on another feature.
+- `ViewControllers.*` depend on `Core` + `Events` + `ViewModels`.
+- `Bootstrap` is the only assembly that wires features together.
+- `Editor` references everything (Editor-only build).
+
+## Optional SDK Layer
+
+Pass `--sdk ZenoSDK` to generate a parallel `Assets/_ZenoSDK/` skeleton with:
+- `ZenoGames.ZenoSDK.Core` (zero deps)
+- `ZenoGames.ZenoSDK.Events` (zero deps)
+- `ZenoGames.ZenoSDK.Editor` (Editor-only, refs Core + Events)
+
+Use this when the studio plans to share libraries across multiple titles.
+
+## Project Rules
+
+The skill assumes the project follows the Ten Crush `CLAUDE.md` rules:
+
+- **NEVER use worktree** — work in place.
+- **Asset-first:** create ScriptableObject data assets and prefabs before logic. Generator only emits the folder + asmdef skeleton; data assets are added by `unity-data`/`unity-prefab` later.
+- **Per-feature docs:** every feature folder must include `README.md` (what + how) and `AGENTS.md` (gotchas). Generator creates both as stubs — replace before shipping.
+- **Event-bus communication:** features never reference each other directly. Use `TenCrush.Events`.
+- **No Resources/ Plugins/ folders** in the generated tree — Addressables and explicit imports only.
+
+## Documentation Maintenance
+
+After running this skill, update the project's `CLAUDE.md`:
+- Add rows to the **Project Structure** table for any new `Datas/`, `Prefabs/`, or `Scripts/` subfolders.
+- Update the **Assembly Definitions** diagram when adding/removing asmdefs.
+
+## Verify Against CLAUDE.md
+
+Before declaring done:
+- [ ] Tree matches the project's `CLAUDE.md` structure table.
+- [ ] Every `<X>.asmdef` has the expected `references[]` (no feature-to-feature links).
+- [ ] Unity recompiles cleanly (`read_console` via MCP).
+- [ ] Project opens without missing-assembly errors.
 
 ## Standards
 
-Load the shared project structure reference for detailed rules:
-```
-read_skill_file("unity-standards", "references/code-standards/architecture-systems.md")
-```
-
-For naming conventions: `read_skill_file("unity-standards", "references/code-standards/core-conventions.md")`
-For assembly boundaries: `read_skill_file("unity-standards", "references/code-standards/architecture-systems.md")`
-For MCP asset/folder tools: `read_skill_file("unity-standards", "references/other/unity-mcp-routing-matrix.md")` - see **Asset Management Branch** for `ManageAsset(CreateFolder)` and `ListResources`
+For naming/convention specifics: load `unity-standards` skill.
+For MCP asset tooling (creating actual prefabs/SOs): `unity-asset-generation` + `manage_asset action=create_folder`.

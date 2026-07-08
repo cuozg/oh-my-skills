@@ -1,166 +1,316 @@
 #!/usr/bin/env python3
 import json
+import sys
 import tempfile
 from pathlib import Path
 
-import sys
-
 sys.path.insert(0, str(Path(__file__).parent))
-from generate_structure import generate_manifest, make_asmdef, apply_manifest
+from generate_structure import apply_manifest, generate_manifest, make_asmdef
 
 
 def test_make_asmdef_basic():
-    result = json.loads(make_asmdef("Game.Core"))
-    assert result["name"] == "Game.Core"
-    assert result["rootNamespace"] == "Game.Core"
+    result = json.loads(make_asmdef("ZenoGames.TenCrush.Core"))
+    assert result["name"] == "ZenoGames.TenCrush.Core"
+    assert result["rootNamespace"] == "ZenoGames.TenCrush.Core"
     assert result["references"] == []
-    assert result["autoReferenced"] is False
+    assert result["autoReferenced"] is True
     assert result["overrideReferences"] is False
     assert result["defineConstraints"] == []
+    assert result["includePlatforms"] == []
 
 
 def test_make_asmdef_with_references():
-    result = json.loads(make_asmdef("Game.Combat", references=["Game.Core"]))
-    assert result["references"] == ["Game.Core"]
+    result = json.loads(
+        make_asmdef("ZenoGames.TenCrush.Features.Board",
+                    references=["ZenoGames.TenCrush.Core",
+                                "ZenoGames.TenCrush.Events"])
+    )
+    assert "ZenoGames.TenCrush.Core" in result["references"]
+    assert "ZenoGames.TenCrush.Events" in result["references"]
+
+
+def test_make_asmdef_editor_only():
+    result = json.loads(
+        make_asmdef("ZenoGames.TenCrush.Editor", editor_only=True)
+    )
+    assert result["includePlatforms"] == ["Editor"]
+    assert result["autoReferenced"] is True
 
 
 def test_make_asmdef_test_assembly():
-    result = json.loads(make_asmdef("Game.Player.Tests", is_test=True))
+    result = json.loads(make_asmdef("TenCrush.Tests", is_test=True, auto_referenced=False))
     assert result["overrideReferences"] is True
+    assert result["autoReferenced"] is False
     assert "UNITY_INCLUDE_TESTS" in result["defineConstraints"]
     assert "nunit.framework.dll" in result["precompiledReferences"]
+    assert result["includePlatforms"] == []  # PlayMode by default
+
+
+def test_make_asmdef_test_editor_only():
+    result = json.loads(
+        make_asmdef("TenCrush.EditMode.Tests", is_test=True,
+                    auto_referenced=False, editor_only=True)
+    )
+    assert result["includePlatforms"] == ["Editor"]
+    assert "UNITY_INCLUDE_TESTS" in result["defineConstraints"]
 
 
 def test_make_asmdef_custom_namespace():
-    result = json.loads(make_asmdef("Game.UI", root_namespace="Custom.NS"))
+    result = json.loads(make_asmdef("ZenoGames.TenCrush.UI", root_namespace="Custom.NS"))
     assert result["rootNamespace"] == "Custom.NS"
 
 
 def test_generate_manifest_defaults():
-    m = generate_manifest("Studio", "RPG")
-    assert m["company"] == "Studio"
-    assert m["project"] == "RPG"
-    assert m["namespace_root"] == "Studio.RPG"
-    assert m["features"] == ["Player"]
-    assert "Assets/_Project/Core/Scripts" in m["directories"]
-    assert "Assets/_Project/Features/Player/Scripts" in m["directories"]
-    assert "Assets/_Project/Features/Player/Prefabs" in m["directories"]
-    assert "Assets/_Project/Features/Player/Art" in m["directories"]
-    assert "Assets/_Project/Features/Player/Animations" in m["directories"]
-    assert "Assets/_Project/Features/Player/Tests" in m["directories"]
-    assert "Assets/_Project/Infrastructure/Scripts" in m["directories"]
-    assert "Assets/_Project/UI" in m["directories"]
-    assert "Assets/_Project/Settings" in m["directories"]
-    assert "Assets/_Project/Art" in m["directories"]
-    assert "Assets/_Project/Audio" in m["directories"]
-    assert "Assets/_Project/Scenes" in m["directories"]
-    assert "Assets/Plugins" in m["directories"]
+    m = generate_manifest("ZenoGames", "TenCrush")
+    assert m["company"] == "ZenoGames"
+    assert m["project"] == "TenCrush"
+    assert m["namespace_root"] == "ZenoGames.TenCrush"
+    assert "Board" in m["features"]
+    assert "HUD" in m["ui_controllers"]
+    assert m["sdk"] is None
+    dirs = m["directories"]
+    # Root-level project dirs
+    assert "Assets/Scenes" in dirs
+    assert "Assets/Settings/Build Profiles" in dirs
+    assert "Assets/Settings/Scenes" in dirs
+    assert "Assets/Tests/EditMode" in dirs
+    assert "Assets/Tests/PlayMode" in dirs
+    # _TenCrush top-level
+    assert "Assets/_TenCrush/Audio" in dirs
+    assert "Assets/_TenCrush/Datas/Events" in dirs
+    assert "Assets/_TenCrush/Datas/Levels" in dirs
+    assert "Assets/_TenCrush/Editor" in dirs
+    assert "Assets/_TenCrush/Prefabs/GamePlay" in dirs
+    assert "Assets/_TenCrush/Prefabs/Services" in dirs
+    assert "Assets/_TenCrush/Prefabs/UI" in dirs
+    assert "Assets/_TenCrush/Scenes" in dirs
+    # Scripts tier
+    assert "Assets/_TenCrush/Scripts/Bootstrap" in dirs
+    assert "Assets/_TenCrush/Scripts/Core" in dirs
+    assert "Assets/_TenCrush/Scripts/Events" in dirs
+    assert "Assets/_TenCrush/Scripts/Models" in dirs
+    assert "Assets/_TenCrush/Scripts/Systems" in dirs
+    assert "Assets/_TenCrush/Scripts/ViewModels" in dirs
+    # Feature dirs
+    assert "Assets/_TenCrush/Scripts/Features/Board/Scripts" in dirs
+    # UI controllers
+    assert "Assets/_TenCrush/Scripts/ViewControllers/HUD/Scripts" in dirs
 
 
 def test_generate_manifest_no_resources_folder():
-    m = generate_manifest("Studio", "RPG")
+    m = generate_manifest("ZenoGames", "TenCrush")
     for d in m["directories"]:
         assert "Resources" not in d, f"Resources folder found: {d}"
 
 
-def test_generate_manifest_asmdef_files():
-    m = generate_manifest("Studio", "RPG", features=["Player", "Combat"])
-    file_paths = [f["path"] for f in m["files"]]
+def test_generate_manifest_no_plugins_folder():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    # Plugins is project-specific, not auto-generated by this skill.
+    for d in m["directories"]:
+        assert "Plugins" not in d, f"Plugins folder auto-generated: {d}"
 
-    assert "Assets/_Project/Core/Scripts/Studio.RPG.Core.asmdef" in file_paths
-    assert (
-        "Assets/_Project/Features/Player/Scripts/Studio.RPG.Player.asmdef" in file_paths
-    )
-    assert (
-        "Assets/_Project/Features/Player/Tests/Studio.RPG.Player.Tests.asmdef"
-        in file_paths
-    )
-    assert (
-        "Assets/_Project/Features/Combat/Scripts/Studio.RPG.Combat.asmdef" in file_paths
-    )
-    assert (
-        "Assets/_Project/Features/Combat/Tests/Studio.RPG.Combat.Tests.asmdef"
-        in file_paths
-    )
-    assert (
-        "Assets/_Project/Infrastructure/Scripts/Studio.RPG.Infrastructure.asmdef"
-        in file_paths
-    )
+
+def test_generate_manifest_asmdef_files():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board", "Match"])
+    paths = [f["path"] for f in m["files"]]
+    # Foundation
+    assert "Assets/_TenCrush/Scripts/Core/ZenoGames.TenCrush.Core.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/Events/ZenoGames.TenCrush.Events.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/Models/ZenoGames.TenCrush.Models.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/Systems/ZenoGames.TenCrush.Systems.asmdef" in paths
+    # ViewModels
+    assert "Assets/_TenCrush/Scripts/ViewModels/ZenoGames.TenCrush.ViewModels.asmdef" in paths
+    # Features
+    assert "Assets/_TenCrush/Scripts/Features/Board/Scripts/ZenoGames.TenCrush.Features.Board.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/Features/Match/Scripts/ZenoGames.TenCrush.Features.Match.asmdef" in paths
+    # UI ViewControllers
+    assert "Assets/_TenCrush/Scripts/ViewControllers/HUD/Scripts/ZenoGames.TenCrush.ViewControllers.HUD.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/ViewControllers/Popups/Scripts/ZenoGames.TenCrush.ViewControllers.Popups.asmdef" in paths
+    assert "Assets/_TenCrush/Scripts/ViewControllers/ZenoGames.TenCrush.ViewControllers.asmdef" in paths
+    # Bootstrap
+    assert "Assets/_TenCrush/Scripts/Bootstrap/ZenoGames.TenCrush.Bootstrap.asmdef" in paths
+    # Editor
+    assert "Assets/_TenCrush/Editor/ZenoGames.TenCrush.Editor.asmdef" in paths
+    # Tests
+    assert "Assets/Tests/EditMode/ZenoGames.TenCrush.EditMode.Tests.asmdef" in paths
+    assert "Assets/Tests/PlayMode/ZenoGames.TenCrush.PlayMode.Tests.asmdef" in paths
+
+
+def test_generate_manifest_feature_docs():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board"])
+    paths = [f["path"] for f in m["files"]]
+    assert "Assets/_TenCrush/Scripts/Features/Board/README.md" in paths
+    assert "Assets/_TenCrush/Scripts/Features/Board/AGENTS.md" in paths
+
+
+def test_generate_manifest_project_docs():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    paths = [f["path"] for f in m["files"]]
+    assert "Assets/_TenCrush/README.md" in paths
+    assert "Assets/_TenCrush/AGENTS.md" in paths
 
 
 def test_generate_manifest_core_has_no_deps():
-    m = generate_manifest("Studio", "RPG")
-    core_file = next(
-        f for f in m["files"] if "Core" in f["path"] and f["path"].endswith(".asmdef")
+    m = generate_manifest("ZenoGames", "TenCrush")
+    core = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Core.asmdef")
     )
-    content = json.loads(core_file["content"])
-    assert content["references"] == []
+    assert json.loads(core["content"])["references"] == []
 
 
-def test_generate_manifest_feature_refs_core():
-    m = generate_manifest("Studio", "RPG", features=["Player"])
-    feat_file = next(
-        f
-        for f in m["files"]
-        if "Player/Scripts" in f["path"] and f["path"].endswith(".asmdef")
+def test_generate_manifest_events_has_no_deps():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    events = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Events.asmdef")
     )
-    content = json.loads(feat_file["content"])
-    assert "Studio.RPG.Core" in content["references"]
+    assert json.loads(events["content"])["references"] == []
 
 
-def test_generate_manifest_test_refs_feature_and_core():
-    m = generate_manifest("Studio", "RPG", features=["Player"])
-    test_file = next(
-        f
-        for f in m["files"]
-        if "Player/Tests" in f["path"] and f["path"].endswith(".asmdef")
+def test_generate_manifest_models_refs_core():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    models = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Models.asmdef")
     )
-    content = json.loads(test_file["content"])
-    assert "Studio.RPG.Player" in content["references"]
-    assert "Studio.RPG.Core" in content["references"]
-    assert content["overrideReferences"] is True
+    refs = json.loads(models["content"])["references"]
+    assert refs == ["ZenoGames.TenCrush.Core"]
 
 
-def test_generate_manifest_infra_refs_all():
-    m = generate_manifest("Studio", "RPG", features=["Player", "Combat"])
-    infra_file = next(
-        f
-        for f in m["files"]
-        if "Infrastructure" in f["path"] and f["path"].endswith(".asmdef")
+def test_generate_manifest_feature_refs_core_events():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board"])
+    feat = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Features.Board.asmdef")
     )
-    content = json.loads(infra_file["content"])
-    assert "Studio.RPG.Core" in content["references"]
-    assert "Studio.RPG.Player" in content["references"]
-    assert "Studio.RPG.Combat" in content["references"]
+    refs = json.loads(feat["content"])["references"]
+    assert "ZenoGames.TenCrush.Core" in refs
+    assert "ZenoGames.TenCrush.Events" in refs
+
+
+def test_generate_manifest_viewmodels_refs_core_events():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    vm = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.ViewModels.asmdef")
+    )
+    refs = json.loads(vm["content"])["references"]
+    assert "ZenoGames.TenCrush.Core" in refs
+    assert "ZenoGames.TenCrush.Events" in refs
+
+
+def test_generate_manifest_editor_refs_features_and_editor_only():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board", "Match"])
+    editor = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Editor.asmdef")
+    )
+    parsed = json.loads(editor["content"])
+    assert parsed["includePlatforms"] == ["Editor"]
+    assert "ZenoGames.TenCrush.Features.Board" in parsed["references"]
+    assert "ZenoGames.TenCrush.Features.Match" in parsed["references"]
+
+
+def test_generate_manifest_bootstrap_refs_core_events_and_features():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board"])
+    bs = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.Bootstrap.asmdef")
+    )
+    refs = json.loads(bs["content"])["references"]
+    assert "ZenoGames.TenCrush.Core" in refs
+    assert "ZenoGames.TenCrush.Events" in refs
+
+
+def test_generate_manifest_viewcontroller_root_refs_submodules():
+    m = generate_manifest("ZenoGames", "TenCrush", ui_controllers=["HUD", "Popups"])
+    vc_root = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.ViewControllers.asmdef")
+    )
+    refs = json.loads(vc_root["content"])["references"]
+    assert "ZenoGames.TenCrush.ViewModels" in refs
+    assert "ZenoGames.TenCrush.ViewControllers.HUD" in refs
+    assert "ZenoGames.TenCrush.ViewControllers.Popups" in refs
+
+
+def test_generate_manifest_tests_setup():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board"])
+    edit = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.EditMode.Tests.asmdef")
+    )
+    parsed = json.loads(edit["content"])
+    assert parsed["includePlatforms"] == ["Editor"]
+    assert parsed["autoReferenced"] is False
+    assert "UNITY_INCLUDE_TESTS" in parsed["defineConstraints"]
+    assert "nunit.framework.dll" in parsed["precompiledReferences"]
+    assert "ZenoGames.TenCrush.Features.Board" in parsed["references"]
+
+    play = next(
+        f for f in m["files"]
+        if f["path"].endswith("ZenoGames.TenCrush.PlayMode.Tests.asmdef")
+    )
+    parsed_p = json.loads(play["content"])
+    assert parsed_p["includePlatforms"] == []
+    assert "ZenoGames.TenCrush.Bootstrap" in parsed_p["references"]
 
 
 def test_generate_manifest_gitignore_included():
-    m = generate_manifest("Studio", "RPG", include_gitignore=True)
+    m = generate_manifest("ZenoGames", "TenCrush", include_gitignore=True)
     gitignore = next((f for f in m["files"] if f["path"] == ".gitignore"), None)
     assert gitignore is not None
     assert "[Ll]ibrary/" in gitignore["content"]
-    assert "[Uu]tmp/" in gitignore["content"]
+    assert ".claude/" in gitignore["content"]
 
 
 def test_generate_manifest_gitignore_excluded():
-    m = generate_manifest("Studio", "RPG", include_gitignore=False)
-    gitignore = next((f for f in m["files"] if f["path"] == ".gitignore"), None)
-    assert gitignore is None
+    m = generate_manifest("ZenoGames", "TenCrush", include_gitignore=False)
+    assert not any(f["path"] == ".gitignore" for f in m["files"])
 
 
-def test_generate_manifest_multiple_features():
-    m = generate_manifest("Acme", "Shooter", features=["Player", "Weapons", "AI"])
+def test_generate_manifest_sdk_scaffold():
+    m = generate_manifest("ZenoGames", "TenCrush", sdk="ZenoSDK")
+    assert m["sdk"]["namespace"] == "ZenoGames.ZenoSDK"
     dirs = m["directories"]
-    assert "Assets/_Project/Features/Player/Scripts" in dirs
-    assert "Assets/_Project/Features/Weapons/Scripts" in dirs
-    assert "Assets/_Project/Features/AI/Scripts" in dirs
+    assert "Assets/_ZenoSDK/Scripts/Core" in dirs
+    assert "Assets/_ZenoSDK/Scripts/Events" in dirs
+    assert "Assets/_ZenoSDK/Editor" in dirs
+    paths = [f["path"] for f in m["files"]]
+    assert "Assets/_ZenoSDK/Scripts/Core/ZenoGames.ZenoSDK.Core.asmdef" in paths
+    assert "Assets/_ZenoSDK/Scripts/Events/ZenoGames.ZenoSDK.Events.asmdef" in paths
+    assert "Assets/_ZenoSDK/Editor/ZenoGames.ZenoSDK.Editor.asmdef" in paths
+    # SDK Core has no deps
+    sdk_core = next(f for f in m["files"]
+                    if f["path"].endswith("ZenoGames.ZenoSDK.Core.asmdef"))
+    assert json.loads(sdk_core["content"])["references"] == []
 
 
-def test_generate_manifest_tree_output():
-    m = generate_manifest("Studio", "RPG")
-    assert isinstance(m["tree"], str)
-    assert len(m["tree"]) > 0
-    assert "Assets" in m["tree"]
+def test_generate_manifest_no_sdk_by_default():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    assert m["sdk"] is None
+    assert not any("_ZenoSDK" in d for d in m["directories"])
+
+
+def test_generate_manifest_strips_whitespace_features():
+    m = generate_manifest("ZenoGames", "TenCrush", features=["  Board  ", "  ", "Match"])
+    assert m["features"] == ["Board", "Match"]
+
+
+def test_generate_manifest_empty_features():
+    m = generate_manifest("ZenoGames", "TenCrush", features=[])
+    assert "Assets/_TenCrush/Scripts/Features" not in m["directories"]
+    # Foundation dirs still present
+    assert "Assets/_TenCrush/Scripts/Core" in m["directories"]
+
+
+def test_generate_manifest_empty_ui_controllers():
+    m = generate_manifest("ZenoGames", "TenCrush", ui_controllers=[])
+    # Top-level ViewControllers directory still exists, but no submodules
+    assert "Assets/_TenCrush/Scripts/ViewControllers" in m["directories"]
+    paths = [f["path"] for f in m["files"]]
+    assert not any("ViewControllers/HUD" in p for p in paths)
 
 
 def test_generate_manifest_namespace_consistency():
@@ -172,47 +322,53 @@ def test_generate_manifest_namespace_consistency():
             assert content["rootNamespace"] == content["name"]
 
 
+def test_generate_manifest_tree_output():
+    m = generate_manifest("ZenoGames", "TenCrush")
+    assert isinstance(m["tree"], str)
+    assert len(m["tree"]) > 0
+    assert "Assets/_TenCrush" in m["tree"]
+
+
 def test_apply_manifest_creates_structure():
-    m = generate_manifest("Test", "Game", features=["Player"], include_gitignore=True)
+    m = generate_manifest("ZenoGames", "TenCrush", features=["Board"], include_gitignore=True)
     with tempfile.TemporaryDirectory() as tmpdir:
         created = apply_manifest(m, tmpdir)
         root = Path(tmpdir)
 
-        assert (root / "Assets/_Project/Core/Scripts").is_dir()
-        assert (root / "Assets/_Project/Features/Player/Scripts").is_dir()
-        assert (root / "Assets/_Project/Features/Player/Prefabs").is_dir()
-        assert (root / "Assets/_Project/Features/Player/Tests").is_dir()
-        assert (root / "Assets/Plugins").is_dir()
+        # Foundation
+        assert (root / "Assets/_TenCrush/Scripts/Core").is_dir()
+        assert (root / "Assets/_TenCrush/Scripts/Events").is_dir()
+        assert (root / "Assets/_TenCrush/Scripts/Models").is_dir()
+        # Feature
+        assert (root / "Assets/_TenCrush/Scripts/Features/Board/Scripts").is_dir()
+        # Bootstrap + Editor
+        assert (root / "Assets/_TenCrush/Scripts/Bootstrap").is_dir()
+        assert (root / "Assets/_TenCrush/Editor").is_dir()
+        # Top-level folders
+        assert (root / "Assets/_TenCrush/Prefabs/GamePlay").is_dir()
+        assert (root / "Assets/_TenCrush/Datas/Events").is_dir()
+        # Tests
+        assert (root / "Assets/Tests/EditMode").is_dir()
+        assert (root / "Assets/Tests/PlayMode").is_dir()
 
-        core_asmdef = root / "Assets/_Project/Core/Scripts/Test.Game.Core.asmdef"
+        core_asmdef = root / "Assets/_TenCrush/Scripts/Core/ZenoGames.TenCrush.Core.asmdef"
         assert core_asmdef.is_file()
-        content = json.loads(core_asmdef.read_text())
-        assert content["name"] == "Test.Game.Core"
+        assert json.loads(core_asmdef.read_text())["name"] == "ZenoGames.TenCrush.Core"
 
+        # Docs created
+        assert (root / "Assets/_TenCrush/Scripts/Features/Board/README.md").is_file()
+        assert (root / "Assets/_TenCrush/Scripts/Features/Board/AGENTS.md").is_file()
+
+        # gitignore
         assert (root / ".gitignore").is_file()
         assert len(created) > 0
 
 
-def test_apply_manifest_empty_features():
-    m = generate_manifest("Co", "Proj", features=[])
-    with tempfile.TemporaryDirectory() as tmpdir:
-        apply_manifest(m, tmpdir)
-        root = Path(tmpdir)
-        assert (root / "Assets/_Project/Core/Scripts").is_dir()
-        assert not (root / "Assets/_Project/Features").exists()
-
-
-def test_generate_manifest_strips_whitespace_features():
-    m = generate_manifest("Co", "Proj", features=["  Player  ", "  ", "Combat"])
-    feature_dirs = [d for d in m["directories"] if "Features" in d]
-    feature_names = set()
-    for d in feature_dirs:
-        parts = d.split("Features/")
-        if len(parts) > 1:
-            feature_names.add(parts[1].split("/")[0])
-    assert "Player" in feature_names
-    assert "Combat" in feature_names
-    assert "" not in feature_names
+def test_no_features_still_generates_bootstrap_editor():
+    m = generate_manifest("ZenoGames", "TenCrush", features=[])
+    paths = [f["path"] for f in m["files"]]
+    assert "Assets/_TenCrush/Scripts/Bootstrap/ZenoGames.TenCrush.Bootstrap.asmdef" in paths
+    assert "Assets/_TenCrush/Editor/ZenoGames.TenCrush.Editor.asmdef" in paths
 
 
 if __name__ == "__main__":

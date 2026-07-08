@@ -49,7 +49,7 @@ review automation.
 5. Keep changes surgical: no adjacent refactors, speculative abstractions, or
    unrelated cleanup.
 6. For package, Unity-version, platform, ECS, Burst, WebGL, Addressables, or UI
-   Toolkit behavior, verify against official docs via `other/official-source-map.md`.
+   Toolkit behavior, verify against official docs via `references/other/official-source-map.md`.
 7. Finish with Unity-grade proof: compile result, targeted tests, console scan,
    Play Mode/Edit Mode validation, scene/prefab inspection, profiler evidence, or
    PR diff verification as appropriate.
@@ -58,23 +58,23 @@ review automation.
 
 | Task | Load first | Add when needed |
 |------|------------|-----------------|
-| C# code or refactor | `code-standards/core-conventions.md` | lifecycle, data/perf, architecture, ECS refs by surface |
-| Asset manager or Addressables | `asset-management/addressables-asset-manager.md` | memory/loading refs, architecture, platform docs |
-| Analytics, LiveOps, config, server API, IAP, release, or monitoring | `production/full-cycle-ownership.md` | architecture, data/perf, lifecycle/errors, official docs |
-| Prefab asset work | `asset-management/prefab-work.md` | Canvas UI, material, shader, Addressables, or review refs by touched asset |
-| Canvas UI asset work | `asset-management/canvas-ui-work.md` | draw-call/batching, prefab, material, shader, or UI Toolkit refs by surface |
-| Material asset work | `asset-management/material-work.md` | shader, rendering settings, batching, or review refs |
-| Shader asset work | `asset-management/shader-work.md` | material, rendering settings, batching, or official render-pipeline docs |
-| Canvas UI draw calls or batching | `optimization/canvas-ui-drawcalls-batching.md` | Canvas UI asset, rendering settings, material, shader, or prefab refs |
-| Debug issue | `debug/diagnosis-workflow.md` | compile, common errors, deep investigation, ECS debugging |
-| Optimize | matching optimization reference below | `quality/performance-audit.md` for broader audits |
-| Review code or PR | `review/checklist.md` | C#, prefab, material, shader, ECS, parallel criteria |
-| Investigate project logic | `debug/deep-investigation-checklist.md` | `debug/analysis-template.md`, dependency mapping, Mermaid |
-| Plan or break down work | `plan/confirmation-flow.md` | dependency map plus quick/deep output template |
-| Write Unity Test Framework tests | `test/coverage-strategy.md` | Edit Mode, Play Mode, advanced patterns, naming |
-| Acceptance criteria | `test/acceptance-criteria-verification.md` | test-case format if manual QA is requested |
+| C# code or refactor | `references/code-standards/core-conventions.md` | lifecycle, data/perf, architecture, ECS refs by surface |
+| Asset manager or Addressables | `references/asset-management/addressables-asset-manager.md` | memory/loading refs, architecture, platform docs |
+| Analytics, LiveOps, config, server API, IAP, release, or monitoring | `references/production/full-cycle-ownership.md` | architecture, data/perf, lifecycle/errors, official docs |
+| Prefab asset work | `references/asset-management/prefab-work.md` | Canvas UI, material, shader, Addressables, or review refs by touched asset |
+| Canvas UI asset work | `references/asset-management/canvas-ui-work.md` | draw-call/batching, prefab, material, shader, or UI Toolkit refs by surface |
+| Material asset work | `references/asset-management/material-work.md` | shader, rendering settings, batching, or review refs |
+| Shader asset work | `references/asset-management/shader-work.md` | material, rendering settings, batching, or official render-pipeline docs |
+| Canvas UI draw calls or batching | `references/optimization/canvas-ui-drawcalls-batching.md` | Canvas UI asset, rendering settings, material, shader, or prefab refs |
+| Debug issue | `references/debug/diagnosis-workflow.md` | compile, common errors, deep investigation, ECS debugging |
+| Optimize | matching optimization reference below | `references/quality/performance-audit.md` for broader audits |
+| Review code or PR | `references/review/checklist.md` | C#, prefab, material, shader, ECS, parallel criteria |
+| Investigate project logic | `references/debug/deep-investigation-checklist.md` | `references/debug/analysis-template.md`, dependency mapping, Mermaid |
+| Plan or break down work | `references/plan/confirmation-flow.md` | dependency map plus quick/deep output template |
+| Write Unity Test Framework tests | `references/test/coverage-strategy.md` | Edit Mode, Play Mode, advanced patterns, naming |
+| Acceptance criteria | `references/test/acceptance-criteria-verification.md` | test-case format if manual QA is requested |
 | Quality audit | matching quality reference below | grading and HTML report only when requested |
-| UI Toolkit | `ui-toolkit/setup.md` | UXML, USS, bindings, controls, performance |
+| UI Toolkit | `references/ui-toolkit/setup.md` | UXML, USS, bindings, controls, performance |
 
 ## Pair With Specialized Skills
 
@@ -93,111 +93,111 @@ review automation.
 
 ### Write Or Refactor Code
 
-- General C#: `code-standards/core-conventions.md`
-- Lifecycle, async, errors, validation: `code-standards/lifecycle-async-errors.md`
-- Collections, LINQ, pooling, serialization: `code-standards/performance-data.md`
-- Architecture, events, dependencies, editor tools, WebGL: `code-standards/architecture-systems.md`
-- ECS, Jobs, Burst, NativeContainers: `code-standards/ecs-burst-standards.md`
+- General C#: `references/code-standards/core-conventions.md`
+- Lifecycle, async, errors, validation: `references/code-standards/lifecycle-async-errors.md`
+- Collections, LINQ, pooling, serialization: `references/code-standards/performance-data.md`
+- Architecture, events, dependencies, editor tools, WebGL: `references/code-standards/architecture-systems.md`
+- ECS, Jobs, Burst, NativeContainers: `references/code-standards/ecs-burst-standards.md`
 
 ### Asset Managers, Addressables, And Assets
 
 - Asset-manager and Addressables work:
-  `asset-management/addressables-asset-manager.md`
-- Prefab work: `asset-management/prefab-work.md`
-- Canvas UI work: `asset-management/canvas-ui-work.md`
-- Material work: `asset-management/material-work.md`
-- Shader work: `asset-management/shader-work.md`
+  `references/asset-management/addressables-asset-manager.md`
+- Prefab work: `references/asset-management/prefab-work.md`
+- Canvas UI work: `references/asset-management/canvas-ui-work.md`
+- Material work: `references/asset-management/material-work.md`
+- Shader work: `references/asset-management/shader-work.md`
 - Legacy combined map for mixed tasks:
-  `asset-management/prefab-material-shader-work.md`
-- Add `code-standards/architecture-systems.md` when ownership, dependency
+  `references/asset-management/prefab-material-shader-work.md`
+- Add `references/code-standards/architecture-systems.md` when ownership, dependency
   boundaries, or platform branches are involved.
-- Add `optimization/memory-settings.md` for memory pressure, asset release, or
+- Add `references/optimization/memory-settings.md` for memory pressure, asset release, or
   loading spikes.
 
 ### Production Ownership, Analytics, And LiveOps
 
 - Full-cycle feature ownership, analytics, LiveOps, release, and monitoring:
-  `production/full-cycle-ownership.md`
-- Add `code-standards/architecture-systems.md` for config, server/client, SDK,
+  `references/production/full-cycle-ownership.md`
+- Add `references/code-standards/architecture-systems.md` for config, server/client, SDK,
   data ownership, or feature-boundary decisions.
-- Add `code-standards/performance-data.md` for scalable config, player data,
+- Add `references/code-standards/performance-data.md` for scalable config, player data,
   save data, and generated/procedural data structures.
-- Add `code-standards/lifecycle-async-errors.md` for server API integration,
+- Add `references/code-standards/lifecycle-async-errors.md` for server API integration,
   retry, timeout, cancellation, and user-facing error behavior.
-- Add `other/official-source-map.md` for IAP, billing, privacy, store review, or
+- Add `references/other/official-source-map.md` for IAP, billing, privacy, store review, or
   platform compliance claims.
 
 ### Review Changes Or PRs
 
-- Main review pass: `review/checklist.md`
-- C# implementation: `review/checklist_cs.md`
-- Assets: `review/checklist_prefab.md`, `review/checklist_material.md`,
-  `review/checklist_shader.md`
-- ECS/Burst: `review/ecs-burst-review.md`
-- Parallel review criteria: `review/parallel-review-criteria.md`
+- Main review pass: `references/review/checklist.md`
+- C# implementation: `references/review/checklist_cs.md`
+- Assets: `references/review/checklist_prefab.md`, `references/review/checklist_material.md`,
+  `references/review/checklist_shader.md`
+- ECS/Burst: `references/review/ecs-burst-review.md`
+- Parallel review criteria: `references/review/parallel-review-criteria.md`
 
 ### Debug Runtime Or Compile Issues
 
-- Start here: `debug/diagnosis-workflow.md`
-- Compile verification: `debug/compile-verification.md`
-- Known error patterns: `debug/common-unity-errors.md`
-- Deep investigations: `debug/deep-investigation-checklist.md`,
-  `debug/analysis-template.md`
-- ECS/Burst diagnostics: `debug/ecs-burst-debugging.md`
+- Start here: `references/debug/diagnosis-workflow.md`
+- Compile verification: `references/debug/compile-verification.md`
+- Known error patterns: `references/debug/common-unity-errors.md`
+- Deep investigations: `references/debug/deep-investigation-checklist.md`,
+  `references/debug/analysis-template.md`
+- ECS/Burst diagnostics: `references/debug/ecs-burst-debugging.md`
 
 ### Plan, Test, Or Document Systems
 
-- Planning flow: `plan/confirmation-flow.md`, `plan/dependency-mapping.md`
-- Plan output: `plan/output-quick.md` or `plan/output-deep.md`
-- Acceptance criteria: `test/acceptance-criteria-verification.md`
-- Test strategy: `test/coverage-strategy.md`, `test/edit-mode-patterns.md`,
-  `test/edit-mode-advanced.md`, `test/play-mode-patterns.md`
-- Test docs: `test/test-case-format.md`, `test/naming-conventions.md`
-- Diagrams: `other/mermaid-syntax.md`
+- Planning flow: `references/plan/confirmation-flow.md`, `references/plan/dependency-mapping.md`
+- Plan output: `references/plan/output-quick.md` or `references/plan/output-deep.md`
+- Acceptance criteria: `references/test/acceptance-criteria-verification.md`
+- Test strategy: `references/test/coverage-strategy.md`, `references/test/edit-mode-patterns.md`,
+  `references/test/edit-mode-advanced.md`, `references/test/play-mode-patterns.md`
+- Test docs: `references/test/test-case-format.md`, `references/test/naming-conventions.md`
+- Diagrams: `references/other/mermaid-syntax.md`
 
 ### Investigate Project Structure Or Logic
 
-- Investigation workflow: `debug/deep-investigation-checklist.md`
-- Report structure: `debug/analysis-template.md`
-- Dependency and call flow: `plan/dependency-mapping.md`
-- Diagrams: `other/mermaid-syntax.md`
+- Investigation workflow: `references/debug/deep-investigation-checklist.md`
+- Report structure: `references/debug/analysis-template.md`
+- Dependency and call flow: `references/plan/dependency-mapping.md`
+- Diagrams: `references/other/mermaid-syntax.md`
 
 ### Optimize Performance
 
-- Build and startup: `optimization/build-settings.md`,
-  `optimization/startup-settings.md`
-- Rendering: `optimization/rendering-settings.md`
+- Build and startup: `references/optimization/build-settings.md`,
+  `references/optimization/startup-settings.md`
+- Rendering: `references/optimization/rendering-settings.md`
 - Canvas UI, draw calls, and batching:
-  `optimization/canvas-ui-drawcalls-batching.md`
-- Memory and loading: `optimization/memory-settings.md`
-- Physics: `optimization/physics-settings.md`
-- Mobile: `optimization/mobile-settings.md`
-- Jobs/Burst/ECS: `optimization/jobs-burst-migration.md`,
-  `optimization/ecs-data-oriented-design.md`
+  `references/optimization/canvas-ui-drawcalls-batching.md`
+- Memory and loading: `references/optimization/memory-settings.md`
+- Physics: `references/optimization/physics-settings.md`
+- Mobile: `references/optimization/mobile-settings.md`
+- Jobs/Burst/ECS: `references/optimization/jobs-burst-migration.md`,
+  `references/optimization/ecs-data-oriented-design.md`
 
 ### Audit Quality Or Technical Debt
 
-- Best practices: `quality/best-practices-audit.md`
-- Architecture: `quality/architecture-audit.md`
-- Performance: `quality/performance-audit.md`
-- Technical debt: `quality/tech-debt-audit.md`
-- Scoring/reporting: `quality/grading-criteria.md`,
-  `quality/html-report-format.md`
+- Best practices: `references/quality/best-practices-audit.md`
+- Architecture: `references/quality/architecture-audit.md`
+- Performance: `references/quality/performance-audit.md`
+- Technical debt: `references/quality/tech-debt-audit.md`
+- Scoring/reporting: `references/quality/grading-criteria.md`,
+  `references/quality/html-report-format.md`
 
 ### UI Toolkit
 
-- Setup: `ui-toolkit/setup.md`
-- UXML/USS: `ui-toolkit/uxml-patterns.md`, `ui-toolkit/uss-styling.md`
-- C# bindings and controls: `ui-toolkit/csharp-bindings.md`,
-  `ui-toolkit/custom-controls.md`
-- Performance: `ui-toolkit/performance.md`
+- Setup: `references/ui-toolkit/setup.md`
+- UXML/USS: `references/ui-toolkit/uxml-patterns.md`, `references/ui-toolkit/uss-styling.md`
+- C# bindings and controls: `references/ui-toolkit/csharp-bindings.md`,
+  `references/ui-toolkit/custom-controls.md`
+- Performance: `references/ui-toolkit/performance.md`
 
 ### Cross-Cutting Helpers
 
-- Unity MCP routing: `other/unity-mcp-routing-matrix.md`
-- FlatBuffers: `other/flatbuffers-guide.md`
-- Skill authoring: `other/skill-authoring.md`
-- Code-standard reference map: `code-standards/README.md`
+- Unity MCP routing: `references/other/unity-mcp-routing-matrix.md`
+- FlatBuffers: `references/other/flatbuffers-guide.md`
+- Skill authoring: `references/other/skill-authoring.md`
+- Code-standard reference map: `references/code-standards/README.md`
 
 ## Verification Defaults
 
