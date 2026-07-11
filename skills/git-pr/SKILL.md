@@ -11,7 +11,7 @@ Deep-investigate all files changed in a PR, then generate and apply a reviewer-r
 
 ## When to Use
 
-- Opening a new PR that needs a clear title and description
+- Opening/Create a new PR that needs a clear title and description
 - Updating a stale or missing PR title or description before review
 - Generating documentation-quality PR context for reviewers
 - Automating PR metadata from a feature branch
@@ -36,7 +36,8 @@ Deep-investigate all files changed in a PR, then generate and apply a reviewer-r
 
 ## Output Format
 
-Title and description applied to the GitHub PR via `gh pr edit --title --body`. Body sections should follow the repository PR template.
+Title and description applied to the GitHub PR via `gh pr edit --title --body`. 
+Body sections MUST follow the repository PR template. (MANDATORY, NO NEGOTIATE)
 
 ## Reference Files
 
