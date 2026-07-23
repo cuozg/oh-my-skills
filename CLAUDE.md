@@ -1,30 +1,6 @@
 # Global Agent Rules
 
 # Ack Rule
-Before starting anything, say:
-"Ok BigBoss."
-
-# SubAgent Rules
-- If the work can delegate to sub agent, then spawn sub agent to do it.
-- If the work can do parallel, then spawn multiple sub agent to do it.
-
-# Coding Rule
-- Only response by code, simplify as much as you can.
-- Minimal explain
-- Don't break current flow/logic
-
-# Git rule
-- NEVER ADD: Co-Authored
-
-# Skills rule
-- Always try to use skill
-- Must follow skill instruction and output template
-- Can use multiple skill if it fit
-
-# Working rule (ALWAYS FOLLOW, MANDATORY, NO NEGOTIATE)
-# Global Agent Rules
-
-# Ack Rule
 Before starting any user task, say:
 "Ok BigBoss."
 
