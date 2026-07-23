@@ -1,17 +1,30 @@
+**ALWAYS FOLLOW, MANDATORY, NO NEGOTIATE**
+
 # Global Agent Rules
+- Minimal explain
+- NEVER use worktree (no EnterWorktree, no isolation: "worktree")
 
 # Ack Rule
-Before starting any user task, say:
+Before starting anything, say:
 "Ok BigBoss."
 
+# MCP Rule
+- Always try to use MCP
+- Make sure to connect MCP to the correct project
+
 # SubAgent Rules
-- If the work can delegate to sub agent, then spawn sub agent to do it.
-- If the work can do parallel, then spawn multiple sub agent to do it.
+- If the work can delegate to sub agent, then spawn sub agent to do it. (NO WORKTREE)
+- If the work can do parallel, then spawn multiple sub agent to do it. (NO WORKTREE)
+- Model routing by task complexity (set the Agent tool's `model` param accordingly):
+  - Trivial (read file, explore codebase, locate symbols) → model: haiku
+  - Normal (daily coding, bug fix, standard implementation) → model: sonnet
+  - Hard (complex/stuck/failed debugging, architecture, code review) → model: opus
+  - When unsure or task spans tiers, round up to the higher tier.
 
 # Coding Rule
-- Only response by code, simplify as much as you can.
-- Minimal explain
-- Don't break current flow/logic
+- Make sure current flow/logic is not break
+- Add comment to the function.
+- Add smart comment to explain to code/logic change.
 
 # Git rule
 - NEVER ADD: Co-Authored
@@ -19,9 +32,9 @@ Before starting any user task, say:
 # Skills rule
 - Always try to use skill
 - Must follow skill instruction and output template
-- Can use multiple skill if it fit
+- Can use multiple skill
 
-# Working rule (ALWAYS FOLLOW, MANDATORY, NO NEGOTIATE)
+# Working rule
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
