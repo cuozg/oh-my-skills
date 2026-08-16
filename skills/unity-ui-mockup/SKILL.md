@@ -86,8 +86,8 @@ Do NOT guess the element hierarchy or component names. Gather hard evidence:
 
 1. **Visual Composition**:
    - Identify visual regions: Top/Header, Safe Area / Center Viewport, Side Menus, Bottom Navigation, Footer, Overlay / Backdrop.
-   - Plan representation: **HTML-styled mockup + ASCII wireframe fallback** is preferred for scroll-list/card screens (see Achievement pattern below); ASCII-only box-drawing is always valid for simple screens.
-   - For achievement/milestone-style lists, follow the Achievement reference: header with title + accent line + subtitle, scroll area annotated `SCROLLRECT (Vertical) → Viewport (Mask) → ContentContainer (VerticalLayoutGroup)`, one `Card_<Item>` per row showing at least two states (e.g. In Progress `3/10` vs Claimable `10/10`), legend mapping colors to states, and `○ = soft currency` reward badge.
+   - Plan representation: **HTML View (styled div) → ASCII Layout (fenced block directly below) → Element Tree** — exactly as in Achievement_Mockup.md (see template). HTML-styled mockup is preferred for scroll-list/card screens; ASCII-only box-drawing is always valid for simple screens but must still sit directly below Visual Layout, never inside `<details>`.
+   - For achievement/milestone-style lists, follow the Achievement reference: header with title + accent line + subtitle, scroll area annotated `SCROLLRECT (Vertical) → Viewport (Mask) → ContentContainer (VerticalLayoutGroup)`, one `Card_<Item>` per row showing at least two states (e.g. In Progress `3/10` vs Claimable `10/10`), legend mapping colors to states, and `○ = soft currency` reward badge. Caption `<p>` sits between HTML and ASCII.
    - Use clean box-drawing borders (`┌─`, `│`, `└─`) and clear labels (`[Button]`, `[Label]`, `[Icon]`) for the ASCII layer.
 
 2. **Component Mapping**:
@@ -128,7 +128,7 @@ After populating the template, run Verification & Validation below before finish
 
 ### Verification & Validation
 
-- Visual Layout present (HTML-styled or ASCII) and Element Tree indentation is exactly 2 spaces per depth.
+- Visual order is **Visual Layout (HTML View) → caption `<p>` → ASCII Layout (fenced block directly below) → Element Tree** — no `<details>` wrapper, no `Element Inventory` between them. Element Tree indentation is exactly 2 spaces per depth.
 - Every node has backticked name and parenthesized component list; layout/mask/input components are not omitted.
 - Scroll hierarchy is `ScrollRect` → `Viewport` (Mask) → `ContentContainer` (`VerticalLayoutGroup` + `ContentSizeFitter`) for list screens; card rows use `LayoutElement` and document both In Progress and Claimable states when applicable.
 - No `TODO`/`TBD`/`FIXME` remains; `**Related:**` links resolve.
@@ -150,8 +150,8 @@ Filled reference: `docs/specs/UIs/Mockups/Achievement_Mockup.md` (approved 2026-
 ## Formatting Rules (Non-Negotiable)
 
 1. **Section Headers**:
-   - `### Visual Layout` followed by HTML mockup and/or ASCII fenced block (when using HTML, include ASCII wireframe in `<details>`).
-   - `### Element Tree` followed by the markdown bullet list; `### Element Inventory` after the tree when needed.
+   - `### Visual Layout` → HTML View (styled div) → caption `<p>` → ASCII Layout (fenced block directly below) — exactly as in Achievement_Mockup.md. Never wrap ASCII in `<details>`.
+   - `### Element Tree` → markdown bullet list with 2-space-per-depth indentation, every node `BacktickedName (Components)`. No `Element Inventory` between Visual Layout and Element Tree.
 2. **Indentation**:
    - 2 spaces per hierarchy depth (`* `, `  * `, `    * `, `      * `).
 3. **GameObject & Component Naming**:
@@ -174,5 +174,5 @@ Filled reference: `docs/specs/UIs/Mockups/Achievement_Mockup.md` (approved 2026-
 | Missing backticks around object names | Inconsistent markdown rendering | Wrap object names in backticks: `` `Header` `` |
 | Using tabs instead of 2-space indentation | Broken nested bullet rendering | Use exact 2-space indent per level |
 | Cluttered / non-aligned ASCII layouts | Hard to parse visual structure | Use standard box-drawing characters with clean padding |
-| Using only ASCII for complex card states | Reviewers cannot distinguish claimable vs in-progress | Use HTML-styled cards with two state variants + ASCII fallback in `<details>` (Achievement pattern) |
+| Using only ASCII for complex card states | Reviewers cannot distinguish claimable vs in-progress | Use HTML-styled cards with two state variants + ASCII Layout directly below HTML (Achievement pattern) |
 | Omitting `LoadingIndicator` / `EmptyStateView` | Async states undocumented | Add them as siblings of `ScrollRect` per Achievement reference |
