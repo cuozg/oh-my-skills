@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>[NAME] — Unity UI Design</title>
+<style>
+:root{
+--bg-color:#000000;--card-bg:#000000;--border-color:#333333;--border-hover:#444444;
+--text-primary:#ededed;--text-secondary:#888888;--text-muted:#666666;
+--accent:#0070f3;--success:#50e3c2;--warning:#f5a623;--error:#ee0000;
+--type-tap:#ffb800;--type-handler:#7b61ff;--type-service:#00a67d;--type-nav:#ff3b30;
+--type-fx:#888888;--type-screen:#1e2142;--type-state:#f5a623;
+--comp-canvas:#3291ff;--comp-layout:#b76fee;--comp-graphic:#50e3c2;
+--comp-control:#ffb800;--comp-custom:#ff4d9e;
+--status-aligned:#50e3c2;--status-mismatch:#f5a623;--status-missing:#ee0000;
+--status-spec-only:#3291ff;--status-prefab-only:#888888;
+--font-sans:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
+--font-mono:'Geist Mono','SF Mono',Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--bg-color);color:var(--text-primary);font-family:var(--font-sans);line-height:1.6;margin:0;padding:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:#3291ff}
+code{font-family:var(--font-mono);font-size:.85em;background:#1a1a1a;color:rgb(87,184,104);padding:.2em .4em;border-radius:4px}
+pre{background:#0a0a0a;border:1px solid var(--border-color);border-radius:6px;padding:1rem 1.25rem;overflow-x:auto;font-family:var(--font-mono);font-size:.8125rem;line-height:1.6;color:#d0d0d0;margin:1rem 0}
+pre code{background:0 0;padding:0;color:inherit;font-size:inherit}
+.code-block{background:#0a0a0a;border:1px solid var(--border-color);border-radius:8px;margin:1.25rem 0;overflow:hidden;transition:border-color .2s}
+.code-block:hover{border-color:var(--border-hover)}
+.code-block-header{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.625rem 1rem;background:#111114;border-bottom:1px solid var(--border-color);font-family:var(--font-mono);font-size:.75rem}
+.code-block-filename{display:inline-flex;align-items:center;gap:.5rem;color:var(--text-secondary);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code-block-filename-icon{color:var(--accent);font-size:.875rem}
+.code-block-lang{background:rgba(0,112,243,.12);color:#4d9eff;border:1px solid rgba(0,112,243,.35);padding:.125rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+.code-block-copy{background:0 0;border:1px solid var(--border-color);color:var(--text-secondary);padding:.25rem .625rem;border-radius:4px;cursor:pointer;font-family:var(--font-sans);font-size:.7rem;font-weight:500;transition:all .15s;flex-shrink:0}
+.code-block-copy:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.code-block-copy.copied{background:var(--success);color:#0a0a0a;border-color:var(--success)}
+.code-block pre{margin:0;border:none;border-radius:0;background:0 0}
+.hljs-keyword,.hljs-built_in,.hljs-selector-tag{color:var(--comp-control)}
+.hljs-string,.hljs-attr,.hljs-template-tag,.hljs-template-variable{color:var(--comp-graphic)}
+.hljs-comment,.hljs-quote{color:var(--text-muted);font-style:italic}
+.hljs-number,.hljs-literal,.hljs-symbol,.hljs-bullet{color:var(--comp-layout)}
+.hljs-title,.hljs-section,.hljs-function .hljs-title,.hljs-name{color:rgb(87,184,104);font-weight:600}
+.hljs-type,.hljs-class .hljs-title,.hljs-tag{color:var(--comp-custom)}
+.hljs-meta,.hljs-meta .hljs-keyword{color:var(--text-secondary);font-weight:600}
+.hljs-variable,.hljs-params,.hljs-attribute{color:var(--comp-canvas)}
+.hljs-doctag{color:var(--comp-custom)}
+.hljs-emphasis{font-style:italic}
+.hljs-strong{font-weight:700}
+.mermaid{background:#0a0a0a;border:1px solid var(--border-color);border-radius:6px;padding:1.25rem;margin:1rem 0;text-align:center}
+.container{margin:0 auto;padding:0 1.5rem 6rem;max-width:1100px}
+.nav{position:sticky;top:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border-color);z-index:100;padding:1rem 0;margin-bottom:3rem}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;gap:1.5rem;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-link{color:var(--text-secondary);font-size:.875rem;font-weight:500}
+.nav-link:hover{color:var(--text-primary);text-decoration:none}
+header{margin-bottom:3rem;display:flex;flex-direction:column;align-items:flex-start}
+.header-meta{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.875rem;color:var(--text-secondary)}
+.header-meta span{display:inline-flex;align-items:center;gap:.35rem}
+.header-meta code{font-size:.8125rem}
+h1{font-size:2.5rem;font-weight:700;letter-spacing:-.05em;margin:0 0 .5rem;color:rgb(87,184,104);line-height:1.2}
+h2{font-size:1.5rem;font-weight:600;letter-spacing:-.03em;margin:0 0 1.5rem;display:flex;align-items:center;color:rgb(183,111,238);gap:.75rem}
+h2 .num{color:var(--text-muted);font-family:var(--font-mono);font-weight:400;font-size:1rem;background:#1a1a1a;padding:.2rem .5rem;color:rgb(0,242,255);border-radius:4px}
+h3{font-size:1.125rem;font-weight:600;color:rgb(246,75,133);margin:2rem 0 1rem}
+h4{font-size:.9375rem;font-weight:600;color:var(--text-primary);margin:1.5rem 0 .75rem}
+.card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:8px;padding:2rem;margin-bottom:2rem;transition:border-color .2s}
+.card:hover{border-color:var(--border-hover)}
+ul,ol{margin:0;padding-left:1.5rem}
+li{margin-bottom:.5rem}
+.mockup-wrapper{background:#f7f8fc;color:#1a1e2f;border-radius:12px;padding:1.25rem;margin:1rem 0;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;overflow-x:auto}
+.tree-block{background:#0a0a0a;border:1px solid var(--border-color);border-radius:6px;padding:1.25rem 1.5rem;font-family:var(--font-mono);font-size:.8125rem;line-height:1.7;color:#d0d0d0;white-space:pre;overflow-x:auto;margin:1rem 0}
+.element-tree{list-style:none;padding:0;margin:0;font-family:var(--font-mono);font-size:.8125rem;line-height:1.85}
+.element-tree ul{list-style:none;padding-left:1.5rem;margin:0;position:relative}
+.element-tree ul::before{content:'';position:absolute;top:0;bottom:0;left:.45rem;border-left:1px dashed #444;z-index:0}
+.element-tree li{margin-bottom:.15rem;padding:2px 4px;border-radius:4px;position:relative}
+.element-tree .go-name{color:rgb(87,184,104);font-weight:600}
+.element-tree .comp{color:#666}
+.element-tree .comp-canvas{color:var(--comp-canvas)}
+.element-tree .comp-layout{color:var(--comp-layout)}
+.element-tree .comp-graphic{color:var(--comp-graphic)}
+.element-tree .comp-canvas,.element-tree .comp-graphic{opacity:.6}
+.element-tree .comp-custom,.element-tree .comp-control{font-weight:700;opacity:1}
+.tree-toggle{display:inline-block;width:18px;cursor:pointer;color:#888;user-select:none;font-size:.7rem;text-align:center;transition:transform .2s ease}
+.tree-toggle:hover{color:var(--text-primary)}
+.tree-toggle.collapsed{transform:rotate(-90deg)}
+.element-tree ul.collapsed-node{display:none}
+.table-wrapper{overflow-x:auto;margin:0 -.5rem;padding:0 .5rem}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th,td{padding:.875rem 1rem;text-align:left;border-bottom:1px solid var(--border-color);vertical-align:top}
+th{color:rgb(246,75,133);font-weight:500;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+tbody tr:nth-child(odd){background:rgba(255,255,255,.01)}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+.badge{display:inline-flex;align-items:center;padding:.125rem .5rem;border-radius:9999px;font-size:.75rem;font-weight:500;font-family:var(--font-sans);border:1px solid transparent;white-space:nowrap;margin-right:.25rem}
+.badge-tap{background:rgba(255,184,0,.12);color:#ffcc4d;border-color:rgba(255,184,0,.35)}
+.badge-handler{background:rgba(123,97,255,.12);color:#a98aff;border-color:rgba(123,97,255,.35)}
+.badge-service{background:rgba(0,166,125,.12);color:#4dd6b1;border-color:rgba(0,166,125,.35)}
+.badge-nav{background:rgba(255,59,48,.12);color:#ff6e64;border-color:rgba(255,59,48,.35)}
+.badge-fx{background:rgba(136,136,136,.12);color:#b3b3b3;border-color:rgba(136,136,136,.35)}
+.badge-screen{background:rgba(30,33,66,.5);color:#b3c1ff;border-color:rgba(30,33,66,.7)}
+.badge-state{background:rgba(245,166,35,.12);color:#ffb84d;border-color:rgba(245,166,35,.35)}
+.verdict-aligned{color:var(--status-aligned);font-weight:600}
+.verdict-mismatch{color:var(--status-mismatch);font-weight:600}
+.verdict-missing{color:var(--status-missing);font-weight:600}
+.verdict-spec-only{color:var(--status-spec-only);font-weight:600}
+.verdict-prefab-only{color:var(--status-prefab-only);font-weight:600}
+.checkbox-list{list-style:none;padding:0;margin-bottom:2rem}
+.checkbox-item{display:flex;align-items:flex-start;margin-bottom:.875rem;padding:.5rem;border-radius:6px;transition:background .2s}
+.checkbox-item:hover{background:rgba(255,255,255,.02)}
+.checkbox-icon{flex-shrink:0;width:18px;height:18px;border:1px solid var(--text-secondary);border-radius:4px;margin-right:1rem;margin-top:.15rem;background:var(--bg-color)}
+.checkbox-category{font-weight:600;color:var(--text-secondary);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem;border-bottom:1px solid var(--border-color);padding-bottom:.5rem;margin-top:1.5rem}
+.anchor-link{color:var(--text-muted);margin-left:.5rem;font-size:.85rem;opacity:0;transition:opacity .2s}
+.card:hover .anchor-link{opacity:1}
+.inline-list{list-style:none;padding:0;margin:0;display:flex;gap:.75rem;flex-wrap:wrap}
+.inline-list li{margin:0}
+footer{border-top:1px solid var(--border-color);padding-top:2rem;margin-top:2rem;color:var(--text-muted);font-size:.875rem;display:flex;align-items:center;gap:.75rem}
+@media print{
+body{background:#fff;color:#000;font-size:10pt}
+.nav{display:none}
+.container{padding:0;max-width:100%}
+.card{border:none!important;padding:0;margin-bottom:2rem;background:0 0;break-inside:avoid}
+pre,.tree-block,.mermaid{background:#fff;border:1px solid #ccc;color:#000}
+code{border:1px solid #ddd;background:#f5f5f5;color:#000}
+table{break-inside:avoid}
+th{color:#000;border-bottom:2px solid #000}
+td,th{border-color:#eee;padding:.5rem}
+tr:nth-child(odd){background:0 0}
+h2{page-break-after:avoid}
+h2 .num{color:#666;background:0 0;border:1px solid #ccc}
+.badge{border:1px solid #999!important;color:#000!important;background:0 0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.checkbox-icon{border-color:#000}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+document.addEventListener('DOMContentLoaded', async () => {
+mermaid.initialize({startOnLoad:false,theme:'dark',themeVariables:{primaryColor:'#1e2142',primaryTextColor:'#ededed',primaryBorderColor:'#7b61ff',lineColor:'#888888',secondaryColor:'#0a0a0a',tertiaryColor:'#0a0a0a',fontFamily:'Inter, sans-serif'}});
+// Mermaid 11.x startOnLoad reads <pre class="mermaid"> via textContent, stripping <br>.
+// Workaround: render manually using innerText so multi-line labels survive.
+const mermaidBlocks = document.querySelectorAll('pre.mermaid');
+let mermaidIdx = 0;
+for (const block of mermaidBlocks) {
+const source = block.innerText;
+const id = 'mermaid-render-' + mermaidIdx++;
+try { const { svg } = await mermaid.render(id, source); block.innerHTML = svg; }
+catch (err) { console.error('Mermaid render failed:', err); block.textContent = 'Mermaid render error: ' + (err.message || err); }
+}
+if (window.hljs) hljs.highlightAll();
+document.querySelectorAll('.code-block-copy').forEach((btn) => {
+btn.addEventListener('click', async () => {
+const block = btn.closest('.code-block');
+const code = block ? block.querySelector('pre code') : null;
+if (!code) return;
+try {
+await navigator.clipboard.writeText(code.innerText);
+const original = btn.textContent;
+btn.textContent = 'Copied ✓';
+btn.classList.add('copied');
+setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+} catch (err) {
+btn.textContent = 'Failed';
+setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+}
+});
+});
+const treeItems = document.querySelectorAll('.element-tree li');
+treeItems.forEach(li => {
+const childUL = li.querySelector('ul');
+const iconSpan = document.createElement('span');
+iconSpan.className = 'tree-toggle';
+if (childUL) {
+iconSpan.innerHTML = '▼';
+iconSpan.addEventListener('click', (e) => {
+e.stopPropagation();
+childUL.classList.toggle('collapsed-node');
+iconSpan.classList.toggle('collapsed');
+});
+} else {
+iconSpan.innerHTML = ' ';
+iconSpan.style.cursor = 'default';
+}
+li.insertBefore(iconSpan, li.firstChild);
+});
+});
+</script>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+<a href="#overview" class="nav-link">01 Overview</a>
+<a href="#visual-layout" class="nav-link">02 Visual Layout</a>
+<a href="#element-tree" class="nav-link">03 Element Tree</a>
+<a href="#ui-flow-diagram" class="nav-link">04 UI Flow</a>
+<a href="#controller-code" class="nav-link">05 Controller Code</a>
+<a href="#visual-reference" class="nav-link">06 Visual Reference</a>
+<a href="#interaction-details" class="nav-link">07 Interaction</a>
+<a href="#state-changes" class="nav-link">08 State Changes</a>
+<a href="#verification" class="nav-link">10 Verification</a>
+</div></nav>
+<div class="container">
+<header>
+<div class="header-meta">
+<span><strong>Date:</strong> <code>YYYY-MM-DD</code></span>
+<span><strong>Status:</strong> <code>Draft</code></span>
+<span><strong>Prefab:</strong> <code>[PrefabName].prefab</code></span>
+<span><strong>Controller:</strong> <code>[ControllerClass].cs</code></span>
+</div>
+<h1>[NAME] — UI Design</h1>
+<ul class="inline-list">
+<li><strong>Related:</strong></li>
+<li><a href="../Screens/[Related_Screen].md">[Related_Screen]</a></li>
+<li><a href="../Popups/[Related_Popup].md">[Related_Popup]</a></li>
+<li><a href="../Elements/[Related_Element].md">[Related_Element]</a></li>
+<li><a href="../Core/[Related_Core].md">[Related_Core]</a></li>
+</ul>
+</header>
+
+<!-- 01 Overview -->
+<div class="card" id="overview">
+<h2><span class="num">01</span> Overview</h2>
+<p>[One sentence: what this UI owns and how it fits in the Canvas hierarchy. Example: <code>HomeScreenController</code> is the side-only orchestrator for <code>ScreenHome</code> — it composes <code>LeftMenu</code>/<code>RightMenu</code> (<code>SideMenuController</code> × 2) + center <code>Button_Text</code> (<code>PlayLevelController</code>); <code>TopMenuController</code> and <code>BottomMenuController</code> are persistents outside this screen on <code>UIManager._canvasRoot</code>.]</p>
+</div>
+
+<!-- 02 Visual Layout -->
+<div class="card" id="visual-layout">
+<h2><span class="num">02</span> Visual Layout</h2>
+<p>HTML View (styled div) — visual target. This block renders in a light card so design tokens (color hex, font, spacing) read clearly.</p>
+<div class="mockup-wrapper">
+<div style="max-width:520px;margin:0 auto;border:1px solid #E1E3EF;border-radius:18px;overflow:hidden;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#EEF0F6;box-shadow:0 8px 24px rgba(26,30,47,.10)">
+<div style="background:linear-gradient(135deg,#1E2142 0%,#2B2F6B 100%);color:#fff;padding:14px 16px 12px;text-align:center">
+<div style="font-size:13px;font-weight:800;letter-spacing:2px;line-height:1">[TITLE]</div>
+<div style="width:56px;height:2px;background:#FFB800;border-radius:1px;margin:7px auto 0"></div>
+<div style="font-size:9px;font-weight:600;letter-spacing:1px;opacity:.62;margin-top:6px">[SUBTITLE]</div>
+</div>
+<div style="padding:12px;background:#F7F8FC">
+<div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:#8B90AD;text-align:center;margin-bottom:8px">SCROLLRECT (Vertical) → Viewport (Mask) → ContentContainer (VerticalLayoutGroup)</div>
+<div style="background:#fff;border:1px solid #E8EAF0;border-left:4px solid #7B61FF;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+<div style="width:44px;height:44px;min-width:44px;border-radius:50%;background:#FFF3DC;border:1px solid #FFD18A;display:flex;align-items:center;justify-content:center;font-size:18px">[ICON_1]</div>
+<div style="flex:1;min-width:0">
+<div style="display:flex;align-items:center;gap:6px">
+<span style="font-size:12px;font-weight:800;color:#1A1E2F">[CARD_TITLE_1]</span>
+<span style="font-size:9px;font-weight:800;color:#7B61FF;background:#F0EFFF;border:1px solid #E0DCFF;padding:1px 6px;border-radius:99px">[BADGE_1]</span>
+</div>
+<div style="font-size:10px;color:#6C7293;margin-top:1px">[CARD_DESC_1]</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:7px">
+<div style="flex:1;height:8px;background:#EDEEF4;border-radius:99px;overflow:hidden;border:1px solid #E6E8F2"><div style="width:[PROGRESS_PCT_1]%;height:100%;background:linear-gradient(90deg,#7B61FF,#9A86FF);border-radius:99px"></div></div>
+<span style="font-size:9px;font-weight:800;color:#6C7293;white-space:nowrap">[PROGRESS_TEXT_1]</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+<span style="font-size:10px;font-weight:800;color:#9AA0B8;background:#E9EBF3;border:1px solid #DDE0EA;padding:7px 14px;border-radius:8px;letter-spacing:.6px">CLAIM</span>
+</div>
+</div>
+<div style="background:#fff;border:1px solid #FFD18A;border-left:4px solid #00C853;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+<div style="width:44px;height:44px;min-width:44px;border-radius:50%;background:#E8F5E9;border:1px solid #A5D6A7;display:flex;align-items:center;justify-content:center;font-size:18px">[ICON_2]</div>
+<div style="flex:1;min-width:0">
+<div style="display:flex;align-items:center;gap:6px">
+<span style="font-size:12px;font-weight:800;color:#1A1E2F">[CARD_TITLE_2]</span>
+<span style="font-size:9px;font-weight:800;color:#1B8E3B;background:#E8F5E9;border:1px solid #A5D6A7;padding:1px 6px;border-radius:99px">DONE</span>
+</div>
+<div style="font-size:10px;color:#6C7293;margin-top:1px">[CARD_DESC_2]</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:7px">
+<div style="flex:1;height:8px;background:#EDEEF4;border-radius:99px;overflow:hidden;border:1px solid #E6E8F2"><div style="width:100%;height:100%;background:linear-gradient(90deg,#00C853,#69F0AE);border-radius:99px"></div></div>
+<span style="font-size:9px;font-weight:800;color:#1A9E4A;white-space:nowrap">[PROGRESS_TEXT_2]</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+<span style="font-size:10px;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF7A00,#FFB800);border:1px solid #FF8F00;padding:7px 14px;border-radius:8px;letter-spacing:.6px;box-shadow:0 2px 8px rgba(255,122,0,.30)">CLAIM</span>
+</div>
+</div>
+<div style="background:#fff;border:1px dashed #D8DAE6;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center">
+<div style="width:36px;height:36px;min-width:36px;border-radius:50%;background:#F4F5F9;border:1px solid #E1E3EF;display:flex;align-items:center;justify-content:center;color:#B8BDD4;font-weight:700">⋯</div>
+<div style="flex:1">
+<div style="font-size:11px;font-weight:700;color:#8B90AD">More [ITEM_PLURAL]</div>
+<div style="font-size:9px;color:#A8ADC3">One <b style="color:#8B90AD">Card_&lt;Item&gt;</b> per [ITEM_SINGULAR] — auto-sized by ContentSizeFitter</div>
+</div>
+<span style="font-size:10px;font-weight:700;color:#B8BDD4;background:#fff;border:1px solid #E1E3EF;padding:6px 12px;border-radius:8px">LOCKED</span>
+</div>
+<div style="text-align:center;font-size:9px;font-weight:600;color:#A8ADC3;letter-spacing:.7px;margin-top:10px;border-top:1px solid #E6E8F2;padding-top:8px">↕ SCROLL — ContentContainer (VerticalLayoutGroup) &nbsp;|&nbsp; ScrollRect → Viewport → ContentContainer → Card_&lt;Item&gt; × N</div>
+</div>
+</div>
+</div>
+<p style="text-align:center;font-size:11px;color:#6C7293;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:8px 0 0;padding:.5rem;background:rgba(255,255,255,.02);border-radius:4px"><strong style="color:#1A1E2F;background:#F0EFFF;padding:1px 5px;border-radius:4px">&lt;RootName&gt;</strong> — Header + ScrollRect (Viewport → ContentContainer) with <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">Card_&lt;Item&gt;</code> rows. Top: in-progress (<code>[PROGRESS_TEXT_1]</code>), middle: claimable (<code>[PROGRESS_TEXT_2]</code>), bottom: placeholder for remaining <code>[ITEM_PLURAL]</code>.</p>
+</div>
+
+<!-- 03 Element Tree -->
+<div class="card" id="element-tree">
+<h2><span class="num">03</span> Element Tree</h2>
+<p>Every <code>GameObject</code> with attached components in parentheses. Layout/mask/input components are mandatory — not optional. 2-space indent per depth.</p>
+<ul class="element-tree">
+<li><span class="go-name">&lt;RootName&gt;</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-custom">&lt;MainController&gt;</span>, <span class="comp-canvas">CanvasGroup</span>)</span>
+<ul>
+<li><span class="go-name">Header</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-layout">HorizontalLayoutGroup</span>)</span>
+<ul><li><span class="go-name">HeaderTitleText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li></ul>
+</li>
+<li><span class="go-name">ScrollRect</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">Image</span>, <span class="comp-graphic">Mask</span>, <span class="comp-control">ScrollRect</span>)</span>
+<ul>
+<li><span class="go-name">Viewport</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">Image</span>, <span class="comp-graphic">Mask</span>)</span>
+<ul>
+<li><span class="go-name">ContentContainer</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-layout">VerticalLayoutGroup</span>, <span class="comp-layout">ContentSizeFitter</span>)</span>
+<ul>
+<li><span class="go-name">Card_&lt;Item&gt;</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-custom">&lt;CardController&gt;</span>, <span class="comp-layout">LayoutElement</span>)</span>
+<ul>
+<li><span class="go-name">CategoryIcon</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>)</span></li>
+<li><span class="go-name">InfoContainer</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-layout">VerticalLayoutGroup</span>)</span>
+<ul>
+<li><span class="go-name">TitleText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li>
+<li><span class="go-name">DescText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li>
+<li><span class="go-name">ProgressBar</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-control">Slider</span>, <span class="comp-graphic">Image</span>)</span>
+<ul>
+<li><span class="go-name">Background</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>)</span></li>
+<li><span class="go-name">FillArea</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>)</span>
+<ul><li><span class="go-name">Fill</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>)</span></li></ul>
+</li>
+<li><span class="go-name">ProgressText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="go-name">RewardContainer</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-layout">HorizontalLayoutGroup</span>)</span>
+<ul>
+<li><span class="go-name">RewardIcon</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>)</span></li>
+<li><span class="go-name">RewardAmountText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li>
+</ul>
+</li>
+<li><span class="go-name">ClaimButton</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>, <span class="comp-control">Button</span>)</span>
+<ul><li><span class="go-name">ClaimText</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li></ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="go-name">LoadingIndicator</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">Image</span>)</span></li>
+<li><span class="go-name">EmptyStateView</span> <span class="comp">(<span class="comp-canvas">RectTransform</span>, <span class="comp-graphic">CanvasRenderer</span>, <span class="comp-graphic">TextMeshProUGUI</span>)</span></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<!-- 04 UI Flow Diagram -->
+<div class="card" id="ui-flow-diagram">
+<h2><span class="num">04</span> UI Flow Diagram</h2>
+<p>Mermaid <code>flowchart TD</code> — every tappable in Visual Reference has one coloured path. Colors: <span class="badge badge-tap">tap</span> <span class="badge badge-handler">handler</span> <span class="badge badge-service">service</span> <span class="badge badge-nav">nav</span> <span class="badge badge-fx">fx</span> <span class="badge badge-state">state</span>. Shows <code>DOKill</code> guards and <code>SetUpdate(true)</code> when <code>Time.timeScale == 0</code>.</p>
+<pre class="mermaid">flowchart TD
+Home["ScreenHome<br>HomeScreenController<br>(ScreenCanvasController)"]:::screen
+L1["OFFER.1<br>Button_Side · LeftMenu[0]<br>●1 badge"]:::tap
+Play["Level 2 — TAP TO PLAY<br>Button_Text (400x200)"]:::tap
+L1 --> H1["OnOfferClicked(0)<br>SideMenuController"]:::handler
+Play --> HP["OnPlayClicked()<br>PlayLevelController"]:::handler
+H1 --> FX1["DOKill + DOPunchScale"]:::fx
+HP --> FX2["DOKill + DOPunchScale"]:::fx
+FX1 --> S1["Haptic: Selection"]:::svc
+FX2 --> S2["LevelManager.CurrentLevelIndex<br>BindLevel() → LV{N}"]:::svc
+S1 --> N1["UIManager.ShowPopupAsync<br>UI.Offer1Popup"]:::nav
+S2 --> N4["LoadCurrentLevelAsync()<br>UIManager.ShowScreenAsync<br>UI.PlayScreen"]:::nav
+N1 --> ST1["PopupStack: push<br>Popup_Offer1 above ScreenHome"]:::state
+N4 --> ST2["Screen: Hide ScreenHome<br>Show ScreenPlay"]:::state
+
+classDef tap fill:#FFB800,stroke:#E99A00,color:#1A1E2F,font-weight:bold
+classDef handler fill:#7B61FF,stroke:#5A3FD6,color:#FFFFFF,font-weight:bold
+classDef svc fill:#00A67D,stroke:#008A65,color:#FFFFFF
+classDef nav fill:#FF3B30,stroke:#D62A1E,color:#FFFFFF,font-weight:bold
+classDef fx fill:#333333,stroke:#666666,color:#ededed
+classDef state fill:#0a0a0a,stroke:#f5a623,color:#ffb84d
+classDef screen fill:#1E2142,stroke:#7b61ff,color:#FFFFFF,font-weight:bold</pre>
+</div>
+
+<!-- 05 Controller Code -->
+<div class="card" id="controller-code">
+<h2><span class="num">05</span> Controller Code</h2>
+<p>Current code for this controller (or new controller scaffold when <code>(to be created)</code>). Show the wiring, lifecycle, handlers, and test seams. Smart comments on <code>DOKill</code> guards, stored <code>UnityAction</code> identity, and <code>UIManager</code> keys.</p>
+<div class="code-block">
+<div class="code-block-header">
+<span class="code-block-filename"><span class="code-block-filename-icon">📄</span>Assets/_ZenoUI/Scripts/Runtime/UIController/[ControllerClass].cs</span>
+<span style="display:flex;align-items:center;gap:.5rem">
+<span class="code-block-lang">C#</span>
+<button class="code-block-copy" type="button">Copy</button>
+</span>
+</div>
+<pre><code class="language-csharp">
+    // File: Assets/_ZenoUI/Scripts/Runtime/UIController/[ControllerClass].cs
+// Namespace: ZenoGames.UI — Base: [BaseClass] (ScreenCanvasController / PopupCanvasController / MonoBehaviour)
+// Prefab: [PrefabName].prefab — Settings: [SettingsClass] (when applicable)
+
+using System.Globalization; // For N0 / InvariantCulture balance + level formatting
+using System.Threading.Tasks;
+using DG.Tweening;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+using ZenoGames.Interface; // IAssetManager, ICurrencyService, ILevelManager, ServiceLocator, EventBus
+
+namespace ZenoGames.UI
+{
+  /// <summary>
+  /// One-line role + where it sits in Canvas hierarchy (persistent vs ScreenContainer).
+  /// Attach to <RootGO> in [PrefabName].prefab.
+  /// </summary>
+  public class [ControllerClass] : [BaseClass]
+  {
+  [Header("Config")]
+    [SerializeField] private [SettingsClass] settings;
+
+    [Header("Elements — wired to prefab children")]
+    [SerializeField] private Button primaryButton;          // e.g. playButton / closeButton / confirmButton
+    [SerializeField] private TextMeshProUGUI titleText;     // e.g. levelText / balanceText / headerTitle
+
+    // Stored delegate identities — required so RemoveListener matches AddListener (lambda identity fix).
+    private UnityAction _primaryAction;
+
+    // ----- Test seams -----
+    public [SettingsClass] Settings => settings;
+
+    protected override void Awake()
+    {
+      base.Awake();
+      // Cache original scales / colours for DOKill + DOPunchScale restore.
+      _primaryAction = OnPrimaryClicked;
+      WireListeners();
+    }
+
+    private void OnEnable()
+    {
+      // Re-wire after SetActive toggle; guard against double wiring.
+      if (_primaryAction != null) WireListenersIfNeeded();
+    }
+
+    private void OnDisable()
+    {
+      UnwireListeners();
+    }
+
+    protected override void OnDestroy()
+    {
+      base.OnDestroy();
+      UnwireListeners();
+      // DOKill all tween targets to prevent orphaned tweens after Destroy.
+      primaryButton?.transform.DOKill();
+      titleText?.DOKill();
+      titleText?.transform.DOKill();
+    }
+
+    // ----- Wiring (dynamic only — never Inspector onClick) -----
+
+    private void WireListeners()
+    {
+      UnwireListeners();
+      if (primaryButton != null && _primaryAction != null)
+        primaryButton.onClick.AddListener(_primaryAction);
+    }
+
+    private void WireListenersIfNeeded()
+    {
+      // Guard for OnEnable after SetActive(false/true) cycle.
+    }
+
+    private void UnwireListeners()
+    {
+      if (primaryButton != null && _primaryAction != null)
+        primaryButton.onClick.RemoveListener(_primaryAction);
+    }
+
+    // ----- Lifecycle -----
+
+    protected override void OnInit()
+    {
+      base.OnInit();
+      // One-time init: refresh labels, build spawned children.
+    }
+
+    protected override void OnShow()
+    {
+      base.OnShow();
+      // Refresh on every show (e.g. level may have advanced while away).
+    }
+
+    protected override void OnHide()
+    {
+      base.OnHide();
+      // Restore timeScale, hide progress, etc.
+    }
+
+    // ----- Handlers — one per tappable -----
+
+    /// <summary>
+    /// Primary CTA tapped — punch, haptic, then navigate.
+    /// </summary>
+    private void OnPrimaryClicked()
+    {
+      // Smart comment: DOKill before every tween to avoid stacking when user spams.
+      primaryButton?.transform.DOKill();
+      primaryButton?.transform.DOPunchScale(Vector3.one * 0.08f, 0.22f, 1, 0.5f);
+
+      // HapticType.Selection for normal, Warning for destructive.
+      // ServiceLocator.Get<IHapticService>()?.Haptic(HapticType.Selection);
+
+      // Navigation — literal Addressable key, never guessed.
+      _ = ShowPopupAsync<PopupCanvasController>("UI.[TargetPopup]");
+      // or: _ = UIManager.ShowScreenAsync<ScreenCanvasController>("UI.[TargetScreen]");
+    }
+
+    // ----- Helpers -----
+
+    /// <summary>Virtual UIManager seam so EditMode tests can override without Addressables.</summary>
+    protected virtual Task<T> ShowPopupAsync<T>(string key) where T : PopupCanvasController
+    => UIManager.ShowPopupAsync<T>(key);
+
+    /// <summary>Test hook — force wire without toggling active.</summary>
+    public void WireForTest() => WireListeners();
+
+    /// <summary>Test hook — force unwire.</summary>
+    public void UnwireForTest() => UnwireListeners();
+  }
+}
+</code></pre>
+</div>
+</div>
+
+<!-- 06 Visual Reference -->
+<div class="card" id="visual-reference">
+<h2><span class="num">06</span> Visual Reference</h2>
+<p>Compact link table — every mockup tappable maps to a prefab GameObject and a controller field. This is the traceability index for the diagrams and interaction table below.</p>
+<div class="table-wrapper"><table><thead><tr>
+<th width="5%">#</th><th width="25%">Mockup Element (label)</th><th width="20%">Prefab GO</th><th width="20%">Controller Field</th><th width="30%">Notes / Key</th>
+</tr></thead><tbody>
+<tr><td>1</td><td><span class="badge badge-tap">TAP</span> <code>OFFER.1</code> — <code>Button_Side</code></td><td><code>LeftMenu/Button_Side</code></td><td><code>SideMenuController.offers[0]</code></td><td><code>offerId="offer1"</code> → <code>"UI.Offer1Popup"</code></td></tr>
+<tr><td>2</td><td><span class="badge badge-tap">TAP</span> <code>Level 2 — TAP TO PLAY</code> — <code>Button_Text</code></td><td><code>ScreenHome/Button_Text</code></td><td><code>PlayLevelController.playButton</code> + <code>levelText</code></td><td><code>"UI.PlayScreen"</code> (SDK placeholder today)</td></tr>
+<tr><td>3</td><td><span class="badge badge-tap">TAP</span> <code>⚙ Settings</code> — <code>TopMenu/settingsButton</code></td><td><code>PersistentTop/settingsButton</code></td><td><code>TopMenuController.settingsButton</code></td><td><code>"UI.SettingsPopup"</code></td></tr>
+<tr><td>4</td><td><span class="badge badge-tap">TAP</span> <code>STORE</code> — <code>BottomMenu[0]</code></td><td><code>PersistentBottom/Button_Menu[0]</code></td><td><code>BottomMenuController.tabs[0]</code></td><td><code>"UI.StoreScreen"</code></td></tr>
+</tbody></table></div>
+</div>
+
+<!-- 07 Interaction Details -->
+<div class="card" id="interaction-details">
+<h2><span class="num">07</span> Interaction Details</h2>
+<p>One row per tappable. <code>Next UI</code> = what the user sees change. <code>Logic</code> = service/manager/event call. <code>Nav</code> = <code>UIManager</code> Addressable key.</p>
+<div class="table-wrapper"><table><thead><tr>
+<th width="4%">#</th><th width="20%">Element (Mockup → Prefab)</th><th width="22%">Wiring (WireListeners)</th><th width="12%">Handler</th><th width="14%">Next UI</th><th width="14%">Logic / Service</th><th width="14%">Nav (key)</th>
+</tr></thead><tbody>
+<tr><td>1</td><td><span class="badge badge-tap">TAP</span> <code>OFFER.1</code> — <code>LeftMenu/Button_Side</code></td><td><code>AddListener(() => OnOfferClicked(0))</code>; <code>OnDisable → RemoveListener</code></td><td><code>OnOfferClicked(0)</code></td><td><code>DOKill</code> + <code>DOPunchScale</code>; popup fades in</td><td><code>HapticManager.Haptic(HapticType.Selection)</code></td><td><span class="badge badge-nav">NAV</span> <code>"UI.Offer1Popup"</code></td></tr>
+<tr><td>2</td><td><span class="badge badge-tap">TAP</span> <code>Level 2 — TAP TO PLAY</code> — <code>Button_Text</code></td><td><code>playButton.onClick.AddListener(OnPlayClicked)</code></td><td><code>OnPlayClicked()</code></td><td><code>DOPunchScale</code>; label <code>LV{N}</code></td><td><code>LevelManager.LoadCurrentLevelAsync()</code></td><td><span class="badge badge-nav">NAV</span> <code>"UI.PlayScreen"</code></td></tr>
+<tr><td>3</td><td><span class="badge badge-tap">TAP</span> <code>⚙</code> — <code>PersistentTop/settingsButton</code></td><td><code>settingsButton.onClick.AddListener(_settingsAction)</code></td><td><code>OnSettingsClicked()</code></td><td>—</td><td><code>HapticType.Selection</code></td><td><span class="badge badge-nav">NAV</span> <code>"UI.SettingsPopup"</code></td></tr>
+<tr><td>4</td><td><span class="badge badge-tap">TAP</span> <code>STORE</code> — <code>PersistentBottom[0]</code></td><td><code>tabs[0].Button.onClick.AddListener(capturedIndex => SelectTab(0))</code></td><td><code>SelectTab(0)</code></td><td><code>DOAnchorPosY</code> + <code>DOColor(selectedColor)</code></td><td><code>HapticType.Selection</code></td><td><span class="badge badge-nav">NAV</span> <code>"UI.StoreScreen"</code></td></tr>
+<tr><td>5</td><td><span class="badge badge-tap">TAP</span> <code>Pause → Resume</code> (Play HUD)</td><td><code>pauseButton.onClick.AddListener(OnPauseClicked)</code></td><td><code>OnPauseClicked()</code></td><td><code>Time.timeScale=0</code>; popup <code>DOFade</code> with <code>SetUpdate(true)</code></td><td><code>SoundManager.PauseBGM</code> (soft duck)</td><td><span class="badge badge-nav">NAV</span> <code>"UI.PausePopup"</code></td></tr>
+</tbody></table></div>
+<h4>Stack &amp; lifecycle contracts</h4>
+<p style="font-size:.875rem;color:var(--text-secondary)"><code>Show()</code> = <code>OnPreShow</code> → <code>DOFade 0→1</code> (<code>fadeInDuration 0.25s Ease.OutQuad</code>, <code>SetUpdate(true)</code>) → <code>OnShow</code> → <code>IsVisible=true</code>. <code>Hide()</code> = <code>OnPreHide</code> → <code>DOFade 1→0</code> → <code>OnHide</code>. Out-of-bounds <code>SelectTab</code> and redundant tap (<code>_currentIndex == index</code>) are no-ops.</p>
+</div>
+
+<!-- 08 State Changes -->
+<div class="card" id="state-changes">
+<h2><span class="num">08</span> State Changes</h2>
+<p>Before → After for each primary flow. Useful for reviewers to eyeball.</p>
+<div class="table-wrapper"><table><thead><tr>
+<th width="20%">Flow</th><th width="20%">Before</th><th width="20%">After</th><th width="40%">Visually</th>
+</tr></thead><tbody>
+<tr><td><strong>Tap <code>OFFER.1</code></strong></td><td><code>ScreenHome</code> visible, <code>PopupStack=[]</code></td><td><code>ScreenHome</code> dimmed behind; <code>Popup_Offer1 IsVisible=true</code></td><td>Dim overlay + card slides/fades in</td></tr>
+<tr><td><strong>Tap <code>TAP TO PLAY</code></strong></td><td><code>Level 2</code> label <code>LV2</code></td><td><code>ScreenPlay</code> visible, <code>ScreenHome</code> hidden</td><td>Full-screen swap via <code>ShowScreenAsync</code></td></tr>
+<tr><td><strong>Tap <code>STORE</code> tab</strong></td><td><code>CurrentScreen=HomeScreen</code></td><td><code>CurrentScreen=StoreScreen</code>, prev tab <code>ResetState</code></td><td>Bottom tab lifts + recolour + content scrolls to top</td></tr>
+<tr><td><strong><code>CurrencyBalanceChangedEvent(coin, +500)</code></strong></td><td><code>coinChip.balanceText="1,500"</code></td><td><code>"2,000"</code> + <code>DOPunchScale</code> pulse</td><td>Chip text pops</td></tr>
+<tr><td><strong><code>Pause → Resume</code></strong></td><td><code>Time.timeScale=1</code>, gameplay running</td><td><code>Time.timeScale=0</code>, <code>PausePopup IsVisible=true</code></td><td>Game freezes; dim + PAUSED card</td></tr>
+</tbody></table></div>
+</div>
+
+<!-- 10 Verification -->
+<div class="card" id="verification">
+<h2><span class="num">10</span> Verification</h2>
+<p>All boxes must tick before shipping. Any failure returns to Phase 3 (Visual/Tree) or Phase 4 (Flow) — do not ship with a known gap.</p>
+
+<div class="checkbox-category">Mock Parity (visual tokens)</div>
+<ul class="checkbox-list">
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every <code>Image.color</code> / <code>TextMeshProUGUI.color</code> hex matches Visual Layout HTML <code>style</code> exactly — zero drift.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every <code>TextMeshProUGUI.font</code> / <code>fontSize</code> / <code>fontStyle</code> / <code>letterSpacing</code> / <code>alignment</code> matches Visual Layout.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every <code>background</code> / <code>gradient</code> / <code>border</code> / <code>border-radius</code> / <code>box-shadow</code> / <code>padding</code> / <code>spacing</code> matches Visual Layout.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Sibling order (<code>GetSiblingIndex</code> walk) matches Visual Layout order top-to-bottom.</div></li>
+</ul>
+
+<div class="checkbox-category">Tree Parity (structure)</div>
+<ul class="checkbox-list">
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Walk <code>Element Tree</code> depth-first against prefab <code>transform</code> hierarchy — every Tree node ticks exactly one prefab GO at the same depth with the same name, and vice versa. Zero unticked nodes.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every Tree node's <code>(Component list)</code> is present on the prefab GO (type name exact). No missing, no extra un-spec'd components except <code>Transform</code>→<code>RectTransform</code> upgrade.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Indentation in spec's Tree (2 spaces per depth) matches prefab depth.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Layout / mask / input components not omitted (<code>ContentSizeFitter</code>, <code>Mask</code>, <code>CanvasGroup</code>, etc.).</div></li>
+</ul>
+
+<div class="checkbox-category">Flow Completeness</div>
+<ul class="checkbox-list">
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every tappable in mockup appears as one row in Visual Reference, one row in Interaction Details, and one path in Mermaid Flow.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every <code>UIManager</code> key is a literal string present in <code>AddressableAssetSettings</code> (or marked <code>(to be created)</code>).</div></li>
+</ul>
+
+<div class="checkbox-category">Wiring Contract</div>
+<ul class="checkbox-list">
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every <code>onClick</code> shows dynamic <code>AddListener</code> with stored <code>UnityAction</code> + <code>RemoveListener</code> in <code>OnDisable</code> / <code>OnHide</code> / <code>OnDestroy</code>; no Inspector <code>onClick</code>.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>Every tween shows <code>DOKill</code> guard; pause flows use <code>SetUpdate(true)</code>.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div><code>CanvasController</code> lifecycle (<code>OnInit</code> / <code>OnPreShow</code> / <code>OnShow</code> / <code>OnPreHide</code> / <code>OnHide</code> + <code>IsVisible</code> + <code>CanvasGroup</code> alpha/interactable/blocksRaycasts) is respected.</div></li>
+</ul>
+
+<div class="checkbox-category">Code &amp; Quality</div>
+<ul class="checkbox-list">
+<li class="checkbox-item"><div class="checkbox-icon"></div><div><code>Controller Code</code> compiles against <code>ZenoGames.UI</code> + <code>ZenoGames.Interface</code> + <code>DOTween</code> + <code>TextMeshPro</code>.</div></li>
+<li class="checkbox-item"><div class="checkbox-icon"></div><div>No <code>TODO</code> / <code>TBD</code> / <code>FIXME</code>; all <code>**Related:**</code> links resolve; all mermaid blocks render.</div></li>
+</ul>
+</div>
+
+<footer><span>Generated by <code>unity-ui-design</code> skill · Output: <code>docs/specs/UIs/Designs/[NAME]_Design.html</code></span></footer>
+</div>
+</body>
+</html>
