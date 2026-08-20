@@ -1,0 +1,38 @@
+Epic,Status,Component,Task,Sub Task,"Jira
+(Client)","Jira
+(Server)",Client,Server,Note,"Assignee
+(SGS)","Assignee
+(BLR)",In/Out
+[FEATURE NAME],,General,"- Design Blueprint
+- Contribute TDD and API documents
+- Client - Server Integration
+- Create the milestone build
+- Merge code LiveOps, Live",,,,[N],[N],"[Cross-cutting work that is otherwise uncosted: fbs/step-id append order as a RELEASE-ORDERING dependency, hand-duplicated enum copies, two-repo release coordination, regression pass before merge.] Design range [X-Y].",,,
+,,[COMPONENT / WORKSTREAM],[DELIVERABLE],"Client:
+- [step, with File.cs:123 anchor]
+- [step]
+- Test",,,[N],,[Design ref WS-0N §4. Design range X-Y. Assumption / pre-existing bug / blocker.],,,
+,,,,"Battle logic:
+- [step, with File.cs:123 anchor]
+- [new step id 38xxx added to BOTH duplicated enum copies]",,,[N],,[Battle-logic days go in the CLIENT column per this sheet's convention.],,,
+,,,,"Server:
+- [endpoint / state machine / job]",,,,[N],"[Or TBD when the contract is unscoped — a TBD row contributes 0 to the column sum, say so here.]",,,
+,,,,"Brick:
+- [data authoring / config rows]",,,,[N],[Brick/config days go in the SERVER column per this sheet's convention.],,,
+,,Optional (decision-dependent),[OPTION],"[Client|Server|Battle logic]:
+- [what it adds]",,,,,"ADD +[X-Y]. Decision: [who must confirm what, and the doc reference].",,,Out
+,,Excluded from these numbers,,"- [Other repo / external server scope]
+- [Blueprint / data authoring owned elsewhere]
+- Art / UX production
+- QA passes, loc translation, release management
+- [Unowned scope needing an owner or an explicit cut]",,,,,Confidence: [HIGH|MEDIUM|LOW] - [what is investigated vs what remains unresolved].,,,Out
+,,,,,,,,,,,,
+Total Assign,,,,,,,[SUM],[SUM],"[How the number was derived: midpoint of the X-Y range, which parts were preserved unchanged, which TBD rows are excluded.]",,,
+Total Assign (design low),,,,,,,[LOW SUM],[SUM],[Low end of the range.],,,
+Total Assign (design high),,,,,,,[HIGH SUM],[SUM],[High end of the range.],,,
+Available Capacity (SGS),,,,,,,[N],[N],"[If demand exceeds capacity, state the exact overrun and where the scope cuts are.]",,,
+,,,,,,,,,,,,
+,,,Tentative Release Plan,,,,Submission,[M/D],,,,
+,,,,,,,Release 50%,[M/D],,,,
+,,,,,,,Release 100%,[M/D],,,,
+,,,,,,,Force Update,[M/D],,,,

@@ -222,63 +222,52 @@ li.insertBefore(iconSpan, li.firstChild);
 <!-- 02 Visual Layout -->
 <div class="card" id="visual-layout">
 <h2><span class="num">02</span> Visual Layout</h2>
-<p>HTML View (styled div) — visual target. This block renders in a light card so design tokens (color hex, font, spacing) read clearly.</p>
+<p>HTML View (styled div) — visual target. This block renders in a light card so design tokens (color hex, font, spacing) read clearly. The chrome is a popup (Backdrop + Card → Header → Body → Footer); <code>Body</code> and <code>Footer</code> are dashed slots so the layout reads clearly as a template. Replace slot content with the variant's actual nodes when filling in. <strong>Header</strong> row labels the title text + close button; <strong>elements</strong> shown inside <code>Body</code> are placeholder rows the variant will replace; <strong>buttons</strong> shown in <code>Footer</code> are placeholder CTAs (one neutral + one gradient).</p>
 <div class="mockup-wrapper">
-<div style="max-width:520px;margin:0 auto;border:1px solid #E1E3EF;border-radius:18px;overflow:hidden;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#EEF0F6;box-shadow:0 8px 24px rgba(26,30,47,.10)">
-<div style="background:linear-gradient(135deg,#1E2142 0%,#2B2F6B 100%);color:#fff;padding:14px 16px 12px;text-align:center">
-<div style="font-size:13px;font-weight:800;letter-spacing:2px;line-height:1">[TITLE]</div>
-<div style="width:56px;height:2px;background:#FFB800;border-radius:1px;margin:7px auto 0"></div>
-<div style="font-size:9px;font-weight:600;letter-spacing:1px;opacity:.62;margin-top:6px">[SUBTITLE]</div>
+<div style="max-width:420px;margin:16px auto;border:1px solid #E1E3EF;border-radius:18px;overflow:hidden;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#EEF0F6;box-shadow:0 8px 24px rgba(26,30,47,.10)">
+<div style="background:#2B2F44;color:rgba(255,255,255,.72);text-align:center;padding:6px 10px;font-size:8px;font-weight:700;letter-spacing:.7px">DIM OVERLAY — Backdrop (Image dim rgba(26,30,47,0.42) + Button → OnBackdropDismiss)</div>
+<div style="padding:16px;background:rgba(26,30,47,.42);display:flex;justify-content:center">
+<div style="background:white;border-radius:16px;padding:14px 16px 16px;width:100%;max-width:320px;box-shadow:0 12px 32px rgba(26,30,47,.18);position:relative">
+<div style="font-size:8px;font-weight:700;color:#A8ADC3;letter-spacing:.6px;text-align:center;margin-bottom:4px">CARD (VerticalLayoutGroup spacing 12) — rounded 16, shadow 0 12 32, anchor centered, max-width 320</div>
+<!-- Header (HorizontalLayoutGroup) — title row: HeaderTitleText + CloseButton (X) -->
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F7F8FC;border:1px solid #E1E3EF;border-radius:10px;padding:6px 8px">
+<span style="font-size:8px;font-weight:700;color:#A8ADC3;letter-spacing:.6px">Header (HorizontalLayoutGroup)</span>
+<div style="display:flex;align-items:center;gap:6px;flex:1;min-width:0">
+<span style="font-size:13px;font-weight:900;color:#1A1E2F;letter-spacing:.6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">[HEADER_TITLE_TEXT]</span>
 </div>
-<div style="padding:12px;background:#F7F8FC">
-<div style="font-size:9px;font-weight:700;letter-spacing:.8px;color:#8B90AD;text-align:center;margin-bottom:8px">SCROLLRECT (Vertical) → Viewport (Mask) → ContentContainer (VerticalLayoutGroup)</div>
-<div style="background:#fff;border:1px solid #E8EAF0;border-left:4px solid #7B61FF;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
-<div style="width:44px;height:44px;min-width:44px;border-radius:50%;background:#FFF3DC;border:1px solid #FFD18A;display:flex;align-items:center;justify-content:center;font-size:18px">[ICON_1]</div>
-<div style="flex:1;min-width:0">
-<div style="display:flex;align-items:center;gap:6px">
-<span style="font-size:12px;font-weight:800;color:#1A1E2F">[CARD_TITLE_1]</span>
-<span style="font-size:9px;font-weight:800;color:#7B61FF;background:#F0EFFF;border:1px solid #E0DCFF;padding:1px 6px;border-radius:99px">[BADGE_1]</span>
+<div style="width:28px;height:28px;border-radius:50%;background:#EEF0F6;border:1px solid #E1E3EF;display:flex;align-items:center;justify-content:center;font-size:12px;color:#6C7293;flex-shrink:0">✕</div>
 </div>
-<div style="font-size:10px;color:#6C7293;margin-top:1px">[CARD_DESC_1]</div>
-<div style="display:flex;align-items:center;gap:8px;margin-top:7px">
-<div style="flex:1;height:8px;background:#EDEEF4;border-radius:99px;overflow:hidden;border:1px solid #E6E8F2"><div style="width:[PROGRESS_PCT_1]%;height:100%;background:linear-gradient(90deg,#7B61FF,#9A86FF);border-radius:99px"></div></div>
-<span style="font-size:9px;font-weight:800;color:#6C7293;white-space:nowrap">[PROGRESS_TEXT_1]</span>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-<span style="font-size:10px;font-weight:800;color:#9AA0B8;background:#E9EBF3;border:1px solid #DDE0EA;padding:7px 14px;border-radius:8px;letter-spacing:.6px">CLAIM</span>
+<!-- Body (slot) — VerticalLayoutGroup + ContentSizeFitter, hosts variant elements -->
+<div style="background:repeating-linear-gradient(45deg,#F4F5F9,#F4F5F9 6px,#EEF0F6 6px,#EEF0F6 12px);border:1px dashed #B8BDD4;border-radius:10px;padding:14px 12px;text-align:center;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin-top:8px">
+<div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#6C7293">BODY SLOT (VerticalLayoutGroup + ContentSizeFitter)</div>
+<div style="font-size:8px;color:#A8ADC3;margin-top:4px;font-family:var(--font-mono)">SetBody(GameObject) — host for variant content<br/>(MessageText, IconImage, RewardList, BoardSummary, …)</div>
+<div style="margin-top:6px;display:flex;flex-direction:column;gap:4px">
+<div style="background:white;border:1px solid #E1E3EF;border-radius:8px;padding:6px 8px;font-size:9px;color:#1A1E2F;text-align:left">[variant_content_line_1]</div>
+<div style="background:white;border:1px solid #E1E3EF;border-radius:8px;padding:6px 8px;font-size:9px;color:#1A1E2F;text-align:left">[variant_content_line_2]</div>
 </div>
 </div>
-<div style="background:#fff;border:1px solid #FFD18A;border-left:4px solid #00C853;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
-<div style="width:44px;height:44px;min-width:44px;border-radius:50%;background:#E8F5E9;border:1px solid #A5D6A7;display:flex;align-items:center;justify-content:center;font-size:18px">[ICON_2]</div>
-<div style="flex:1;min-width:0">
-<div style="display:flex;align-items:center;gap:6px">
-<span style="font-size:12px;font-weight:800;color:#1A1E2F">[CARD_TITLE_2]</span>
-<span style="font-size:9px;font-weight:800;color:#1B8E3B;background:#E8F5E9;border:1px solid #A5D6A7;padding:1px 6px;border-radius:99px">DONE</span>
+<!-- Footer (slot) — HorizontalLayoutGroup, hosts variant buttons (FOOTER_BTN_*) -->
+<div style="background:#F7F8FC;border:1px dashed #B8BDD4;border-radius:10px;padding:8px 10px;margin-top:8px">
+<div style="font-size:9px;font-weight:700;letter-spacing:.7px;color:#6C7293;text-align:center">FOOTER SLOT (HorizontalLayoutGroup)</div>
+<div style="display:flex;gap:8px;margin-top:6px;justify-content:center">
+<div style="flex:1;background:white;border:1px solid #D8DAE6;color:#6C7293;font-size:10px;font-weight:800;padding:8px;border-radius:99px;text-align:center">[FOOTER_BTN_1 — neutral]</div>
+<div style="flex:1;background:linear-gradient(90deg,#FF7A00,#FFB800);border:1px solid #FF8F00;color:white;font-size:10px;font-weight:900;padding:8px;border-radius:99px;text-align:center;box-shadow:0 4px 12px rgba(255,122,0,.28)">[FOOTER_BTN_2 — CTA]</div>
 </div>
-<div style="font-size:10px;color:#6C7293;margin-top:1px">[CARD_DESC_2]</div>
-<div style="display:flex;align-items:center;gap:8px;margin-top:7px">
-<div style="flex:1;height:8px;background:#EDEEF4;border-radius:99px;overflow:hidden;border:1px solid #E6E8F2"><div style="width:100%;height:100%;background:linear-gradient(90deg,#00C853,#69F0AE);border-radius:99px"></div></div>
-<span style="font-size:9px;font-weight:800;color:#1A9E4A;white-space:nowrap">[PROGRESS_TEXT_2]</span>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-<span style="font-size:10px;font-weight:900;color:#fff;background:linear-gradient(90deg,#FF7A00,#FFB800);border:1px solid #FF8F00;padding:7px 14px;border-radius:8px;letter-spacing:.6px;box-shadow:0 2px 8px rgba(255,122,0,.30)">CLAIM</span>
-</div>
-</div>
-<div style="background:#fff;border:1px dashed #D8DAE6;border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center">
-<div style="width:36px;height:36px;min-width:36px;border-radius:50%;background:#F4F5F9;border:1px solid #E1E3EF;display:flex;align-items:center;justify-content:center;color:#B8BDD4;font-weight:700">⋯</div>
-<div style="flex:1">
-<div style="font-size:11px;font-weight:700;color:#8B90AD">More [ITEM_PLURAL]</div>
-<div style="font-size:9px;color:#A8ADC3">One <b style="color:#8B90AD">Card_&lt;Item&gt;</b> per [ITEM_SINGULAR] — auto-sized by ContentSizeFitter</div>
-</div>
-<span style="font-size:10px;font-weight:700;color:#B8BDD4;background:#fff;border:1px solid #E1E3EF;padding:6px 12px;border-radius:8px">LOCKED</span>
-</div>
-<div style="text-align:center;font-size:9px;font-weight:600;color:#A8ADC3;letter-spacing:.7px;margin-top:10px;border-top:1px solid #E6E8F2;padding-top:8px">↕ SCROLL — ContentContainer (VerticalLayoutGroup) &nbsp;|&nbsp; ScrollRect → Viewport → ContentContainer → Card_&lt;Item&gt; × N</div>
+<div style="font-size:8px;color:#A8ADC3;margin-top:6px;font-family:var(--font-mono)">SetFooter(GameObject) — host for variant buttons (Cancel/Confirm, Resume/Restart, Claim, etc.)</div>
 </div>
 </div>
 </div>
-<p style="text-align:center;font-size:11px;color:#6C7293;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:8px 0 0;padding:.5rem;background:rgba(255,255,255,.02);border-radius:4px"><strong style="color:#1A1E2F;background:#F0EFFF;padding:1px 5px;border-radius:4px">&lt;RootName&gt;</strong> — Header + ScrollRect (Viewport → ContentContainer) with <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">Card_&lt;Item&gt;</code> rows. Top: in-progress (<code>[PROGRESS_TEXT_1]</code>), middle: claimable (<code>[PROGRESS_TEXT_2]</code>), bottom: placeholder for remaining <code>[ITEM_PLURAL]</code>.</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px 10px;background:white;border-top:1px solid #E6E8F2;font-size:9px;font-weight:600;color:#6C7293">
+<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:rgba(26,30,47,.42);display:inline-block"></span> Backdrop dim rgba(26,30,47,0.42)</span>
+<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#fff;border:1px solid #E1E3EF;display:inline-block"></span> Card 16px radius + 0 12 32 shadow</span>
+<span style="display:inline-flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:#EEF0F6;border:1px solid #E1E3EF;display:inline-block"></span> CloseButton (✕)</span>
+<span style="color:#A8ADC3;font-weight:500">Body &amp; Footer are dashed slots — variants call SetBody / SetFooter</span>
+</div>
+</div>
+</div>
+<p style="text-align:center;font-size:11px;color:#6C7293;font-family:Inter,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:8px 0 0;padding:.5rem;background:rgba(255,255,255,.02);border-radius:4px">
+<strong style="color:#1A1E2F;background:#F0EFFF;padding:1px 5px;border-radius:4px">&lt;RootName&gt;</strong> — full-screen <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">Backdrop</code> (Image dim rgba(26,30,47,0.42) + Button → dismiss) + centered <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">Card</code> (<code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">VerticalLayoutGroup</code> spacing 12, rounded 16, shadow 0 12 32). <strong>Header</strong> (<code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">HorizontalLayoutGroup</code>) → <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">HeaderTitleText</code> + 28×28 <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">CloseButton</code> (✕). <strong>Body</strong> slot (<code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">VerticalLayoutGroup</code> + <code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">ContentSizeFitter</code>) hosts variant <strong>elements</strong> (MessageText, IconImage, RewardList, …). <strong>Footer</strong> slot (<code style="background:#F0EFFF;padding:1px 5px;border-radius:4px;font-size:11px">HorizontalLayoutGroup</code>) hosts variant <strong>buttons</strong> ([FOOTER_BTN_1] neutral + [FOOTER_BTN_2] CTA gradient).
+</p>
 </div>
 
 <!-- 03 Element Tree -->
