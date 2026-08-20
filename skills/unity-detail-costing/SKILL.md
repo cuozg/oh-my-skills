@@ -7,7 +7,7 @@ description: >
   or when the user names a `... Detailed Costing ....csv`. For an HTML costing report use `unity-costing` instead.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-detail-costing
 
@@ -23,13 +23,13 @@ Produce a **CSV** detailed-costing sheet for a Unity feature/refactor. Answer "w
 |---|---|---|
 | 0 | `Epic` | Feature name; set once on the block's first row, blank after. Also the label column for `Total Assign` / `Available Capacity`. |
 | 1 | `Status` | Left blank unless the source sheet uses it. |
-| 2 | `Component` | Workstream / system grouping. Set once, blank on continuation rows. |
-| 3 | `Task` | One deliverable. Blank on continuation rows of the same task. |
-| 4 | `Sub Task` | Multi-line `Client:` / `Server:` / `Battle logic:` / `Brick:` block, one `- ` bullet per step, `file:line` anchors inline. |
+| 2 | `Component` | Short title for the workstream / system grouping. Set once, blank on continuation rows. |
+| 3 | `Task` | One short line describing the target deliverable. No bullets or implementation detail. Blank on continuation rows of the same task. |
+| 4 | `Sub Task` | Short multi-line list of requirements and acceptance criteria. State observable targets, not how to implement them. |
 | 5-6 | `Jira (Client)` / `Jira (Server)` | Left blank — tickets are created later, not by this skill. |
 | 7 | `Client` | Client **and battle-logic** dev-days. |
 | 8 | `Server` | Server **and Brick/config** dev-days. |
-| 9 | `Note` | Design-doc reference (`WS-02 §4`), the estimate **range**, assumptions, pre-existing bugs, blockers. |
+| 9 | `Note` | Short `- ` list of implementation steps, followed by compact metadata when needed: design-doc reference (`WS-02 §4`), estimate **range**, assumptions, risks, bugs, or blockers. |
 | 10-11 | `Assignee (SGS)` / `Assignee (BLR)` | Left blank. |
 | 12 | `In/Out` | `Out` for optional and excluded rows; blank for in-scope rows. |
 
@@ -55,7 +55,11 @@ Read every design doc in scope. Record `file:line` evidence. Collect all results
 - **BLOCKING:** If scope is ambiguous or confidence is Low, print a "🔍 SCOPE DETECTION" summary and stop for user confirmation.
 
 ### 4. Rows, not tasks
-One row per deliverable, 0.5-day granularity. Split a row when the work crosses Client/Server or client/battle-logic. Group rows under `Component`. Order components by the dependency graph, not alphabetically.
+One row per deliverable, 0.5-day granularity. Split a row when the work crosses Client/Server or client/battle-logic. Group rows under a short `Component` title and order components by the dependency graph, not alphabetically.
+
+- Keep `Task` to one short line naming the target.
+- Keep `Sub Task` to a short list of requirements and acceptance criteria. Each bullet describes what must be true when done; never put implementation steps here.
+- Keep `Note` to a short list of implementation steps. Append estimate, assumption, risk, and blocker metadata compactly after the steps.
 
 ### 5. Ranges → cells
 A cell holds **one number**. Use the **midpoint rounded to 0.5**; put the range and its rationale in `Note` (`Design range 4-6.`). Preserve the full range with three summary rows:
@@ -69,7 +73,7 @@ Total Assign (design high) <high sum>
 ### 6. Out-of-scope blocks
 Two trailing `Component` blocks, both marked `Out` in `In/Out`:
 - `Optional (decision-dependent)` — one row per option. Cost goes in `Note` as `ADD +3-5. Decision: <who decides what>`, **never** in the `Client`/`Server` column, so a naive column SUM stays correct.
-- `Excluded from these numbers` — one bulleted `Sub Task` cell listing what is not costed (other repos, art/UX, QA, loc, release management, unowned scope) plus the confidence statement.
+- `Excluded from these numbers` — use a one-line `Task` target and short `Sub Task` acceptance bullets identifying what is not costed (other repos, art/UX, QA, loc, release management, unowned scope). Put the verification steps and confidence statement in `Note`.
 
 ### 7. Review Costing & Risks
 - Risks live in `Note` on the row they threaten, not in a separate section.

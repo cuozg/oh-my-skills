@@ -3,29 +3,40 @@ Epic,Status,Component,Task,Sub Task,"Jira
 (Server)",Client,Server,Note,"Assignee
 (SGS)","Assignee
 (BLR)",In/Out
-[FEATURE NAME],,General,"- Design Blueprint
-- Contribute TDD and API documents
-- Client - Server Integration
-- Create the milestone build
-- Merge code LiveOps, Live",,,,[N],[N],"[Cross-cutting work that is otherwise uncosted: fbs/step-id append order as a RELEASE-ORDERING dependency, hand-duplicated enum copies, two-repo release coordination, regression pass before merge.] Design range [X-Y].",,,
-,,[COMPONENT / WORKSTREAM],[DELIVERABLE],"Client:
-- [step, with File.cs:123 anchor]
-- [step]
-- Test",,,[N],,[Design ref WS-0N §4. Design range X-Y. Assumption / pre-existing bug / blocker.],,,
-,,,,"Battle logic:
-- [step, with File.cs:123 anchor]
-- [new step id 38xxx added to BOTH duplicated enum copies]",,,[N],,[Battle-logic days go in the CLIENT column per this sheet's convention.],,,
-,,,,"Server:
-- [endpoint / state machine / job]",,,,[N],"[Or TBD when the contract is unscoped — a TBD row contributes 0 to the column sum, say so here.]",,,
-,,,,"Brick:
-- [data authoring / config rows]",,,,[N],[Brick/config days go in the SERVER column per this sheet's convention.],,,
-,,Optional (decision-dependent),[OPTION],"[Client|Server|Battle logic]:
-- [what it adds]",,,,,"ADD +[X-Y]. Decision: [who must confirm what, and the doc reference].",,,Out
-,,Excluded from these numbers,,"- [Other repo / external server scope]
-- [Blueprint / data authoring owned elsewhere]
-- Art / UX production
-- QA passes, loc translation, release management
-- [Unowned scope needing an owner or an explicit cut]",,,,,Confidence: [HIGH|MEDIUM|LOW] - [what is investigated vs what remains unresolved].,,,Out
+[FEATURE NAME],,[SHORT TITLE],[ONE-LINE TARGET],"Client:
+- [Requirement]
+- [Acceptance criterion]",,,[N],[N],"- [Implementation step]
+- [Implementation step]
+Design range [X-Y]. [Assumption / risk / blocker.]",,,
+,,[SHORT TITLE],[ONE-LINE TARGET],"Client:
+- [Requirement]
+- [Acceptance criterion]",,,[N],,"- [Implementation step with File.cs:123 anchor]
+- [Implementation step]
+Design ref WS-0N §4. Design range X-Y. [Assumption / risk / blocker.]",,,
+,,,"[ONE-LINE BATTLE TARGET]","Battle logic:
+- [Requirement]
+- [Acceptance criterion]",,,[N],,"- [Implementation step with File.cs:123 anchor]
+- [Implementation step]
+Battle-logic days use the Client column. Design range X-Y.",,,
+,,[SHORT TITLE],[ONE-LINE SERVER TARGET],"Server:
+- [Requirement]
+- [Acceptance criterion]",,,,[N],"- [Implementation step]
+- [Implementation step]
+Use TBD with zero cost when the contract is unscoped. Design range X-Y.",,,
+,,,"[ONE-LINE CONFIG TARGET]","Brick:
+- [Requirement]
+- [Acceptance criterion]",,,,[N],"- [Implementation step]
+- [Implementation step]
+Brick/config days use the Server column. Design range X-Y.",,,
+,,Optional,[ONE-LINE OPTION TARGET],"- [Requirement]
+- [Acceptance criterion]",,,,,"- [Implementation step]
+ADD +[X-Y]. Decision: [who confirms what; design reference].",,,Out
+,,Excluded,[DEFINE COSTING BOUNDARY],"- [Other repo / external server scope is excluded]
+- [Blueprint / data authoring owned elsewhere is excluded]
+- [Art / UX, QA, localization, and release management are excluded]
+- [Unowned scope has an owner or explicit cut]",,,,,"- Verify excluded owners and boundaries
+- Record unresolved scope
+Confidence: [HIGH|MEDIUM|LOW] - [investigated vs unresolved].",,,Out
 ,,,,,,,,,,,,
 Total Assign,,,,,,,[SUM],[SUM],"[How the number was derived: midpoint of the X-Y range, which parts were preserved unchanged, which TBD rows are excluded.]",,,
 Total Assign (design low),,,,,,,[LOW SUM],[SUM],[Low end of the range.],,,

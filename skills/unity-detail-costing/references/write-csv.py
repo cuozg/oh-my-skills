@@ -42,7 +42,7 @@ def row(epic="", component="", task="", sub="", client="", server="", note="", i
 
 
 def b(*lines):
-    """Join Sub Task / Task bullets into one multi-line cell."""
+    """Join short Sub Task acceptance bullets or Note implementation steps."""
     return "\n".join(lines)
 
 
@@ -64,9 +64,11 @@ if SRC:
     tail = orig[start:]                       # preserved verbatim
 
 block = [
-    row(epic="[FEATURE]", component="General",
-        task=b("- Design Blueprint", "- Create the milestone build"),
-        client="[N]", server="[N]", note="[Design range X-Y.]"),
+    row(epic="[FEATURE]", component="[SHORT TITLE]",
+        task="[ONE-LINE TARGET]",
+        sub=b("Client:", "- [Requirement]", "- [Acceptance criterion]"),
+        client="[N]", server="[N]",
+        note=b("- [Implementation step]", "- [Implementation step]", "Design range X-Y.")),
     # ... one row per deliverable; see references/output-template.csv
 ]
 
