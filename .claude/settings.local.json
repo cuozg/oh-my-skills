@@ -1,1 +1,120 @@
-{}
+{
+  "env": {
+    "CLAUDE_CODE_USE_BEDROCK": "1",
+    "ANTHROPIC_BEDROCK_BASE_URL": "https://mushigen.wwe-champions.scopelyai.com/bedrock",
+    "CLAUDE_CODE_SKIP_BEDROCK_AUTH": "1",
+    "AWS_REGION": "us-east-1",
+    "ANTHROPIC_AUTH_TOKEN": "sk-anTrkIz3BitJIZTkNRE9Qg",
+    "ANTHROPIC_MODEL": "us.anthropic.claude-opus-5-5",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "us.anthropic.claude-sonnet-5-5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "us.anthropic.claude-opus-5-5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "us.anthropic.claude-haiku-5-5",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "us.anthropic.claude-sonnet-5-5",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "500000",
+    "ENABLE_TOOL_SEARCH": "true",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Edit(*)",
+      "Write(*)",
+      "WebSearch",
+      "WebFetch",
+      "Bash(pwd)",
+      "Bash(ls *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git stash *)",
+      "Bash(git mv *)",
+      "Bash(git push -u origin dev/cuongnp*)",
+      "Bash(git push origin dev/cuongnp*)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(flutter *)",
+      "Bash(dart *)",
+      "Bash(dotnet test *)",
+      "Bash(dotnet build *)",
+      "mcp__unity-mcp__*",
+      "mcp__UnityMCP__*",
+      "Skill(unity-*)",
+      "Bash(lsof *)",
+      "Bash(ps -p *)",
+      "Bash(ls *)",
+      "Bash(git add *)",
+      "Bash(echo *)",
+      "Bash(git checkout *)",
+      "Bash(git commit -q -m 'WHIP-69355 - Restore Team Link shine animator in PVP prematch prefab *)",
+      "Bash(gh pr *)",
+      "Bash(git commit -q -m 'Gate Tactics debug time getters on HasDebugTimeOverride *)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/*secret*)",
+      "Read(**/*.key)",
+      "Read(**/*apikey*)",
+      "Read(**/*keystore*)",
+      "Read(**/*privatekey*)",
+      "Read(**/.ssh/**)",
+      "Read(**/id_rsa*)",
+      "Read(**/id_ed25519*)",
+      "Bash(rm *)",
+      "Bash(sudo *)",
+      "Bash(chmod 777 *)",
+      "Bash(chown *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(ssh *)",
+      "Bash(scp *)"
+    ],
+    "ask": [
+      "Bash(git push *)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "us.anthropic.claude-fable-5-1",
+  "skillOverrides": {},
+  "worktree": {
+    "baseRef": "head",
+    "bgIsolation": "none"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline/statusline.sh"
+  },
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {
+    "firebase": {
+      "source": {
+        "source": "github",
+        "repo": "firebase/firebase-tools"
+      }
+    },
+    "superpowers-dev": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers"
+      }
+    }
+  },
+  "language": "English",
+  "effortLevel": "high",
+  "askUserQuestionTimeout": "never",
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "custom:midnight",
+  "editorMode": "normal",
+  "verbose": true,
+  "autoCompactEnabled": true,
+  "switchModelsOnFlag": false,
+  "skipAutoPermissionPrompt": true,
+  "disableLoginPrompt": true
+}

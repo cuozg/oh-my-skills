@@ -12,7 +12,7 @@ metadata:
 
 Produce a self-contained HTML costing report for a Unity feature/refactor. Answer "what will this cost?" — not "please implement this."
 Supports: tshirt costing, detail costing, and highlevel costing.
-When the deliverable is a **CSV** costing sheet instead of an HTML report — or an existing `... Detailed Costing ....csv` must be updated — use `unity-detail-costing`.
+When the deliverable is a **CSV** costing sheet instead of an HTML report — or an existing `... Detailed Costing ....csv` must be updated — use `unity-wbs`.
 
 **Pre-requisite:** Read `references/output-template.html`. Replace all `[PLACEHOLDER]` tokens exactly. Use predefined CSS badge classes. Maintain Vercel dark theme.
 

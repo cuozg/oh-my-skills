@@ -1,0 +1,35 @@
+{
+  "skill_name": "unity-2d-animation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "ref: Assets/Art/pony.png. Rig this pony with 2D Animation, give it idle/walk/run/jump and a scene where I press Play to test.",
+      "expected_output": "Export checklist checked; new_subject.py --kind character scaffolds Assets/Pony with per-subject scripts; config from inspect measurements; check_split PASS; Rest build clean; Specs/Wire written in PonyClipFactory from animation.md; check_frames PASS on every clip sample; jump/ledge/speed state sequences verified; report with gates + 'Changed from template'."
+    },
+    {
+      "id": 2,
+      "prompt": "Animate this treasure chest image: idle shimmer and a lid open/close when triggered.",
+      "expected_output": "Scaffolds with --kind object (no Rigidbody/controller); parts Base/Lid with a hinge bone at the pivot; Idle loop + Open one-shot wired to a trigger in Wire(); both gates pass; HUD previews each clip."
+    },
+    {
+      "id": 3,
+      "prompt": "The legs of my rigged dog show white triangles under the belly when it runs. Fix it.",
+      "expected_output": "Reproduces with HUD PoseAt + KeyBackground captures; check_frames flags exposed fill edges; applies quality.md fix (glue limbs, anchor first in part_bones) in the subject's config; re-split + rebuild; gate 2 PASS on Run samples."
+    },
+    {
+      "id": 4,
+      "prompt": "Cut this cat sticker into separate body part PNGs for Unity skinning, I'll rig it myself.",
+      "expected_output": "Runs phases 1-3 only (export check, scaffold, inspect, config, split); check_split PASS; delivers Art/Parts PNGs with overpainted joints plus debug images; does not force the Unity build."
+    },
+    {
+      "id": 5,
+      "prompt": "Add an attack animation to my rigged knight.",
+      "expected_output": "Enters at phase 5 on the existing subject folder; adds an anticipation/action/recovery one-shot Spec + trigger wiring; rebuilds; gate 2 on the new clip's samples; reports any template edits."
+    },
+    {
+      "id": 6,
+      "prompt": "create the idle anim for Assets/Demo/flower.png (soft-shaded cartoon flower: brown outline, gradient petals, green stem shading, grass bottom drawn without an outline)",
+      "expected_output": "Shading flagged in the export check but accepted for idle; labels.png misread fixed with shade_hue (green over red) and bg_white_lum + bg_holes rather than lowering dark_lum; fused stem/leaf/curl/grass kept as one Plant part with Base/Grass/Stem/Leaf/Curl bones and a rigid Head; extend sized to the head tilt (~30 px); check_split PASS with the curl reported as INFO negative space; Idle spec per the Plant sway recipe; check_frames --rest PASS on every sample with the grass bottom as INFO art edge; framing identical across samples; cleanup after editor_stop."
+    }
+  ]
+}
