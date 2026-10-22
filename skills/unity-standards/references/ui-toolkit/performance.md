@@ -2,35 +2,30 @@
 
 ## Element Visibility Cost
 
-| Method | CPU | GPU | Memory | Use Case |
-|--------|-----|-----|--------|----------|
-| `visibility: hidden` | Low | No render | Freed | Frequently toggled UI |
-| `opacity: 0` | Low | GPU still processes | Freed | Fade animations |
-| `display: none` | Layout reflow | No render | Freed | Permanent removal |
-| `RemoveFromHierarchy()` | Recreate cost | Freed | Freed | One-time hide |
+| Method | Layout | Render | Memory | Use Case |
+|--------|--------|--------|--------|----------|
+| `visibility: hidden` | Kept | Skipped | Kept | Frequently toggled UI |
+| `opacity: 0` | Kept | Vertex cost remains | Kept | Fade animations |
+| `display: none` | Removed (relayout on toggle) | Skipped | Kept | Hidden for longer periods |
+| `RemoveFromHierarchy()` + drop refs | Removed | None | GC-freed | Rarely shown; re-creation is costly |
 
-**Rule**: Use `visibility: hidden` for toggled UI. Use `display: none` only for permanent changes.
+**Rule**: Pre-create and toggle with `visibility` for frequent changes; remove
+elements only when they are rarely needed. Source: Manual `UIE-best-practices-for-managing-elements`.
 
 ## Element Pooling
 
 ```csharp
-private readonly List<VisualElement> _pool = new();
+using UnityEngine.Pool;
 
-void InitPool(VisualElement parent, int count)
+private ObjectPool<VisualElement> _pool;
+
+void InitPool(VisualElement parent)
 {
-    for (int i = 0; i < count; i++)
-    {
-        var item = new VisualElement();
-        item.AddToClassList("list-item");
-        item.style.visibility = Visibility.Hidden;
-        parent.Add(item);
-        _pool.Add(item);
-    }
+    _pool = new ObjectPool<VisualElement>(
+        createFunc: () => { var e = new VisualElement(); e.AddToClassList("list-item"); return e; },
+        actionOnGet: e => parent.Add(e),
+        actionOnRelease: e => e.RemoveFromHierarchy());
 }
-
-VisualElement GetFromPool() =>
-    _pool.FirstOrDefault(e => e.style.visibility == Visibility.Hidden)
-         is { } item ? (item.style.visibility = Visibility.Visible, item).item : null;
 ```
 
 ## ListView (Built-in Pooling)
@@ -42,6 +37,7 @@ listView.itemsSource = items;
 listView.makeItem = () => new Label();
 listView.bindItem = (element, index) =>
     ((Label)element).text = items[index].name;
+listView.RefreshItems();   // after items change
 ```
 
 ## USS Selector Performance
@@ -50,6 +46,7 @@ listView.bindItem = (element, index) =>
 - BEM single-class selectors: `.button--primary` -> O(1)
 - Deep selectors: `.panel > .list > .item:hover` -> N1xN2 per mouse move
 - `:hover` on deep hierarchies triggers re-style on every `PointerMoveEvent`
+- Prefer USS files over inline styles - inline styles allocate per-element memory
 
 ## UsageHints
 
@@ -68,12 +65,6 @@ void OnClick() => root.Q<Label>("status").text = "Done";
 private Label _status;
 void OnEnable() => _status = root.Q<Label>("status");
 void OnClick() => _status.text = "Done";
-
-// BAD Captures 'this' - entire MonoBehaviour stays alive
-button.clicked += () => this.UpdateUI();
-// GOOD Capture specific element reference
-var label = root.Q<Label>("output");
-button.clicked += () => label.text = "Updated";
 
 // GOOD Always unregister in OnDisable
 void OnDisable() {

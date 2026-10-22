@@ -59,28 +59,48 @@ slider.RegisterValueChangedCallback(evt => Apply(evt.newValue));     // Value ch
 element.UnregisterCallback<PointerDownEvent>(OnPointerDown);         // Always pair
 ```
 
-## Closure Safety
+## Callback Lifetime
 
 ```csharp
-// BAD: captures 'this'
-button.clicked += () => this.DoSomething();
-// GOOD: capture specific element
-var label = root.Q<Label>("status");
-button.clicked += () => label.text = "Done";
+// Lambdas cannot be unregistered - the handler lives as long as the element
+button.clicked += () => DoSomething();
+// GOOD: named method, paired with -= / UnregisterCallback in OnDisable
+button.clicked += OnClick;
 ```
 
-## Data Binding (Unity 6.3+)
+## Runtime Data Binding (Unity 6+)
 
 ```csharp
-// Bind UI element to C# property
+using Unity.Properties;
+using UnityEngine.UIElements;
+
+public class PlayerData                       // plain C# or ScriptableObject
+{
+    [CreateProperty] public string Name { get; set; }
+}
+
+root.dataSource = playerData;                 // inherited by descendants
 var nameLabel = root.Q<Label>("player-name");
-nameLabel.SetBinding("text", new DataBinding {
+nameLabel.SetBinding("text", new DataBinding
+{
     dataSourcePath = new PropertyPath(nameof(PlayerData.Name)),
-    bindingMode = BindingMode.OneWayToTarget  // C# -> UI only
+    bindingMode = BindingMode.ToTarget        // source -> UI only
 });
-// Modes: OneWayToTarget (display), TwoWay (editable), OneWayFromTarget (user-driven)
-// Triggers: OnValueChange (default), OnFocusOut (debounced)
 ```
+
+```xml
+<Label name="player-name">
+  <Bindings>
+    <DataBinding property="text" data-source-path="Name" binding-mode="ToTarget" />
+  </Bindings>
+</Label>
+```
+
+- `BindingMode`: `TwoWay` (default), `ToTarget`, `ToSource`, `ToTargetOnce`.
+- `updateTrigger`: `OnSourceChanged` (default), `WhenDirty`, `EveryUpdate`.
+- For cheap change detection, implement `INotifyBindablePropertyChanged` and/or
+  `IDataSourceViewHashProvider` on the source.
+- Editor UI binding stays `bindingPath` + `Bind(SerializedObject)`.
 
 ## Focus & Visibility
 
@@ -90,9 +110,9 @@ root.schedule.Execute(() => textField.Focus());
 element.tabIndex = 0;    // tab order (-1 to skip)
 element.focusable = true;
 
-// Hide: visibility (cheap, keeps layout) vs display (reflows)
-element.style.visibility = Visibility.Hidden;   // GOOD cheapest
-element.style.display = DisplayStyle.None;      // layout reflow
+// Hide: visibility keeps layout, display removes it (cost table: performance.md)
+element.style.visibility = Visibility.Hidden;
+element.style.display = DisplayStyle.None;
 
 // State via USS classes
 element.ToggleInClassList("card--selected");

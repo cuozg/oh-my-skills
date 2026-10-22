@@ -1,5 +1,45 @@
 # Rendering Optimization Settings
 
+Baseline: Unity 6 with URP 17 (Render Graph on by default). Built-in RP
+migration: `unity:migrate-birp-to-urp`; post-processing: `unity:urp-postprocessing`.
+
+## URP 17 Pipeline Settings (Unity 6)
+
+| Setting | Where | Guidance |
+|---------|-------|----------|
+| Rendering Path | URP Renderer asset | Forward+ for many real-time lights (no per-object light limit); Forward for simple mobile scenes |
+| Render Graph | Project Settings > Graphics | Keep enabled; Compatibility Mode is deprecated. Custom `ScriptableRendererFeature`s must implement `RecordRenderGraph` - validate with `unity:validate-urp-render-graph-renderer-feature` |
+| Light Probe System | URP Asset > Lighting | Adaptive Probe Volumes replace hand-placed Light Probe Groups for large scenes; requires a bake and adds probe data memory |
+| Upscaling Filter | URP Asset > Quality | STP when Render Scale < 1 on compute-capable hardware; measure GPU cost on mobile |
+
+## Batching Choice Matrix
+
+| Surface | Prefer | Watch For |
+| --- | --- | --- |
+| uGUI Canvas | See `canvas-ui-drawcalls-batching.md` | Masks, unique materials, layout rebuilds |
+| Many static/dynamic MeshRenderers (URP/HDRP) | GPU Resident Drawer + SRP Batcher | Forward+ requirement, unsupported shaders, compute support |
+| URP/HDRP renderers generally | SRP Batcher, shared shader variants | Non-compatible shaders, MaterialPropertyBlocks, CBUFFER layout |
+| Repeated meshes, custom draw | GPU instancing / `Graphics.RenderMeshInstanced` | Unique materials, SRP Batcher taking precedence |
+| Static environment without GPU Resident Drawer | Static batching | Memory growth and immovable objects |
+| Small dynamic meshes | SRP Batcher or instancing first | Dynamic batching CPU cost |
+
+## GPU Resident Drawer (Unity 6)
+
+Uses `BatchRendererGroup` to draw MeshRenderers with GPU instancing automatically,
+cutting CPU draw cost for large scenes.
+
+**Enable:**
+1. URP Asset > Rendering > GPU Resident Drawer: Instanced Drawing
+2. URP Renderer > Rendering Path: Forward+
+3. Project Settings > Graphics > BatchRendererGroup Variants: Keep All
+4. Optional: URP Asset > GPU Occlusion for GPU occlusion culling
+
+**Limits:** MeshRenderers only (not SkinnedMeshRenderer or particles); shaders
+must support DOTS instancing (URP Lit/Unlit and Shader Graph do); renderers using
+`MaterialPropertyBlock` fall back to the normal path; needs compute shader
+support, so not on OpenGL ES / WebGL. Verify in Frame Debugger and with
+CPU render-thread timings before/after.
+
 ## SRP Batcher
 
 Reduces CPU draw call overhead by batching shader state changes (not objects).
@@ -9,7 +49,9 @@ Reduces CPU draw call overhead by batching shader state changes (not objects).
 - Shader must declare `CBUFFER` for all material properties
 - `UnityPerMaterial` and `UnityPerDraw` CBUFFERs properly declared
 
-**Verify:** Frame Debugger -> look for "SRP Batch" entries. Non-compatible shaders break batches.
+**Verify:** Frame Debugger -> look for "SRP Batch" entries; the shader Inspector
+shows "SRP Batcher: compatible". Non-compatible shaders break batches, and
+renderers using a `MaterialPropertyBlock` drop out of the SRP Batcher.
 
 ```
 // In Shader: properties must be in CBUFFER
@@ -25,10 +67,13 @@ Renders multiple objects with same mesh+material in one draw call.
 
 **Setup:**
 1. Material Inspector -> Enable GPU Instancing checkbox
-2. Shader must support `UNITY_INSTANCING_BUFFER` (standard shaders do by default)
+2. Shader must support instancing (`#pragma multi_compile_instancing`; URP Lit does)
 3. Objects must share exact same material instance (not `.material` copies)
+4. Per-instance values go through `MaterialPropertyBlock` with properties declared
+   in `UNITY_INSTANCING_BUFFER`
 
-**Limitations:** Does not work with SkinnedMeshRenderers. Broken by MaterialPropertyBlock in some cases - use `Graphics.DrawMeshInstanced` for manual control.
+**Limitations:** Does not work with SkinnedMeshRenderers. For manual control use
+`Graphics.RenderMeshInstanced` (replaces `Graphics.DrawMeshInstanced`).
 
 **SRP note:** In URP/HDRP, prefer SRP Batcher for compatible shaders unless the
 project has measured that instancing is the better fit for a repeated mesh set.
@@ -43,7 +88,7 @@ Combines static meshes at build time into large vertex buffers.
 |-----|-----|
 | Zero CPU overhead at runtime | Increases build size + memory (duplicated vertices) |
 | Works with any shader | Cannot move/animate batched objects |
-| Simple: check "Static" checkbox | Large meshes may exceed 64K vertex limit |
+| Simple: mark "Batching Static" | Large meshes may exceed 64K vertex limit |
 
 **When:** Static environment geometry (buildings, terrain props, fences).
 **Skip when:** Memory-constrained mobile, procedurally placed objects, objects that need movement.
@@ -66,9 +111,8 @@ Combines small dynamic meshes at runtime.
 Unstripped projects can have 10,000+ shader variants -> slow build, large size, shader compilation stutters.
 
 **Strategy:**
-- `shader_feature` for material toggles (strips unused variants)
-- `multi_compile` only for runtime-toggled keywords (includes ALL variants)
-- Remove unused URP features in URP Asset (SSAO, HDR, Depth Texture if unused)
+- Keyword authoring (`shader_feature` vs `multi_compile`): `references/asset-management/shader-work.md`
+- Remove unused URP features in every URP Asset and Renderer in use (SSAO, HDR, Depth Texture if unused)
 - Edit -> Project Settings -> Graphics -> Shader Stripping: strip unused passes
 
 **URP-specific:**
@@ -87,7 +131,12 @@ Prevent runtime shader compilation stutters:
 
 1. **ShaderVariantCollection:** Create in Editor -> record variants during play -> preload at startup
 2. **Preloaded Shaders:** Edit -> Project Settings -> Graphics -> Preloaded Shaders array
-3. **Shader.WarmupAllShaders():** Brute-force warmup at loading screen (expensive but thorough)
+3. **Shader.WarmupAllShaders():** Brute-force warmup at loading screen (expensive)
+
+On DX12, Vulkan, and Metal, classic warmup cannot build the full pipeline state
+(it depends on vertex layout and render target). Warm up with representative
+draws behind a loading screen, and check the local Unity docs for the
+`ShaderWarmup` / graphics-state collection APIs available in the project's version.
 
 ## LOD Groups
 
@@ -115,10 +164,13 @@ Skips rendering objects behind other objects.
 
 **Best for:** Indoor scenes, dense urban environments, levels with lots of walls.
 **Skip when:** Open landscapes with few occluders, simple scenes with < 100 objects.
+**Unity 6 alternative:** GPU occlusion culling (with GPU Resident Drawer) needs no
+bake and handles dynamic occluders; measure GPU cost on the target device.
 
 ## Draw Call Reduction Checklist
 
 - [ ] Enable SRP Batcher (URP/HDRP)
+- [ ] GPU Resident Drawer for MeshRenderer-heavy scenes on compute-capable targets
 - [ ] Reduce material count - atlas textures, share materials
 - [ ] GPU Instancing for repeated objects (trees, grass, props)
 - [ ] Static Batching for immovable geometry
@@ -130,8 +182,10 @@ Skips rendering objects behind other objects.
 ## Related UI And Asset References
 
 - For uGUI Canvas batching, masks, atlases, and rebuild cost, load
-  `optimization/canvas-ui-drawcalls-batching.md`.
+  `references/optimization/canvas-ui-drawcalls-batching.md`.
 - For material and shader asset edits that affect batching, load
-  `asset-management/prefab-material-shader-work.md`.
+  `references/asset-management/material-work.md` and
+  `references/asset-management/shader-work.md` (renderer prefabs:
+  `references/asset-management/prefab-work.md`).
 - For runtime loading, preloading, and release ownership, load
-  `asset-management/addressables-asset-manager.md`.
+  `references/asset-management/addressables-asset-manager.md`.

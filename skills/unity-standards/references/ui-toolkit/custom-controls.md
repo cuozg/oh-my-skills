@@ -2,23 +2,25 @@
 
 ## UxmlElement Pattern (Unity 6+)
 
+`[UxmlElement]` + `[UxmlAttribute]` are source-generated; the class must be `partial`.
+UXML element name defaults to the class name; attribute names become kebab-case
+(`MaxValue` -> `max-value`).
+
 ```csharp
 using UnityEngine.UIElements;
 
-[UxmlElement("stat-bar")]
+[UxmlElement]
 public partial class StatBar : VisualElement
 {
-    [UxmlAttribute]
-    public string label { get; set; } = "Health";
+    private readonly Label _label;
+    private readonly VisualElement _fill;
+    private string _text = "Health";
+    private float _current = 1f;
+    private float _maxValue = 1f;
 
-    [UxmlAttribute]
-    public float value { get; set; } = 1f;
-
-    [UxmlAttribute]
-    public float maxValue { get; set; } = 1f;
-
-    private Label _label;
-    private VisualElement _fill;
+    [UxmlAttribute] public string Text { get => _text; set { _text = value; Refresh(); } }
+    [UxmlAttribute] public float Current { get => _current; set { _current = value; Refresh(); } }
+    [UxmlAttribute] public float MaxValue { get => _maxValue; set { _maxValue = value; Refresh(); } }
 
     public StatBar()
     {
@@ -35,12 +37,15 @@ public partial class StatBar : VisualElement
         _fill = new VisualElement();
         _fill.AddToClassList("stat-bar__fill");
         track.Add(_fill);
+
+        Refresh();
     }
 
-    public void Refresh()
+    // Setters call this so UXML, UI Builder, and code changes all update visuals
+    private void Refresh()
     {
-        _label.text = label;
-        float pct = maxValue > 0 ? value / maxValue : 0f;
+        _label.text = _text;
+        float pct = _maxValue > 0 ? _current / _maxValue : 0f;
         _fill.style.width = Length.Percent(pct * 100f);
     }
 }
@@ -48,10 +53,12 @@ public partial class StatBar : VisualElement
 
 ## Usage in UXML
 
+Controls inside a C# namespace need that namespace in UXML (e.g. `xmlns:game="MyGame.UI"` -> `<game:StatBar />`).
+
 ```xml
 <UXML xmlns="UnityEngine.UIElements">
-  <stat-bar name="health-bar" label="HP" value="75" max-value="100" />
-  <stat-bar name="mana-bar" label="MP" value="30" max-value="50" />
+  <StatBar name="health-bar" text="HP" current="75" max-value="100" />
+  <StatBar name="mana-bar" text="MP" current="30" max-value="50" />
 </UXML>
 ```
 
@@ -92,5 +99,6 @@ public partial class StatBar : VisualElement
 - Use `[UxmlAttribute]` for UXML-configurable properties (Unity 6+)
 - Keep logic in the control; keep styling in USS
 - Expose events for parent controllers: `public event Action<float> OnValueChanged`
-- Call `Refresh()` or property setters to update visuals after data changes
-- Pre-6.0 fallback: use `UxmlFactory`/`UxmlTraits` inner classes with attribute descriptions
+- Update visuals from property setters; add `[CreateProperty]` to properties used as binding targets
+- Migration only: `UxmlFactory`/`UxmlTraits` are obsolete in Unity 6 - replace with `[UxmlElement]`/`[UxmlAttribute]` when touched
+- Deep custom-control work: plugin skill `unity:ui-uitk`

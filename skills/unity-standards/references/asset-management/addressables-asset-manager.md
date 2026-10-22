@@ -7,7 +7,8 @@ runtime asset catalogs, async asset handles, scene loading, or replacing
 ## First Read The Project
 
 - Check `Packages/manifest.json` for the Addressables package version before
-  relying on package-specific APIs.
+  relying on package-specific APIs. Unity 6 projects normally use Addressables
+  2.x.
 - Find the existing loading abstraction first. Do not introduce a second asset
   manager when one already owns caching, release, retry, logging, or platform
   differences.
@@ -32,9 +33,10 @@ runtime asset catalogs, async asset handles, scene loading, or replacing
   objects still reference the loaded asset.
 - Do not keep loaded assets forever by default. Cache only assets with a clear
   reuse case and an explicit invalidation or release point.
-- Avoid synchronous waits on Addressables loads in gameplay or UI flow. If the
-  project uses async/await, coroutines, UniTask, or callbacks, follow that local
-  async style consistently.
+- Avoid synchronous waits (`handle.WaitForCompletion()`) in gameplay or UI flow.
+  Follow the project's async style (`Awaitable`, UniTask, coroutines, or
+  callbacks) consistently; new Unity 6 code without UniTask awaits `handle.Task`
+  inside an `Awaitable` method.
 - For instantiated prefabs, use the project's established ownership rule:
   `Addressables.InstantiateAsync`/`ReleaseInstance`, or load prefab then instantiate
   and release through the manager. Do not mix policies inside one feature.
@@ -50,11 +52,15 @@ runtime asset catalogs, async asset handles, scene loading, or replacing
   sprite atlas, or shader into many groups can duplicate bundle dependencies.
 - For remote catalogs or content updates, preserve fallback behavior when a key
   is missing, a catalog update fails, or a platform cannot reach the CDN.
+- Content Update Restriction per group: "Prevent Updates" off for small,
+  frequently patched groups (the whole bundle is rebuilt and replaced); on for
+  large shipped content (changed assets move to a new update group). Build size targets and the
+  duplicate-dependency Analyze rule: `references/optimization/build-settings.md`.
 
 ## Remote Bundle Delivery Strategy
 
 Remote content decisions affect build size, startup, download flow, QA cost, and
-player experience. Load `../production/full-cycle-ownership.md` when the asset
+player experience. Load `references/production/full-cycle-ownership.md` when the asset
 change is part of LiveOps or release delivery.
 
 - Keep stable shared assets such as common fonts, shaders, and atlases in local
@@ -91,7 +97,9 @@ change is part of LiveOps or release delivery.
 - Prove missing-key, failed-load, and successful-load paths when changing the
   manager.
 - Check for leaked handles or unreleased instances by exercising open/close,
-  scene unload, popup close, or repeated UI refresh flows.
+  scene unload, popup close, or repeated UI refresh flows, watching the
+  Addressables Profiler module (release pattern and Memory Profiler workflow:
+  `references/optimization/memory-settings.md`).
 - For memory work, capture before/after memory or profiler evidence.
 - For remote/content-update work, state whether remote catalog, CDN, and platform
   behavior were actually tested.

@@ -2,7 +2,12 @@
 
 Use this when a Unity feature may benefit from Entities/ECS because it processes
 large volumes of similar data. Prefer ordinary C# and MonoBehaviours until the
-project, profiling evidence, and data shape justify ECS complexity.
+project, profiling evidence, and data shape justify ECS complexity. Examples
+target Entities 1.x (the line supported on Unity 6). Jobs/Burst rules live in
+`jobs-burst-migration.md`; code and review rules in
+`references/code-standards/ecs-burst-standards.md` and
+`references/review/ecs-burst-review.md`; debugging in
+`references/debug/ecs-burst-debugging.md`.
 
 ## When ECS Fits
 
@@ -38,8 +43,10 @@ public struct MoveSpeed : IComponentData
     public float Value;
 }
 
+[BurstCompile]
 public partial struct MoveSystem : ISystem
 {
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
@@ -107,7 +114,8 @@ public partial struct MoveSystem : ISystem
 
 ## Verification
 
-- Console has no Entities/Burst/Collections safety errors.
+- Console has no Entities/Burst/Collections safety errors (live Editor console
+  or `Editor.log`; see `references/other/unity-cli-routing.md`).
 - Entity count and query count match expected scene/test data.
 - Systems run in the intended group/order.
 - Structural changes appear at the intended frame.

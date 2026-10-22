@@ -6,7 +6,7 @@ description: >
   investigate the codebase first and fire subagents when scope touches multiple systems or evidence is needed.
 metadata:
   author: kuozg
-  version: "4.0"
+  version: "4.1"
 ---
 # unity-costing
 
@@ -23,7 +23,8 @@ Understand clearly the requirement. Do not assume. Ask user if: target platform,
 
 ### 2. Investigate Context
 Understand the code base and document context.
-- Spawn `explore` or `librarian` subagents to gather evidence on:
+- Record the Unity version (`ProjectSettings/ProjectVersion.txt`) and key packages/render pipeline (`Packages/manifest.json`); a needed Unity/package upgrade is its own costed task.
+- Spawn `Explore` subagents (codebase) and a `general-purpose` subagent (Unity docs/package research via `../unity-standards/references/other/official-source-map.md`) to gather evidence on:
   - Entry points, public APIs, module boundaries.
   - Cross-system dependencies (calls, shared state, events).
   - Existing patterns, test coverage, and performance-critical paths.
@@ -44,7 +45,7 @@ Record `file:line` evidence. Collect all results before scoping.
 
 ### 6. Create Tasks
 - **Granularity:** 1-4h per task. Split >4h, merge <30m. One clear deliverable per task.
-- **Format:** Subject starts with imperative verb. Description must have `{What}\n{Why}\n{How}\n→ skill:{name}`.
+- **Format:** Subject starts with imperative verb. Description must have `{What}\n{Why}\n{How}\n→ skill:{name}`, where `{name}` is an existing skill (`unity-standards`, `unity-editor`, `unity-test-unit`, `unity-debug`, `unity-document`, `unity:ui-uitk`, `unity:ui-ugui`, …).
 - **Dependencies:** Minimize chains. Use `blockedBy=[ID]` only for true data dependencies.
 - **Tasks Data:** T-N ID, epic, title, 2-5 action steps, type, cost, affected files.
 - **Types/Costs:** `Logic/UI/Data/API/Asset/Test/Config`. `S/M/L/XL/Spike`. Use predefined template badges.

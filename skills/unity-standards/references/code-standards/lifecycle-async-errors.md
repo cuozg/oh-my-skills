@@ -71,7 +71,7 @@ Standards:
 
 ## Coroutines
 
-Use coroutines for simple frame-based sequences owned by a MonoBehaviour. Store handles when a routine must be stopped or replaced.
+Coroutines remain valid for simple frame-based sequences in code that already uses them. Store handles when a routine must be stopped or replaced.
 
 ```csharp
 private Coroutine _fadeRoutine;
@@ -92,7 +92,7 @@ Rules:
 - Do not start unbounded coroutines without a clear stop condition.
 - Stop or replace routines when state changes.
 - Cache common yield instructions only when the duration is constant and reuse is measurable or repeated.
-- Prefer async/await for IO-like flows and coroutines for simple visual/time sequencing when the repo has no async standard.
+- For new sequenced or IO-like flows without an existing async standard, prefer `Awaitable` (below).
 
 ## Async Stack Choice
 
@@ -100,11 +100,17 @@ Use the async primitive already established by the project.
 
 | Stack | Use When |
 | --- | --- |
-| Unity `Awaitable` | The local Unity version supports it and the project uses Unity-native async without UniTask. |
-| UniTask | The project already depends on it, needs older Unity support, or has UniTask-based infrastructure. |
+| Unity `Awaitable` | Default for Unity 6 projects without UniTask. |
+| UniTask | The project already depends on it or has UniTask-based infrastructure. |
 | `Task` | External .NET/library boundaries, server calls, or code not tied to Unity player loop. |
 
-Do not mix `Awaitable`, UniTask, and `Task` in one gameplay flow unless the boundary is explicit. Check the local Unity version and package manifest before making API claims.
+Do not mix `Awaitable`, UniTask, and `Task` in one gameplay flow unless the boundary is explicit. Check `Packages/manifest.json` before assuming UniTask.
+
+`Awaitable` gotchas:
+
+- Instances are pooled: await each `Awaitable` exactly once; never store and re-await it.
+- Frame/time waits replace yield instructions: `Awaitable.NextFrameAsync`, `EndOfFrameAsync`, `FixedUpdateAsync`, `WaitForSecondsAsync`, `FromAsyncOperation`.
+- `await Awaitable.BackgroundThreadAsync()` moves CPU work off the main thread; `await Awaitable.MainThreadAsync()` before touching Unity APIs again. WebGL has no background threads, so do not depend on it there.
 
 ## Cancellation
 
@@ -121,7 +127,7 @@ private async Awaitable PatrolAsync(CancellationToken cancellationToken)
 }
 ```
 
-For MonoBehaviours, use the repo's established lifetime token pattern. If `destroyCancellationToken` exists in the local Unity version, prefer it for object-owned async work. For UniTask projects, use the project's cancellation helpers consistently.
+For object-owned async work in MonoBehaviours, use `destroyCancellationToken`; for app-lifetime work, use `Application.exitCancellationToken`. Link a shorter-lived `CancellationTokenSource` when a flow ends before its owner (for example on `OnDisable`). For UniTask projects, use the project's cancellation helpers consistently.
 
 Treat `OperationCanceledException` as a normal exit path unless cancellation indicates a product error.
 
@@ -151,20 +157,10 @@ For normal async methods, return `Awaitable`, `UniTask`, `Task`, or a result typ
 
 ## Server API Flow
 
-For client/backend integration, also load
-`../production/full-cycle-ownership.md`.
-
-- Retry only idempotent calls unless the backend contract makes transactional
-  retries safe.
-- Categorize failures: network/timeout, authentication, backend unavailable,
-  and business-rule errors usually need different UI and recovery behavior.
-- Keep independent requests parallel only when their results do not depend on
-  each other; preserve ordering for dependent or economy-sensitive requests.
-- Show loading, disable repeated submit actions, or use an explicit pending
-  state during server operations.
-- Keep old valid state until the authoritative response is validated. When the
-  server owns the result, hydrate from the response instead of recomputing local
-  state.
+For client/backend integration (retries, error classes, pending state,
+authoritative hydration), load `references/production/full-cycle-ownership.md`.
+Use `UnityWebRequest` (dispose with `using`) or the project's existing HTTP client;
+`System.Net.Http` does not work in WebGL players.
 
 ## Validation
 
@@ -234,14 +230,4 @@ Gate noisy diagnostics behind compile symbols or local debug flags. Do not leave
 
 ## Conditional Compilation
 
-Use platform symbols at the boundary, not scattered through business logic.
-
-```csharp
-#if UNITY_WEBGL && !UNITY_EDITOR
-    storage = new WebGlSaveStorage();
-#else
-    storage = new FileSaveStorage();
-#endif
-```
-
-Keep platform-specific implementations behind an interface when the branch affects more than a few lines.
+Use platform symbols at the boundary, not scattered through business logic. Keep platform-specific implementations behind an interface when the branch affects more than a few lines; see the example in `references/code-standards/architecture-systems.md` (WebGL And Platform Boundaries).

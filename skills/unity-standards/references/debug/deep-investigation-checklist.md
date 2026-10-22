@@ -7,8 +7,9 @@ Multi-angle bug analysis using targeted investigation angles. Use this checklist
 ### 1. Lifecycle Angle
 - Trace `Awake -> OnEnable -> Start -> Update/LateUpdate -> OnDisable -> OnDestroy` for all involved objects
 - Check whether the component is active, destroyed prematurely, or re-instantiated
-- **Key file pattern:** `[DefaultExecutionOrder]`, event subscription timing, bootstrapping order
-- **Grep:** `Awake|OnEnable|Start|OnDisable|OnDestroy`
+- With domain reload disabled (Enter Play Mode Options), static fields and static events survive between Play sessions; verify they reset in `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]`
+- **Key file pattern:** `[DefaultExecutionOrder]`, event subscription timing, bootstrapping order, `static` state
+- **Grep:** `Awake|OnEnable|Start|OnDisable|OnDestroy|RuntimeInitializeOnLoadMethod`
 
 ### 2. Data Flow Angle
 - Identify the value at the source (serialized field, method return, event payload)
@@ -34,7 +35,7 @@ Multi-angle bug analysis using targeted investigation angles. Use this checklist
 - Null refs: uninitialized field, destroyed object, missing serialized ref
 - Empty collections: `Count == 0`, indexing empty lists
 - Math: division by zero, precision loss, negative values where positive expected
-- Timing: object destroyed before async completion, listener removed mid-iteration
+- Timing: object destroyed before async completion (no `destroyCancellationToken`), listener removed mid-iteration
 - **Grep:** direct indexing, unchecked division, dereference without guard
 
 ### 6. Event System Angle (If Applicable)
@@ -84,6 +85,9 @@ Angle: [angle name from above]
 - Serialization: unsupported type or non-serialized property relied on by the Inspector
 - Edge case: IL2CPP stripping or AOT assumption
 - Threading: main-thread assumptions hidden by editor timing
+
+### Works On First Play, Broken On Second
+- Lifecycle: static state not reset with domain reload disabled
 
 ### Worked Yesterday, Broken Today
 - Scene reload: object not re-initialized in `OnEnable`

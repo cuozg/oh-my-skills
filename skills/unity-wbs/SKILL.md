@@ -8,7 +8,7 @@ description: >
   or when the user names a `... Detailed Costing ....csv`. For an HTML costing report use `unity-costing` instead.
 metadata:
   author: kuozg
-  version: "1.2"
+  version: "1.3"
 ---
 # unity-wbs
 
@@ -44,7 +44,8 @@ Produce a **CSV** detailed-costing sheet for a Unity feature/refactor. Answer "w
 Do not assume. Ask the user if unclear: target platform, boundaries, quality bar, estimate unit, and — when a costing already exists — **whose numbers win** (existing sheet vs fresh design-derived) and **where output goes** (update in place vs new file). These two are the usual ambiguity; resolve them before writing anything.
 
 ### 2. Investigate Context
-Spawn `explore` / `librarian` subagents (never a worktree) to gather evidence on:
+Spawn `Explore` subagents (codebase) and a `general-purpose` subagent (Unity docs/package research) — never a worktree — to gather evidence on:
+- Unity version (`ProjectSettings/ProjectVersion.txt`) and packages (`Packages/manifest.json`); a required upgrade is its own row.
 - Entry points, public APIs, module boundaries.
 - Cross-system dependencies (calls, shared state, events), and **cross-repo** ones — a sibling repo that is not a submodule is a release-ordering dependency.
 - Existing patterns, test coverage, performance-critical paths.

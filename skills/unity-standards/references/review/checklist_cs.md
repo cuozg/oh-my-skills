@@ -38,7 +38,6 @@ Severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 - [ ] `DontDestroyOnLoad` objects have duplicate-instance and stale-static handling.
 - [ ] `DestroyImmediate()` is editor-only; runtime code uses `Destroy()`.
 - [ ] Additive scene, pooled object, and inactive-object paths reset state deliberately.
-- [ ] Async continuations do not touch destroyed Unity objects.
 
 ### Serialization
 
@@ -55,12 +54,12 @@ Severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 ### Performance
 
 - [ ] Hot paths avoid avoidable allocations: LINQ, closures, `ToList`, string formatting, boxing, and temporary collections.
-- [ ] Repeated component, camera, transform, and scene lookups are cached or injected.
+- [ ] Repeated component, camera, transform, and scene lookups are cached or injected; no scene-wide `Find*` in hot paths.
 - [ ] Tags use `CompareTag`; distance checks use `sqrMagnitude` where exact distance is unnecessary.
-- [ ] Physics queries use layer masks and `NonAlloc` variants when called frequently.
-- [ ] Rigidbody and physics writes happen in `FixedUpdate` or through deliberate simulation steps.
+- [ ] Physics queries use layer masks and non-allocating variants when called frequently (`Physics.*NonAlloc`; 2D overloads taking an array or `List<T>`).
+- [ ] Rigidbody and physics writes happen in `FixedUpdate`, or in manual `Physics.Simulate` steps when `Physics.simulationMode` is `Script`.
 - [ ] Runtime material changes avoid accidental `Renderer.material` instance churn in loops.
-- [ ] Frequent spawn/despawn paths use the project pool and reset pooled state fully.
+- [ ] Frequent spawn/despawn paths use the project pool and reset pooled state fully; large one-off spawns consider `Object.InstantiateAsync`.
 - [ ] Addressables, asset handles, native containers, and rented buffers are released at owner lifetime.
 - [ ] UI updates avoid unnecessary layout/canvas rebuilds; text changes only when values change.
 
@@ -91,8 +90,8 @@ Severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 - [ ] Background work returns plain data and dispatches scene/object changes back to the main thread.
 - [ ] `async void` is limited to Unity/UI event handlers and catches/logs exceptions internally.
 - [ ] Long-lived async methods accept and forward cancellation tokens.
-- [ ] Await continuations check object lifetime before touching Unity objects.
-- [ ] Awaitable/UniTask/Task usage matches the project's established async stack and Unity version.
+- [ ] MonoBehaviour async flows pass `destroyCancellationToken` (or check object lifetime) before touching Unity objects after an await.
+- [ ] Awaitable/UniTask/Task usage matches the project's established async stack; each `Awaitable` is awaited once (instances are pooled).
 - [ ] Jobs complete or chain dependencies before reading/writing/disposal.
 
 ### Architecture
@@ -100,7 +99,8 @@ Severity: CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 - [ ] MonoBehaviours own lifecycle and scene binding; reusable rules live in testable C# types where practical.
 - [ ] Dependencies flow toward stable core logic; UI, platform, SDK, and editor code stay at boundaries.
 - [ ] Runtime assemblies do not reference editor-only APIs or assemblies.
+- [ ] No new obsolete Unity 6 APIs (`FindObjectOfType`, `Rigidbody.velocity`, ...) - table in `references/quality/best-practices-audit.md`.
 - [ ] No new service locator, singleton, event bus, or DI framework usage unless it matches the existing architecture.
 - [ ] Large classes and methods are flagged only when the change worsens readability or risk.
-- [ ] ECS code separates authoring/baking, data components, systems, structural changes, and Burst-compatible work.
+- [ ] ECS code separates authoring/baking, data components, systems, structural changes, and Burst-compatible work (details: `references/review/ecs-burst-review.md`).
 - [ ] Inheritance is intentional and shallow; composition is preferred for gameplay variation.

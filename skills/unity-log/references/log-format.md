@@ -2,50 +2,39 @@
 
 ## Standard Prefix
 
-All debug logs use `[DBG]` prefix with subsystem tag:
+Every generated trace starts with a colored `[DBG]` tag, then `Class.Method`, so all
+temporary logs can be found and removed by searching `[DBG]`. The level comes from the
+`Debug` method and the tag color. Always pass `this` (or another `UnityEngine.Object`)
+as context.
 
 ```csharp
 Debug.Log(
-    $"<color=cyan>[DBG][Player]</color> Health changed\n" +
-    $"Health: <color=white>{_hp}</color>");
+    $"<color=cyan>[DBG]</color> {nameof(PlayerHealth)}.{nameof(TakeDamage)}\n" +
+    $"Health: <color=white>{_hp}</color>",
+    this);
 
 Debug.LogWarning(
-    $"<color=yellow>[WRN][AI]</color> No path found\n" +
-    $"Agent: <color=white>{agent.name}</color>");
+    $"<color=yellow>[DBG]</color> {nameof(EnemyAI)}.{nameof(FindPath)} no path found\n" +
+    $"Agent: <color=cyan>{agent.name}</color>",
+    this);
 
 Debug.LogError(
-    $"<color=red>[ERR][Save]</color> Failed to write\n" +
-    $"Path: <color=white>{path}</color>");
+    $"<color=red>[DBG]</color> {nameof(SaveSystem)}.{nameof(Write)} failed\n" +
+    $"Path: <color=red>{path}</color>",
+    this);
 ```
 
 ## Color Tags by Level
 
-| Level | Color | Tag |
-|-------|-------|-----|
-| `Debug.Log` | cyan | `<color=cyan>[DBG]</color>` |
-| `Debug.LogWarning` | yellow | `<color=yellow>[WRN]</color>` |
-| `Debug.LogError` | red | `<color=red>[ERR]</color>` |
-
-```csharp
-Debug.Log(
-    $"<color=cyan>[DBG][{GetType().Name}]</color> {msg}\n" +
-    $"Value: <color=white>{value}</color>");
-```
+| Level | Use | Tag |
+|-------|-----|-----|
+| `Debug.Log` | Trace | `<color=cyan>[DBG]</color>` |
+| `Debug.LogWarning` | Unexpected but handled | `<color=yellow>[DBG]</color>` |
+| `Debug.LogError` | Failure | `<color=red>[DBG]</color>` |
 
 ## Value Highlighting
 
 Color every value that explains the issue or workflow. Keep labels plain so the values stand out.
-
-```csharp
-Debug.Log(
-    $"<color=cyan>[DBG][Match]</color> Turn decision\n" +
-    $"PlayerId: <color=white>{playerId}</color>\n" +
-    $"CanMove: <color=lime>{canMove}</color>\n" +
-    $"Reason: <color=orange>{reason}</color>",
-    this);
-```
-
-Use consistent colors when they improve scanning:
 
 | Meaning | Color |
 |---------|-------|
@@ -57,14 +46,13 @@ Use consistent colors when they improve scanning:
 
 ## One Key-Value Per Line
 
-Do not compress multiple state values into one sentence. Put each key-value pair on its own line, or use table alignment for repeated rows.
+Put each key-value pair on its own line with `\n`.
 
 ```csharp
 Debug.Log(
-    $"<color=cyan>[DBG][Inventory]</color> Add item decision\n" +
+    $"<color=cyan>[DBG]</color> {nameof(Inventory)}.{nameof(AddItem)} decision\n" +
     $"ItemId: <color=cyan>{itemId}</color>\n" +
     $"Quantity: <color=white>{quantity}</color>\n" +
-    $"CurrentCount: <color=white>{currentCount}</color>\n" +
     $"Capacity: <color=white>{capacity}</color>\n" +
     $"Accepted: <color=lime>{accepted}</color>",
     this);
@@ -74,7 +62,7 @@ For repeated comparable values, a compact table is acceptable:
 
 ```csharp
 Debug.Log(
-    $"<color=cyan>[DBG][Rewards]</color> Reward summary\n" +
+    $"<color=cyan>[DBG]</color> {nameof(RewardService)}.{nameof(Grant)} summary\n" +
     $"Slot | ItemId | Amount\n" +
     $"0    | <color=cyan>{firstItemId}</color> | <color=white>{firstAmount}</color>\n" +
     $"1    | <color=cyan>{secondItemId}</color> | <color=white>{secondAmount}</color>",
@@ -89,74 +77,61 @@ Place logs where they explain the flow without repeating the same information:
 - Decision log: branch result and the values that caused it.
 - Outcome log: final state or side effect.
 
-Avoid logging the same key-value set at entry, before every branch, and again at return. If a loop is noisy, log a summary or only the failing item unless every iteration is relevant to the bug.
+Log each key-value set once per flow. For noisy loops, log one summary (count,
+first/last, or the failing item) unless every iteration is relevant to the bug.
 
 ## Editor-Only Guard
+
+Wrap inline snippets in `#if UNITY_EDITOR` so they never ship:
 
 ```csharp
 #if UNITY_EDITOR
 Debug.Log(
-    $"<color=cyan>[DBG][Physics]</color> Raycast hit\n" +
+    $"<color=cyan>[DBG]</color> {nameof(Projectile)}.{nameof(OnHit)}\n" +
     $"Collider: <color=cyan>{hit.collider.name}</color>",
     this);
 #endif
 ```
 
-## Conditional Attribute
+## Static Helper (Optional)
+
+When the project already has a helper, or many traces are needed, `[Conditional]`
+strips the call and its argument evaluation from non-Editor builds, replacing the
+`#if` guard. `[HideInCallstack]` hides the helper frame from the Console callstack
+when Console > Strip logging callstack is enabled.
 
 ```csharp
-[System.Diagnostics.Conditional("UNITY_EDITOR")]
-static void EditorLog(string msg) => Debug.Log($"<color=cyan>[DBG]</color> {msg}");
-```
+using System.Diagnostics;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
 
-## Static Helper Class
-
-```csharp
 public static class Dbg
 {
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    public static void Log(string tag, string msg, Object ctx = null)
-        => Debug.Log($"<color=cyan>[DBG][{tag}]</color> {msg}", ctx);
+    [Conditional("UNITY_EDITOR"), HideInCallstack]
+    public static void Log(string msg, Object ctx)
+        => Debug.Log($"<color=cyan>[DBG]</color> {msg}", ctx);
 
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    public static void Warn(string tag, string msg, Object ctx = null)
-        => Debug.LogWarning($"<color=yellow>[WRN][{tag}]</color> {msg}", ctx);
+    [Conditional("UNITY_EDITOR"), HideInCallstack]
+    public static void Warn(string msg, Object ctx)
+        => Debug.LogWarning($"<color=yellow>[DBG]</color> {msg}", ctx);
 
-    [System.Diagnostics.Conditional("UNITY_EDITOR")]
-    public static void Err(string tag, string msg, Object ctx = null)
-        => Debug.LogError($"<color=red>[ERR][{tag}]</color> {msg}", ctx);
+    [Conditional("UNITY_EDITOR"), HideInCallstack]
+    public static void Err(string msg, Object ctx)
+        => Debug.LogError($"<color=red>[DBG]</color> {msg}", ctx);
 }
+
+Dbg.Log(
+    $"{nameof(EnemySpawner)}.{nameof(ExpandPool)}\n" +
+    $"PoolSize: <color=orange>{_pool.Count}</color>",
+    this);
 ```
 
 ## Context Object (Click-to-Select)
 
-Pass `this` or any `UnityEngine.Object` as context — clicking the log entry selects it in Hierarchy:
+Pass `this` or any `UnityEngine.Object` as context; clicking the Console entry pings it
+in the Hierarchy/Project window:
 
 ```csharp
-Debug.Log("Taking damage", this);           // selects this GO
-Debug.Log("Spawned", spawnedObject);         // selects spawned GO
-Debug.LogError("Missing ref", gameObject);   // selects parent GO
-```
-
-## Usage Examples
-
-```csharp
-Dbg.Log(
-    "Inventory",
-    $"Added item\n" +
-    $"Item: <color=cyan>{item.name}</color>\n" +
-    $"Count: <color=white>{count}</color>",
-    this);
-
-Dbg.Warn(
-    "Pool",
-    $"Pool expanded\n" +
-    $"PoolSize: <color=orange>{_pool.Count}</color>",
-    this);
-
-Dbg.Err(
-    "Net",
-    $"Packet lost\n" +
-    $"Sequence: <color=red>{seq}</color>",
-    this);
+Debug.Log("<color=cyan>[DBG]</color> ...", this);           // this component's GameObject
+Debug.Log("<color=cyan>[DBG]</color> ...", spawnedObject);  // the spawned object
 ```

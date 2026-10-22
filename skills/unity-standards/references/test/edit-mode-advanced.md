@@ -1,38 +1,34 @@
 # Edit Mode Test Patterns - Advanced
 
-## NSubstitute - Mocking Framework
+## Async Tests (`async Task`)
+
+Test Framework 1.3+ (Unity 6 ships 1.4+) awaits `async Task` tests and
+`[SetUp]`/`[TearDown]` on the main thread, polling each Editor update (Edit Mode)
+or frame (Play Mode).
 
 ```csharp
-using NSubstitute;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 [Test]
-public void DamageCalculator_AppliesArmor()
+public async Task LoadProfile_ValidId_ReturnsProfile()
 {
-    var armor = Substitute.For<IArmorService>();
-    armor.Reduction.Returns(0.5f);
+    var service = new ProfileService(new FakeProfileStore());
 
-    var buffs = Substitute.For<IBuffService>();
-    buffs.Multiplier.Returns(1.0f);
+    var profile = await service.LoadAsync("player-1");
 
-    var calc = new DamageCalculator(armor, buffs);
-    Assert.AreEqual(50f, calc.Calculate(100f), 0.01f);
-}
-
-[Test]
-public void EventBus_NotifiesSubscribers()
-{
-    var handler = Substitute.For<IEventHandler<DamageEvent>>();
-    var bus = new EventBus();
-    bus.Subscribe(handler);
-
-    bus.Publish(new DamageEvent(50f));
-
-    handler.Received(1).Handle(Arg.Is<DamageEvent>(e => e.Amount == 50f));
+    Assert.AreEqual("player-1", profile.Id);
 }
 ```
 
-**Setup:** Add `com.unity.testtools.codecoverage` and NSubstitute via NuGet or Assembly Definition reference.
+- Failing `LogAssert` checks are evaluated after the async method completes.
+- Keep `[UnityTest]` `IEnumerator` for frame-exact yields (`WaitForFixedUpdate`, etc.).
+
+## Mocking
+
+Interface fakes: `edit-mode-patterns.md` (Interface Substitution). NSubstitute
+setup and usage live in the `unity-test-unit` skill:
+`../unity-test-unit/references/test-patterns.md`.
 
 ## Testing MonoBehaviour Indirectly
 

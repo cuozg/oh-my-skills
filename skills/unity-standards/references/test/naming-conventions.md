@@ -52,14 +52,24 @@ Assets/
 | Play Mode tests | `{Project}.Tests.PlayMode` |
 | Source reference | Add source asmdef to test asmdef references |
 
+Create via `Assets > Create > Testing > Tests Assembly Folder`, or write:
+
 ```json
 {
     "name": "MyGame.Tests.EditMode",
-    "references": ["MyGame.Runtime"],
-    "optionalUnityReferences": ["TestAssemblies"],
-    "includePlatforms": ["Editor"]
+    "references": ["MyGame.Runtime", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+    "includePlatforms": ["Editor"],
+    "overrideReferences": true,
+    "precompiledReferences": ["nunit.framework.dll"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"]
 }
 ```
+
+- Play Mode asmdef: same shape, `"includePlatforms": []`, and drop
+  `UnityEditor.TestRunner` (Editor-only).
+- `"optionalUnityReferences": ["TestAssemblies"]` is the legacy form; migrate it
+  to the explicit references above when touched.
 
 ## Category Attribute
 
@@ -76,7 +86,9 @@ public class SaveSystemTests { }
 public class SceneLoadTests { }
 ```
 
-Run filtered: `Unity Test Runner -> Category filter`
+Run filtered: Test Runner window category filter, or from the terminal
+`unity test <project> --mode EditMode|PlayMode --filter <name> --format json`
+(routing and exit codes: `references/other/unity-cli-routing.md`).
 
 ## Quick Reference
 

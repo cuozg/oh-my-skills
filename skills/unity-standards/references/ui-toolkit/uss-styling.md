@@ -85,7 +85,5 @@ Button { background-color: #333; }
 ## Performance Rules
 
 - BEM single-class selectors (`.button--primary`) over deep hierarchy (`.container > .menu > Button`)
-- Selector cost = N1 (classes on element) x N2 (USS files loaded)
-- Avoid `:hover` on deeply nested elements - triggers re-style on every mouse move
-- Use USS files over inline styles - inline styles allocate per-element memory
 - Keep USS files focused: one per screen + one shared variables file
+- Selector cost, `:hover`, and inline-style memory: `performance.md`

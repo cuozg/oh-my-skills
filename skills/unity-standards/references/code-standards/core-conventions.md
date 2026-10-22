@@ -181,7 +181,7 @@ Comments explain intent, constraints, or non-obvious Unity behavior. They should
 
 ```csharp
 // Delay one frame so pooled objects finish OnEnable before bindings fire.
-yield return null;
+await Awaitable.NextFrameAsync(destroyCancellationToken);
 _view.Bind(model);
 ```
 

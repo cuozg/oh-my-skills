@@ -19,6 +19,7 @@ graph TD
 Node shapes: `[rect]` `(round)` `{diamond}` `([stadium])` `[[subroutine]]` `((circle))`
 Arrows: `-->` `-.->` `==>` `--text-->`
 Direction: `TD` (top-down), `LR` (left-right), `BT`, `RL`
+Quote labels with C# punctuation: `A["Player.Update()"]`, `B{"hp <= 0?"}`
 
 ## Sequence Diagram
 

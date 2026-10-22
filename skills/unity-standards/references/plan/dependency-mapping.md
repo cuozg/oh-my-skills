@@ -52,4 +52,4 @@ flowchart LR
     D --> C
 ```
 
-A and D can run after A completes. C waits for both B and D.
+B and D can run in parallel after A completes. C waits for both B and D.

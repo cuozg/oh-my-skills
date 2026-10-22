@@ -17,10 +17,12 @@ world, dependency, lifetime, or baking mismatches.
 
 ## Debugging Order
 
-1. Reproduce with Burst enabled and disabled.
-2. Read console messages from Burst, Jobs, Collections, and Entities.
+1. Reproduce with Burst enabled and disabled (`Jobs > Burst > Enable Compilation`).
+2. Read console messages from Burst, Jobs, Collections, and Entities (live Editor console
+   or `Editor.log`; see `references/other/unity-cli-routing.md`).
 3. Identify the world: default, test, baking, client, server, or subscene world.
-4. Inspect entity existence, component values, tags, and enableable state.
+4. Inspect entity existence, component values, tags, and enableable state
+   (`Window > Entities` Hierarchy / Inspector in Runtime mode; Systems window for queries and timing).
 5. Verify query shape and `RequireForUpdate` gates.
 6. Verify system group/order and ECB playback timing.
 7. Verify job dependencies, completion points, and NativeContainer disposal.

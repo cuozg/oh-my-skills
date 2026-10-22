@@ -4,17 +4,18 @@
 
 | Exception | Cause | Fix |
 |-----------|-------|-----|
-| `NullReferenceException` | Missing serialized ref | Assign in Inspector or add `[Required]` check |
+| `NullReferenceException` | Missing serialized ref | Assign in Inspector; validate in `OnValidate()` / `Awake()` |
 | `NullReferenceException` | Destroyed object accessed | Check `obj != null` (uses Unity's lifetime check) |
 | `NullReferenceException` | Execution order - ref not set yet | Use `[DefaultExecutionOrder]` or move to `Start()` |
 | `MissingReferenceException` | Object destroyed but still referenced | Unsubscribe events in `OnDestroy()`, null out refs |
-| `InvalidOperationException` | Collection modified during iteration | Iterate copy: `foreach (var x in list.ToList())` |
-| `SerializationException` | Non-serializable field in SO/MB | Add `[System.Serializable]`, or use `ISerializationCallbackReceiver` |
+| `InvalidOperationException` | Collection modified during iteration | Iterate a snapshot, or a reverse `for` loop when removing |
+| `SerializationException` | .NET serializer (`BinaryFormatter`, DataContract) hit a non-`[Serializable]` type | Add `[System.Serializable]`; prefer JSON over insecure `BinaryFormatter`. Unity's serializer silently skips unsupported fields instead (see below) |
 | `StackOverflowException` | Recursive property getter | Don't call property from within its own getter |
 | `ArgumentException` | Layer/tag not found | Add layer/tag in Project Settings before use |
 | `MissingComponentException` | `GetComponent<T>()` returns null | Add `[RequireComponent(typeof(T))]` to class |
 | `UnassignedReferenceException` | Serialized field left empty | Use `OnValidate()` to warn in editor |
-| `ExecutionEngineException` | IL2CPP stripped needed code | Add to `link.xml` or `[Preserve]` attribute |
+| `ExecutionEngineException` | IL2CPP has no AOT code for a generic instantiation (reflection, serializers) | Reference the concrete generic instantiation in code so IL2CPP generates it |
+| `MissingMethodException` (player only) | Managed code stripping removed a type/member used via reflection | Add to `link.xml` or `[Preserve]`; review Managed Stripping Level |
 | `TypeLoadException` | Missing assembly reference | Check asmdef references, ensure assembly is included |
 | `PlatformNotSupportedException` | API not available on target | Guard with `#if UNITY_[PLATFORM]` or runtime check |
 | `EntryPointNotFoundException` | Native plugin missing function | Verify plugin architecture (x86/ARM) matches target |
@@ -24,6 +25,8 @@
 | Burst compile error: managed type not supported | Burst job references `string`, `class`, `List<T>`, `GameObject`, `Transform` | Convert to unmanaged data, entity refs, NativeContainers, or fixed strings |
 | Entity query matches 0 unexpectedly | Missing component/tag, excluded tag, disabled enableable component, wrong world | Inspect Entities window, query filters, Baker output, and world |
 | Entity structural change exception | Add/remove/create/destroy during iteration or job | Use `EntityCommandBuffer` and choose correct playback system |
+
+ECS/Jobs/Burst triage in depth: `references/debug/ecs-burst-debugging.md`.
 
 ## Quick Diagnostic Patterns
 
@@ -38,8 +41,8 @@ if (!TryGetComponent<Rigidbody>(out var rb))
     return;
 }
 
-// Prevent collection modification
-var snapshot = _listeners.ToList();
+// Prevent collection modification (listeners may unsubscribe while invoked)
+var snapshot = _listeners.ToArray();
 foreach (var listener in snapshot) listener.OnEvent();
 
 // Execution order fix
@@ -65,9 +68,9 @@ Use `== null` for Unity objects. Use `is null` only for pure C# objects.
 | Field Type | Serializable? | Fix |
 |------------|--------------|-----|
 | `private` field | No | Add `[SerializeField]` |
-| `public` property | No | Use backing `[SerializeField]` field |
+| `public` property | No | Use backing `[SerializeField]` field or `[field: SerializeField]` auto-property |
 | `Dictionary<K,V>` | No | Use `ISerializationCallbackReceiver` |
-| `interface` field | No | Use abstract `ScriptableObject` base |
+| `interface` field | Only with `[SerializeReference]` | `[SerializeReference]` (managed ref), or abstract `ScriptableObject` base |
 | `static` field | No | Not supported - use instance field |
 
 ## IL2CPP Stripping Issues
@@ -81,6 +84,6 @@ public class SaveData { public int score; public string name; }
 // Fix 2: link.xml in Assets/
 // <linker><assembly fullname="Assembly-CSharp"><type fullname="SaveData" preserve="all"/></assembly></linker>
 
-// Common symptom: JsonUtility.FromJson<T>() returns default values in IL2CPP builds
-// but works fine in Editor (Mono)
+// Common symptom: reflection-based deserializers (e.g. Newtonsoft.Json) return defaults
+// or throw missing-constructor errors in IL2CPP builds but work in the Editor (Mono)
 ```

@@ -2,10 +2,10 @@
 name: unity-document
 description: >
   Unity documentation skill for investigating a feature in a Unity codebase and writing an
-  evidence-based system document to Docs/Systems/<feature-name>.md.
+  evidence-based system document to Docs/Systems/{feature-name}.md.
 metadata:
   author: kuozg
-  version: "3.0"
+  version: "3.1"
 ---
 
 # unity-document
@@ -24,10 +24,13 @@ manager, integration, or gameplay system.
    - Clarify only if the request is ambiguous enough that a reasonable file name or scope cannot
      be inferred.
 ### 2. **Investigate the codebase**
-   - Spawn at least one `explorer` subagent to inspect the relevant code paths, assets, scenes,
+   - Spawn at least one `Explore` subagent to inspect the relevant code paths, assets, scenes,
      tests, and config.
-   - Spawn a second `explorer` when a separate pass is useful for dependencies, events, or setup
+   - Spawn a second `Explore` subagent when a separate pass is useful for dependencies, events, or setup
      paths.
+   - When a live Editor is reachable (preflight in `../unity-standards/references/other/unity-cli-routing.md`),
+     confirm scene/prefab wiring with read-only probes (`get_scene_hierarchy`, `find_gameobjects`) instead
+     of parsing `.unity`/`.prefab` YAML.
    - Use the subagent findings as evidence, not as a substitute for reading the source.
 ### 3. **Build the document**
    - Write the document in this exact section order:
@@ -43,13 +46,13 @@ manager, integration, or gameplay system.
      10. `API Reference`
    - Put the file at `Docs/Systems/<feature-name>.md`.
    - Use concise, evidence-backed prose. Cite claims with `file:line` references from the codebase.
-   - Include Mermaid diagrams where they clarify the architecture or event flow.
+   - Include Mermaid diagrams where they clarify the architecture or event flow (syntax: `../unity-standards/references/other/mermaid-syntax.md`).
 ### 4. **Verify the document**
    - Confirm the target path is correct.
    - Confirm every required section exists and is in the correct order.
    - Confirm the document has no placeholder text such as `TODO`, `TBD`, or `FIXME`.
    - Confirm the document includes source citations and any required Mermaid diagrams.
-   - Run the bundled validator when available.
+   - Run `python3 scripts/validate_unity_document.py Docs/Systems/<feature-name>.md` (path relative to this skill's base directory) and fix every failure.
 
 ## Writing Rules
 

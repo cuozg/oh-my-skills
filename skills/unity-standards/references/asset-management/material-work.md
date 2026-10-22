@@ -21,12 +21,15 @@ property changes.
 - Share material assets intentionally. Calling `.material` creates a
   per-renderer material instance and can break batching; use `.sharedMaterial`
   only when the shared asset should change for every user.
-- Use `MaterialPropertyBlock` for per-renderer values when it fits the render
-  pipeline and batching constraints. Verify the actual batching result with
-  Frame Debugger or profiler.
+- `MaterialPropertyBlock` suits per-renderer values for Built-in RP or GPU
+  instancing, but in URP/HDRP it drops the renderer out of the SRP Batcher and
+  GPU Resident Drawer. For a few distinct looks, prefer separate shared materials
+  or Material Variants; verify the batching result with Frame Debugger.
 - Keep material count low for repeated renderers and UI. Prefer shared
   materials, atlases, sprite atlases, or shader properties over many
   near-identical material assets.
+- Use Material Variants (parent material + overrides) instead of cloning
+  near-identical materials; edits to the parent propagate to every variant.
 - Check render queue, blend mode, z-write, transparency, culling, and sorting
   settings. Transparent materials often increase overdraw and sorting cost.
 - Match texture import settings to use: UI sprites usually do not need mipmaps;
@@ -49,9 +52,10 @@ property changes.
 ## Verification
 
 - Inspect affected prefabs or renderers to confirm the intended material asset is
-  assigned.
+  assigned; edit `.mat`/`.prefab` assets through a live Editor when available
+  (`references/other/unity-cli-routing.md`).
 - Use Frame Debugger for material, texture, pass, instancing, and SRP Batcher
-  claims.
+  claims (batching paths: `references/optimization/rendering-settings.md`).
 - Capture screenshots for visual material changes at the relevant quality level.
 - For performance-sensitive changes, capture before/after batches, SetPass
   calls, overdraw, memory, or frame time.

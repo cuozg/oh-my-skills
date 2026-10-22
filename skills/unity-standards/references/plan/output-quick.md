@@ -38,7 +38,7 @@ Add health component with damage/heal API and death event, based on existing IDa
 - [ ] Create HealthBar UI prefab
   - Slider-based bar, subscribe to HealthComponent events.
   - Follow existing UI pattern in Assets/Prefabs/UI/.
-  - Skill: `unity-standards`
+  - Skill: `unity:ui-ugui`
 - [ ] Write HealthComponent unit tests
   - Cover damage clamp, heal cap, death trigger, and negative input.
   - Skill: `unity-test-unit`
@@ -54,7 +54,7 @@ Add health component with damage/heal API and death event, based on existing IDa
 | Summary     | 1 sentence, reference existing code/patterns|
 | Subject     | Imperative verb + target                    |
 | Description | What + why + constraints (2-3 lines max)    |
-| Skill       | Exact skill name from skill registry        |
+| Skill       | Exact existing skill name (same set as `output-deep.md`) |
 | Product / release surface | Mention analytics, LiveOps, server, IAP, release, or monitoring only when touched |
 
 ## Metadata Line

@@ -40,7 +40,7 @@ Detection:
 ## Dead Code Detection
 
 Flag and report:
-- `private` methods with zero references
+- `private` methods with zero references (exempt Unity messages and methods wired via UnityEvent, Animation Events, `SendMessage`, or `Invoke`)
 - `[SerializeField]` fields unused in code AND inspector
 - Unreachable branches after `return`/`throw`
 - Empty Unity callbacks (`Start`, `Update` with no body)

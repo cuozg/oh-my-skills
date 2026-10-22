@@ -4,7 +4,7 @@ description: >
   Use this skill to review Unity GitHub pull requests. Use when the user provides a PR URL/number, or asks to "review PR", "pull request", "merge", "is this ready".
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Unity PR Code Review
@@ -20,13 +20,13 @@ Complete end-to-end workflow for reviewing Unity GitHub pull requests.
 
 ## 1. Fetch PR + Auth User + Labels
 
-- Fetch PR details via `gh pr view {pr} --json {number,author,labels,files,commits,headRefOid}`.
-- If the current branch is not PR branch, try to checkout PR branch as new worktree.
+- Fetch PR details via `gh pr view {pr} --json number,author,labels,files,commits,headRefOid,baseRefName`.
+- If the local `HEAD` equals `headRefOid`, read files locally. Otherwise read from GitHub: `gh pr diff {pr}` for patches, `gh api repos/{owner}/{repo}/contents/{path}?ref={headRefOid}` for full files — never switch branches or create worktrees (local work may be uncommitted).
 - If scope is big: Ask the user which specific criteria they need to review.
 
 ## 2. Build Changed-File Groups
 
-Group files by type (`.cs`, `.prefab`, `.unity`, `.mat`, `.shader`). Ignore `.meta`.
+Group files by type (`.cs`, `.asmdef`, `.prefab`, `.unity`, `.mat`, `.shader`/`.shadergraph`, `.uxml`/`.uss`, `Packages/manifest.json`). Ignore `.meta` except when a `.meta` changes without its asset (GUID churn = finding).
 
 ## 3. Build Commentable-Line Map
 
@@ -34,7 +34,7 @@ Build a map from PR file patches: `{ path, line, side }`. Only inline comment if
 
 ## 4. Spawn Parallel Review Subagents
 
-Spawn parallel reviewers for each file type with a strict schema. See `unity-standards/references/review/parallel-review-criteria.md`. Split work for big scopes.
+Spawn parallel reviewers for each file type with a strict schema. See `../unity-standards/references/review/parallel-review-criteria.md`; reviewers load the matching `../unity-standards/references/review/checklist_*.md` for their file type. Split work for big scopes.
 
 ## 5. Aggregator Validation
 

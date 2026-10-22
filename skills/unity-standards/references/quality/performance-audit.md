@@ -18,7 +18,7 @@ Flag these in `Update`, `FixedUpdate`, or `LateUpdate`:
 - `string` concatenation
 - LINQ queries
 - `new` allocations in loops
-- Boxing via `object` or interface dispatch
+- Boxing value types via `object` or interface casts
 - `foreach` over non-struct enumerators
 - Repeated `GetComponent<T>()`
 - Closure captures in lambdas
@@ -27,8 +27,8 @@ Flag these in `Update`, `FixedUpdate`, or `LateUpdate`:
 
 | Severity | Pattern |
 |----------|---------|
-| Critical | `FindObjectOfType` in Update |
-| High | Repeated scene-wide lookup in Update (`Find*`, uncached global lookups in complex scenes) |
+| Critical | Scene-wide `FindObjectsByType` / `FindFirstObjectByType` / `FindAnyObjectByType` in Update |
+| High | Repeated name/tag lookup in Update (`GameObject.Find*`, uncached global lookups) |
 | High | Nested loops in Update |
 | High | Physics queries every frame without need |
 | Medium | String operations in Update |
@@ -36,11 +36,11 @@ Flag these in `Update`, `FixedUpdate`, or `LateUpdate`:
 
 ## Physics Settings
 
-- `Fixed Timestep`: 0.02 (50 Hz) by default; justify changes
-- `Auto Sync Transforms`: off unless explicitly needed
-- Layer collision matrix disables unused layer pairs
-- Rigidbody `interpolation` only on player-visible objects that benefit from it
-- `Physics.Raycast` preferred over `RaycastAll` when a single hit is enough
+Audit against `references/optimization/physics-settings.md`. Flag:
+- `Fixed Timestep` changed from 0.02 (50 Hz) without justification
+- `Auto Sync Transforms` on without need
+- Layer collision matrix left fully enabled
+- `Physics.simulationMode` = `Script` without a matching `Physics.Simulate` owner
 
 ## Draw Call Budget
 
@@ -50,9 +50,8 @@ Flag these in `Update`, `FixedUpdate`, or `LateUpdate`:
 | PC | 2000-3000 | 500-1000 |
 | VR | 100-150 per eye | 50-75 |
 
-- Enable GPU instancing on shared materials where it helps
-- Use SRP Batcher with compatible shaders
-- Atlas sprites to reduce material swaps
+- Batching strategy (SRP Batcher, instancing): `references/optimization/rendering-settings.md`
+- UI batching: `references/optimization/canvas-ui-drawcalls-batching.md`
 
 ## Texture Memory Budget
 
@@ -62,9 +61,7 @@ Flag these in `Update`, `FixedUpdate`, or `LateUpdate`:
 | PC | 2-4 GB | 4096x4096 |
 | VR | 1-2 GB | 2048x2048 |
 
-- Compress with ASTC for mobile and BC formats for desktop where supported
-- Mip maps on for 3D, off for UI unless required
-- Read/Write off unless runtime mutation needs it
+- Import settings (compression, mipmaps, Read/Write): `references/optimization/memory-settings.md`, `references/optimization/build-settings.md`
 
 ## Profiler Markers
 

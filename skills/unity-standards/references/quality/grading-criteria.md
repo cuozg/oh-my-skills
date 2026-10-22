@@ -41,11 +41,11 @@ Score each audit category independently:
 | Tech Debt | 0.20 |
 
 3. Weighted average -> final grade:
-   - 3.5-4.0 -> A
-   - 2.5-3.4 -> B
-   - 1.5-2.4 -> C
-   - 0.5-1.4 -> D
-   - 0.0-0.4 -> F
+   - >= 3.5 -> A
+   - >= 2.5 -> B
+   - >= 1.5 -> C
+   - >= 0.5 -> D
+   - < 0.5 -> F
 
 ## Grade Override Rules
 

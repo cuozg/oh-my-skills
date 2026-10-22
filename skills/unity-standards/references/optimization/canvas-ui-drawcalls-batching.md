@@ -1,22 +1,11 @@
 # Canvas UI, Draw Calls, And Batching
 
-Use this for uGUI Canvas performance, UI draw calls, batching, overdraw, atlas
-usage, and UI prefab changes. For UI Toolkit, load the `ui-toolkit/` references
-instead.
-
-## Product UX Baseline
-
-UI quality is runtime engineering work. Match the intended mockup, animation
-timing, interaction flow, loading state, and screen-ratio behavior before
-optimizing visuals. Players perceive quality through responsiveness and
-smoothness.
-
-- Provide immediate button feedback and prevent double-submit during server
-  requests.
-- Keep screen openings, transitions, scrolling, drag/drop, and popup navigation
-  free of visible hitches.
-- Choose preload vs lazy-load deliberately so first interaction stays responsive.
-- For large lists, virtualize rows and generate only the needed visible range.
+Use this for uGUI Canvas performance: rebuilds, draw calls, batching, overdraw,
+and atlas usage. UX baseline, prefab/layout standards, and pool reset contracts
+live in `references/asset-management/canvas-ui-work.md`. For UI Toolkit, load
+`references/ui-toolkit/performance.md` or the `unity:ui-uitk` skill. Deeper
+coverage: `unity:ui-ugui`, `unity:manage-sprite-atlas` (atlas setup),
+`unity:optimize-text-mesh-pro` (TMP fonts and text cost).
 
 ## Canvas Rebuilds
 
@@ -30,9 +19,9 @@ smoothness.
   sizes can cause repeated rebuilds.
 - Disable `Raycast Target` on non-interactive `Image` and `Text` graphics so
   input raycasts do less work.
-- Pool UI prefabs only when their reset contract is clear: active state,
-  `CanvasGroup`, animation state, selected state, text, sprites, material
-  overrides, and event subscriptions all need reset.
+- For screens toggled often, disable the `Canvas` component instead of
+  `SetActive(false)` on the root: the Canvas keeps its geometry and skips a full
+  rebuild when re-enabled.
 
 ## Draw Calls And Batching
 
@@ -54,20 +43,13 @@ smoothness.
 - Test on the target aspect ratio and quality tier; UI overdraw often changes
   with responsive layouts.
 
-## Batching Choice Matrix
-
-| Surface | Prefer | Watch For |
-| --- | --- | --- |
-| uGUI Canvas | Sprite atlases, shared materials, split static/dynamic Canvases | Masks, unique materials, frequent layout rebuilds |
-| URP/HDRP renderers | SRP Batcher, shared shader variants | Non-compatible shaders or material CBUFFER layout |
-| Repeated meshes | GPU instancing | Unique materials, unsupported shaders, SkinnedMeshRenderer limits |
-| Static environment | Static batching | Memory growth and immovable objects |
-| Small dynamic meshes | Usually SRP Batcher or instancing first | Dynamic batching CPU cost |
+For non-UI renderers (SRP Batcher, GPU Resident Drawer, instancing, static
+batching), see the Batching Choice Matrix in `rendering-settings.md`.
 
 ## Verification
 
-- Use Unity Profiler UI modules for Canvas rebuilds, layout rebuilds, and UI
-  batch counts.
+- Use the Profiler UI and UI Details modules for Canvas rebuilds, layout
+  rebuilds, and UI batch counts.
 - Use Frame Debugger to prove why a batch broke: texture, material, shader pass,
   clipping, stencil, or Canvas boundary.
 - Capture before/after draw calls, batches, SetPass calls, Canvas rebuild time,

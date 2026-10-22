@@ -19,13 +19,13 @@ Do not migrate to ECS just to look modern. Use it when data layout, scheduling, 
 
 ## Version Awareness
 
-Entities APIs changed substantially across versions. Before editing DOTS code:
+Unity 6 projects use Entities 1.x. Before editing DOTS code:
 
 - Check `Packages/manifest.json` for Entities, Burst, Collections, Mathematics, and Physics package versions.
-- Match the project's current API style.
-- Prefer Entities 1.x patterns for new code when the project is already on Entities 1.x: `ISystem`, `SystemAPI`, Bakers, `LocalTransform`, `IJobEntity`, and ECB singletons.
-- Treat `IConvertGameObjectToEntity`, `Translation`, `Rotation`, and `GameObjectConversionUtility` as legacy unless the project already uses pre-1.0 Entities.
-- Load official docs for version-sensitive details before changing APIs.
+- Use Entities 1.x patterns: `ISystem`, `SystemAPI`, `Baker<T>`, `LocalTransform`, `IJobEntity`, and ECB singletons.
+- Conversion-era APIs (`IConvertGameObjectToEntity`, `GameObjectConversionUtility`, `Translation`, `Rotation`) do not exist in 1.x; replace them instead of matching them.
+- Treat `Entities.ForEach`, `Job.WithCode`, and `IAspect` as legacy; use `SystemAPI.Query` or `IJobEntity` in new code.
+- Check version-sensitive details via `references/other/official-source-map.md`.
 
 ## ECS Shape
 
@@ -37,21 +37,9 @@ Separate authoring, data, and logic.
 | Data | `IComponentData`, `IBufferElementData`, tags | Runtime state in chunks. |
 | Logic | `ISystem`, jobs | Stateless processing over queries. |
 
+Authoring/Baker example: see Bakers And Entity Prefabs below.
+
 ```csharp
-public sealed class MoveSpeedAuthoring : MonoBehaviour
-{
-    [SerializeField, Min(0f)] private float _metersPerSecond = 5f;
-
-    private sealed class Baker : Baker<MoveSpeedAuthoring>
-    {
-        public override void Bake(MoveSpeedAuthoring authoring)
-        {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent(entity, new MoveSpeed { Value = authoring._metersPerSecond });
-        }
-    }
-}
-
 public struct MoveSpeed : IComponentData
 {
     public float Value;
@@ -132,7 +120,7 @@ foreach (var (health, entity) in SystemAPI.Query<RefRO<Health>>().WithEntityAcce
 }
 ```
 
-For parallel jobs, use `EntityCommandBuffer.ParallelWriter` with the correct sort key.
+For parallel jobs, use `EntityCommandBuffer.ParallelWriter` with a deterministic sort key (in `IJobEntity`, a `[ChunkIndexInQuery] int` parameter).
 
 ## Jobs
 
@@ -231,7 +219,7 @@ Store entity prefab references in components produced by Bakers. Instantiate ent
 
 ## Verification
 
-For ECS/Burst work, compile is not enough. Verify the affected path with at least one of:
+For ECS/Burst work, compile is not enough. Run tests via `unity test` (see `references/other/unity-cli-routing.md`). Related refs: `references/debug/ecs-burst-debugging.md`, `references/review/ecs-burst-review.md`, `references/optimization/jobs-burst-migration.md`. Verify the affected path with at least one of:
 
 - focused Edit Mode or Play Mode test
 - scene smoke check with entity counts/state inspection

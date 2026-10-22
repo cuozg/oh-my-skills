@@ -1,93 +1,48 @@
 ---
 name: unity-standards
-description: "Use for Unity engineering standards: C# code, asset managers, Addressables, analytics, LiveOps, config, server API, IAP, prefab, Canvas UI, material, shader, draw calls, batching, debugging, optimization, reviews, project investigation, tests, plans, todos, acceptance criteria, and technical docs."
+description: "Use for Unity 6 engineering standards: C# code, asset managers, Addressables, analytics, LiveOps, config, server API, IAP, prefab, Canvas UI, material, shader, draw calls, batching, debugging, optimization, reviews, project investigation, tests, plans, todos, acceptance criteria, and technical docs."
 metadata:
   author: kuozg
-  version: "2.1"
+  version: "3.0"
 ---
 
 # unity-standards
 
-Use this as the compact Unity engineering standards router. Codex already knows
-Unity basics; this skill tells the agent which local standards to load and what
-evidence proves the work is done.
+Compact Unity engineering standards router. Assumes Unity basics; this skill tells
+the agent which local standards to load and what evidence proves the work is done.
 
 ## Agent Contract
 
-Use this skill to make Unity work predictable: inspect the real project first,
-choose the smallest applicable standard, make the smallest correct change, and
-verify through Unity-aware evidence. Do not turn this skill into a generic Unity
-tutorial; every loaded reference should answer the current task.
+Make Unity work predictable: inspect the real project first, choose the smallest
+applicable standard, make the smallest correct change, and verify through
+Unity-aware evidence. Every loaded reference must answer the current task.
 
-This is the standards layer, not a replacement for specialized Unity skills. Pair
-it with a task-specific skill when the primary work is asset generation, audio
-clip preparation, UI Toolkit implementation, Editor tooling, WebGL integration,
-manual QA test cases, unit-test authoring, technical design, costing, or PR
-review automation.
+This is the standards layer. Pair it with a task-specific skill when the primary
+work is Editor tooling, unit tests, debugging, technical design, costing, docs,
+or PR review (see Pair With Specialized Skills).
 
-## When This Skill Triggers
+## Baseline
 
-- Writing or refactoring Unity C# code
-- Reviewing local changes or pull requests
-- Debugging Unity runtime or compile issues
-- Investigating Unity project structure, logic, or data flow
-- Planning, breaking down, testing, or documenting Unity systems
-- Optimizing Unity project performance
-- Product ownership, analytics, LiveOps, remote config, server API, IAP,
-  release, or post-launch monitoring work
-- Asset-manager, Addressables, prefab, material, shader, Canvas UI, draw-call,
-  batching, or asset-pipeline work
+- **Unity 6.0+ (6000.x)**, latest Unity 6 LTS preferred. Read
+  `ProjectSettings/ProjectVersion.txt` and `Packages/manifest.json` first; the
+  project's actual version and packages override this baseline.
+- **Editor access goes through the `unity` CLI** (`unity:unity-cli` skill). Run the
+  preflight in `references/other/unity-cli-routing.md` before any step that needs
+  a live Editor (compile, console, tests, scene/prefab edits, Play Mode proof).
 
 ## Operating Rules
 
 1. Start from the user's named file, symbol, scene, prefab, branch, or symptom.
 2. State assumptions for ambiguous work; ask only when a reasonable assumption
    would be risky.
-3. Load only the smallest matching reference set. Add more only when the touched
-   surface changes or evidence is missing.
+3. Load only the smallest matching reference set (first entry of each section
+   below). Add more only when the touched surface changes or evidence is missing.
 4. Prefer the project's current patterns over generic Unity advice.
 5. Keep changes surgical: no adjacent refactors, speculative abstractions, or
    unrelated cleanup.
 6. For package, Unity-version, platform, ECS, Burst, WebGL, Addressables, or UI
    Toolkit behavior, verify against official docs via `references/other/official-source-map.md`.
-7. Finish with Unity-grade proof: compile result, targeted tests, console scan,
-   Play Mode/Edit Mode validation, scene/prefab inspection, profiler evidence, or
-   PR diff verification as appropriate.
-
-## Task Router
-
-| Task | Load first | Add when needed |
-|------|------------|-----------------|
-| C# code or refactor | `references/code-standards/core-conventions.md` | lifecycle, data/perf, architecture, ECS refs by surface |
-| Asset manager or Addressables | `references/asset-management/addressables-asset-manager.md` | memory/loading refs, architecture, platform docs |
-| Analytics, LiveOps, config, server API, IAP, release, or monitoring | `references/production/full-cycle-ownership.md` | architecture, data/perf, lifecycle/errors, official docs |
-| Prefab asset work | `references/asset-management/prefab-work.md` | Canvas UI, material, shader, Addressables, or review refs by touched asset |
-| Canvas UI asset work | `references/asset-management/canvas-ui-work.md` | draw-call/batching, prefab, material, shader, or UI Toolkit refs by surface |
-| Material asset work | `references/asset-management/material-work.md` | shader, rendering settings, batching, or review refs |
-| Shader asset work | `references/asset-management/shader-work.md` | material, rendering settings, batching, or official render-pipeline docs |
-| Canvas UI draw calls or batching | `references/optimization/canvas-ui-drawcalls-batching.md` | Canvas UI asset, rendering settings, material, shader, or prefab refs |
-| Debug issue | `references/debug/diagnosis-workflow.md` | compile, common errors, deep investigation, ECS debugging |
-| Optimize | matching optimization reference below | `references/quality/performance-audit.md` for broader audits |
-| Review code or PR | `references/review/checklist.md` | C#, prefab, material, shader, ECS, parallel criteria |
-| Investigate project logic | `references/debug/deep-investigation-checklist.md` | `references/debug/analysis-template.md`, dependency mapping, Mermaid |
-| Plan or break down work | `references/plan/confirmation-flow.md` | dependency map plus quick/deep output template |
-| Write Unity Test Framework tests | `references/test/coverage-strategy.md` | Edit Mode, Play Mode, advanced patterns, naming |
-| Acceptance criteria | `references/test/acceptance-criteria-verification.md` | test-case format if manual QA is requested |
-| Quality audit | matching quality reference below | grading and HTML report only when requested |
-| UI Toolkit | `references/ui-toolkit/setup.md` | UXML, USS, bindings, controls, performance |
-
-## Pair With Specialized Skills
-
-| Primary Task | Pair With | How `unity-standards` Helps |
-|--------------|-----------|-----------------------------|
-| Unit tests | `unity-test-unit` | test mode, naming, coverage, verification rules |
-| Manual QA cases | `unity-test-case` | acceptance criteria and evidence expectations |
-| Runtime UI Toolkit | `unity-uitoolkit` | UI Toolkit architecture, performance, binding standards |
-| Editor tools | `unity-editor` | editor-code isolation, Undo, serialized property standards |
-| WebGL work | `unity-webgl` | platform boundaries, async/storage/build constraints |
-| Asset/image/audio generation | relevant asset/audio skills | validation, placement, performance, and proof requirements |
-| Technical plans/costing | `unity-technical` / `unity-costing` | assumptions, dependencies, risks, acceptance criteria |
-| PR review or local review | Unity review skills | severity, evidence, changed-line discipline |
+7. Finish with Unity-grade proof (see Verification Defaults).
 
 ## Load References Accordingly
 
@@ -98,6 +53,7 @@ review automation.
 - Collections, LINQ, pooling, serialization: `references/code-standards/performance-data.md`
 - Architecture, events, dependencies, editor tools, WebGL: `references/code-standards/architecture-systems.md`
 - ECS, Jobs, Burst, NativeContainers: `references/code-standards/ecs-burst-standards.md`
+- File map: `references/code-standards/README.md`
 
 ### Asset Managers, Addressables, And Assets
 
@@ -107,8 +63,6 @@ review automation.
 - Canvas UI work: `references/asset-management/canvas-ui-work.md`
 - Material work: `references/asset-management/material-work.md`
 - Shader work: `references/asset-management/shader-work.md`
-- Legacy combined map for mixed tasks:
-  `references/asset-management/prefab-material-shader-work.md`
 - Add `references/code-standards/architecture-systems.md` when ownership, dependency
   boundaries, or platform branches are involved.
 - Add `references/optimization/memory-settings.md` for memory pressure, asset release, or
@@ -152,7 +106,7 @@ review automation.
 - Acceptance criteria: `references/test/acceptance-criteria-verification.md`
 - Test strategy: `references/test/coverage-strategy.md`, `references/test/edit-mode-patterns.md`,
   `references/test/edit-mode-advanced.md`, `references/test/play-mode-patterns.md`
-- Test docs: `references/test/test-case-format.md`, `references/test/naming-conventions.md`
+- Test docs and manual QA cases: `references/test/test-case-format.md`, `references/test/naming-conventions.md`
 - Diagrams: `references/other/mermaid-syntax.md`
 
 ### Investigate Project Structure Or Logic
@@ -174,6 +128,7 @@ review automation.
 - Mobile: `references/optimization/mobile-settings.md`
 - Jobs/Burst/ECS: `references/optimization/jobs-burst-migration.md`,
   `references/optimization/ecs-data-oriented-design.md`
+- Broader audit: `references/quality/performance-audit.md`
 
 ### Audit Quality Or Technical Debt
 
@@ -181,7 +136,7 @@ review automation.
 - Architecture: `references/quality/architecture-audit.md`
 - Performance: `references/quality/performance-audit.md`
 - Technical debt: `references/quality/tech-debt-audit.md`
-- Scoring/reporting: `references/quality/grading-criteria.md`,
+- Scoring/reporting (only when requested): `references/quality/grading-criteria.md`,
   `references/quality/html-report-format.md`
 
 ### UI Toolkit
@@ -194,15 +149,32 @@ review automation.
 
 ### Cross-Cutting Helpers
 
-- Unity MCP routing: `references/other/unity-mcp-routing-matrix.md`
+- Unity Editor access (CLI first, MCP fallback): `references/other/unity-cli-routing.md`
 - FlatBuffers: `references/other/flatbuffers-guide.md`
-- Skill authoring: `references/other/skill-authoring.md`
-- Code-standard reference map: `references/code-standards/README.md`
+
+## Pair With Specialized Skills
+
+| Primary Task | Pair With | How `unity-standards` Helps |
+|--------------|-----------|-----------------------------|
+| Project scaffold, asmdefs, CLAUDE.md | `unity-init` | asmdef boundaries, folder conventions |
+| Unit tests | `unity-test-unit` | test mode, naming, coverage, verification rules |
+| Editor tools | `unity-editor` | editor-code isolation, Undo, serialized property standards |
+| Debugging | `unity-debug` / `unity-log` | diagnosis workflow, error patterns, compile verification |
+| Technical design, costing, WBS | `unity-technical` / `unity-costing` / `unity-wbs` | assumptions, dependencies, risks, acceptance criteria |
+| System docs | `unity-document` | investigation checklist, Mermaid |
+| PR review | `unity-review-pr` | severity, evidence, changed-line discipline |
+| Editor/CLI automation, tests, builds | `unity:unity-cli` | Editor routing and verification evidence |
+| UI Toolkit / uGUI deep work | `unity:ui-uitk` / `unity:ui-ugui` | UI performance and binding standards |
+| WebGL / Web builds | `unity:optimize-web` | platform boundaries, async/storage/build constraints |
+| Packages (UPM) | `unity:unity-package-management` | package-sensitive API checks |
 
 ## Verification Defaults
 
-- Code change: run compile or the repo's fastest equivalent, then focused tests
-  for the touched behavior when practical.
+Run Editor-dependent checks through `references/other/unity-cli-routing.md`.
+
+- Code change: compile check (live Editor `recompile` + console scan, or
+  `Logs/Editor.log` grep), then focused tests for the touched behavior
+  (`unity test --filter <name>` or the Editor's test command).
 - Bug fix: prove the old failure path and the fixed path; use logs only when a
   test or direct editor validation is not practical.
 - Review: inspect committed diff or PR files, report findings first with

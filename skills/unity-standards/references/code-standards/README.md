@@ -5,10 +5,10 @@ Load only the file that matches the work surface, then apply the target reposito
 
 ## How To Use These Standards
 
-1. Inspect the current project before applying a rule. Existing architecture, Unity version, packages, and team conventions override generic guidance.
+1. Inspect the current project before applying a rule. Baseline is Unity 6.0+; existing architecture, packages, and team conventions override generic guidance.
 2. Prefer the smallest change that satisfies the request and keeps behavior verifiable.
 3. Treat examples as patterns, not code to paste blindly. Rename, trim, and adapt to the surrounding code.
-4. Verify with the narrowest meaningful check: compile, focused unit/Edit Mode test, Play Mode smoke, prefab/scene inspection, or profiler evidence.
+4. Verify with the narrowest meaningful check: compile, focused unit/Edit Mode test, Play Mode smoke, prefab/scene inspection, or profiler evidence. Run Editor-side checks through the `unity` CLI per `references/other/unity-cli-routing.md`.
 5. For package-sensitive APIs, check `Packages/manifest.json` and load `references/other/official-source-map.md`.
 
 ## Files
@@ -25,10 +25,10 @@ Related non-code standards:
 
 | File | Load When |
 | --- | --- |
-| `../asset-management/addressables-asset-manager.md` | Asset manager, Addressables, runtime loading, catalogs, labels, handles, and release ownership. |
-| `../asset-management/prefab-material-shader-work.md` | Prefab, material, shader, sprite atlas, and renderer asset work. |
-| `../optimization/canvas-ui-drawcalls-batching.md` | uGUI Canvas optimization, UI draw calls, batching, masks, atlases, and overdraw. |
-| `../production/full-cycle-ownership.md` | Product goals, analytics, LiveOps, remote config, server APIs, IAP, release readiness, and monitoring. |
+| `references/asset-management/addressables-asset-manager.md` | Asset manager, Addressables, runtime loading, catalogs, labels, handles, and release ownership. |
+| `references/asset-management/prefab-work.md`, `material-work.md`, `shader-work.md` | Prefab, material, shader, and renderer asset work. |
+| `references/optimization/canvas-ui-drawcalls-batching.md` | uGUI Canvas optimization, UI draw calls, batching, masks, atlases, and overdraw. |
+| `references/production/full-cycle-ownership.md` | Product goals, analytics, LiveOps, remote config, server APIs, IAP, release readiness, and monitoring. |
 
 ## Senior-Engineer Baseline
 

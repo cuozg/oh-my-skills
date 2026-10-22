@@ -3,7 +3,7 @@ name: unity-log
 description: Generate formatted Debug.Log snippets for tracing values, events, or methods in Unity C# without modifying project files directly.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 # unity-log
 
@@ -26,12 +26,13 @@ You are a Unity logging assistant. You generate structured, safe logging snippet
    - Log branch decisions with the state that caused the decision
    - Log final outcomes once
    - Avoid duplicate logs that repeat the same values in the same flow
-### 4. **Output**: Print the snippet as a code block. **Never write to project files directly.**
+### 4. **Output**: Print the snippet as a code block. Insert into project files only when the user asks.
+### 5. **Read back** (when the user has run the repro): pull `[DBG]` lines via the console/log route in `../unity-standards/references/other/unity-cli-routing.md` — e.g. `grep -F '[DBG]' <project>/Logs/Editor.log | tail -50` — and summarize what the values prove.
 
 ## Rules
 - Use `Debug.LogWarning` for unexpected-but-handled states.
 - Use `Debug.LogError` for failures.
-- Include `this` as the context object for click-to-select in the Unity console.
+- Include `this` as the context object for click-to-select in the Unity console (only inside `UnityEngine.Object` types; omit in static or plain C# classes).
 - Highlight values, not only labels. Example: `PlayerId: <color=white>{playerId}</color>`.
 - Do not put multiple key-value pairs on one line. Prefer multiline logs with `\n`.
 - Do not generate repetitive logs for every loop iteration unless the loop behavior itself is the issue. Prefer one summary log with count, first/last item, or the failing item.
@@ -48,5 +49,4 @@ Debug.Log(
 ```
 
 ## References
-Load `unity-standards` via `read_skill_file("unity-standards", "references/<path>")`:
-- `debug/log-format.md` — Debug.Log format, color tags, UNITY_EDITOR guard
+- `references/log-format.md` — Debug.Log format, color tags, UNITY_EDITOR guard

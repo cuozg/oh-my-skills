@@ -23,6 +23,12 @@ compatibility issues.
   SRP code have different compatibility and batching rules.
 - Preserve SRP Batcher compatibility when the project relies on URP/HDRP. Keep
   material properties in the correct constant buffer layout for the pipeline.
+- For GPU Resident Drawer projects (Unity 6), hand-written URP shaders also need
+  DOTS instancing support (`#pragma multi_compile _ DOTS_INSTANCING_ON`, target
+  4.5+); Shader Graph and URP Lit/Unlit already have it.
+- URP 17 custom passes and renderer features use Render Graph
+  (`RecordRenderGraph`); validate them with
+  `unity:validate-urp-render-graph-renderer-feature`.
 - Use `shader_feature` for material-controlled variants that can be stripped.
   Use `multi_compile` only for keywords that must switch at runtime.
 - Avoid adding keywords, passes, grab passes, full-screen effects, or expensive
@@ -47,10 +53,12 @@ compatibility issues.
 ## Verification
 
 - Verify shader compilation for the target platform or the repo's fastest
-  available equivalent.
+  available equivalent: shader errors appear in the Editor Console /
+  `Editor.log` (see `references/other/unity-cli-routing.md`).
 - Use Frame Debugger for pass count, material switches, SRP Batcher, instancing,
   stencil, and render queue evidence.
 - Capture screenshots or video for visual changes in the scene, prefab, or UI
   hierarchy where the shader is used.
+- Variant stripping and warmup settings: `references/optimization/rendering-settings.md`.
 - Use RenderDoc, platform profiler, or Unity Profiler when fragment cost,
   bandwidth, overdraw, or GPU timing is the actual risk.

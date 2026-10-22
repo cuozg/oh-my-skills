@@ -68,3 +68,4 @@ Format: `TC-{NNN}` - sequential per feature. Group by category in table order:
 2. Edge Case (TC-100-199)
 3. Error (TC-200-299)
 4. Performance (TC-300-399)
+5. Regression (TC-400-499)

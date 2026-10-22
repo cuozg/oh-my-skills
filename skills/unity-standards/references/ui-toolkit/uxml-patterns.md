@@ -42,9 +42,9 @@ block--modifier -> .button--primary, .header--collapsed, .modal--fullscreen
   </VisualElement>
 </UXML>
 
-<!-- MainScreen.uxml - instantiate reusable template -->
+<!-- Screens/MainScreen.uxml - instantiate reusable template (src is relative to this file) -->
 <UXML xmlns="UnityEngine.UIElements">
-  <Template src="Components/Card.uxml" name="CardTemplate" />
+  <Template src="../Components/Card.uxml" name="CardTemplate" />
 
   <VisualElement class="screen">
     <Instance template="CardTemplate" name="card-1" />
@@ -52,6 +52,8 @@ block--modifier -> .button--primary, .header--collapsed, .modal--fullscreen
   </VisualElement>
 </UXML>
 ```
+
+Custom controls (`[UxmlElement]`): `custom-controls.md`. UXML data bindings: `csharp-bindings.md`.
 
 ## Element Hierarchy Guidelines
 
@@ -75,12 +77,12 @@ Screen (root VisualElement)
 |---------|----------|----------------|
 | `Label` | Static/dynamic text | `text` |
 | `Button` | Actions | `text`, `clicked` event |
-| `TextField` | Text input | `value`, `placeholder` |
+| `TextField` | Text input | `value`, `placeholder-text` |
 | `Toggle` | On/off | `value`, `label` |
 | `Slider` | Range input | `value`, `low-value`, `high-value` |
 | `DropdownField` | Selection | `choices`, `value` |
 | `ScrollView` | Scrollable container | `mode` (vertical/horizontal) |
-| `ListView` | Virtualized list | `itemSource`, auto-pools items |
+| `ListView` | Virtualized list | `itemsSource` (C#), auto-pools items |
 | `ProgressBar` | Progress display | `value`, `title` |
 | `Foldout` | Collapsible section | `text`, `value` (open/closed) |
 

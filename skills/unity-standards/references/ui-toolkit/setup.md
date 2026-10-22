@@ -1,5 +1,8 @@
 # UI Toolkit Setup
 
+Unity 6 baseline. For deep UI Toolkit implementation (UI Builder workflows,
+complex screens, migrations) use plugin skill `unity:ui-uitk`.
+
 ## UIDocument Component
 
 Attach `UIDocument` to a GameObject to render runtime UI Toolkit content.
@@ -23,7 +26,8 @@ Access the root with `GetComponent<UIDocument>().rootVisualElement`.
 
 ## PanelSettings Asset
 
-Create via `Assets > Create > UI Toolkit > Panel Settings Asset`.
+Create via `Assets > Create > UI Toolkit > Panel Settings Asset`. Assign a Theme
+Style Sheet (`.tss`); Unity generates `UnityDefaultRuntimeTheme.tss` for runtime UI.
 
 ### Scale Modes
 
@@ -67,9 +71,11 @@ Query in `OnEnable` because the visual tree can be rebuilt when a `UIDocument` i
 - If mixing with uGUI, validate the event and input setup carefully.
 - Multiple documents sharing one panel also share focus navigation context.
 
-## Runtime Binding Note
+## Runtime Data Binding
 
-Runtime data binding exists in newer UI Toolkit versions, but it is version-sensitive. If a project uses it, confirm the exact feature set in `references/other/official-source-map.md` before assuming runtime and editor binding behave the same way.
+Unity 6 supports runtime data binding (`dataSource`, `[CreateProperty]`,
+`SetBinding`). Patterns: `csharp-bindings.md`. Editor UI keeps using
+`bindingPath` + `Bind(SerializedObject)`.
 
 ## File Organization
 

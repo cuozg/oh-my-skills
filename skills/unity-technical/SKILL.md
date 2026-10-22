@@ -7,7 +7,7 @@ description: >
   for Unity runtime, Editor, tools, assets, data, UI, WebGL, SDKs, or production pipelines.
 metadata:
   author: kuozg
-  version: "1.0"
+  version: "1.1"
 ---
 
 # unity-technical
@@ -22,11 +22,12 @@ Turn a Unity requirement into a shared technical understanding and a decision-re
 - Extract the desired outcome, constraints, success criteria, target platform, quality bar, and deadline.
 - Read every user-provided document, spec, screenshot summary, log, or linked local file before asking.
 - If the request names existing code, scenes, prefabs, packages, or systems, inspect them first.
+- Record the Unity version (`ProjectSettings/ProjectVersion.txt`), render pipeline, and packages (`Packages/manifest.json`); design for that version, baseline Unity 6.0+.
 
 ### 2. Explore Before Asking
 - Search the codebase for relevant systems, call paths, assets, tests, settings, and conventions.
-- Use `explore` subagents when the answer spans multiple files or systems.
-- Research Unity best practices, official docs, package guidance, and production patterns when the solution depends on Unity APIs, tooling, performance, platform behavior, or third-party packages.
+- Use `Explore` subagents when the answer spans multiple files or systems.
+- Research Unity best practices, official docs, package guidance, and production patterns when the solution depends on Unity APIs, tooling, performance, platform behavior, or third-party packages. Start from `../unity-standards/references/other/official-source-map.md` and the matching `unity-standards` reference.
 - If codebase exploration can answer a question, do that before asking the user.
 
 ### 3. Interview Relentlessly

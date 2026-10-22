@@ -12,7 +12,7 @@ Extract from report:
 
 | Category | Signals |
 |----------|---------|
-| Compile | red console, `CS####` codes, IDE red squiggles |
+| Compile | red console, `CS####` codes, IDE red squiggles, Editor in Safe Mode |
 | Runtime | exception at play, null ref, missing ref |
 | Logic | wrong behavior, no error, "it just doesn't work" |
 | Performance | frame drops, GC spikes, hitch on action |
@@ -20,12 +20,20 @@ Extract from report:
 | Analytics / LiveOps | missing event, duplicate event, bad config, rollout anomaly |
 | ECS / Jobs / Burst | entity not processed, Burst compile error, NativeContainer safety error, race-like behavior |
 
+Load next by category:
+- Compile → `references/debug/compile-verification.md`
+- Runtime → `references/debug/common-unity-errors.md`
+- Logic / timing → `references/debug/deep-investigation-checklist.md`
+- ECS / Jobs / Burst → `references/debug/ecs-burst-debugging.md`
+
+Live evidence (console, Unity version, scene state): `references/other/unity-cli-routing.md`.
+
 ## 3. Investigation Angles (pick >=3)
 
 | Angle | What to Check |
 |-------|---------------|
 | Call stack | stack trace -> find originating call |
-| State | inspect fields at breakpoint or with Debug.Log |
+| State | inspect fields at breakpoint, with `Debug.Log` (`unity-log`), or a read-only live-Editor probe |
 | Input | what triggered it - user action, event, lifecycle |
 | Reproduction | minimal repro steps, isolate variables |
 | Timing | execution order, race conditions, async gaps |
@@ -36,7 +44,7 @@ Extract from report:
 
 ## 4. Multi-Angle Rule
 
-Investigate **>=3 angles** before proposing a fix. Single-angle diagnosis misses root cause ~40% of the time.
+Investigate **>=3 angles** before proposing a fix; single-angle diagnosis often stops at a symptom.
 
 ## 5. Solution Format
 
@@ -59,7 +67,7 @@ Rank by risk ascending. Present safest first.
 ## Production Incident Notes
 
 For crash, ANR, analytics, remote config, or post-release issues, load
-`../production/full-cycle-ownership.md`.
+`references/production/full-cycle-ownership.md`.
 
 - Do not rely only on a stack trace. Correlate with player actions, analytics
   breadcrumbs, memory-heavy screens, asset loading, scene transitions, SDK init,

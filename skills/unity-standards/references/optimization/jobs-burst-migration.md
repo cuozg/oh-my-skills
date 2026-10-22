@@ -22,8 +22,8 @@ scene-object-heavy, or easier to prove with ordinary C#.
 - Profile first: capture frame time, marker name, call count, GC allocs, and
   target hardware/platform when available.
 - Identify data ownership: who writes, who reads, lifetime, and reset rules.
-- Check package and Unity version before using Entities, Burst, Collections, or
-  TransformAccess APIs.
+- Check `Packages/manifest.json` for Entities, Burst, Collections, and
+  Mathematics versions before relying on version-specific APIs.
 - Verify the project already accepts the complexity. A one-off job framework for
   one minor feature is usually the wrong trade.
 
@@ -47,14 +47,17 @@ public struct SteeringInput
 ## Job Rules
 
 - Mark read-only containers with `[ReadOnly]`.
-- Do not access `GameObject`, `Transform`, `Component`, `Debug.Log`, or most
-  `UnityEngine` APIs inside Burst jobs.
+- Keep `GameObject`, `Transform`, `Component`, and most `UnityEngine` APIs out of
+  Burst jobs. `Debug.Log` compiles in Burst only with literal/`FixedString`
+  messages; keep it out of hot jobs.
 - Chain `JobHandle`s for read/write dependencies; complete only when the main
   thread needs the result.
 - Never dispose a NativeContainer before all jobs using it have completed.
 - Avoid scheduling tiny jobs where overhead exceeds work.
-- Use `Allocator.TempJob` for short jobs and dispose within the required window;
-  use `Persistent` only for long-lived owned buffers.
+- Use `Allocator.TempJob` for short jobs and dispose within 4 frames (leak
+  warning otherwise); use `Persistent` only for long-lived owned buffers.
+- For batched physics queries, use `RaycastCommand` / `SpherecastCommand`
+  scheduled as jobs instead of per-object main-thread casts.
 
 ```csharp
 [BurstCompile]
@@ -77,8 +80,9 @@ Burst-compatible code:
 
 - Uses blittable structs and primitive/math types.
 - Uses `Unity.Mathematics` instead of `UnityEngine` object APIs.
-- Avoids managed allocations, classes, virtual dispatch, delegates, exceptions,
-  reflection, LINQ, strings, and most collection types.
+- Avoids managed allocations, classes, virtual dispatch, managed delegates
+  (use `FunctionPointer<T>`), try/catch, reflection, LINQ, managed strings (use
+  `FixedString*`), and managed collections (use `Unity.Collections`).
 - Keeps deterministic math requirements explicit if gameplay depends on them.
 
 Use Burst Inspector or compiler diagnostics when performance or compatibility is
@@ -89,18 +93,8 @@ or a normal logic/data issue.
 
 Move to ECS when the domain is data-heavy and object identity is less important
 than throughput: crowds, projectiles, board cells, status effects, simulation
-agents, or repeated stateless processing.
-
-ECS migration shape:
-
-1. Convert authored data with Bakers or an existing authoring pipeline.
-2. Represent runtime state as small `IComponentData` structs.
-3. Process with systems that have clear query ownership.
-4. Use `EntityCommandBuffer` for structural changes.
-5. Keep GameObject bridges at the edge for visuals, UI, and legacy systems.
-
-Avoid partial ECS that duplicates truth in both GameObjects and components
-without an explicit authority.
+agents, or repeated stateless processing. Fit signals, component/system shape,
+baking, and the migration checklist live in `ecs-data-oriented-design.md`.
 
 ## Common Failure Modes
 
@@ -108,7 +102,6 @@ without an explicit authority.
 | --- | --- | --- |
 | NativeContainer leak warning | missing dispose or incomplete dependency | owner lifetime and job handles |
 | Safety error on read/write | parallel write or missing dependency | attributes, job chain, ECB timing |
-| Entity not processed | query mismatch or wrong world | required components, enableable state, world |
 | Burst compile failure | managed type/API in job | diagnostics and Burst-compatible code path |
 | Slower after migration | scheduling/copy overhead | profiler marker and batch size |
 
@@ -117,7 +110,7 @@ without an explicit authority.
 - Compare profiler before/after with the same scene, data size, and platform when
   practical.
 - Add tests for pure data transforms before changing the runtime pipeline.
-- For ECS, inspect entity counts and query matches in the target world.
+- For ECS, follow the Verification section of `ecs-data-oriented-design.md`.
 - For jobs, verify dependency completion, disposal, and deterministic outputs.
 - Document the old bottleneck, new architecture, and measured tradeoff in the PR
   or task notes.

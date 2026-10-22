@@ -14,7 +14,8 @@ screen, popup, HUD item, or reusable UI component.
    unrelated components, transforms, or inactive children.
 4. Validate the prefab in Unity when possible. Raw YAML is useful for diff
    review, but it does not prove missing references, active states, or runtime
-   reset behavior.
+   reset behavior. While a live Editor is reachable, make prefab edits through
+   Editor commands, not YAML (`references/other/unity-cli-routing.md`).
 5. Capture evidence: prefab inspection, scene smoke, Play Mode path, screenshot,
    or focused test according to the prefab's runtime use.
 
@@ -53,7 +54,8 @@ screen, popup, HUD item, or reusable UI component.
 
 ## Verification
 
-- Inspect the affected prefab or scene hierarchy in Unity when available.
+- Inspect the affected prefab or scene hierarchy in Unity when available
+  (discover the Editor's commands with `unity command --query prefab`).
 - Run the user flow that instantiates or opens the prefab when the behavior is
   runtime-visible.
 - For UI prefabs, also verify target aspect ratios, safe areas, input blocking,

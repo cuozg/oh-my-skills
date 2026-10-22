@@ -28,7 +28,7 @@ Use this reference when reviewing changes that touch Unity Entities, DOTS, Job S
 - [ ] Baker uses correct `TransformUsageFlags` for static, dynamic, renderable, or none.
 - [ ] Prefab references are converted with `GetEntity(prefab, flags)`.
 - [ ] Runtime systems can assume baked data is valid or explicitly handle invalid data.
-- [ ] No legacy conversion API introduced into an Entities 1.x project.
+- [ ] No legacy conversion API (`GameObjectConversionSystem`, `IConvertGameObjectToEntity`, `ConvertToEntity`) - removed in Entities 1.0; use `Baker<T>`.
 
 ### Components
 
@@ -43,6 +43,7 @@ Use this reference when reviewing changes that touch Unity Entities, DOTS, Job S
 
 - [ ] `ISystem` is preferred for Burst-compatible runtime logic.
 - [ ] `SystemBase` is used only when managed state/API access is required.
+- [ ] New iteration uses `SystemAPI.Query` or `IJobEntity`, not `Entities.ForEach` / `Job.WithCode` (deprecated in Entities 1.3).
 - [ ] `RequireForUpdate` prevents systems from running before required singleton/query data exists.
 - [ ] Update group/order attributes document dependencies between systems.
 - [ ] System logic is stateless or stores state in components/singletons, not hidden managed fields.

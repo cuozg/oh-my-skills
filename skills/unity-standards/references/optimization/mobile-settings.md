@@ -3,16 +3,11 @@
 ## Target Frame Rate
 
 ```csharp
-// Set explicitly - mobile often defaults lower than desktop expectations
+// Set explicitly - iOS/Android default to 30 fps when targetFrameRate is -1
 Application.targetFrameRate = 60; // or 30 for battery-conscious experiences
 
-void Update()
-{
-    if (SystemInfo.thermalStatus >= ThermalStatus.Throttling)
-        Application.targetFrameRate = 30;
-    else
-        Application.targetFrameRate = 60;
-}
+// Menus/idle screens: keep 60 Hz input/Update but render every 2nd frame
+UnityEngine.Rendering.OnDemandRendering.renderFrameInterval = 2;
 ```
 
 | Target | Use Case | Battery Impact |
@@ -23,7 +18,11 @@ void Update()
 
 ## Thermal Throttling Management
 
-Sustained GPU and CPU load causes thermal throttling.
+Sustained GPU and CPU load causes thermal throttling. Read thermal warnings
+through the Adaptive Performance package
+(`com.unity.adaptiveperformance`, provider per platform) and lower the target
+frame rate or quality when it reports throttling. Check the installed package
+version for the exact API and supported devices.
 
 **Budget with throttling factor:**
 - Peak performance: 16.67ms frame budget at 60 FPS
@@ -31,28 +30,25 @@ Sustained GPU and CPU load causes thermal throttling.
 - Design for headroom instead of shipping right at the thermal edge
 
 **Mitigation strategies:**
-- Reduce particle counts when `SystemInfo.thermalStatus >= Warning`
+- Reduce particle counts when throttling is imminent
 - Lower LOD bias dynamically
 - Disable expensive post-processing first
 - Reduce shadow resolution or distance
 
 ## Resolution Scaling
 
-```csharp
-Screen.SetResolution(
-    (int)(Screen.width * scaleFactor),
-    (int)(Screen.height * scaleFactor),
-    true);
+Prefer URP **Render Scale** (URP Asset > Quality) over `Screen.SetResolution`:
+it scales 3D rendering only, keeps Screen Space - Overlay UI at native
+resolution, and can be changed at runtime per quality tier. Upscaling Filter
+options include FSR 1 and STP (Unity 6); STP needs compute shader support and
+costs GPU time, so measure it on low-end mobile before enabling.
 
-// URP dynamic resolution is usually the better long-term option.
-```
-
-| Scale | Visual Impact | Performance Gain |
+| Scale | Visual Impact | Max GPU Savings (fill-bound) |
 |-------|--------------|-----------------|
 | 100% | Native | Baseline |
-| 85% | Barely noticeable | 20-30% GPU savings |
-| 75% | Slight softening | 40-50% GPU savings |
-| 50% | Noticeably blurry | 60-70% GPU savings |
+| 85% | Barely noticeable | up to ~25% |
+| 75% | Slight softening | up to ~40% |
+| 50% | Noticeably blurry | up to ~70% |
 
 **Pattern:** Scale down when frame time exceeds budget, scale up when headroom exists.
 
@@ -62,45 +58,44 @@ Screen.SetResolution(
 
 | Setting | Value | Why |
 |---------|-------|-----|
-| Scripting Backend | IL2CPP | Required for iOS and generally faster |
-| Managed Stripping Level | Medium-High | Reduce binary size |
-| Target Architecture | ARM64 only | Modern store requirement and simpler QA |
-| Rendering Path | Forward | Deferred is usually too expensive |
+| Scripting Backend | IL2CPP | Required for iOS and Android ARM64 |
+| Managed Stripping Level | Medium-High | Reduce binary size (see `build-settings.md`) |
+| Target Architecture | ARM64 only | Store requirement and simpler QA |
+| Rendering Path (URP Renderer) | Forward, or Forward+ for many real-time lights | Deferred is usually too expensive |
 | Color Space | Linear | Better lighting consistency |
+| Use Incremental GC | ON | Avoids long GC spikes |
 
 ### Recommended Quality Settings
 
-| Setting | Mobile Value | Why |
-|---------|-------------|-----|
-| VSync Count | Don't Sync | Prefer explicit `targetFrameRate` |
-| Anti-Aliasing | 2x MSAA or Off | 4x and 8x are often too expensive |
-| Shadow Resolution | 512-1024 | High resolutions are costly |
-| Shadow Distance | 20-50m | Reduces shadow map work |
-| Pixel Light Count | 1-2 | Limit real-time lights |
-| Texture Quality | Half Res for low-end | Reduces memory pressure |
-| LOD Bias | 0.5-0.7 | More aggressive LOD switching |
-| Particle Raycast Budget | 16-64 | Limit collision checks |
+In URP, MSAA, shadows, and light limits live on the URP Asset assigned to each
+Quality level; the rest are in Project Settings > Quality.
+
+| Setting | Where | Mobile Value | Why |
+|---------|-------|-------------|-----|
+| VSync Count | Quality | Don't Sync | Prefer explicit `targetFrameRate` |
+| Anti-Aliasing | URP Asset | 2x MSAA or Off | 4x and 8x are often too expensive |
+| Shadow Resolution | URP Asset | 512-1024 | High resolutions are costly |
+| Shadow Distance | URP Asset | 20-50m | Reduces shadow map work |
+| Additional Lights (per object limit) | URP Asset | 1-2, or Disabled | Limit real-time lights |
+| Global Mipmap Limit | Quality | Half Res for low-end | Reduces memory pressure |
+| LOD Bias | Quality | 0.5-0.7 | More aggressive LOD switching |
+| Particle Raycast Budget | Quality | 16-64 | Limit collision checks |
 
 ## Mobile-Specific Code Patterns
 
 ```csharp
-// Decorative UI should not block raycasts
-image.raycastTarget = false;
-
-// Prefer caching globals used every frame
-private int _screenWidth;
-void Start() => _screenWidth = Screen.width;
-
 // Use cheaper math in hot paths
 Vector3.SqrMagnitude(a - b) < threshold * threshold;
 ```
 
-`Camera.main` is safer on newer Unity versions than it used to be, but repeated global lookups still reduce clarity in multi-camera scenes. Cache the intended camera when the code path is hot or the scene is not trivial.
+`Camera.main` is cached internally in Unity 6; still pass or cache the intended
+camera in multi-camera scenes for clarity. UI raycast-target and Canvas rules:
+`canvas-ui-drawcalls-batching.md`.
 
 ## Battery-Conscious Design
 
-- Lower frame rate during menus, inventory, and pause screens
+- Lower frame rate or `OnDemandRendering.renderFrameInterval` during menus,
+  inventory, and pause screens
 - Disable unnecessary sensors when not used
 - Reduce network polling when the app is backgrounded or idle
-- OLED-friendly dark UI can help on some devices
-- Use mono SFX, lower sample rates where acceptable, and stream music
+- Audio import rules: `memory-settings.md` (Audio Memory)

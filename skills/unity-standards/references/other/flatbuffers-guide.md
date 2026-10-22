@@ -7,6 +7,10 @@
 3. Serialize with `FlatBufferBuilder`
 4. Deserialize with `GetRootAs*`
 
+Keep the `flatc` version equal to the FlatBuffers C# runtime in the project (source or
+DLL under `Assets/Plugins/`). Current runtimes use `namespace Google.FlatBuffers`;
+older ones use `FlatBuffers`.
+
 ## Schema Syntax
 
 ```fbs
@@ -35,19 +39,28 @@ flatc --csharp -o Assets/Scripts/Generated/ schema.fbs
 
 ## Serialize
 
+Create strings, vectors, and child tables before `Start*`; structs are written inline.
+
 ```csharp
+using Google.FlatBuffers;
+
 var builder = new FlatBufferBuilder(256);
 var nameOffset = builder.CreateString("Sword");
-var item = Item.CreateItem(builder, 1, nameOffset, ItemType.Weapon);
+Item.StartItem(builder);
+Item.AddId(builder, 1);
+Item.AddName(builder, nameOffset);
+Item.AddType(builder, ItemType.Weapon);
+Item.AddPosition(builder, Vec3.CreateVec3(builder, 0f, 1f, 0f));
+var item = Item.EndItem(builder);
 builder.Finish(item.Value);
 byte[] bytes = builder.SizedByteArray();
-File.WriteAllBytes(path, bytes);
+File.WriteAllBytes(Path.Combine(Application.persistentDataPath, "item.bin"), bytes);
 ```
 
 ## Deserialize
 
 ```csharp
-byte[] bytes = File.ReadAllBytes(path);
+byte[] bytes = File.ReadAllBytes(Path.Combine(Application.persistentDataPath, "item.bin"));
 var buf = new ByteBuffer(bytes);
 var item = Item.GetRootAsItem(buf);
 Debug.Log($"{item.Name} type={item.Type}");
@@ -60,11 +73,5 @@ Debug.Log($"{item.Name} type={item.Type}");
 | Add field at end of table   | Remove any field        |
 | Add new enum value at end   | Reorder fields          |
 | Add new table               | Change field type       |
-| Deprecate field             | Rename field            |
-
-## Size Comparison (1000 items)
-
-| Format | Size   | Parse Time |
-|--------|--------|------------|
-| JSON   | ~150KB | ~12ms      |
-| FlatBuffers | ~40KB | ~0.1ms |
+| Deprecate field (`(deprecated)`) | Change default value |
+| Rename field (binary-safe; breaks code/JSON) | Insert field mid-table without `(id: n)` |

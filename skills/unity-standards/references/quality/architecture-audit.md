@@ -4,7 +4,7 @@
 
 | Metric | Threshold | Tool |
 |--------|-----------|------|
-| Afferent coupling (Ca) | <= 10 per class | lsp_find_references |
+| Afferent coupling (Ca) | <= 10 per class | IDE Find References or `grep -rnw ClassName Assets/` |
 | Efferent coupling (Ce) | <= 8 per class | count `using` + field types |
 | Instability (Ce/(Ca+Ce)) | 0.0-1.0 range | calculate per assembly |
 
@@ -25,7 +25,7 @@ UI -> Application -> Domain -> Core
 ```
 
 - Higher layers depend on lower layers only
-- Domain layer has zero Unity dependencies (pure C#)
+- Domain layer has zero Unity dependencies (pure C#; enforce with asmdef `noEngineReferences: true`)
 - Infrastructure implements domain interfaces
 - Flag any reverse dependency as **Critical**
 
@@ -38,6 +38,7 @@ UI -> Application -> Domain -> Core
 | Thread safety | `lock` or main-thread assertion |
 | Testability | Interface-backed, injectable |
 | Scene survival | Explicit `DontDestroyOnLoad` justification |
+| Play Mode reset | Static instance reset via `[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]` when domain reload is disabled |
 
 ## Event System Consistency
 

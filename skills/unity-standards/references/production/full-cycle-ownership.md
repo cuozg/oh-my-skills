@@ -22,7 +22,7 @@ Before implementation, identify:
 
 ## GDD And Technical Design
 
-For non-trivial features, read the GDD, task, or goal file before code. Ask
+For non-trivial features, read the GDD, task, or spec before code. Ask
 direct questions in the source document or final response when requirements,
 edge cases, ownership, or dependencies are unclear.
 
@@ -97,10 +97,11 @@ Server integration must stay responsive under failure.
 
 Release readiness includes build, store, and live checks:
 
-- Confirm CI/build pipeline impact: version control, build automation,
+- Confirm CI/build pipeline impact: version control, build automation
+  (`unity build`, see `references/other/unity-cli-routing.md`),
   Addressables/bundles, distribution, and store release steps.
 - For IAP, billing, privacy, tracking, or store-review behavior, verify current
-  requirements from official sources via `../other/official-source-map.md`.
+  requirements from official sources via `references/other/official-source-map.md`.
 - Keep release notes, screenshots, preview media, disclosures, and IAP metadata
   aligned with actual gameplay and platform policy.
 - Preserve crash symbolication and breadcrumbs for critical flows so Crashlytics,
@@ -129,8 +130,8 @@ an alternative solution, or a risk-managed tradeoff.
 
 Use the narrowest proof that covers the production surface:
 
-- Product behavior: Play Mode, scene/prefab inspection, screenshots, or device
-  smoke check for the user flow.
+- Product behavior: Play Mode, scene/prefab inspection, screenshots (via the
+  `unity` CLI routing above), or device smoke check for the user flow.
 - Analytics: schema check, duplicate/missing event test, local capture, or live
   dashboard/raw event verification after rollout.
 - Config/LiveOps: valid, missing, expired, malformed, rollback, and refresh paths.

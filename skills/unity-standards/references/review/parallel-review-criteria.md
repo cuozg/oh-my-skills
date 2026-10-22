@@ -18,8 +18,9 @@ hunks for its assigned file type.
 | ----------------------- | -------------------------------- | --------------------------------------------------------------- |
 | `.cs`                 | `checklist_cs.md`       | Logic, Lifecycle, Performance, Serialization, Concurrency, etc. |
 | `.prefab`, `.unity` | `checklist_prefab.md`   | Hierarchy, overrides, missing scripts, scene references         |
-| `.mat`                | `checklist_material.md` | GPU instancing, shared materials, properties                    |
-| `.shader`             | `checklist_shader.md`   | Render queue, fallbacks, passes, properties                     |
+| `.mat`                | `checklist_material.md` | SRP Batcher/instancing, shared materials, properties            |
+| `.shader`, `.shadergraph` | `checklist_shader.md` | Render queue, fallbacks, passes, properties, variants        |
+| `.cs` (Entities/Jobs/Burst) | `ecs-burst-review.md` | Queries, ECB, job dependencies, Burst, NativeContainers   |
 
 ## Focused Review Prompt Template
 
@@ -67,9 +68,9 @@ If GitHub patch is missing or file is too large:
 Example:
 
 ```text
-`Assets/_lowrez/.../low_UniversalSystemPopup.prefab`
-GameObject: UniversalSystemPopup
-Component: UPSystemPopupController
+`Assets/UI/Popups/SystemPopup.prefab`
+GameObject: SystemPopup
+Component: SystemPopupController
 Fields: userInputField, noticeText
 Issue: both are `{fileID: 0}`, InputText layout crashes.
 Expected Fix: Assign valid references.

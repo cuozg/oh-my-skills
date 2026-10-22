@@ -128,18 +128,9 @@ When a feature crosses systems, write down the integration points before changin
 ## Production Feature Boundaries
 
 For features that affect product goals, LiveOps, analytics, IAP, server APIs, or
-release behavior, load `../production/full-cycle-ownership.md` before changing
-architecture. These features need more than clean code boundaries:
-
-- Product goal and success signal should be known before implementation.
-- Client/server authority must be explicit for economy, purchases, inventory,
-  progression, attribution, and other business-critical state.
-- Remote config and blueprint systems need validation, defaults, rollback, and
-  expired-data cleanup, not just a deserializer.
-- Analytics instrumentation belongs in the feature design and test plan, with
-  event meaning and timing clarified before code.
-- Post-launch monitoring and rollback paths are part of ownership for risky
-  features.
+release behavior, load `references/production/full-cycle-ownership.md` before changing
+architecture. Make client/server authority explicit for economy, purchases,
+inventory, progression, attribution, and other business-critical state.
 
 ## Patterns Worth Using
 
@@ -174,7 +165,7 @@ Do not combine behavior changes with cleanup unless the cleanup is required to m
 
 ## Editor Code
 
-Editor scripts must be isolated from runtime builds.
+Editor scripts must be isolated from runtime builds. For inspectors, windows, drawers, and tools, use the `unity-editor` skill.
 
 Standards:
 
@@ -186,8 +177,13 @@ Standards:
 - Keep editor tools deterministic and safe for dirty scenes.
 
 ```csharp
-Undo.RecordObject(target, "Update Spawn Radius");
+// SerializedObject path: ApplyModifiedProperties records Undo and prefab overrides itself.
 serializedObject.ApplyModifiedProperties();
+
+// Direct mutation path: record Undo first; prefab instances also need
+// PrefabUtility.RecordPrefabInstancePropertyModifications(spawner).
+Undo.RecordObject(spawner, "Update Spawn Radius");
+spawner.Radius = newRadius;
 ```
 
 ## Gizmos And Scene Handles
@@ -199,7 +195,7 @@ serializedObject.ApplyModifiedProperties();
 
 ## WebGL And Platform Boundaries
 
-WebGL and mobile platforms impose real constraints. Keep platform behavior behind interfaces or small adapters.
+WebGL and mobile platforms impose real constraints. Keep platform behavior behind interfaces or small adapters. For WebGL builds and optimization, use the `unity:optimize-web` skill.
 
 Common WebGL considerations:
 
@@ -221,7 +217,7 @@ Use platform branches near composition:
 
 ## Verification Expectations
 
-Architecture changes need evidence beyond compilation:
+Architecture changes need evidence beyond compilation. Run compile, test, and build checks through the `unity` CLI (`references/other/unity-cli-routing.md`):
 
 - asmdef/reference changes: compile affected assemblies and tests.
 - scene/prefab dependency changes: inspect affected assets or run scene smoke checks.

@@ -12,12 +12,12 @@ CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 ### Prefabs
 - [ ] No `Missing (Mono Script)` components
 - [ ] Variant overrides intentional - review each modified property
-- [ ] No direct scene references in prefabs (use SO or events)
+- [ ] Prefabs do not rely on runtime lookups of scene objects by name/tag (use SO, events, or injected refs)
 - [ ] `Raycast Target` disabled on non-interactive UI elements
 - [ ] Serialized object references are not `{fileID: 0}` unless optional
 - [ ] New components have safe default values for existing prefab instances
 
-### Textures & Mesh (if applicable)
+### Textures & Mesh (if applicable; import settings: `references/optimization/memory-settings.md`)
 - [ ] Read/Write disabled (halves memory) unless CPU access needed
 - [ ] Compression set per platform (ASTC mobile, BC7 desktop)
 - [ ] Mipmaps: enabled for 3D, disabled for UI sprites
@@ -25,5 +25,5 @@ CRITICAL > HIGH > MEDIUM > LOW > STYLE.
 
 ### Audio (if applicable)
 - [ ] Short SFX: Decompress On Load; Music: Streaming
-- [ ] Force Mono for non-spatial SFX
+- [ ] Force To Mono for 3D/spatialized SFX (details: `unity:optimize-audio`)
 - [ ] Preload Audio Data off for large files

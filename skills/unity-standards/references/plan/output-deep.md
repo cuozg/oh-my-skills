@@ -1,6 +1,6 @@
 # Deep Plan Output Template
 
-Save to `Documents/Plans/PLAN_{Name}.md`. Follow this structure exactly.
+Save to `Docs/Plans/PLAN_{Name}.md`. Follow this structure exactly.
 
 ## Template
 
@@ -75,7 +75,7 @@ Wave 3 (after W2): T-5
 | Product And Operations | Fill every row; use "None" only after checking scope |
 | Task ID | Sequential: T-1, T-2, T-3... |
 | Subject | Imperative verb + target (e.g., "Add health component") |
-| Skill | Exact skill name from registry |
+| Skill | Exact existing skill name (e.g. `unity-standards`, `unity-editor`, `unity-test-unit`, `unity:ui-uitk`, `unity:ui-ugui`) |
 | Blocked By | Task IDs this depends on, or `-` for none |
 
 ## Rules

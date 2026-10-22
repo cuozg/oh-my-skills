@@ -10,11 +10,13 @@
 - Single self-contained `.html` file
 - Print-friendly (`@media print` overrides)
 - Replace all `{X}` placeholders before saving
-- Evidence rows sorted by severity: CRITICAL -> WARNING -> NOTE
+- Evidence rows sorted by severity: Critical -> High -> Medium -> Low
 - Top 5 fixes ranked by `severity x frequency`
 - No images or external CDN resources
 
 ## Grade Badge CSS
+
+Paste this and the Severity Colors CSS into the template `<style>` block.
 
 ```css
 .grade { display: inline-block; width: 48px; height: 48px;
@@ -63,8 +65,7 @@
   <title>Unity Quality Audit - {Project} - {Date}</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; }
-    .grade-A { color: #16a34a; } .grade-B { color: #65a30d; }
-    .grade-C { color: #d97706; } .grade-D { color: #ea580c; } .grade-F { color: #dc2626; }
+    /* Grade Badge CSS + Severity Colors (sections above) */
     table { border-collapse: collapse; width: 100%; }
     th, td { border: 1px solid #e5e7eb; padding: 0.5rem 0.75rem; text-align: left; }
     th { background: #f9fafb; }
@@ -78,10 +79,10 @@
   <h2>Grade Summary</h2>
   <table>
     <tr><th>Category</th><th>Grade</th><th>Key Finding</th></tr>
-    <tr><td>Architecture</td><td class="grade-{X}">{X}</td><td>{summary}</td></tr>
-    <tr><td>Performance</td><td class="grade-{X}">{X}</td><td>{summary}</td></tr>
-    <tr><td>Best Practices</td><td class="grade-{X}">{X}</td><td>{summary}</td></tr>
-    <tr><td>Tech Debt</td><td class="grade-{X}">{X}</td><td>{summary}</td></tr>
+    <tr><td>Architecture</td><td><span class="grade grade-{x}">{X}</span></td><td>{summary}</td></tr>
+    <tr><td>Performance</td><td><span class="grade grade-{x}">{X}</span></td><td>{summary}</td></tr>
+    <tr><td>Best Practices</td><td><span class="grade grade-{x}">{X}</span></td><td>{summary}</td></tr>
+    <tr><td>Tech Debt</td><td><span class="grade grade-{x}">{X}</span></td><td>{summary}</td></tr>
   </table>
   <h2>Top 5 Priority Fixes</h2>
   <ol>
@@ -90,7 +91,7 @@
   <h2>Evidence</h2>
   <table>
     <tr><th>Severity</th><th>Category</th><th>Location</th><th>Detail</th></tr>
-    <!-- one row per finding, class="critical" or class="warning" -->
+    <!-- one row per finding: class="critical" for Critical/High, class="warning" for Medium/Low -->
   </table>
 </body>
 </html>

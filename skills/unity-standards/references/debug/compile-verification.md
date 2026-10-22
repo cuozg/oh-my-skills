@@ -1,21 +1,31 @@
 # Compile Verification
 
-Patterns for verifying Unity C# compilation - log parsing, error formats, and verification chain.
+Patterns for verifying Unity C# compilation - verification chain, log parsing, and
+error formats. Editor access rules and preflight: `references/other/unity-cli-routing.md`.
 
 ## Verification Chain
 
-Use the fastest tool that covers your scope:
+Use the fastest step that covers your scope; escalate when it cannot.
 
-| Tool | Speed | Scope | When to Use |
-|------|-------|-------|-------------|
-| `lsp_diagnostics` | Instant | Single-file type/syntax | After every edit |
-| Unity MCP `ReadConsole` | Fast | Running Editor state | When Editor is open |
-| Unity MCP `GetConsoleLogs` | Fast | All console output | Quick error scan |
-| Batchmode compile check | 30s-5m | Full project compile | MCP unavailable, CI, cross-assembly |
+| Step | How | Scope | When to Use |
+|------|-----|-------|-------------|
+| 0. IDE diagnostics | Editor integration (e.g. VS Code C# Dev Kit, Rider) problems list | Single-file type/syntax | Fast check after each edit; never final proof |
+| 1. Live Editor | `unity status --format json` (state `ready`) → `unity command recompile --caller plugin --skill <skill>` → scan errors with the console/log command `unity command --query log` lists | Full project as the Editor compiles it | GUI or batch Editor reachable |
+| 2. Safe Mode check | `unity pipeline list --format json` → `data.summary.instancesInSafeMode > 0` → `grep` `<project>/Logs/Editor.log` | Errors that blocked Editor startup | Editor open but CLI cannot connect |
+| 3. Headless | `unity run <project> -- -logFile <path>`, or `unity test <project> --mode EditMode --format json` | Full project compile (plus tests) | No live Editor, CI, cross-assembly changes |
 
-**Escalation path:** `lsp_diagnostics` -> Unity MCP -> batchmode compile check
+Rules:
+- Run `unity command --format json` first; use only commands this Editor lists.
+- Headless runs need the project closed in the GUI Editor.
+- Never pass `-batchmode` / `-quit` to `unity run` / `unity test` / `unity build`.
+- Read logs through `grep`, never dump them whole.
 
-## When lsp_diagnostics Is Not Enough
+```bash
+# Log scan (Safe Mode or headless): CS errors plus the global failure marker
+grep -nE 'error CS[0-9]{4}|Scripts have compiler errors' <project>/Logs/Editor.log   # headless: the -logFile path
+```
+
+## When IDE Diagnostics Are Not Enough
 
 - Cross-assembly reference errors (asmdef boundaries)
 - Unity-specific compilation contexts (editor-only code, platform defines)
@@ -42,6 +52,9 @@ Named groups: `filename`, `line`, `column`, `type` (error|warning|info), `id` (C
 
 ## Log Section Markers
 
+Primary signal is the `error CS####` lines above. These markers may also appear
+(exact text varies by Unity version):
+
 ```
 -----CompilerOutput:-stderr----------
 <errors appear here>
@@ -66,9 +79,9 @@ DisplayProgressNotification: Scripts have compiler errors.
 | CS1061 | Type does not contain a definition | Wrong type, missing method, API change |
 | CS0234 | Namespace does not exist | Missing package or asmdef dependency |
 | CS0117 | Does not contain a definition for member | Static member access on wrong type |
-| CS0619 | Member is obsolete and will error | Use the replacement API suggested in message |
+| CS0619 | Member is obsolete and will error | Use the replacement API suggested in message (see `references/quality/best-practices-audit.md`) |
 | CS0618 | Member is obsolete (warning) | Use replacement API or suppress with `#pragma` if justified |
-| CS0168 | Variable declared but never used | Remove unused variable or prefix with `_` |
+| CS0168 | Variable declared but never used | Remove the variable; for `catch (Exception e)` drop `e` |
 
 ## Additional Error Patterns
 
@@ -82,12 +95,15 @@ Shader error in '<name>': <message>      - Shader compilation failure
 
 ## Exit Code Caveat
 
-Exit code 0 from Unity batchmode does NOT guarantee zero errors. Always parse the log file as well. Unity exits 0 when:
-- `-ignorecompilererrors` is set
-- `-executeMethod` catches all exceptions without calling `EditorApplication.Exit(1)`
-- `BuildPipeline.BuildPlayer` fails but the calling method doesn't re-throw
+Exit code 0 does NOT guarantee zero compile errors. Always parse the log too.
+
+- `unity test`: `8` = tests failed; `6` = run never produced a verdict (often compile
+  errors or an Editor crash - grep the log).
+- `unity run` / `unity build` can still exit 0 when:
+  - `--execute-method` code catches all exceptions without calling `EditorApplication.Exit(1)`
+  - `BuildPipeline.BuildPlayer` fails but the method ignores `BuildReport.summary.result`
 
 Belt-and-suspenders check:
 ```bash
-[ $exit_code -ne 0 ] || grep -qE "error CS|error IL|Scripts have compiler errors" log.txt
+[ $exit_code -ne 0 ] || grep -qE "error CS|error IL|Scripts have compiler errors" <logfile>
 ```

@@ -1,14 +1,31 @@
 # Best Practices Audit
 
-## Deprecated API Usage
+## Obsolete / Removed APIs (Unity 6)
 
-| Deprecated | Replacement |
+Compiler signal: `CS0618` (obsolete warning) / `CS0619` (obsolete error).
+
+| Obsolete | Replacement |
 |-----------|-------------|
-| `OnGUI()` for production UI | UI Toolkit or uGUI |
+| `Object.FindObjectOfType<T>()` | `FindFirstObjectByType<T>()` (deterministic) or `FindAnyObjectByType<T>()` (faster) |
+| `Object.FindObjectsOfType<T>()` | `FindObjectsByType<T>(FindObjectsSortMode.None)` |
+| `Rigidbody`/`Rigidbody2D` `.velocity`, `.drag`, `.angularDrag` | `.linearVelocity`, `.linearDamping`, `.angularDamping` |
+| `Physics.autoSimulation` / `Physics2D.autoSimulation` | `Physics.simulationMode` / `Physics2D.simulationMode` |
+| `Physics2D.*NonAlloc` queries | Overloads taking an array or `List<T>` result |
+| URP `ScriptableRenderPass.Execute` / `Configure` / `OnCameraSetup` | `RecordRenderGraph` (old path is Compatibility Mode only) |
+| Entities `GameObjectConversionSystem` / `IConvertGameObjectToEntity` | `Baker<T>` (Entities 1.x) |
+| Entities `Entities.ForEach` / `Job.WithCode` | `SystemAPI.Query` / `IJobEntity` |
+| `com.unity.textmeshpro` package | TextMeshPro ships inside `com.unity.ugui` 2.0 |
 | `WWW` | `UnityWebRequest` |
 | `Application.LoadLevel` | `SceneManager.LoadScene` |
 | `GUIText` / `GUITexture` | `TextMeshPro` / `Image` |
 | `Network.*` (UNet) | Netcode for GameObjects or project-specific networking layer |
+
+## Avoid In New Code
+
+| Avoid | Prefer |
+|-------|--------|
+| `OnGUI()` for production UI | UI Toolkit or uGUI |
+| Legacy `UnityEngine.Input` | Input System package (`InputAction`), unless the project standardizes on legacy input |
 | Stretching `JsonUtility` past its limits | Newtonsoft or a custom serializer |
 
 ## CompareTag Usage
@@ -42,7 +59,7 @@ if (obj != null) obj.DoSomething();
 
 - Cache `WaitForSeconds` instances only when the delay value is stable and reuse is readable.
 - Stop or cancel long-lived flows in `OnDisable` or `OnDestroy`.
-- Prefer the project's established async stack for complex flows.
+- Prefer the project's established async stack for complex flows; without one, use `Awaitable` with `destroyCancellationToken`.
 - Never use `StopAllCoroutines()` as a blanket cleanup strategy.
 - Flag `StartCoroutine` in `Update` as critical.
 

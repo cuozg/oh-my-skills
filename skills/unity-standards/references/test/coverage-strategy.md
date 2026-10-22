@@ -68,6 +68,8 @@ public void Config_SurvivesSerializationRoundtrip()
 
 ## Coverage Targets
 
+Measure with the Code Coverage package (`com.unity.testtools.codecoverage`).
+
 | Layer | Target | Rationale |
 |-------|--------|-----------|
 | Core logic (pure C#) | 90%+ | No Unity deps, easy to test |

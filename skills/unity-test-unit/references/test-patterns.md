@@ -1,10 +1,14 @@
 # Test Patterns — Skill Extensions
 
-> **Canonical reference**: `unity-standards/references/test/edit-mode-patterns.md`
-> Load via: `read_skill_file("unity-standards", "references/test/edit-mode-patterns.md")`
+Generic Unity Test Framework facts live in `unity-standards`:
+- Attributes, assertions, SetUp/TearDown, ScriptableObject, exception, manual fakes:
+  `../unity-standards/references/test/edit-mode-patterns.md`
+- Async tests, MonoBehaviour logic extraction: `../unity-standards/references/test/edit-mode-advanced.md`
+- Play Mode, `LogAssert`, scenes, physics: `../unity-standards/references/test/play-mode-patterns.md`
+- Naming, folders, test asmdefs: `../unity-standards/references/test/naming-conventions.md`
+- Boundary values (Category 3): `../unity-standards/references/test/coverage-strategy.md`
 
-Standards covers AAA pattern, assertions, SetUp/TearDown, ScriptableObject testing,
-exception testing, and manual mocking. Below are extensions unique to this skill.
+This file holds the skill-specific data-category patterns and NSubstitute mocking.
 
 ## Data-Focused Test Organization
 
@@ -197,7 +201,13 @@ public void TakeDamage_WhenShielded_DoesNotFireDeathEvent()
 
 ## Mocking with NSubstitute
 
+NSubstitute is not bundled with Unity: add `NSubstitute.dll` and its dependencies
+(e.g. via NuGetForUnity) under `Assets/Plugins/`, then list it in the test asmdef
+`precompiledReferences` next to `nunit.framework.dll`.
+
 ```csharp
+using NSubstitute;
+
 // Create substitute
 var mockRepo = Substitute.For<IRepository>();
 
@@ -209,6 +219,9 @@ mockRepo.Received(1).Save(Arg.Any<Entity>());
 
 // Verify call was NOT made (negative assertion)
 mockRepo.DidNotReceive().Delete(Arg.Any<int>());
+
+// Verify argument content
+handler.Received(1).Handle(Arg.Is<DamageEvent>(e => e.Amount == 50f));
 ```
 
 ## Test Case Categories Checklist

@@ -82,7 +82,11 @@ state.
 3. Use manual QA only for visual feel, device/platform behavior, or flows that
    are not practical to automate in the current project.
 4. Run the narrowest meaningful verification first; broaden only when the change
-   touches shared systems.
+   touches shared systems. Automated runs:
+   `unity test <project> --mode EditMode|PlayMode --filter <name> --format json`
+   (exit `0` pass, `8` tests failed, `6` no verdict; needs the project closed in
+   the GUI Editor, otherwise use the live Editor via `unity command`). See
+   `references/other/unity-cli-routing.md`.
 5. Record failures against the AC ID and keep the original AC text intact.
 6. For production features, include analytics, LiveOps/config, server/API, IAP,
    release, and monitoring proof when those surfaces are part of the change.

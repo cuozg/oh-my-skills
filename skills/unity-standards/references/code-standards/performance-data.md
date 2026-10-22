@@ -32,60 +32,19 @@ private int FindTargets(Vector3 position, float radius)
 
 ## Collections
 
-| Need | Preferred Type |
-| --- | --- |
-| Fixed serialized list | Array or `List<T>` |
-| Dynamic ordered list | `List<T>` |
-| Lookup by key | `Dictionary<TKey, TValue>` |
-| Unique membership / fast contains | `HashSet<T>` |
-| FIFO work queue | `Queue<T>` |
-| Undo / LIFO | `Stack<T>` |
-| Public read-only exposure | `IReadOnlyList<T>` or copied result |
-| Jobs/Burst data | `NativeArray<T>`, `NativeList<T>`, native hash maps |
-
-Pre-size when count is predictable:
-
-```csharp
-private readonly List<Enemy> _visibleEnemies = new(64);
-private readonly Dictionary<string, AbilityData> _abilitiesById = new(128);
-```
-
-Do not expose mutable collections directly:
-
-```csharp
-public IReadOnlyList<Enemy> VisibleEnemies => _visibleEnemies;
-```
+- Pre-size `List<T>`/`Dictionary<TKey, TValue>` when the count is predictable (`new(64)`).
+- Expose read-only views (see `core-conventions.md`, Access And Mutability).
+- Use `NativeArray<T>`, `NativeList<T>`, and native hash maps for Jobs/Burst data.
 
 ## LINQ
 
-LINQ is fine for editor tools, tests, one-time setup, and cold paths. Avoid it in hot runtime paths.
-
-```csharp
-// Setup path: acceptable.
-_abilitiesById = _abilities.ToDictionary(ability => ability.Id);
-
-// Hot path: prefer a loop.
-Enemy closest = null;
-float closestDistanceSq = float.MaxValue;
-
-for (int i = 0; i < _visibleEnemies.Count; i++)
-{
-    Enemy enemy = _visibleEnemies[i];
-    float distanceSq = (enemy.Position - origin).sqrMagnitude;
-
-    if (distanceSq < closestDistanceSq)
-    {
-        closest = enemy;
-        closestDistanceSq = distanceSq;
-    }
-}
-```
+LINQ is fine for editor tools, tests, one-time setup, and cold paths. In hot runtime paths, use plain `for` loops.
 
 Avoid `Where(...).First(...)`; use `First(...)` or a loop. Avoid properties that recompute LINQ queries every access.
 
 ## Unity Hot-Path Patterns
 
-- Cache `Camera.main` if used repeatedly.
+- `Camera.main` is engine-cached and cheap; prefer a serialized/injected camera when one camera is a real dependency.
 - Cache component references used repeatedly.
 - Use `CompareTag` instead of `gameObject.tag ==`.
 - Use `sqrMagnitude` for distance comparisons.
@@ -171,20 +130,9 @@ Risky uses:
 
 ## Config And Scalable Data
 
-Remote config, blueprints, and server payloads are production data. Load
-`../production/full-cycle-ownership.md` when config affects LiveOps, analytics,
-economy, progression, or release behavior.
-
-- Keep config compact. Large payloads, post-load dictionary generation, sorting,
-  and dependency resolution can hurt startup and memory.
-- Validate required fields and version compatibility before applying new config.
-- Keep the previous valid state when a new config is missing, malformed, expired,
-  or incompatible.
-- For unbounded systems, store only the compact player-specific state and
-  generate predictable ranges from templates. Do not persist every possible
-  level, reward, or row when the data can scale indefinitely.
-- Clean up expired config and obsolete player data intentionally so LiveOps
-  iteration does not create permanent memory, save, or backend bloat.
+Remote config, blueprints, and server payloads are production data. For size,
+validation, fallback, template generation, and expired-data cleanup rules, load
+`references/production/full-cycle-ownership.md` (LiveOps, Remote Config, And Blueprints).
 
 ## Save And External Data
 

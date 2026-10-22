@@ -49,7 +49,7 @@ After printing the plan (Quick inline report or Deep markdown), ask:
 
 ```
 Plan ready. Want me to:
-1. Create goal/todo tasks from this plan
+1. Create tasks from this plan
 2. Adjust the plan
 3. Discard and start over
 ```
@@ -58,7 +58,7 @@ Plan ready. Want me to:
 
 | Response | Action |
 |----------|--------|
-| Create tasks (yes, go, create) | Use the relevant goal/todo skill output format |
+| Create tasks (yes, go, create) | Create one task per Task Breakdown row in the user's tracker or the session task list, keeping Blocked By links |
 | Adjust (change X, add Y, remove Z) | Modify plan, re-present for review |
 | Discard (no, start over, scrap it) | Acknowledge, wait for new direction |
 
@@ -75,13 +75,4 @@ Plan ready. Want me to:
 - Do not skip the review checkpoint when the user asked for planning only
 - If user requests changes, update plan and re-present
 - Keep the confirmation question short and actionable
-
----
-
-## Anti-Patterns
-
-- Auto-proceeding past unresolved scope ambiguity
-- Creating tasks immediately after plan generation
-- Treating "hmm" or partial responses as confirmation
-- Skipping checkpoint 2 for "obvious" small tasks
-- Generating plan before scope is confirmed
+- Treat partial responses ("hmm") as questions, not confirmation

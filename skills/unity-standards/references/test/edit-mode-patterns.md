@@ -1,5 +1,25 @@
 # Edit Mode Test Patterns
 
+Edit Mode tests run only in the Editor (on `EditorApplication.update`), can use
+Editor APIs, and are the default for pure C#, ScriptableObjects, and Editor
+tooling. Test Framework is a core package in Unity 6 (1.4+).
+
+## Attribute Quick Reference
+
+| Attribute | Mode | Purpose |
+|---|---|---|
+| `[Test]` | Both | Synchronous test; `async Task` return is also supported |
+| `[UnityTest]` | Both | `IEnumerator` test; yields editor updates (Edit) or frames (Play) |
+| `[SetUp]` / `[TearDown]` | Both | Runs before/after each test (`async Task` allowed) |
+| `[UnitySetUp]` / `[UnityTearDown]` | Both | `IEnumerator` setup/teardown that can yield |
+| `[OneTimeSetUp]` / `[OneTimeTearDown]` | Both | Runs once per fixture |
+| `[TestCase(a, b)]` / `[ValueSource]` | Both | Parameterized `[Test]` |
+| `[Category("name")]` | Both | Group tests for filtered runs |
+| `[Ignore("reason")]` | Both | Skip test with explanation |
+
+Prefer `[Test]`; use `[UnityTest]` only to yield instructions or wait frames.
+Play Mode specifics: `play-mode-patterns.md`.
+
 ## Basic Test
 
 ```csharp
@@ -96,4 +116,4 @@ public void TakeDamage_NegativeValue_Throws()
     Assert.Throws<ArgumentException>(() => h.TakeDamage(-1));
 }
 ```
-<!-- Advanced: edit-mode-advanced.md -->
+Advanced (async tests, mocking, MonoBehaviour logic extraction): `edit-mode-advanced.md`.

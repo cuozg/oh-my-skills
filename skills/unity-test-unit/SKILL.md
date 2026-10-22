@@ -5,10 +5,10 @@ description: >
   pattern with 10+ test cases per class. Use when the user says "write tests," "unit test this class,"
   "add test coverage," "create tests for X," or wants automated verification of a MonoBehaviour,
   ScriptableObject, or utility class. Do not use for manual QA test case documentation — use
-  unity-test-case for that.
+  unity-standards (test-case-format) for that.
 metadata:
   author: kuozg
-  version: "1.3"
+  version: "2.0"
 ---
 # unity-test-unit
 
@@ -42,7 +42,11 @@ Assert **specific behavior** per failure path: `Assert.Throws<ArgumentNullExcept
    - Total must meet: 3+ valid, 3+ boundary, 4+ invalid
 3. **Classify** — Edit Mode vs Play Mode (Play Mode only for coroutines/physics/lifecycle)
 4. **Write** — AAA pattern with `[Test]` or `[UnityTest]`
-5. **Verify** — compilation, missing assembly refs, namespace issues
+5. **Run (BLOCKING)** — follow the preflight in `../unity-standards/references/other/unity-cli-routing.md`:
+   - Live Editor reachable → use the test-runner command it lists (`unity command --query test`), else ask the user to close the project before a headless run
+   - Headless → `unity test <project> --mode EditMode --filter "<Namespace.ClassTests>" --format json` (repeat with `--mode PlayMode` when Play Mode tests exist)
+   - Exit `0` = pass · `8` = tests failed (fix test or code, rerun) · `6` = never produced a verdict (compile error, license, timeout — read `Logs/Editor.log` for `error CS`)
+   - No Editor/CLI available → report "tests written, not run" explicitly
 6. **Coverage Gate (BLOCKING)** — Before done, verify:
    - Every object parameter has null-input test
    - Every string has `""` and `"  "` tests
@@ -57,16 +61,14 @@ Assert **specific behavior** per failure path: `Assert.Throws<ArgumentNullExcept
 - `Assert.Throws<T>` for expected exceptions — never catch-and-ignore
 - Edit Mode preferred; Play Mode only when coroutines/lifecycle required
 - Naming: `MethodName_Condition_ExpectedResult` (e.g. `_WithNullInput_`, `_AtMaxBoundary_`)
-- Place in `Assets/Tests/EditMode/` or `Assets/Tests/PlayMode/`
+- Place in `Assets/Tests/EditMode/` or `Assets/Tests/PlayMode/` unless the project already has a test layout
+- Each test folder needs its asmdef referencing the target assembly + `UnityEngine.TestRunner` / `UnityEditor.TestRunner` (Edit Mode: Editor platform only); reuse existing test asmdefs first
 - `[SetUp]`/`[TearDown]` to prevent state leakage
 - `[TestCase]` for parameterized variants
 - Never `Debug.Log` in tests — `Assert` only
 
 ## References
 
-Via `read_skill_file("unity-test-unit", "references/<file>")`:
-- `test-patterns.md` — data-focused patterns, NSubstitute mocking
-- `unity-test-attributes.md` — [Test], [UnityTest], Edit vs Play mode
-
-Via `read_skill_file("unity-standards", "references/test/<file>")`:
-- `edit-mode-patterns.md` · `play-mode-patterns.md` · `naming-conventions.md` · `coverage-strategy.md`
+- `references/test-patterns.md` — data-focused patterns, NSubstitute mocking
+- `../unity-standards/references/test/` — `edit-mode-patterns.md` ([Test]/[UnityTest] attribute table, Edit vs Play mode) · `play-mode-patterns.md` · `naming-conventions.md` · `coverage-strategy.md`
+- `unity:unity-cli` → `build-run-test.md` — `unity test` flags (`--filter`, `--report-format junit`, `--coverage`)

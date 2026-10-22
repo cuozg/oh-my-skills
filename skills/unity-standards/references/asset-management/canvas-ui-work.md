@@ -2,10 +2,12 @@
 
 Use this for uGUI Canvas screens, popups, HUDs, buttons, layout prefabs,
 animations, input blocking, screen-ratio behavior, and production UI wiring. For
-UI Toolkit, use the `ui-toolkit/` references instead.
+UI Toolkit, use `references/ui-toolkit/` or the `unity:ui-uitk` skill; for deep
+uGUI component guidance, `unity:ui-ugui`.
 
-Load `optimization/canvas-ui-drawcalls-batching.md` only when the task involves
-draw calls, batching, overdraw, rebuilds, or measurable UI performance.
+Rebuild cost, raycast targets, materials/masks, batching, and overdraw live in
+`references/optimization/canvas-ui-drawcalls-batching.md`; load it whenever the
+change touches layout groups, masks, materials, atlases, or UI performance.
 
 ## Efficient Workflow
 
@@ -37,10 +39,6 @@ draw calls, batching, overdraw, rebuilds, or measurable UI performance.
 
 - Keep anchors, pivots, safe-area handling, layout groups, and content sizing
   intentional. Responsive bugs usually come from accidental parent constraints.
-- Avoid layout components in hot update paths. Nested `HorizontalLayoutGroup`,
-  `VerticalLayoutGroup`, `ContentSizeFitter`, and changing preferred sizes can
-  cause repeated rebuilds.
-- Disable `Raycast Target` on non-interactive `Image` and `Text` graphics.
 - Pool UI prefabs only when the reset contract is clear: active state,
   `CanvasGroup`, animation state, selected state, text, sprites, material
   overrides, and event subscriptions all need reset.
@@ -49,24 +47,15 @@ draw calls, batching, overdraw, rebuilds, or measurable UI performance.
 - Keep button callbacks and animation events pointed at stable controller
   methods. Remove callbacks only when your change made them obsolete.
 
-## Materials, Sprites, And Masks
-
-- Prefer sprite atlases and shared materials for elements rendered together.
-- Avoid per-element material instances. A single `.material` access in a UI view
-  can create unique materials and increase batches.
-- Minimize masks, nested masks, soft masks, and custom UI shaders in dense UI
-  unless the visual requirement justifies the cost.
-- Verify clipping, stencil, alpha blending, and batching behavior when using
-  custom UI shaders or masked content.
-
 ## Verification
 
 - Inspect the prefab or scene hierarchy for active states, anchors, references,
   button callbacks, raycast targets, masks, materials, atlases, and Canvas
-  boundaries.
+  boundaries — through a live Editor when available
+  (`references/other/unity-cli-routing.md`).
 - Run the UI flow in Play Mode when the behavior depends on data binding,
   animation, input, server state, or pooling.
 - Capture screenshots for visual changes at the relevant aspect ratio and
   quality tier.
-- For optimization claims, capture before/after draw calls, batches, SetPass
-  calls, Canvas rebuild time, frame time, or overdraw evidence.
+- For optimization claims, follow the Verification section of
+  `references/optimization/canvas-ui-drawcalls-batching.md`.
