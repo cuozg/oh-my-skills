@@ -41,7 +41,7 @@ Only after both false negatives are ruled out, fall back and say so explicitly:
 | Scene / GameObject edits | `get_scene_hierarchy`, `find_gameobjects`, `create_gameobject`, `add_component`, `set_transform`, `save_scene` | Hand-edit YAML only as a last resort, disclosed to the user |
 | New script → attach | `create_script` → `recompile` → `attach_script` | Write the `.cs` file; attachment needs the Editor |
 | Arbitrary Editor C# | `unity command eval "…"` / `eval_file <file>` when listed — keep snippets small and read-only unless mutation is the task | `unity run <project> --command <name>` for a registered `[CliCommand]` |
-| Play Mode proof | `editor_play` + console scan, or `screenshot --output <png>` | PlayMode tests via `unity test` |
+| Play Mode proof | `editor_play` + console scan, or `screenshot --output <png>` (camera only: it misses Screen Space Overlay UI; use `unity-validate`'s `validate_game_shot`) | PlayMode tests via `unity test` |
 | Build | — | `unity build <project> --target <target> --execute-method <Class.Method>` |
 | Project / editor version | `unity command eval "return Application.unityVersion;"` | `unity projects info <project> --format json` → `editorVersion`; or `ProjectSettings/ProjectVersion.txt` |
 

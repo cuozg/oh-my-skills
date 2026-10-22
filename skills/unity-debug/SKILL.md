@@ -25,6 +25,7 @@ Keep it compact and structured. Focus on evidence and actionable solutions. Avoi
    - Check `git log -5` for recent changes.
    - Pull live evidence via `../unity-standards/references/other/unity-cli-routing.md`: Unity version, console errors/stack traces (`unity command` console/log route, else `grep` on `<project>/Logs/Editor.log`), and Safe Mode (`unity pipeline list --format json`) for "Editor won't connect / compile" symptoms.
    - Reproduction steps and frequency
+   - Reproduce before tracing: dispatch a fresh subagent with skill `unity-validate` (bug: reproduce). It writes `Docs/Validations/<bug>.md`; link that file in the Reproduce section. `🔴 Reproduced` gives the evidence and the method; on `⚪ Not reproduced`, stop and ask the user for more detail. Compile errors skip this step: the compile output is the repro
 ### 2. If required debug inputs are missing, ask only for the missing evidence. Do not assume.
 ### 3. Understand the codebase.
    - Spawn an `Explore` subagent to read related code when tracing needs more than 3 searches
@@ -41,6 +42,7 @@ Keep it compact and structured. Focus on evidence and actionable solutions. Avoi
    - Report uncertainty explicitly if proof is incomplete
 ### 6. Propose 2 to 3 solutions.
    - Each solution must include approach, where to fix, scope, verify, and trade-off
+   - Verify = after a fix is applied, dispatch `unity-validate` (bug: verify fix) on the same `Docs/Validations/<bug>.md`. It reruns the same method → `🟢 Fixed`
    - Prefer minimal fix first, then structural alternatives only when useful
    - Recommend one option with a short reason
 ### 7. Report the result using `references/output-template.md`.
