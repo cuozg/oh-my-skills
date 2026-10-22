@@ -1,9 +1,9 @@
 ---
 name: unity-debug
-description: Diagnose Unity bugs from compile errors to stack traces, runtime failures, and tricky logic issues; gather reproduction details, trace the code path, prove the root cause with evidence, and report options without changing code unless asked.
+description: Diagnose Unity bugs from compile errors to stack traces, runtime failures, and tricky logic issues; reproduce with unity-validate, trace the code path, prove the root cause with evidence, report options, and verify any applied fix with unity-validate.
 metadata:
   author: kuozg
-  version: "3.1"
+  version: "3.2"
 ---
 
 # unity-debug
@@ -13,6 +13,8 @@ Use this skill for Unity debugging, diagnosis, and root-cause analysis.
 Keep it compact and structured. Focus on evidence and actionable solutions. Avoid unnecessary prose.
 
 *** MANDATORY: Use `references/output-template.md` for debug reports. Follow the structure and icon guidelines strictly. ***
+
+*** MANDATORY: Every bug goes through skill `unity-validate` twice: **reproduce** before tracing (step 1), and **verify fix** after any fix (step 8). The `Docs/Validations/<bug>.md` report is the evidence for both. ***
 
 ## Workflow
 
@@ -25,7 +27,8 @@ Keep it compact and structured. Focus on evidence and actionable solutions. Avoi
    - Check `git log -5` for recent changes.
    - Pull live evidence via `../unity-standards/references/other/unity-cli-routing.md`: Unity version, console errors/stack traces (`unity command` console/log route, else `grep` on `<project>/Logs/Editor.log`), and Safe Mode (`unity pipeline list --format json`) for "Editor won't connect / compile" symptoms.
    - Reproduction steps and frequency
-   - Reproduce before tracing: dispatch a fresh subagent with skill `unity-validate` (bug: reproduce). It writes `Docs/Validations/<bug>.md`; link that file in the Reproduce section. `🔴 Reproduced` gives the evidence and the method; on `⚪ Not reproduced`, stop and ask the user for more detail. Compile errors skip this step: the compile output is the repro
+   - Reproduce before tracing: dispatch a fresh subagent with skill `unity-validate` (bug: reproduce), compile errors included. It writes `Docs/Validations/<bug>.md`; link that file in the Reproduce section. `🔴 Reproduced` gives the evidence and the method; on `⚪ Not reproduced`, stop and ask the user for more detail.
+   - **Done when:** the validation report exists with verdict `🔴 Reproduced`. Tracing starts only after this gate.
 ### 2. If required debug inputs are missing, ask only for the missing evidence. Do not assume.
 ### 3. Understand the codebase.
    - Spawn an `Explore` subagent to read related code when tracing needs more than 3 searches
@@ -50,6 +53,12 @@ Keep it compact and structured. Focus on evidence and actionable solutions. Avoi
    - Use tree format for Flow, Reproduce, and Solutions
    - Keep each section compact: 1 to 3 bullets unless evidence requires more
    - Do not report a final root cause until it is proven with cited evidence
+### 8. Verify the fix (whenever a fix is applied).
+   - Applies when the user asks you to fix, or tells you they applied a fix.
+   - After the fix compiles, dispatch a fresh subagent with skill `unity-validate` (bug: verify fix) on the same `Docs/Validations/<bug>.md`. It reruns the recorded repro method plus regression cases.
+   - `🟢 Fixed` → report the fix done, with the verdict and report path in the Verify section.
+   - `❌ Still reproduces` → return to step 4 with the new evidence; the fix is not done.
+   - **Done when:** the validation report shows `🟢 Fixed`. Claim a fix only on that verdict.
 
 ## Investigation Rules
 

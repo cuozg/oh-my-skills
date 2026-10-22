@@ -52,6 +52,8 @@ Flow
 
 ## 🧪 Reproduce
 
+- **unity-validate:** 🔴 Reproduced — `Docs/Validations/<bug>.md` (method: <Unit / PlayMode run / compile>)
+
 ```text
 Reproduce
 ├─ Setup
@@ -95,6 +97,7 @@ Recommended: <Option 1/2/3> because <short reason>.
 
 ## ✅ Verify
 
+- 🔵 **unity-validate (verify fix):** <🟢 Fixed | ❌ Still reproduces | ⏳ pending — no fix applied yet> — `Docs/Validations/<bug>.md`
 - 🧪 **Automated:** <unit/Edit Mode/Play Mode test or compile check>
 - 🎮 **Unity Editor:** <scene, prefab, Play Mode, inspector, console check>
 - 🔁 **Regression:** <nearby behavior that must still work>
@@ -113,3 +116,5 @@ Rules:
 - Include 2 to 3 solution options.
 - Each solution must include `approach`, `where to fix`, `scope`, `verify`, and `trade-off`.
 - Report only after the root cause is proven with cited evidence.
+- `Reproduce` must link the unity-validate report with `🔴 Reproduced`.
+- Mark a fix done only when `Verify` shows unity-validate `🟢 Fixed`.
